@@ -1,0 +1,81 @@
+option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
+option(LCD_DUAL_BUFFER "Dual LCD Buffer" OFF)
+option(TARANIS_INTERNAL_PPM "Taranis internal module hack to output PPM" OFF)
+
+if(PCB STREQUAL I6X)
+  set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
+  set(SPLASH "OFF" CACHE STRING "Splash (DEFAULT/OFF/FRSKY)")
+  set(CPU_TYPE STM32F0)
+  set(CPU_TYPE_FULL STM32F072)  # for size report
+  set(LINKER_SCRIPT targets/flysky/STM32F072VB_FLASH.ld)
+  set(HAPTIC NO)
+  set(LUA_EXPORT lua_export_x7)
+  set(FLAVOUR x7)
+  add_definitions(-DSTM32F072)
+  add_definitions(-DPCBI6X -DSOFTWARE_VOLUME)
+  add_definitions(-DEEPROM_VARIANT=0x4000)
+  add_definitions(-DPWR_BUTTON_${PWR_BUTTON})
+  set(GUI_DIR 128x64)
+  set(BITMAPS_TARGET 9x_bitmaps)
+  set(FONTS_TARGET 9x_fonts_1bit)
+  set(LCD_DRIVER lcd_driver.cpp)
+  set(GVAR_SCREEN model_gvars.cpp)
+endif()
+
+if(PCB STREQUAL XLITE)
+  set(TARGET_SRC
+    ${TARGET_SRC}
+    ../common/arm/stm32/intmodule_serial_driver.cpp
+    )
+else()
+  set(TARGET_SRC
+    ${TARGET_SRC}
+    intmodule_pulses_driver.cpp
+    trainer_driver.cpp
+    )
+  add_definitions(-DSBUS)
+  set(PULSES_SRC
+    ${PULSES_SRC}
+    ../sbus.cpp
+    )
+endif()
+
+set(HSE_VALUE 4800000)
+set(SDCARD NO)
+set(EEPROM EEPROM_RAW)
+set(TARGET_DIR flysky)
+set(PPM_LIMITS_SYMETRICAL YES)
+
+add_definitions(-DPCBFLYSKY)
+add_definitions(-DAUDIO -DRTCLOCK)
+
+set(GUI_SRC ${GUI_SRC}
+  model_input_edit.cpp
+  model_mix_edit.cpp
+  model_display.cpp
+  radio_diagkeys.cpp
+  radio_diaganas.cpp
+  radio_hardware.cpp
+  view_channels.cpp
+  view_telemetry.cpp
+  view_about.cpp
+  bmp.cpp
+  ../screenshot.cpp
+  )
+
+set(TARGET_SRC
+  ${TARGET_SRC}
+  board.cpp
+  ${LED_DRIVER}
+  backlight_driver.cpp
+  extmodule_driver.cpp
+  adc_driver.cpp
+  )
+
+set(FIRMWARE_TARGET_SRC
+  ${FIRMWARE_TARGET_SRC}
+  ${LCD_DRIVER}
+  i2c_driver.cpp
+  pwr_driver.cpp
+  )
+set(FIRMWARE_DEPENDENCIES ${FIRMWARE_DEPENDENCIES} ${BITMAPS_TARGET})
