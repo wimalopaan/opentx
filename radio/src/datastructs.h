@@ -796,6 +796,8 @@ PACK(struct CustomScreenData {
   #define MODELDATA_EXTRA   NOBACKUP(uint8_t spare:3); NOBACKUP(uint8_t trainerMode:3); NOBACKUP(uint8_t potsWarnMode:2); ModuleData moduleData[NUM_MODULES+1]; NOBACKUP(ScriptData scriptsData[MAX_SCRIPTS]); NOBACKUP(char inputNames[MAX_INPUTS][LEN_INPUT_NAME]); NOBACKUP(uint8_t potsWarnEnabled); NOBACKUP(int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS]); NOBACKUP(uint8_t potsWarnSpares[NUM_DUMMY_ANAS]);
 #elif defined(PCBTARANIS)
   #define MODELDATA_EXTRA   uint8_t spare:3; uint8_t trainerMode:3; uint8_t potsWarnMode:2; ModuleData moduleData[NUM_MODULES+1]; ScriptData scriptsData[MAX_SCRIPTS]; char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; uint8_t potsWarnEnabled; int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS];
+#elif defined(PCBI6X)
+#define MODELDATA_EXTRA   uint8_t spare:6; NOBACKUP(uint8_t trainerMode:3); uint8_t potsWarnMode:2; ModuleData moduleData[NUM_MODULES+1]; char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; uint8_t potsWarnEnabled; int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS]; uint8_t rxBattAlarms[2];
 #elif defined(PCBSKY9X)
   #define MODELDATA_EXTRA   uint8_t spare:6; uint8_t potsWarnMode:2; ModuleData moduleData[NUM_MODULES+1]; char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; uint8_t potsWarnEnabled; int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS]; uint8_t rxBattAlarms[2];
 #else
@@ -1124,6 +1126,19 @@ static inline void check_struct()
   CHKSIZE(FrSkyTelemetryData, 88);
   CHKSIZE(ModelHeader, 12);
   CHKTYPE(CurveData, 4);
+#elif defined(PCBI6X)
+  CHKSIZE(LimitData, 13);
+  CHKSIZE(MixData, 22);
+  CHKSIZE(ExpoData, 19);
+  CHKSIZE(CustomFunctionData, 11);
+  CHKSIZE(FlightModeData, 40);
+  CHKSIZE(TimerData, 16);
+  CHKSIZE(SwashRingData, 8);
+  CHKSIZE(FrSkyBarData, 5);
+  CHKSIZE(FrSkyLineData, 3);
+  CHKSIZE(FrSkyTelemetryData, 88);
+  CHKSIZE(ModelHeader, 24);
+  CHKTYPE(CurveData, 4);
 #else
   // Common for all variants
   CHKSIZE(LimitData, 5);
@@ -1161,7 +1176,11 @@ static inline void check_struct()
 
 #endif /* board specific ifdefs*/
 
-#if defined(CPUARM)
+#if defined(PCBI6X)
+  CHKSIZE(LogicalSwitchData, 9);
+  CHKSIZE(TelemetrySensor, 13);
+    CHKSIZE(ModuleData, 38); /*change it*/
+#elif defined(CPUARM)
   CHKSIZE(LogicalSwitchData, 9);
   CHKSIZE(TelemetrySensor, 13);
   CHKSIZE(ModuleData,70);

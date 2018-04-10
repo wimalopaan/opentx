@@ -402,7 +402,9 @@ void perMain()
 #endif
   checkSpeakerVolume();
   checkEeprom();
+#if defined(SDCARD)
   logsWrite();
+#endif
   handleUsbConnection();
   checkTrainerSettings();
   periodicTick();

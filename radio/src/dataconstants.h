@@ -69,6 +69,18 @@
   #define MAX_INPUTS                   32
   #define MAX_TRAINER_CHANNELS         16
   #define MAX_TELEMETRY_SENSORS        32
+#elif defined(PCBI6X)
+  #define MAX_MODELS                   16
+  #define MAX_OUTPUT_CHANNELS          16 // number of real output channels CH1-CH16
+  #define MAX_FLIGHT_MODES             9
+  #define MAX_MIXERS                   32
+  #define MAX_EXPOS                    14
+  #define MAX_LOGICAL_SWITCHES         12
+  #define MAX_SPECIAL_FUNCTIONS        16 // number of functions assigned to switches
+  #define MAX_TRAINER_CHANNELS         8
+  #define MAX_INPUTS                   32
+  #define MAX_TELEMETRY_SENSORS        32
+  #define MAX_SCRIPTS				   0
 #elif defined(CPUM2560) || defined(CPUM2561)
   #define MAX_MODELS                   30
   #define MAX_OUTPUT_CHANNELS          16 // number of real output channels CH1-CH16
@@ -166,7 +178,7 @@ enum CurveType {
   #define MAX_CURVE_POINTS             (112-MAX_CURVES)
 #endif
 
-#if defined(PCBTARANIS) || defined(PCBSKY9X) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBSKY9X) || defined(PCBHORUS) ||  defined(PCBI6X) 
   #define NUM_MODULES                  2
 #else
   #define NUM_MODULES                  1
@@ -237,7 +249,7 @@ enum BeeperMode {
   e_mode_all
 };
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
   enum ModuleIndex {
     INTERNAL_MODULE,
     EXTERNAL_MODULE,
@@ -276,6 +288,8 @@ enum BeeperMode {
 #define IS_INTERNAL_MODULE_ENABLED() (g_model.moduleData[INTERNAL_MODULE].type != MODULE_TYPE_NONE)
 #elif defined(PCBSKY9X)
   #define IS_INTERNAL_MODULE_ENABLED() (false)
+#elif defined(PCBI6X)
+  #define IS_INTERNAL_MODULE_ENABLED() (true)
 #endif
 #define IS_EXTERNAL_MODULE_ENABLED() (g_model.moduleData[EXTERNAL_MODULE].type != MODULE_TYPE_NONE)
 

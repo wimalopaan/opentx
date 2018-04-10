@@ -71,9 +71,11 @@ else()
   message(WARNING "Python not found! Most firmware and simu flavors not buildable.")
   set(LUA NO)
 endif()
-
+if(PCB STREQUAL I6X)
+option(DISABLE_COMPANION "Disable building companion and simulators" ON)
+else()
 option(DISABLE_COMPANION "Disable building companion and simulators" OFF)
-
+endif()
 if(NOT DISABLE_COMPANION)
 find_package(Qt5Core)
 find_package(Qt5Widgets)

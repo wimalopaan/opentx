@@ -2,7 +2,7 @@
  * Copyright (C) OpenTX
  *
  * Based on code named
- *   th9x - http://code.google.com/p/th9x 
+ *   th9x - http://code.google.com/p/th9x
  *   er9x - http://code.google.com/p/er9x
  *   gruvin9x - http://code.google.com/p/gruvin9x
  *
@@ -42,6 +42,8 @@
   const int8_t ana_direction[NUM_ANALOGS] = {1,-1,-1,1,  -1,1,  1};
 #elif defined(REV4a)
   const int8_t ana_direction[NUM_ANALOGS] = {1,-1,1,-1,  1,-1,0,  1,1,  1};
+#elif defined(PCBI6X)
+    const int8_t ana_direction[NUM_ANALOGS] = {1,-1,1,-1,  1,-1,0};
 #else
   const int8_t ana_direction[NUM_ANALOGS] = {1,-1,1,-1,  1,1,0,   1,1,  1};
 #endif
@@ -60,6 +62,18 @@
 
 uint16_t adcValues[NUM_ANALOGS] __DMA;
 
+#if defined(STM32F0)
+void adcInit()
+{
+
+}
+
+void adcSingleRead()
+{
+
+
+}
+#else
 void adcInit()
 {
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -182,7 +196,7 @@ void adcSingleRead()
   ADC_DMA_Stream->CR &= ~DMA_SxCR_EN; // Disable DMA
 #endif
 }
-
+#endif
 void adcRead()
 {
   uint16_t temp[NUM_ANALOGS] = { 0 };
@@ -221,7 +235,7 @@ uint16_t getAnalogValue(uint8_t index)
 {
   if (IS_POT(index) && !IS_POT_SLIDER_AVAILABLE(index)) {
     // Use fixed analog value for non-existing and/or non-connected pots.
-    // Non-connected analog inputs will slightly follow the adjacent connected analog inputs, 
+    // Non-connected analog inputs will slightly follow the adjacent connected analog inputs,
     // which produces ghost readings on these inputs.
     return 0;
   }

@@ -1,7 +1,7 @@
 include(CMakeForceCompiler)
 include(Bitmaps)
 
-set(PCB_TYPES X7 XLITE X9D X9D+ X9E X10 X12S 9X 9XR 9X128 9XR128 9X2561 GRUVIN9X MEGA2560 SKY9X 9XRPRO AR9X)
+set(PCB_TYPES X7 XLITE X9D X9D+ X9E X10 X12S 9X 9XR 9X128 9XR128 9X2561 GRUVIN9X MEGA2560 SKY9X 9XRPRO AR9X I6X)
 set(GUI_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU NL)
 set(TTS_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU RU)
 
@@ -89,6 +89,8 @@ elseif(PCB STREQUAL SKY9X OR PCB STREQUAL 9XRPRO OR PCB STREQUAL AR9X)
   include(targets/sky9x/CMakeLists.txt)
 elseif(PCB STREQUAL 9X OR PCB STREQUAL 9XR OR PCB STREQUAL 9X128 OR PCB STREQUAL 9XR128)
   include(targets/9x/CMakeLists.txt)
+elseif(PCB STREQUAL I6X)
+  include(targets/flysky/CMakeLists.txt)
 elseif(PCB STREQUAL 9X2561)
   set(ARCH AVR)
   set(MCU atmega2561)
@@ -134,6 +136,10 @@ endif()
 
 if(CPU_TYPE STREQUAL STM32F2)
   include(targets/common/arm/stm32/f2/CMakeLists.txt)
+endif()
+
+if(CPU_TYPE STREQUAL STM32F0)
+  include(targets/common/arm/stm32/f0/CMakeLists.txt)
 endif()
 
 if(CPU_FAMILY STREQUAL STM32)
