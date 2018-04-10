@@ -245,7 +245,7 @@ char * getSwitchString(char * dest, swsrc_t idx)
     idx = -idx;
   }
 
-#if defined(PCBSKY9X)
+#if defined(PCBSKY9X) ||   defined(PCBI6X) 
   #define IDX_TRIMS_IN_STR_VSWITCHES   (1+SWSRC_LAST_SWITCH)
   #define IDX_ON_IN_STR_VSWITCHES      (IDX_TRIMS_IN_STR_VSWITCHES+SWSRC_LAST_TRIM-SWSRC_FIRST_TRIM+2)
   if (idx <= SWSRC_LAST_SWITCH) {

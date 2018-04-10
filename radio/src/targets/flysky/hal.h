@@ -35,6 +35,16 @@
   #define KEYS_GPIO_PIN_PLUS            GPIO_Pin_3
   #define KEYS_GPIO_REG_MINUS           GPIOD->IDR
   #define KEYS_GPIO_PIN_MINUS           GPIO_Pin_4
+  
+
+  #define KEYS_GPIO_REG_UP              GPIOE->IDR
+  #define KEYS_GPIO_PIN_UP              GPIO_Pin_10 // PE.10
+  #define KEYS_GPIO_REG_DOWN            GPIOE->IDR
+  #define KEYS_GPIO_PIN_DOWN            GPIO_Pin_14 // PE.14
+  #define KEYS_GPIO_REG_LEFT            GPIOE->IDR
+  #define KEYS_GPIO_PIN_LEFT            GPIO_Pin_12 // PE.12
+  #define KEYS_GPIO_REG_RIGHT           GPIOE->IDR
+  #define KEYS_GPIO_PIN_RIGHT           GPIO_Pin_13 // PE.13
 
 
 // Trims

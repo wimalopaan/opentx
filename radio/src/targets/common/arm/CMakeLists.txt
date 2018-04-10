@@ -86,21 +86,32 @@ foreach(LANGUAGE ${TTS_LANGUAGES})
   string(TOLOWER ${LANGUAGE} lang_lower)
   set(SRC ${SRC} translations/tts_${lang_lower}.cpp)
 endforeach()
+
+
+
 set(SRC
   ${SRC}
   main_arm.cpp
   tasks_arm.cpp
   audio_arm.cpp
-  io/frsky_sport.cpp
   telemetry/telemetry.cpp
   telemetry/telemetry_holders.cpp
   telemetry/telemetry_sensors.cpp
-  telemetry/frsky.cpp
-  telemetry/frsky_d_arm.cpp
-  telemetry/frsky_sport.cpp
   crc16.cpp
   vario.cpp
   )
+  
+if(PCB STREQUAL I6X)
+else()
+set(SRC
+  ${SRC}
+  io/frsky_sport.cpp
+  telemetry/frsky.cpp
+  telemetry/frsky_d_arm.cpp
+  telemetry/frsky_sport.cpp
+  )
+endif()
+
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
   diskio.cpp
@@ -125,6 +136,8 @@ set(FIRMWARE_SRC
   ${COOS_DIR}/portable/GCC/port.c
   ${COOS_DIR}/portable/arch.c
   )
+  
+  
 set(PULSES_SRC
   ${PULSES_SRC}
   pulses_arm.cpp

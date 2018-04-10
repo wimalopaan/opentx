@@ -210,7 +210,7 @@ PLAY_FUNCTION(playValue, source_t idx)
 }
 #endif
 
-#if defined(CPUARM)
+#if defined(CPUARM) && defined(VOICE)
 void playCustomFunctionFile(const CustomFunctionData * sd, uint8_t id)
 {
   if (sd->play.name[0] != '\0') {
@@ -224,7 +224,7 @@ void playCustomFunctionFile(const CustomFunctionData * sd, uint8_t id)
 }
 #endif
 
-#if defined(CPUARM)
+#if defined(CPUARM) && defined(VOICE)
 bool isRepeatDelayElapsed(const CustomFunctionData * functions, CustomFunctionsContext & functionsContext, uint8_t index)
 {
   const CustomFunctionData * cfn = &functions[index];

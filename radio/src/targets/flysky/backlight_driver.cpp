@@ -37,6 +37,6 @@ void backlightDisable()
 
 uint8_t isBacklightEnabled()
 {
-
+	return 1;
 }
 

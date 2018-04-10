@@ -70,6 +70,7 @@ set(TARGET_SRC
   backlight_driver.cpp
   extmodule_driver.cpp
   adc_driver.cpp
+  eeprom_driver.cpp
   )
 
 set(FIRMWARE_TARGET_SRC

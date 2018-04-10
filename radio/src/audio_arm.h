@@ -202,7 +202,7 @@ class ToneContext {
     } state;
 
 };
-#ifdef SDCARD
+
 class WavContext {
   public:
 
@@ -227,7 +227,9 @@ class WavContext {
     AudioFragment fragment;
 
     struct {
+#ifdef SDCARD
       FIL      file;
+#endif
       uint8_t  codec;
       uint32_t freq;
       uint32_t size;
@@ -235,7 +237,7 @@ class WavContext {
       uint16_t readSize;
     } state;
 };
-#endif
+
 
 class MixedContext {
 #if defined(CLI)
@@ -268,9 +270,7 @@ class MixedContext {
     int mixBuffer(AudioBuffer *buffer, int toneVolume, int wavVolume, unsigned int fade)
     {
       if (isTone()) return tone.mixBuffer(buffer, toneVolume, fade);
-#ifdef SDCARD
       else if (isFile()) return wav.mixBuffer(buffer, wavVolume, fade);
-#endif
       return 0;
     }
 
@@ -278,9 +278,7 @@ class MixedContext {
     union {
       AudioFragment fragment;   // a hack: fragment is used to access the fragment members of tone and wav
       ToneContext tone;
-#ifdef SDCARD
       WavContext wav;
-#endif
     };
 
 };
@@ -508,9 +506,7 @@ class AudioQueue {
   private:
     volatile bool _started;
     MixedContext normalContext;
-#ifdef SDCARD
     WavContext   backgroundContext;
-#endif
     ToneContext  priorityContext;
     ToneContext  varioContext;
     AudioFragmentFifo fragmentsFifo;
@@ -544,6 +540,7 @@ void audioTask(void * pdata);
   #define AUDIO_ERROR_MESSAGE(e) audioEvent(e)
   #define AUDIO_TIMER_MINUTE(t)  playDuration(t, 0, 0)
 #else
+  void audioDefevent(uint8_t e);
   #define AUDIO_ERROR_MESSAGE(e) audioEvent(AU_ERROR)
   #define AUDIO_TIMER_MINUTE(t)  audioDefevent(AU_WARNING1)
 #endif

@@ -994,13 +994,16 @@ void audioTrimPress(int value)
 
 void audioTimerCountdown(uint8_t timer, int value)
 {
+
   if (g_model.timers[timer].countdownBeep == COUNTDOWN_VOICE) {
+#if defined(VOICE)
     if (value >= 0 && value <= TIMER_COUNTDOWN_START(timer)) {
       playNumber(value, 0, 0, 0);
     }
     else if (value == 30 || value == 20) {
       playDuration(value, 0, 0);
     }
+#endif
   }
   else if (g_model.timers[timer].countdownBeep == COUNTDOWN_BEEPS) {
     if (value == 0) {
@@ -1039,6 +1042,12 @@ void audioTimerCountdown(uint8_t timer, int value)
   }
 #endif
 }
+#if !defined(VOICE)
+  void audioDefevent(uint8_t e){
+	  //fix me
+	  audioEvent(e);
+  }
+#endif
 
 void audioEvent(unsigned int index)
 {
@@ -1076,8 +1085,10 @@ void audioEvent(unsigned int index)
         audioQueue.playTone(1950, 160, 20, PLAY_REPEAT(2), 1);
         audioQueue.playTone(2550, 160, 20, PLAY_REPEAT(2), -1);
         break;
+#if defined(VOICE)
       case AU_THROTTLE_ALERT:
       case AU_SWITCH_ALERT:
+#endif
       case AU_ERROR:
         audioQueue.playTone(BEEP_DEFAULT_FREQ, 200, 20, PLAY_NOW);
         break;

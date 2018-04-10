@@ -797,7 +797,7 @@ PACK(struct CustomScreenData {
 #elif defined(PCBTARANIS)
   #define MODELDATA_EXTRA   uint8_t spare:3; uint8_t trainerMode:3; uint8_t potsWarnMode:2; ModuleData moduleData[NUM_MODULES+1]; ScriptData scriptsData[MAX_SCRIPTS]; char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; uint8_t potsWarnEnabled; int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS];
 #elif defined(PCBI6X)
-#define MODELDATA_EXTRA   uint8_t spare:6; NOBACKUP(uint8_t trainerMode:3); uint8_t potsWarnMode:2; ModuleData moduleData[NUM_MODULES+1]; char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; uint8_t potsWarnEnabled; int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS]; uint8_t rxBattAlarms[2];
+#define MODELDATA_EXTRA   NOBACKUP(uint8_t spare:3); NOBACKUP(uint8_t trainerMode:3); uint8_t potsWarnMode:2; ModuleData moduleData[NUM_MODULES+1]; char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; uint8_t potsWarnEnabled; int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS]; uint8_t rxBattAlarms[2];
 #elif defined(PCBSKY9X)
   #define MODELDATA_EXTRA   uint8_t spare:6; uint8_t potsWarnMode:2; ModuleData moduleData[NUM_MODULES+1]; char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; uint8_t potsWarnEnabled; int8_t potsWarnPosition[NUM_POTS+NUM_SLIDERS]; uint8_t rxBattAlarms[2];
 #else
@@ -960,6 +960,12 @@ PACK(struct TrainerData {
     uint8_t  sticksGain; \
     uint8_t  rotarySteps; \
     char switchNames[NUM_SWITCHES][LEN_SWITCH_NAME]; \
+    char anaNames[NUM_STICKS+NUM_POTS+NUM_SLIDERS][LEN_ANA_NAME];
+#elif defined(PCBI6X)
+  #define EXTRA_GENERAL_FIELDS \
+    EXTRA_GENERAL_FIELDS_ARM \
+	uint8_t  serial2Mode:4; \
+	char switchNames[NUM_SWITCHES][LEN_SWITCH_NAME]; \
     char anaNames[NUM_STICKS+NUM_POTS+NUM_SLIDERS][LEN_ANA_NAME];
 #elif defined(CPUARM)
   #define EXTRA_GENERAL_FIELDS  EXTRA_GENERAL_FIELDS_ARM
@@ -1127,17 +1133,17 @@ static inline void check_struct()
   CHKSIZE(ModelHeader, 12);
   CHKTYPE(CurveData, 4);
 #elif defined(PCBI6X)
-  CHKSIZE(LimitData, 13);
-  CHKSIZE(MixData, 22);
-  CHKSIZE(ExpoData, 19);
-  CHKSIZE(CustomFunctionData, 11);
-  CHKSIZE(FlightModeData, 40);
-  CHKSIZE(TimerData, 16);
+  CHKSIZE(LimitData, 11);
+  CHKSIZE(MixData, 20);
+  CHKSIZE(ExpoData, 17);
+  CHKSIZE(CustomFunctionData, 9);
+  CHKSIZE(FlightModeData, 36);
+  CHKSIZE(TimerData, 11);
   CHKSIZE(SwashRingData, 8);
   CHKSIZE(FrSkyBarData, 5);
-  CHKSIZE(FrSkyLineData, 3);
+  CHKSIZE(FrSkyLineData, 2);
   CHKSIZE(FrSkyTelemetryData, 88);
-  CHKSIZE(ModelHeader, 24);
+  CHKSIZE(ModelHeader, 12);
   CHKTYPE(CurveData, 4);
 #else
   // Common for all variants

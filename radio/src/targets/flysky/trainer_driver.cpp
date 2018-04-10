@@ -75,5 +75,5 @@ void stop_sbus_on_heartbeat_capture()
 
 int sbusGetByte(uint8_t * byte)
 {
-
+	return 0;
 }

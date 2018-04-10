@@ -97,7 +97,7 @@ void storageReadRadioSettings()
     eeLoadModelHeaders();
   }
 
-#if defined(CPUARM)
+#if defined(CPUARM) && defined(VOICE)
   for (uint8_t i=0; languagePacks[i]!=NULL; i++) {
     if (!strncmp(g_eeGeneral.ttsLanguage, languagePacks[i]->id, 2)) {
       currentLanguagePackIdx = i;

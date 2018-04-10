@@ -219,18 +219,12 @@ int sbusGetByte(uint8_t * byte);
 enum EnumKeys
 {
   KEY_MENU,
+  KEY_ENTER=KEY_MENU,
   KEY_EXIT,
-  KEY_ENTER,
-#if defined(PCBXLITE)
   KEY_DOWN,
+  KEY_MINUS = KEY_DOWN,
   KEY_UP,
-  KEY_RIGHT,
-  KEY_LEFT,
-#else
-  KEY_PAGE,
-  KEY_PLUS,
-  KEY_MINUS,
-#endif
+  KEY_PLUS = KEY_UP,
 
   TRM_BASE,
   TRM_LH_DWN = TRM_BASE,
@@ -246,21 +240,6 @@ enum EnumKeys
   NUM_KEYS
 };
 
-#if defined(PCBX9E) && !defined(SIMU)
-  #define KEY_UP                        KEY_MINUS
-  #define KEY_DOWN                      KEY_PLUS
-  #define KEY_RIGHT                     KEY_PLUS
-  #define KEY_LEFT                      KEY_MINUS
-#elif defined(PCBXLITE)
-  #define KEY_PLUS                      KEY_RIGHT
-  #define KEY_MINUS                     KEY_LEFT
-#else
-  #define KEY_UP                        KEY_PLUS
-  #define KEY_DOWN                      KEY_MINUS
-  #define KEY_RIGHT                     KEY_MINUS
-  #define KEY_LEFT                      KEY_PLUS
-#endif
-
 enum EnumSwitches
 {
   SW_SA,
@@ -272,8 +251,13 @@ enum EnumSwitches
   SW_SG,
   SW_SH
 };
-#define IS_3POS(x)                      ((x) != SW_SF && (x) != SW_SH)
 
+#define SW_ID0 SW_SA
+#define SW_ID1 SW_SB
+
+
+#define IS_3POS(x)                      ((x) == SW_SC)
+#define IS_TOGGLE(x)					((x) != SW_SC)
 enum EnumSwitchesPositions
 {
   SW_SA0,
@@ -341,16 +325,16 @@ enum EnumSwitchesPositions
   SW_SR2,
 #endif
 };
-#if defined(PCBI6X)
-  #define NUM_SWITCHES                  4
-#else
-  #define NUM_SWITCHES                  4
-#endif
+
+
+#define NUM_SWITCHES                  4
+
 void keysInit(void);
 uint8_t keyState(uint8_t index);
 uint32_t switchState(uint8_t index);
 uint32_t readKeys(void);
 uint32_t readTrims(void);
+
 #define TRIMS_PRESSED()                 (readTrims())
 #define KEYS_PRESSED()                  (readKeys())
 
@@ -365,9 +349,9 @@ uint32_t readTrims(void);
 #endif
 #define wdt_disable()
 void watchdogInit(unsigned int duration);
-#define WAS_RESET_BY_SOFTWARE()             (RCC->CSR & RCC_CSR_SFTRSTF)
-#define WAS_RESET_BY_WATCHDOG()             (RCC->CSR & (RCC_CSR_WDGRSTF | RCC_CSR_WWDGRSTF))
-#define WAS_RESET_BY_WATCHDOG_OR_SOFTWARE() (RCC->CSR & (RCC_CSR_WDGRSTF | RCC_CSR_WWDGRSTF | RCC_CSR_SFTRSTF))
+#define WAS_RESET_BY_SOFTWARE()             (RCC_GetFlagStatus(RCC_FLAG_SFTRST))
+#define WAS_RESET_BY_WATCHDOG()             (RCC_GetFlagStatus(RCC_FLAG_WWDGRST) || RCC_GetFlagStatus(RCC_FLAG_IWDGRST) )
+#define WAS_RESET_BY_WATCHDOG_OR_SOFTWARE() (RCC_GetFlagStatus(RCC_FLAG_SFTRST) || RCC_GetFlagStatus(RCC_FLAG_WWDGRST) || RCC_GetFlagStatus(RCC_FLAG_IWDGRST))
 
 // ADC driver
 enum Analogs {
@@ -384,7 +368,7 @@ enum Analogs {
 };
 
 #define NUM_POTS                        (POT_LAST-POT_FIRST+1)
-#define NUM_XPOTS                       NUM_POTS
+#define NUM_XPOTS                       0						//disable xpot for now
 #define NUM_SLIDERS                     (TX_VOLTAGE-POT_LAST-1)
 
 enum CalibratedAnalogs {
@@ -456,11 +440,18 @@ void backlightEnable(uint8_t level);
 // I2C driver: EEPROM + Audio Volume
 
 #define EEPROM_SIZE                   (128*1024)
-
+#define EEPROM_BLOCK_SIZE     			(4*1024)
 void i2cInit(void);
+void eepromInit();
 void eepromReadBlock(uint8_t * buffer, size_t address, size_t size);
 void eepromStartWrite(uint8_t * buffer, size_t address, size_t size);
+
+void eepromBlockErase(uint32_t address);
+void eepromStartRead(uint8_t * buffer, size_t address, size_t size);
 uint8_t eepromIsTransferComplete();
+uint8_t eepromReadStatus();
+
+
 
 // Debug driver
 void debugPutc(const char c);
@@ -541,7 +532,6 @@ void ledGreen(void);
 void ledBlue(void);
 
 // LCD driver
-#if defined(STATUS_LEDS)
 #define LCD_W                           128
 #define LCD_H                           64
 #define LCD_DEPTH                       1
@@ -549,15 +539,7 @@ void ledBlue(void);
 #define LCD_CONTRAST_MIN                10
 #define LCD_CONTRAST_MAX                30
 #define LCD_CONTRAST_DEFAULT            20
-#else
-#define LCD_W                           212
-#define LCD_H                           64
-#define LCD_DEPTH                       4
-#define IS_LCD_RESET_NEEDED()           (!WAS_RESET_BY_WATCHDOG_OR_SOFTWARE())
-#define LCD_CONTRAST_MIN                0
-#define LCD_CONTRAST_MAX                45
-#define LCD_CONTRAST_DEFAULT            25
-#endif
+
 void lcdInit(void);
 void lcdInitFinish(void);
 void lcdOff(void);

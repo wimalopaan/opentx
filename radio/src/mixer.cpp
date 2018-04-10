@@ -394,7 +394,7 @@ getvalue_t getValue(mixsrc_t i)
   }
 #else
   else if (i == MIXSRC_3POS) {
-    return (getSwitch(SW_ID0+1) ? -1024 : (getSwitch(SW_ID1+1) ? 0 : 1024));
+    return (getSwitch(SWSRC_ID0+1) ? -1024 : (getSwitch(SWSRC_ID1+1) ? 0 : 1024));
   }
   // don't use switchState directly to give getSwitch possibility to hack values if needed for switch warning
   else if (i < MIXSRC_SW1) {
