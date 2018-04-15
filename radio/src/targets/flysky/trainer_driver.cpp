@@ -20,7 +20,7 @@
 
 #include "opentx.h"
 
-DMAFifo<32> heartbeatFifo __DMA (HEARTBEAT_DMA_Stream);
+//DMAFifo<32> heartbeatFifo __DMA (HEARTBEAT_DMA_Stream);
 
 void trainerSendNextFrame();
 

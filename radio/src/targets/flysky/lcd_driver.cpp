@@ -31,10 +31,21 @@ void lcdInit()
 {
   
 }
+void lcdOff(){
+	
+}
 
 void lcdSetRefVolt(uint8_t val)
 {
  
+}
+
+void lcdRefresh(bool wait){
+	
+	
+}
+void lcdRefreshWait(){
+	
 }
 
 void lcdRefresh()

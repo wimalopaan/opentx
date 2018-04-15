@@ -23,29 +23,50 @@
 #if defined(STM32F2)
   #include "dwt.h"    // the old ST library that we use does not define DWT register for STM32F2xx
 #endif
+#if defined(STM32F0)
+  #include "coocox.h"  
+#endif
 
 #define SYSTEM_TICKS_1US    ((CFG_CPU_FREQ + 500000)  / 1000000)      // number of system ticks in 1us
 #define SYSTEM_TICKS_01US   ((CFG_CPU_FREQ + 5000000) / 10000000)     // number of system ticks in 0.1us (rounding needed for sys frequencies that are not multiple of 10MHz)
 
+
 void delaysInit(void)
 {
+#if defined(STM32F0)
+
+#else
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
   DWT->CYCCNT = 0;
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+#endif
+
 }
 
 void delay_01us(uint16_t nb)
 {
+#if defined(STM32F0)
+  volatile U64 dwtStart = OSTickCnt;
+  volatile U64 dwtTotal = (SYSTEM_TICKS_01US * nb) - 10;
+  while ((OSTickCnt - dwtStart) < dwtTotal);
+#else
   volatile uint32_t dwtStart = DWT->CYCCNT;
   volatile uint32_t dwtTotal = (SYSTEM_TICKS_01US * nb) - 10;
   while ((DWT->CYCCNT - dwtStart) < dwtTotal);
+#endif
 }
 
 void delay_us(uint16_t nb)
 {
+#if defined(STM32F0)
+  volatile U64 dwtStart = OSTickCnt;
+  volatile U64 dwtTotal = (SYSTEM_TICKS_1US * nb) - 10;
+  while ((OSTickCnt - dwtStart) < dwtTotal);
+#else
   volatile uint32_t dwtStart = DWT->CYCCNT;
   volatile uint32_t dwtTotal = (SYSTEM_TICKS_1US * nb) - 10;
   while ((DWT->CYCCNT - dwtStart) < dwtTotal);
+#endif
 }
 
 void delay_ms(uint32_t ms)

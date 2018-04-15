@@ -110,6 +110,11 @@ void delay_ms(uint32_t ms);
 #ifdef __cplusplus
 }
 #endif
+#define usbPlugged() (false)
+#define usbStarted() (false)
+#define getSelectedUsbMode() (USB_UNSELECTED_MODE)
+
+
 
 // CPU Unique ID
 #define LEN_CPU_UID                     (3*8+2)
@@ -177,7 +182,7 @@ void init_crossfire( uint32_t module_index );
 void disable_crossfire( uint32_t module_index );
 void init_sbusOut(uint32_t module_index);
 void disable_sbusOut(uint32_t module_index);
-
+void setupPulsesSbus(uint8_t port);
 // Trainer driver
 #define SLAVE_MODE()                    (g_model.trainerMode == TRAINER_MODE_SLAVE)
 #if defined(PCBX9E)
@@ -225,7 +230,8 @@ enum EnumKeys
   KEY_MINUS = KEY_DOWN,
   KEY_UP,
   KEY_PLUS = KEY_UP,
-
+  KEY_RIGHT,
+  KEY_LEFT,
   TRM_BASE,
   TRM_LH_DWN = TRM_BASE,
   TRM_LH_UP,
@@ -479,11 +485,11 @@ void sportUpdatePowerOff(void);
 #endif
 
 // Audio driver
-void audioInit(void) ;
-void audioEnd(void) ;
+void audioInit(void);
+void audioEnd(void);
 void dacStart(void);
 void dacStop(void);
-void setSampleRate(uint32_t frequency);
+
 #define VOLUME_LEVEL_MAX  23
 #define VOLUME_LEVEL_DEF  12
 #if !defined(SOFTWARE_VOLUME)
@@ -492,17 +498,14 @@ void setVolume(uint8_t volume);
 int32_t getVolume(void);
 #endif
 void audioConsumeCurrentBuffer();
+void setSampleRate(uint32_t frequency);
+void referenceSystemAudioFiles();
 #define audioDisableIrq()               __disable_irq()
 #define audioEnableIrq()                __enable_irq()
 
 // Haptic driver
 void hapticInit(void);
 void hapticOff(void);
-#if defined(HAPTIC_PWM)
-  void hapticOn(uint32_t pwmPercent);
-#else
-  void hapticOn(void);
-#endif
 
 // Second serial port driver
 #if defined(SERIAL_GPIO)

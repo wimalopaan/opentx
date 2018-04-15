@@ -170,6 +170,7 @@ void setupPulses(uint8_t port)
       setupPulsesPXX(port);
       scheduleNextMixerCalculation(port, 9);
       break;
+	  
     case PROTO_SBUS:
       setupPulsesSbus(port);
       scheduleNextMixerCalculation(port, (45+g_model.moduleData[port].sbus.refreshRate)/2);

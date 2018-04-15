@@ -104,7 +104,9 @@ static const MenuHandlerFunc menuTabGeneral[] PROGMEM = {
   menuRadioVersion,
   menuRadioDiagKeys,
   menuRadioDiagAnalogs,
+#if !defined(STM32F0)
   CASE_CPUARM(menuRadioHardware)
+#endif
   menuRadioCalibration
 };
 

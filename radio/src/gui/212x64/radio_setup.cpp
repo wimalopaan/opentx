@@ -437,9 +437,10 @@ void menuRadioSetup(event_t event)
         g_eeGeneral.countryCode = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_COUNTRYCODE, STR_COUNTRYCODES, g_eeGeneral.countryCode, 0, 2, attr, event);
         break;
 #endif
-
+#if defined(VOICE)
       case ITEM_SETUP_LANGUAGE:
         lcdDrawTextAlignedLeft(y, STR_VOICELANG);
+
         lcdDrawText(RADIO_SETUP_2ND_COLUMN, y, currentLanguagePack->name, attr);
         if (attr) {
           currentLanguagePackIdx = checkIncDec(event, currentLanguagePackIdx, 0, DIM(languagePacks)-2, EE_GENERAL);
@@ -449,7 +450,7 @@ void menuRadioSetup(event_t event)
           }
         }
         break;
-
+#endif
       case ITEM_SETUP_IMPERIAL:
         g_eeGeneral.imperial = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_UNITSSYSTEM, STR_VUNITSSYSTEM, g_eeGeneral.imperial, 0, 1, attr, event);
         break;

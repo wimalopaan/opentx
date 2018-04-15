@@ -52,7 +52,7 @@
     
 #ifndef __STM32F0XX_H
 #define __STM32F0XX_H
-
+#define assert_param(xx)
 #ifdef __cplusplus
  extern "C" {
 #endif 

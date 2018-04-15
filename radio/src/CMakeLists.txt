@@ -1,10 +1,6 @@
 include(CMakeForceCompiler)
 include(Bitmaps)
-
 set(PCB_TYPES X7 XLITE X9D X9D+ X9E X10 X12S 9X 9XR 9X128 9XR128 9X2561 GRUVIN9X MEGA2560 SKY9X 9XRPRO AR9X I6X)
-set(GUI_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU NL)
-set(TTS_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU RU)
-
 set(PCB "X9D+" CACHE STRING "Radio type, one of: ${PCB_TYPES}")
 set_property(CACHE PCB PROPERTY STRINGS ${PCB_TYPES})
 set(TRANSLATIONS "EN" CACHE STRING "Radio language, one of: ${GUI_LANGUAGES}")
@@ -17,6 +13,13 @@ set(DEFAULT_MODE "" CACHE STRING "Default sticks mode")
 set(FONT "STD" CACHE STRING "Choose font : STD or SQT5")
 set_property(CACHE FONT PROPERTY STRINGS SQT5)
 
+if(NOT CPU_TYPE STREQUAL STM32F0)
+set(GUI_LANGUAGES EN)
+set(TTS_LANGUAGES EN)
+else()
+set(GUI_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU NL)
+set(TTS_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU RU)
+endif()
 option(HELI "Heli menu" ON)
 option(FLIGHT_MODES "Flight Modes" ON)
 option(CURVES "Curves" ON)
@@ -295,6 +298,8 @@ if(SDCARD)
   set(SRC ${SRC} sdcard.cpp rtc.cpp logs.cpp)
   set(FIRMWARE_SRC ${FIRMWARE_SRC} ${FATFS_SRC})
 endif()
+
+set(SRC ${SRC} rtc.cpp)
 
 if(SHUTDOWN_CONFIRMATION)
   add_definitions(-DSHUTDOWN_CONFIRMATION)

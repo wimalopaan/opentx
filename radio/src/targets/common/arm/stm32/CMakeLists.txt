@@ -6,7 +6,7 @@ option(LUA_ALLOCATOR_TRACER "Trace Lua memory (de)allocations to debug port (als
 
 set(ARCH ARM)
 set(STM32USB_DIR ${THIRDPARTY_DIR}/STM32_USB-Host-Device_Lib_V2.2.0/Libraries)
-add_definitions(-DSTM32 -DLUA_INPUTS -DVARIO -DCROSSFIRE)
+add_definitions(-DSTM32 -DVARIO)
 include_directories(${RADIO_SRC_DIRECTORY}/targets/common/arm/stm32)
 include_directories(${STM32USB_DIR}/STM32_USB_OTG_Driver/inc)
 include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Core/inc)
@@ -15,6 +15,8 @@ include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Class/hid/inc)
 include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Class/cdc/inc)
 include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Core/inc/)
 include_directories(${STM32USB_DIR}/STM32_USB_OTG_Driver/inc)
+
+
 set(STM32USB_SRC
   STM32_USB_OTG_Driver/src/usb_core.c
   STM32_USB_OTG_Driver/src/usb_dcd.c
@@ -32,13 +34,22 @@ set(TARGET_SRC
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
   ../common/arm/stm32/delays.cpp
+  )
+
+if(NOT CPU_TYPE STREQUAL STM32F0)
+ add_definitions(-DLUA_INPUTS -DCROSSFIRE)
+set(FIRMWARE_TARGET_SRC
+  ${FIRMWARE_TARGET_SRC}
   ../common/arm/stm32/usb_bsp.c
   ../common/arm/stm32/usbd_desc.c
   ../common/arm/stm32/usbd_usr.cpp
   ../common/arm/stm32/usb_driver.cpp
   ../common/arm/stm32/flash_driver.cpp
+  ../common/arm/stm32/usbd_storage_msd.cpp
   )
+endif()
 
+  
 if(DEBUG)
   set(STM32USB_SRC
     ${STM32USB_SRC}
@@ -56,10 +67,6 @@ set(STM32USB_SRC
   STM32_USB_Device_Library/Class/msc/src/usbd_msc_scsi.c
   STM32_USB_Device_Library/Class/msc/src/usbd_msc_bot.c
   STM32_USB_Device_Library/Class/msc/src/usbd_msc_core.c
-  )
-set(FIRMWARE_TARGET_SRC
-  ${FIRMWARE_TARGET_SRC}
-  ../common/arm/stm32/usbd_storage_msd.cpp
   )
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
@@ -82,6 +89,7 @@ foreach(FILE ${STM32LIB_SRC})
     ${STM32LIB_DIR}/${FILE}
     )
 endforeach()
+if(NOT CPU_TYPE STREQUAL STM32F0)
 foreach(FILE ${STM32USB_SRC})
   set(FIRMWARE_SRC
     ${FIRMWARE_SRC}
@@ -93,7 +101,9 @@ set(SRC
   telemetry/crossfire.cpp
   io/bootloader_flash.cpp
   )
+
 set(PULSES_SRC
   ${PULSES_SRC}
   crossfire.cpp
   )
+endif()

@@ -29,6 +29,31 @@ extern "C" {
 }
 #endif
 
+
+//audio
+void audioConsumeCurrentBuffer()
+{
+	
+	
+}
+void audioInit()
+{
+	
+	
+}
+
+void referenceSystemAudioFiles(){
+	
+	
+}
+
+void setSampleRate(uint32_t frequency){
+	
+	
+}
+
+
+
 void watchdogInit(unsigned int duration)
 {
   IWDG->KR = 0x5555;      // Unlock registers
@@ -184,6 +209,7 @@ void boardInit()
   adcInit();
   delaysInit();
   lcdInit(); // delaysInit() must be called before
+  //define this deiver
   audioInit();
   init2MhzTimer();
   init5msTimer();
@@ -194,14 +220,6 @@ void boardInit()
 #if defined(DEBUG) && defined(SERIAL_GPIO)
   serial2Init(0, 0); // default serial mode (None if DEBUG not defined)
   TRACE("\nTaranis board started :)");
-#endif
-
-#if defined(HAPTIC)
-  hapticInit();
-#endif
-
-#if defined(BLUETOOTH)
-  bluetoothInit(BLUETOOTH_DEFAULT_BAUDRATE);
 #endif
 
 #if defined(DEBUG)
@@ -290,7 +308,6 @@ void boardOff()
     wdt_reset();
   }
 #endif
-
   lcdOff();
   SysTick->CTRL = 0; // turn off systick
   pwrOff();
@@ -318,7 +335,8 @@ void checkTrainerSettings()
         break;*/
 #if defined(TRAINER_BATTERY_COMPARTMENT)
       case TRAINER_MODE_MASTER_BATTERY_COMPARTMENT:
-        serial2Stop();
+        //serial2Stop();
+		break;
 #endif
     }
 

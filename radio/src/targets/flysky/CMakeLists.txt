@@ -20,6 +20,7 @@ if(PCB STREQUAL I6X)
   set(FONTS_TARGET 9x_fonts_1bit)
   set(LCD_DRIVER lcd_driver.cpp)
   set(GVAR_SCREEN model_gvars.cpp)
+  set(SERIAL2_DRIVER ../common/arm/stm32/serial2_driver.cpp)
 endif()
 
 if(PCB STREQUAL XLITE)

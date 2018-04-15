@@ -521,7 +521,7 @@ void menuRadioSetup(event_t event)
         break;
 #endif
 
-#if defined(CPUARM)
+#if defined(CPUARM) && defined(VOICE)
       case ITEM_SETUP_LANGUAGE:
         lcdDrawTextAlignedLeft(y, STR_VOICELANG);
         lcdDrawText(RADIO_SETUP_2ND_COLUMN, y, currentLanguagePack->name, attr);

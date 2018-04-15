@@ -243,12 +243,16 @@ void onLogicalSwitchesMenu(const char *result)
   }
 
   if (result == STR_COPY) {
+#if defined(SDCARD)
     clipboard.type = CLIPBOARD_TYPE_CUSTOM_SWITCH;
     clipboard.data.csw = *cs;
+#endif
   }
   else if (result == STR_PASTE) {
+#if defined(SDCARD)
     *cs = clipboard.data.csw;
     storageDirty(EE_MODEL);
+#endif
   }
   else if (result == STR_CLEAR) {
     memset(cs, 0, sizeof(LogicalSwitchData));
@@ -272,8 +276,10 @@ void menuModelLogicalSwitches(event_t event)
       POPUP_MENU_ADD_ITEM(STR_EDIT);
     if (cs->func || cs->v1 || cs->v2 || cs->delay || cs->duration || cs->andsw)
       POPUP_MENU_ADD_ITEM(STR_COPY);
+#if defined(SDCARD)
     if (clipboard.type == CLIPBOARD_TYPE_CUSTOM_SWITCH)
       POPUP_MENU_ADD_ITEM(STR_PASTE);
+#endif
     if (cs->func || cs->v1 || cs->v2 || cs->delay || cs->duration || cs->andsw)
       POPUP_MENU_ADD_ITEM(STR_CLEAR);
     POPUP_MENU_START(onLogicalSwitchesMenu);

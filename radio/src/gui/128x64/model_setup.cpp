@@ -1034,7 +1034,9 @@ void menuModelSetup(event_t event)
               }
             }
             lcdDrawText(MODEL_SETUP_2ND_COLUMN+xOffsetBind, y, STR_MODULE_BIND, l_posHorz==1 ? attr : 0);
+#if defined(PCBTARANIS) || defined(DSM2)
             lcdDrawText(MODEL_SETUP_2ND_COLUMN+MODEL_SETUP_RANGE_OFS+xOffsetBind, y, STR_MODULE_RANGE, l_posHorz==2 ? attr : 0);
+#endif
             uint8_t newFlag = 0;
 #if defined(MULTIMODULE)
             if (multiBindStatus == MULTI_BIND_FINISHED) {

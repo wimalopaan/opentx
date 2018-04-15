@@ -72,11 +72,11 @@ void eepromWriteBlock(uint8_t * buffer, size_t address, size_t size)
 {
 
 }
-
-uint8_t eepromIsTransferComplete()
-{
-  return 1;
-}
+//defined in eeprom_driver
+// uint8_t eepromIsTransferComplete()
+// {
+  // return 1;
+// }
 
 /**
   * @brief  Writes more than one byte to the EEPROM with a single WRITE cycle.

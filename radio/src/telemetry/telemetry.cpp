@@ -78,7 +78,9 @@ void processTelemetryData(uint8_t data)
     return;
   }
 #endif
+#if !defined(STM32F0)
   processFrskyTelemetryData(data);
+#endif
 }
 
 void telemetryWakeup()

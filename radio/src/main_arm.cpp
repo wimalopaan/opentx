@@ -27,6 +27,7 @@ uint8_t mainRequestFlags = 0;
 #if defined(STM32)
 void onUSBConnectMenu(const char *result)
 {
+#if !defined(STM32F0)
   if (result == STR_USB_MASS_STORAGE) {
     setSelectedUsbMode(USB_MASS_STORAGE_MODE);
   }
@@ -36,12 +37,13 @@ void onUSBConnectMenu(const char *result)
   else if (result == STR_USB_SERIAL) {
     setSelectedUsbMode(USB_SERIAL_MODE);
   }
+#endif
 }
 #endif
 
 void handleUsbConnection()
 {
-#if defined(STM32) && !defined(SIMU)
+#if defined(STM32) && !defined(SIMU) && !defined(STM32F0)
   if (!usbStarted() && usbPlugged() && !(getSelectedUsbMode() == USB_UNSELECTED_MODE)) {
     usbStart();
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
