@@ -27,10 +27,17 @@ extern "C" {
 }
 #endif
 
+#if defined(STM32F0)
 #define MENUS_STACK_SIZE       2000
 #define MIXER_STACK_SIZE       500
 #define AUDIO_STACK_SIZE       500
 #define BLUETOOTH_STACK_SIZE   500
+#else
+#define MENUS_STACK_SIZE       1000
+#define MIXER_STACK_SIZE       500
+#define AUDIO_STACK_SIZE       200
+#define BLUETOOTH_STACK_SIZE   50
+#endif
 
 #if defined(_MSC_VER)
 #define _ALIGNED(x) __declspec(align(x))
