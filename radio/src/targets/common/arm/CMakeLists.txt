@@ -144,15 +144,15 @@ set(FIRMWARE_SRC
   ${COOS_DIR}/portable/arch.c
   )
   
- set(PULSES_SRC
+set(PULSES_SRC
   ${PULSES_SRC}
   pulses_arm.cpp
   ppm_arm.cpp
-  pxx_arm.cpp
-  ) 
+ ) 
 if(NOT CPU_TYPE STREQUAL STM32F0)
 set(PULSES_SRC
   ${PULSES_SRC}
+  pxx_arm.cpp
   dsm2_arm.cpp
   sbus_arm.cpp
   )

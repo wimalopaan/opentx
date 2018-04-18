@@ -182,7 +182,9 @@ void init_crossfire( uint32_t module_index );
 void disable_crossfire( uint32_t module_index );
 void init_sbusOut(uint32_t module_index);
 void disable_sbusOut(uint32_t module_index);
+//jsut to allow compilation
 void setupPulsesSbus(uint8_t port);
+void setupPulsesPXX(uint8_t port);
 // Trainer driver
 #define SLAVE_MODE()                    (g_model.trainerMode == TRAINER_MODE_SLAVE)
 #if defined(PCBX9E)

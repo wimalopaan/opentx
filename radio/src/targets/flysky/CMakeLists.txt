@@ -18,30 +18,18 @@ if(PCB STREQUAL I6X)
   set(GUI_DIR 128x64)
   set(BITMAPS_TARGET 9x_bitmaps)
   set(FONTS_TARGET 9x_fonts_1bit)
-  set(LCD_DRIVER lcd_driver.cpp)
   set(GVAR_SCREEN model_gvars.cpp)
   set(SERIAL2_DRIVER ../common/arm/stm32/serial2_driver.cpp)
 endif()
 
-if(PCB STREQUAL XLITE)
-  set(TARGET_SRC
-    ${TARGET_SRC}
-    ../common/arm/stm32/intmodule_serial_driver.cpp
-    )
-else()
-  set(TARGET_SRC
-    ${TARGET_SRC}
-    intmodule_pulses_driver.cpp
-    trainer_driver.cpp
-    )
-  add_definitions(-DSBUS)
-  set(PULSES_SRC
-    ${PULSES_SRC}
-    ../sbus.cpp
-    )
-endif()
 
-set(HSE_VALUE 4800000)
+set(TARGET_SRC
+  ${TARGET_SRC}
+  intmodule_pulses_driver.cpp
+  trainer_driver.cpp
+  )
+
+set(HSE_VALUE 8000000)
 set(SDCARD NO)
 set(EEPROM EEPROM_RAW)
 set(TARGET_DIR flysky)
@@ -60,14 +48,11 @@ set(GUI_SRC ${GUI_SRC}
   view_channels.cpp
   view_telemetry.cpp
   view_about.cpp
-  bmp.cpp
-  ../screenshot.cpp
   )
 
 set(TARGET_SRC
   ${TARGET_SRC}
   board.cpp
-  ${LED_DRIVER}
   backlight_driver.cpp
   extmodule_driver.cpp
   adc_driver.cpp
@@ -76,7 +61,7 @@ set(TARGET_SRC
 
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
-  ${LCD_DRIVER}
+  lcd_driver.cpp
   i2c_driver.cpp
   pwr_driver.cpp
   )
