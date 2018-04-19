@@ -39,9 +39,9 @@ uint8_t unexpectedShutdown = 0;
 /* ARM: mixer duration in 0.5us */
 uint16_t maxMixerDuration;
 
-#if defined(AUDIO) && !defined(CPUARM)
-audioQueue  audio;
-#endif
+// #if defined(AUDIO) && !defined(CPUARM)
+// audioQueue  audioQueue;
+// #endif
 
 uint8_t heartbeat;
 

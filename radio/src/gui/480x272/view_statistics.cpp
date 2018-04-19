@@ -119,10 +119,12 @@ bool menuStatsDebug(event_t event)
   lcdDrawNumber(lcdNextPos+5, MENU_CONTENT_TOP+2*FH, menusStack.available(), LEFT);
   lcdDrawText(lcdNextPos+20, MENU_CONTENT_TOP+2*FH+1, "[Mix]", HEADER_COLOR|SMLSIZE);
   lcdDrawNumber(lcdNextPos+5, MENU_CONTENT_TOP+2*FH, mixerStack.available(), LEFT);
+  int line = 2;
+#if !defined(STM32F0)
   lcdDrawText(lcdNextPos+20, MENU_CONTENT_TOP+2*FH+1, "[Audio]", HEADER_COLOR|SMLSIZE);
   lcdDrawNumber(lcdNextPos+5, MENU_CONTENT_TOP+2*FH, audioStack.available(), LEFT);
-
-  int line = 3;
+  line++;
+#endif
 
 #if defined(DISK_CACHE)
   lcdDrawText(MENUS_MARGIN_LEFT, MENU_CONTENT_TOP+line*FH, "SD cache hits");

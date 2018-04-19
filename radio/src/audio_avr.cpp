@@ -19,8 +19,9 @@
  */
 
 #include "opentx.h"
+AudioQueue audioQueue;
 
-audioQueue::audioQueue()
+AudioQueue::AudioQueue()
 {
   toneTimeLeft = 0;
   tonePause = 0;
@@ -29,12 +30,15 @@ audioQueue::audioQueue()
   t_queueRidx = 0;
   t_queueWidx = 0;
 }
+void AudioQueue::start()
+{
 
+}
 
 // heartbeat is responsibile for issueing the audio tones and general square waves
 // it is essentially the life of the class.
 // it is called every 10ms
-void audioQueue::heartbeat()
+void AudioQueue::heartbeat()
 {
 #if defined(SIMU)
   return;
@@ -88,7 +92,7 @@ void audioQueue::heartbeat()
 #endif // defined(SIMU)
 }
 
-inline uint8_t audioQueue::getToneLength(uint8_t tLen)
+inline uint8_t AudioQueue::getToneLength(uint8_t tLen)
 {
   uint8_t result = tLen; // default
   if (g_eeGeneral.beepLength < 0) {
@@ -100,12 +104,12 @@ inline uint8_t audioQueue::getToneLength(uint8_t tLen)
   return result;
 }
 
-void audioQueue::pause(uint8_t tLen)
+void AudioQueue::pause(uint8_t tLen)
 {
   play(0, tLen, 5); // a pause
 }
 
-void audioQueue::play(uint8_t tFreq, uint8_t tLen, uint8_t tPause, uint8_t tFlags)
+void AudioQueue::play(uint8_t tFreq, uint8_t tLen, uint8_t tPause, uint8_t tFlags)
 {
   if (tFlags & PLAY_BACKGROUND) {
     tone2Freq = tFreq;
@@ -144,7 +148,7 @@ void audioQueue::play(uint8_t tFreq, uint8_t tLen, uint8_t tPause, uint8_t tFlag
   }
 }
 
-void audioQueue::event(uint8_t e)
+void AudioQueue::event(uint8_t e)
 {
 #if defined(HAPTIC)
   haptic.event(e); //do this before audio to help sync timings
@@ -242,14 +246,15 @@ void audioQueue::event(uint8_t e)
 
 void audioDefevent(uint8_t e)
 {
-  audio.event(e);
+  audioQueue.event(e);
 }
+
 
 void audioKeyPress()
 {
 #if defined(AUDIO)
   if (g_eeGeneral.beepMode == e_mode_all) {
-    audio.play(BEEP_DEFAULT_FREQ, 10, 1, PLAY_NOW);
+    audioQueue.play(BEEP_DEFAULT_FREQ, 10, 1, PLAY_NOW);
   }
 #else
   beep(0);
@@ -269,7 +274,7 @@ void audioTrimPress(int16_t value)
     value = limit<int16_t>(TRIM_MIN, value, TRIM_MAX);
     value >>= 2;
     value += 60;
-    audio.play(value, 6, 1, PLAY_NOW);
+    audioQueue.play(value, 6, 1, PLAY_NOW);
 #else
     warble = true;
     beep(1);
@@ -313,16 +318,16 @@ void audioTimerCountdown(uint8_t timer, int value)
 
   else {
     if (value == 0) {
-      audio.play(BEEP_DEFAULT_FREQ + 50, 30, 3, PLAY_NOW);
+      audioQueue.play(BEEP_DEFAULT_FREQ + 50, 30, 3, PLAY_NOW);
     }
     else if (value > 0 && value <= 10) {
-      audio.play(BEEP_DEFAULT_FREQ + 50, 15, 3, PLAY_NOW);
+      audioQueue.play(BEEP_DEFAULT_FREQ + 50, 15, 3, PLAY_NOW);
     }
     else if (value == 30) {
-      audio.play(BEEP_DEFAULT_FREQ + 50, 15, 3, PLAY_REPEAT(2) | PLAY_NOW);
+      audioQueue.play(BEEP_DEFAULT_FREQ + 50, 15, 3, PLAY_REPEAT(2) | PLAY_NOW);
     }
     else if (value == 20) {
-      audio.play(BEEP_DEFAULT_FREQ + 50, 15, 3, PLAY_REPEAT(1) | PLAY_NOW);
+      audioQueue.play(BEEP_DEFAULT_FREQ + 50, 15, 3, PLAY_REPEAT(1) | PLAY_NOW);
     }
   }
 }

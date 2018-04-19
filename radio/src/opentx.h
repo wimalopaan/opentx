@@ -1389,11 +1389,11 @@ enum AUDIO_SOUNDS {
 };
 
 #if defined(AUDIO)
-#if defined(CPUARM)
-#include "audio_arm.h"
-#else
-#include "audio_avr.h"
-#endif
+	#if defined(STM32F0) || !defined(CPUARM)
+		#include "audio_avr.h"
+	#else
+		#include "audio_arm.h"
+	#endif
 #endif
 
 #include "buzzer.h"

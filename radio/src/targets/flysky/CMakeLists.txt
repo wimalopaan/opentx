@@ -35,9 +35,9 @@ set(EEPROM EEPROM_RAW)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
 
-add_definitions(-DPCBFLYSKY)
-add_definitions(-DAUDIO -DRTCLOCK)
 
+
+add_definitions(-DPCBFLYSKY -DAUDIO -DRTCLOCK)
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
   model_mix_edit.cpp
@@ -49,10 +49,14 @@ set(GUI_SRC ${GUI_SRC}
   view_telemetry.cpp
   view_about.cpp
   )
+  
+add_definitions(-DBUZZER)
+set(SRC ${SRC} buzzer.cpp)
 
 set(TARGET_SRC
   ${TARGET_SRC}
   board.cpp
+  buzzer_driver.cpp
   backlight_driver.cpp
   extmodule_driver.cpp
   adc_driver.cpp

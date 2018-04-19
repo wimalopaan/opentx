@@ -93,13 +93,21 @@ foreach(LANGUAGE ${TTS_LANGUAGES})
   set(SRC ${SRC} translations/tts_${lang_lower}.cpp)
 endforeach()
 
-
-
+if(CPU_TYPE STREQUAL STM32F0)
+set(SRC
+  ${SRC}
+  audio_avr.cpp
+  )
+else()
+set(SRC
+  ${SRC}
+  audio_arm.cpp
+  )
+endif()
 set(SRC
   ${SRC}
   main_arm.cpp
   tasks_arm.cpp
-  audio_arm.cpp
   telemetry/telemetry.cpp
   telemetry/telemetry_holders.cpp
   telemetry/telemetry_sensors.cpp

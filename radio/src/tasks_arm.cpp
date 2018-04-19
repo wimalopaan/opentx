@@ -27,8 +27,10 @@ TaskStack<MENUS_STACK_SIZE> _ALIGNED(8) menusStack;
 OS_TID mixerTaskId;
 TaskStack<MIXER_STACK_SIZE> mixerStack;
 
+#if !defined(STM32F0)
 OS_TID audioTaskId;
 TaskStack<AUDIO_STACK_SIZE> audioStack;
+#endif
 
 OS_MutexID audioMutex;
 OS_MutexID mixerMutex;
@@ -68,7 +70,9 @@ void stackPaint()
 {
   menusStack.paint();
   mixerStack.paint();
+#if !defined(STM32F0)
   audioStack.paint();
+#endif
 #if defined(CLI)
   cliStack.paint();
 #endif
@@ -273,7 +277,7 @@ void tasksStart()
   mixerTaskId = CoCreateTask(mixerTask, NULL, 5, &mixerStack.stack[MIXER_STACK_SIZE-1], MIXER_STACK_SIZE);
   menusTaskId = CoCreateTask(menusTask, NULL, 10, &menusStack.stack[MENUS_STACK_SIZE-1], MENUS_STACK_SIZE);
 
-#if !defined(SIMU)
+#if !defined(SIMU) && !defined(STM32F0)
   // TODO move the SIMU audio in this task
   audioTaskId = CoCreateTask(audioTask, NULL, 7, &audioStack.stack[AUDIO_STACK_SIZE-1], AUDIO_STACK_SIZE);
 #endif

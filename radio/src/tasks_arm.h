@@ -28,15 +28,14 @@ extern "C" {
 #endif
 
 #if defined(STM32F0)
+#define MENUS_STACK_SIZE       1000
+#define MIXER_STACK_SIZE       500
+#else
+
 #define MENUS_STACK_SIZE       2000
 #define MIXER_STACK_SIZE       500
 #define AUDIO_STACK_SIZE       500
 #define BLUETOOTH_STACK_SIZE   500
-#else
-#define MENUS_STACK_SIZE       1000
-#define MIXER_STACK_SIZE       500
-#define AUDIO_STACK_SIZE       200
-#define BLUETOOTH_STACK_SIZE   50
 #endif
 
 #if defined(_MSC_VER)
@@ -75,8 +74,10 @@ extern TaskStack<MENUS_STACK_SIZE> _ALIGNED(8) menusStack;
 extern OS_TID mixerTaskId;
 extern TaskStack<MIXER_STACK_SIZE> mixerStack;
 
+#if !defined(STM32F0)
 extern OS_TID audioTaskId;
 extern TaskStack<AUDIO_STACK_SIZE> audioStack;
+#endif 
 
 void tasksStart();
 

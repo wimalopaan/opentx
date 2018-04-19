@@ -257,8 +257,10 @@ void menuStatisticsDebug(event_t event)
   lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_RTOS, menusStack.available(), UNSIGN|LEFT);
   lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_RTOS, "/");
   lcdDrawNumber(lcdLastRightPos+1, MENU_DEBUG_Y_RTOS, mixerStack.available(), UNSIGN|LEFT);
+#if !defined(STM32F0)
   lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_RTOS, "/");
   lcdDrawNumber(lcdLastRightPos+1, MENU_DEBUG_Y_RTOS, audioStack.available(), UNSIGN|LEFT);
+#endif
 #else
   lcdDrawTextAlignedLeft(1*FH, STR_TMR1LATMAXUS);
   lcdDraw8bitsNumber(MENU_DEBUG_COL1_OFS , 1*FH, g_tmr1Latency_max/2 );

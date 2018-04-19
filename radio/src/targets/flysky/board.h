@@ -149,6 +149,11 @@ void sdPoll10ms(void);
 uint32_t sdMounted(void);
 #define SD_CARD_PRESENT()               ((SD_GPIO_PRESENT_GPIO->IDR & SD_GPIO_PRESENT_GPIO_PIN) == 0)
 #endif
+//buzzer
+void buzzerOn();
+void buzzerOff();
+void buzzerSound(uint8_t duration);
+void buzzerHeartbeat();
 
 // Flash Write driver
 #define FLASH_PAGESIZE 256
