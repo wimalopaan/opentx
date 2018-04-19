@@ -40,6 +40,8 @@
 // Save some RAM on smaller STM32 processors. Slightly lowers USB mass storage speed
 #if defined(STM32F2) && !defined(BOOT)
 #define MSC_MEDIA_PACKET             512
+#elif defined(STM32F0)
+#define MSC_MEDIA_PACKET             128
 #else
 #define MSC_MEDIA_PACKET             4096
 #endif

@@ -517,13 +517,13 @@ void hapticOff(void);
 // Second serial port driver
 #if defined(SERIAL_GPIO)
 #define DEBUG_BAUDRATE                  115200
-#define SERIAL2
-extern uint8_t serial2Mode;
-void serial2Init(unsigned int mode, unsigned int protocol);
-void serial2Putc(char c);
-#define serial2TelemetryInit(protocol) serial2Init(UART_MODE_TELEMETRY, protocol)
-void serial2SbusInit(void);
-void serial2Stop(void);
+//#define SERIAL2
+//extern uint8_t serial2Mode;
+//void serial2Init(unsigned int mode, unsigned int protocol);
+//void serial2Putc(char c);
+//#define serial2TelemetryInit(protocol) serial2Init(UART_MODE_TELEMETRY, protocol)
+//void serial2SbusInit(void);
+//void serial2Stop(void);
 #endif
 
 // BT driver
