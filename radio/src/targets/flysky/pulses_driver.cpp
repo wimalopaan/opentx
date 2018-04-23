@@ -81,3 +81,4 @@ void disable_no_pulses(uint32_t port)
 void init_sbusOut(uint32_t module_index) {}
 void disable_sbusOut(uint32_t module_index){}
 void setupPulsesSbus(uint8_t port){}
+void setupPulsesPXX(uint8_t port){}

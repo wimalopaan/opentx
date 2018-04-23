@@ -117,7 +117,10 @@ union ModulePulsesData {
   PxxUartPulsesData pxx_uart;
 #endif
   PpmPulsesData<pulse_duration_t> ppm;
+//F0 doent have Crossfire
+#if !defined(STM32F0)
   CrossfirePulsesData crossfire;
+#endif
 } __ALIGNED;
 
 /* The __ALIGNED keyword is required to align the struct inside the modulePulsesData below,

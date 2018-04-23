@@ -21,7 +21,7 @@
 #ifndef _AUDIO_AVR_H_
 #define _AUDIO_AVR_H_
 
-#if defined(PCBSTD)
+#if defined(PCBSTD) || defined(STM32F0)
   #define speakerOn()      buzzerOn()
   #define speakerOff()     toneFreq=0; buzzerOff()
 #endif
@@ -31,12 +31,21 @@
 #define BEEP_DEFAULT_FREQ  (70)
 #define BEEP_OFFSET        (10)
 
-class audioQueue
+#define IS_PLAYING(id)          false
+
+enum {
+  // IDs for special functions [0:64]
+  // IDs for global functions [64:128]
+  ID_PLAY_PROMPT_BASE = 128,
+  ID_PLAY_FROM_SD_MANAGER = 255,
+};
+
+class AudioQueue
 {
   public:
 
-    audioQueue();
-
+    AudioQueue();
+	void start();
     void play(uint8_t tFreq, uint8_t tLen, uint8_t tPause, uint8_t tFlags=0);
     void pause(uint8_t tLen);
 
@@ -89,9 +98,13 @@ class audioQueue
 
 };
 
-extern audioQueue audio;
+extern AudioQueue audioQueue;
 
 void audioDefevent(uint8_t e);
+
+#if defined(STM32F0)
+#define audioEvent(e) audioDefevent(e)
+#endif
 
 #if defined(AUDIO) && defined(BUZZER)
   #define AUDIO_BUZZER(a, b)  do { a; b; } while(0)
@@ -126,24 +139,39 @@ void audioTimerCountdown(uint8_t timer, int value);
 #define AUDIO_TIMER_COUNTDOWN(idx, val)  audioTimerCountdown(idx, val)
 #define AUDIO_TIMER_ELAPSED(idx) AUDIO_BUZZER(audioTimerCountdown(idx, 0), beep(3))
 
+#define AUDIO_RSSI_RED()		 
+#define AUDIO_RSSI_ORANGE()
+#define AUDIO_TELEMETRY_BACK()
+#define AUDIO_TELEMETRY_LOST();
+
 //#define AUDIO_TIMER_30()         // VOICE_AUDIO_BUZZER(PUSH_SYSTEM_PROMPT(AU_TIMER_30), audioDefevent(AU_TIMER_30), { beepAgain=2; beep(2); })
 //#define AUDIO_TIMER_20()         // VOICE_AUDIO_BUZZER(PUSH_SYSTEM_PROMPT(AU_TIMER_20), audioDefevent(AU_TIMER_20), { beepAgain=1; beep(2); })
 //#define AUDIO_TIMER_LT10(m, x)   // AUDIO_BUZZER(audioDefevent(AU_TIMER_LT10), beep(2))
 //#define AUDIO_TIMER_00(m)        // AUDIO_BUZZER(audioDefevent(AU_TIMER_00), beep(3))
 #define AUDIO_MIX_WARNING(x)     AUDIO_BUZZER(audioDefevent(AU_MIX_WARNING_1+x-1), beep(1))
-#define AUDIO_POT_MIDDLE()       AUDIO_BUZZER(audioDefevent(AU_POT_MIDDLE), beep(2))
+#if defined(CPUARM)
+	#define AUDIO_POT_MIDDLE(x)       AUDIO_BUZZER(audioDefevent(AU_STICK1_MIDDLE+x), beep(2))
+#else
+	#define AUDIO_POT_MIDDLE()       AUDIO_BUZZER(audioDefevent(AU_POT_MIDDLE), beep(2))
+#endif
+
 #define AUDIO_VARIO_UP()         // audioDefevent(AU_KEYPAD_UP)
 #define AUDIO_VARIO_DOWN()       // audioDefevent(AU_KEYPAD_DOWN)
-#define AUDIO_TRIM_MIDDLE()      // AUDIO_BUZZER(audio.event(AU_TRIM_MIDDLE, f), beep(2))
+#define AUDIO_TRIM_MIDDLE()      // AUDIO_BUZZER(audioQueue.event(AU_TRIM_MIDDLE, f), beep(2))
 #define AUDIO_TRIM_MIN()         // AUDIO_BUZZER(audioDefevent(f), beep(2))
 #define AUDIO_TRIM_MAX()         // AUDIO_BUZZER(audioDefevent(f), beep(2))
 #define AUDIO_TRIM_PRESS(val)    audioTrimPress(val)
-#define AUDIO_PLAY(p)            audio.event(p)
-#define AUDIO_VARIO(f, t)        audio.play(f, t, 0, PLAY_BACKGROUND)
+#define AUDIO_PLAY(p)            audioQueue.event(p)
+#if defined(CPUARM)
+	#define AUDIO_VARIO(f, t, p, fl)        audioQueue.play(f, t, p, fl)
+#else
+	#define AUDIO_VARIO(f, t)        audioQueue.play(f, t, 0, PLAY_BACKGROUND)
+#endif
 
-#define AUDIO_DRIVER()           audio.driver()
-#define AUDIO_HEARTBEAT()        audio.heartbeat()
-#define IS_AUDIO_BUSY()          audio.busy()
+
+#define AUDIO_DRIVER()           audioQueue.driver()
+#define AUDIO_HEARTBEAT()        audioQueue.heartbeat()
+#define IS_AUDIO_BUSY()          audioQueue.busy()
 #define AUDIO_RESET()
 #define AUDIO_FLUSH()
 

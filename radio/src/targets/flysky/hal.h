@@ -142,7 +142,10 @@
 
 
 // Internal Module
-  #define INTMODULE_PULSES
+
+ /* #define INTMODULE_PULSES
+ PXX and DSM!!!!!
+ 
   #define INTMODULE_RCC_AHB1Periph      (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_DMA2)
   #define INTMODULE_RCC_APB1Periph      0
   #define INTMODULE_RCC_APB2Periph      RCC_APB2Periph_TIM1
@@ -161,7 +164,7 @@
   #define INTMODULE_DMA_STREAM_IRQHandler DMA2_Stream5_IRQHandler
   #define INTMODULE_DMA_FLAG_TC         DMA_IT_TCIF5
   #define INTMODULE_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
-
+*/
 // Trainer Port
 #if defined(PCBXLITE)
   #define TRAINER_RCC_AHBPeriph        0

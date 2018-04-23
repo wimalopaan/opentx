@@ -79,7 +79,7 @@
   #define MAX_SPECIAL_FUNCTIONS        16 // number of functions assigned to switches
   #define MAX_TRAINER_CHANNELS         8
   #define MAX_INPUTS                   32
-  #define MAX_TELEMETRY_SENSORS        32
+  #define MAX_TELEMETRY_SENSORS        16
   #define MAX_SCRIPTS				   0
 #elif defined(CPUM2560) || defined(CPUM2561)
   #define MAX_MODELS                   30

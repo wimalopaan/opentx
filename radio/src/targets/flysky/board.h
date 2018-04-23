@@ -149,6 +149,11 @@ void sdPoll10ms(void);
 uint32_t sdMounted(void);
 #define SD_CARD_PRESENT()               ((SD_GPIO_PRESENT_GPIO->IDR & SD_GPIO_PRESENT_GPIO_PIN) == 0)
 #endif
+//buzzer
+void buzzerOn();
+void buzzerOff();
+void buzzerSound(uint8_t duration);
+void buzzerHeartbeat();
 
 // Flash Write driver
 #define FLASH_PAGESIZE 256
@@ -182,7 +187,9 @@ void init_crossfire( uint32_t module_index );
 void disable_crossfire( uint32_t module_index );
 void init_sbusOut(uint32_t module_index);
 void disable_sbusOut(uint32_t module_index);
+//jsut to allow compilation
 void setupPulsesSbus(uint8_t port);
+void setupPulsesPXX(uint8_t port);
 // Trainer driver
 #define SLAVE_MODE()                    (g_model.trainerMode == TRAINER_MODE_SLAVE)
 #if defined(PCBX9E)
@@ -510,13 +517,13 @@ void hapticOff(void);
 // Second serial port driver
 #if defined(SERIAL_GPIO)
 #define DEBUG_BAUDRATE                  115200
-#define SERIAL2
-extern uint8_t serial2Mode;
-void serial2Init(unsigned int mode, unsigned int protocol);
-void serial2Putc(char c);
-#define serial2TelemetryInit(protocol) serial2Init(UART_MODE_TELEMETRY, protocol)
-void serial2SbusInit(void);
-void serial2Stop(void);
+//#define SERIAL2
+//extern uint8_t serial2Mode;
+//void serial2Init(unsigned int mode, unsigned int protocol);
+//void serial2Putc(char c);
+//#define serial2TelemetryInit(protocol) serial2Init(UART_MODE_TELEMETRY, protocol)
+//void serial2SbusInit(void);
+//void serial2Stop(void);
 #endif
 
 // BT driver
