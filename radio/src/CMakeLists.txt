@@ -500,10 +500,10 @@ if(NOT MSVC)
       if(NOT LUA STREQUAL NO)
         # Lua needs %g and %f
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u _printf_float -u _scanf_float")
+		# Nano's malloc does work well with lua, use our own
+		add_definitions(-DUSE_BIN_ALLOCATOR)
+		set(SRC ${SRC} bin_allocator.cpp)
       endif()
-      # Nano's malloc does work well with lua, use our own
-      add_definitions(-DUSE_BIN_ALLOCATOR)
-      set(SRC ${SRC} bin_allocator.cpp)
     endif()
 
 
