@@ -2646,134 +2646,22 @@ void opentxInit(OPENTX_INIT_ARGS)
 #if defined(SIMU)
 void * simuMain(void *)
 #else
-int main()
-#endif
-{
-  // G: The WDT remains active after a WDT reset -- at maximum clock speed. So it's
-  // important to disable it before commencing with system initialisation (or
-  // we could put a bunch more wdt_reset()s in. But I don't like that approach
-  // during boot up.)
-#if defined(CPUM2560) || defined(CPUM2561)
-  uint8_t mcusr = MCUSR; // save the WDT (etc) flags
-  MCUSR = 0; // must be zeroed before disabling the WDT
-  MCUCR = 0x80 ;   // Disable JTAG port that can interfere with POT3
-  MCUCR = 0x80 ;   // Must be done twice
-#elif defined(PCBSTD)
-  uint8_t mcusr = MCUCSR;
-  MCUCSR = 0x80 ;   // Disable JTAG port that can interfere with POT3
-  MCUCSR = 0x80 ;   // Must be done twice
-#endif
-#if defined(PCBTARANIS)
-  g_eeGeneral.contrast = LCD_CONTRAST_DEFAULT;
-#endif
-  wdt_disable();
-
-  boardInit();
-
-#if defined(PCBX7)
-  bluetoothInit(BLUETOOTH_DEFAULT_BAUDRATE);   //BT is turn on for a brief period to differentiate X7 and X7S
-#endif
-
-#if defined(GUI) && !defined(PCBTARANIS) && !defined(PCBHORUS)
-  // TODO remove this
-  lcdInit();
-#endif
-
-#if !defined(SIMU)
-  stackPaint();
-#endif
-
-#if defined(GUI) && !defined(PCBTARANIS)
-  // lcdSetRefVolt(25);
-#endif
-
-#if defined(SPLASH) && (defined(PCBTARANIS) || defined(PCBHORUS))
-  drawSplash();
-#endif
-
-  sei(); // interrupts needed now
-
-#if !defined(CPUARM) && defined(TELEMETRY_FRSKY) && !defined(DSM2_SERIAL)
-  telemetryInit();
-#endif
-
-#if defined(DSM2_SERIAL) && !defined(TELEMETRY_FRSKY)
-  DSM2_Init();
-#endif
-
-#if defined(TELEMETRY_JETI)
-  JETI_Init();
-#endif
-
-#if defined(TELEMETRY_ARDUPILOT)
-  ARDUPILOT_Init();
-#endif
-
-#if defined(TELEMETRY_NMEA)
-  NMEA_Init();
-#endif
-
-#if defined(TELEMETRY_MAVLINK)
-  MAVLINK_Init();
-#endif
-
-#if defined(MENU_ROTARY_SW)
-  init_rotary_sw();
-#endif
-
-#if defined(PCBHORUS)
-  if (!IS_FIRMWARE_COMPATIBLE_WITH_BOARD()) {
-    runFatalErrorScreen(STR_WRONG_PCBREV);
-  }
-#endif
-
-#if !defined(EEPROM)
-  if (!SD_CARD_PRESENT() && !UNEXPECTED_SHUTDOWN()) {
-    runFatalErrorScreen(STR_NO_SDCARD);
-  }
-#endif
-
-#if defined(CPUARM)
-  tasksStart();
-#else
-  opentxInit(mcusr);
-#if defined(CPUM2560)
-  uint8_t shutdown_state = 0;
-#endif
-
-  while (1) {
-#if defined(CPUM2560)
-    if ((shutdown_state=pwrCheck()) > e_power_trainer)
-      break;
-#endif
-#if defined(SIMU)
-    sleep(5/*ms*/);
-    if (main_thread_running == 0)
-      return 0;
-#endif
-
-    perMain();
-
-    if (heartbeat == HEART_WDT_CHECK) {
-      wdt_reset();
-      heartbeat = 0;
+int main() {
+    wdt_disable();
+    boardInit();
+    stackPaint();
+    sei(); // interrupts needed now
+    tasksStart();
+    while (1) {
+      perMain();
+      if (heartbeat == HEART_WDT_CHECK) {
+        wdt_reset();
+        heartbeat = 0;
+      }
     }
-  }
-#endif
-
-#if defined(CPUM2560)
-  // Time to switch off
-  drawSleepBitmap();
-  opentxClose();
-  boardOff(); // Only turn power off if necessary
-  wdt_disable();  // this function is provided by AVR Libc
-  while(1); // never return from main() - there is no code to return back, if any delays occurs in physical power it does dead loop.
-#endif
-
-#if defined(SIMU)
-  return NULL;
-#endif
+    return 0;
 }
+#endif
 
 #if defined(PWR_BUTTON_PRESS)
 uint32_t pwr_press_time = 0;
@@ -2835,7 +2723,7 @@ uint32_t pwrCheck()
           event_t evt = getEvent(false);
           DISPLAY_WARNING(evt);
           lcdRefresh();
-          
+
           if (warningResult) {
             pwr_check_state = PWR_CHECK_OFF;
             return e_power_off;

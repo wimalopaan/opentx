@@ -35,8 +35,8 @@ void pwrOff()
 {
 
 }
-
+//if !PWR_PRESS_BUTTON logic is reversed
 uint32_t pwrPressed()
 {
-  return 0;
+  return 1;
 }

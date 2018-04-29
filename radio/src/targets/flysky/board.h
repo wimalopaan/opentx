@@ -77,15 +77,13 @@ extern "C" {
 
 #define FLASHSIZE                       0x80000
 #define BOOTLOADER_SIZE                 0x0
-//#define BOOTLOADER_SIZE                 0x8000
 #define FIRMWARE_ADDRESS                0x08000000
 
 #define LUA_MEM_MAX                     (0)    // max allowed memory usage for complete Lua  (in bytes), 0 means unlimited
 
 
-#define PERI1_FREQUENCY               24000000
+#define PERI1_FREQUENCY               48000000
 #define PERI2_FREQUENCY               48000000
-
 
 #define TIMER_MULT_APB1                 2
 #define TIMER_MULT_APB2                 2
@@ -227,6 +225,7 @@ void setupPulsesPXX(uint8_t port);
 // SBUS
 int sbusGetByte(uint8_t * byte);
 
+
 // Keys driver
 enum EnumKeys
 {
@@ -239,6 +238,7 @@ enum EnumKeys
   KEY_PLUS = KEY_UP,
   KEY_RIGHT,
   KEY_LEFT,
+  KEY_BIND,
   TRM_BASE,
   TRM_LH_DWN = TRM_BASE,
   TRM_LH_UP,
@@ -249,7 +249,6 @@ enum EnumKeys
   TRM_RH_DWN,
   TRM_RH_UP,
   TRM_LAST = TRM_RH_UP,
-
   NUM_KEYS
 };
 
@@ -259,87 +258,10 @@ enum EnumSwitches
   SW_SB,
   SW_SC,
   SW_SD,
-  SW_SE,
-  SW_SF,
-  SW_SG,
-  SW_SH
 };
-
-#define SW_ID0 SW_SA
-#define SW_ID1 SW_SB
-
 
 #define IS_3POS(x)                      ((x) == SW_SC)
 #define IS_TOGGLE(x)					((x) != SW_SC)
-enum EnumSwitchesPositions
-{
-  SW_SA0,
-  SW_SA1,
-  SW_SA2,
-  SW_SB0,
-  SW_SB1,
-  SW_SB2,
-  SW_SC0,
-  SW_SC1,
-  SW_SC2,
-  SW_SD0,
-  SW_SD1,
-  SW_SD2,
-#if !defined(PCBX7) && !defined(PCBXLITE)
-  SW_SE0,
-  SW_SE1,
-  SW_SE2,
-#endif
-#if !defined(PCBXLITE)
-  SW_SF0,
-  SW_SF1,
-  SW_SF2,
-#endif
-#if !defined(PCBX7) && !defined(PCBXLITE)
-  SW_SG0,
-  SW_SG1,
-  SW_SG2,
-#endif
-#if !defined(PCBXLITE)
-  SW_SH0,
-  SW_SH1,
-  SW_SH2,
-#endif
-#if defined(PCBX9E)
-  SW_SI0,
-  SW_SI1,
-  SW_SI2,
-  SW_SJ0,
-  SW_SJ1,
-  SW_SJ2,
-  SW_SK0,
-  SW_SK1,
-  SW_SK2,
-  SW_SL0,
-  SW_SL1,
-  SW_SL2,
-  SW_SM0,
-  SW_SM1,
-  SW_SM2,
-  SW_SN0,
-  SW_SN1,
-  SW_SN2,
-  SW_SO0,
-  SW_SO1,
-  SW_SO2,
-  SW_SP0,
-  SW_SP1,
-  SW_SP2,
-  SW_SQ0,
-  SW_SQ1,
-  SW_SQ2,
-  SW_SR0,
-  SW_SR1,
-  SW_SR2,
-#endif
-};
-
-
 #define NUM_SWITCHES                  4
 
 void keysInit(void);
@@ -396,12 +318,8 @@ enum CalibratedAnalogs {
   NUM_CALIBRATED_ANALOGS
 };
 
-#if defined(PCBX9D)
-  #define IS_POT(x)                     ((x)>=POT_FIRST && (x)<=POT2) // POT3 is only defined in software
-#else
-  #define IS_POT(x)                     ((x)>=POT_FIRST && (x)<=POT_LAST)
-#endif
-#define IS_SLIDER(x)                    ((x)>POT_LAST && (x)<TX_VOLTAGE)
+#define IS_POT(x)                     ((x)>=POT_FIRST && (x)<=POT_LAST)
+#define IS_SLIDER(x)                  ((x)>POT_LAST && (x)<TX_VOLTAGE)
 void adcInit(void);
 void adcRead(void);
 extern uint16_t adcValues[NUM_ANALOGS];
@@ -479,17 +397,9 @@ extern uint32_t telemetryErrors;
 #define HAS_SPORT_UPDATE_CONNECTOR()  false
 
 // Sport update driver
-#if defined(SPORT_UPDATE_PWR_GPIO)
-void sportUpdateInit(void);
-void sportUpdatePowerOn(void);
-void sportUpdatePowerOff(void);
-#define SPORT_UPDATE_POWER_ON()         sportUpdatePowerOn()
-#define SPORT_UPDATE_POWER_OFF()        sportUpdatePowerOff()
-#else
 #define sportUpdateInit()
 #define SPORT_UPDATE_POWER_ON()         EXTERNAL_MODULE_ON()
 #define SPORT_UPDATE_POWER_OFF()        EXTERNAL_MODULE_OFF()
-#endif
 
 // Audio driver
 void audioInit(void);
@@ -523,7 +433,7 @@ void hapticOff(void);
 //void serial2Putc(char c);
 //#define serial2TelemetryInit(protocol) serial2Init(UART_MODE_TELEMETRY, protocol)
 //void serial2SbusInit(void);
-//void serial2Stop(void);
+//void serial2Stop(void);f
 #endif
 
 // BT driver
@@ -553,20 +463,11 @@ void ledBlue(void);
 void lcdInit(void);
 void lcdInitFinish(void);
 void lcdOff(void);
-
-// TODO lcdRefreshWait() stub in simpgmspace and remove LCD_DUAL_BUFFER
-#if defined(LCD_DMA) && !defined(LCD_DUAL_BUFFER) && !defined(SIMU)
-void lcdRefreshWait();
-#else
-#define lcdRefreshWait()
-#endif
-#if defined(PCBX9D) || defined(SIMU) || !defined(__cplusplus)
-void lcdRefresh(void);
-#else
-void lcdRefresh(bool wait=true); // TODO uint8_t wait to simplify this
-#endif
+void lcdRefreshWait(void);
 void lcdSetRefVolt(unsigned char val);
 void lcdSetContrast(void);
+void lcdRefresh();
+
 
 #define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE)
 

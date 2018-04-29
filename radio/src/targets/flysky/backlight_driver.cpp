@@ -2,7 +2,7 @@
  * Copyright (C) OpenTX
  *
  * Based on code named
- *   th9x - http://code.google.com/p/th9x 
+ *   th9x - http://code.google.com/p/th9x
  *   er9x - http://code.google.com/p/er9x
  *   gruvin9x - http://code.google.com/p/gruvin9x
  *
@@ -20,23 +20,31 @@
 
 #include "opentx.h"
 
+
+
 void backlightInit()
 {
-
+    RCC_AHBPeriphClockCmd(BACKLIGHT_RCC_AHB1Periph, ENABLE);
+    GPIO_InitTypeDef gpio_init;
+    gpio_init.GPIO_Mode  = GPIO_Mode_OUT;
+    gpio_init.GPIO_OType = GPIO_OType_PP;
+    gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+    gpio_init.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    gpio_init.GPIO_Pin   = BACKLIGHT_GPIO_PIN;
+    GPIO_Init(BACKLIGHT_GPIO, &gpio_init);
 }
 
 void backlightEnable(uint8_t level)
 {
-
+    GPIO_SetBits(BACKLIGHT_GPIO, BACKLIGHT_GPIO_PIN);
 }
 
 void backlightDisable()
 {
-
+    GPIO_ResetBits(BACKLIGHT_GPIO, BACKLIGHT_GPIO_PIN);
 }
 
 uint8_t isBacklightEnabled()
 {
-	return 1;
+	return GPIO_ReadInputDataBit(BACKLIGHT_GPIO, BACKLIGHT_GPIO_PIN) != 0;
 }
-

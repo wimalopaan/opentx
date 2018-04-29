@@ -33,23 +33,23 @@ extern "C" {
 //audio
 void audioConsumeCurrentBuffer()
 {
-	
-	
+
+
 }
 void audioInit()
 {
-	
-	
+
+
 }
 
 void referenceSystemAudioFiles(){
-	
-	
+
+
 }
 
 void setSampleRate(uint32_t frequency){
-	
-	
+
+
 }
 
 
@@ -59,7 +59,7 @@ void watchdogInit(unsigned int duration)
   IWDG->KR = 0x5555;      // Unlock registers
   IWDG->PR = 3;           // Divide by 32 => 1kHz clock
   IWDG->KR = 0x5555;      // Unlock registers
-  IWDG->RLR = duration;       // 1.5 seconds nominal
+  IWDG->RLR = duration;   // 1.5 seconds nominal
   IWDG->KR = 0xAAAA;      // reload
   IWDG->KR = 0xCCCC;      // start
 }
@@ -84,27 +84,20 @@ void init5msTimer()
   INTERRUPT_xMS_TIMER->CR1 = 5 ;
   INTERRUPT_xMS_TIMER->DIER |= 1 ;
 
-  //NVIC_EnableIRQ(INTERRUPT_xMS_IRQn) ;
-  //NVIC_SetPriority(INTERRUPT_xMS_IRQn, 7);
+  NVIC_EnableIRQ(INTERRUPT_xMS_IRQn) ;
+  NVIC_SetPriority(INTERRUPT_xMS_IRQn, 7);
 }
 
 void stop5msTimer( void )
 {
   INTERRUPT_xMS_TIMER->CR1 = 0 ;        // stop timer
-  //NVIC_DisableIRQ(INTERRUPT_xMS_IRQn) ;
+  NVIC_DisableIRQ(INTERRUPT_xMS_IRQn) ;
 }
 
-// TODO use the same than board_sky9x.cpp
 void interrupt5ms()
 {
   static uint32_t pre_scale ;       // Used to get 10 Hz counter
-
   AUDIO_HEARTBEAT();
-
-#if defined(HAPTIC)
-  HAPTIC_HEARTBEAT();
-#endif
-
   if (++pre_scale >= 2) {
     pre_scale = 0 ;
     DEBUG_TIMER_START(debugTimerPer10ms);
@@ -112,10 +105,6 @@ void interrupt5ms()
     per10ms();
     DEBUG_TIMER_STOP(debugTimerPer10ms);
   }
-
-#if defined(ROTARY_ENCODER_NAVIGATION)
-  checkRotaryEncoder();
-#endif
 }
 
 #if !defined(SIMU)
@@ -131,97 +120,59 @@ extern "C" void INTERRUPT_xMS_IRQHandler()
   #define PWR_PRESS_DURATION_MIN        100 // 1s
   #define PWR_PRESS_DURATION_MAX        500 // 5s
 #endif
-
-#if (defined(PCBX9E) && !defined(SIMU))
-const pm_uchar bmp_startup[] PROGMEM = {
-  #include "startup.lbm"
-};
-const pm_uchar bmp_lock[] PROGMEM = {
-  #include "lock.lbm"
-};
-#endif
-
-#if defined(SPORT_UPDATE_PWR_GPIO)
-void sportUpdateInit()
+/*
+volatile uint8_t active = 0;
+void boardInit()
 {
-  GPIO_InitTypeDef GPIO_InitStructure;
-  GPIO_InitStructure.GPIO_Pin = SPORT_UPDATE_PWR_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-  GPIO_Init(SPORT_UPDATE_PWR_GPIO, &GPIO_InitStructure);
-}
+  RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2_LIST, ENABLE);
+  delaysInit();
+  init2MhzTimer();
+  init5msTimer();
+  __enable_irq();
+  backlightInit();
 
-void sportUpdatePowerOn()
-{
-  if (HAS_SPORT_UPDATE_CONNECTOR())
-    GPIO_SetBits(SPORT_UPDATE_PWR_GPIO, SPORT_UPDATE_PWR_GPIO_PIN);
-  else
-    EXTERNAL_MODULE_ON();
-}
+  while(1){
+      delay_ms(500);
+      if(active == 0){
+          active = 1;
+          backlightEnable(1);
+      }
+     else {
+          active = 0;
+          backlightDisable();
+      }
+  }
 
-void sportUpdatePowerOff()
-{
-  if (HAS_SPORT_UPDATE_CONNECTOR())
-    GPIO_ResetBits(SPORT_UPDATE_PWR_GPIO, SPORT_UPDATE_PWR_GPIO_PIN);
-  else
-    EXTERNAL_MODULE_OFF();
+
 }
-#endif
+*/
 
 void boardInit()
 {
-	
 #if !defined(SIMU)
-  RCC_AHBPeriphClockCmd(PWR_RCC_AHB1Periph | PCBREV_RCC_AHB1Periph |
-                         KEYS_RCC_AHB1Periph | LCD_RCC_AHB1Periph |
-                         AUDIO_RCC_AHB1Periph | BACKLIGHT_RCC_AHB1Periph |
-                         ADC_RCC_AHB1Periph | I2C_RCC_AHB1Periph |
-                         SD_RCC_AHB1Periph | HAPTIC_RCC_AHB1Periph /*	 |
-						 NTMODULE_RCC_AHB1Periph | EXTMODULE_RCC_AHB1Periph |
-                         TELEMETRY_RCC_AHB1Periph | SPORT_UPDATE_RCC_AHB1Periph |
-                         SERIAL_RCC_AHB1Periph | TRAINER_RCC_AHB1Periph |
-                         HEARTBEAT_RCC_AHB1Periph | BT_RCC_AHB1Periph*/, ENABLE);
-
-  RCC_APB1PeriphClockCmd(LCD_RCC_APB1Periph | AUDIO_RCC_APB1Periph | ADC_RCC_APB1Periph |
-                         BACKLIGHT_RCC_APB1Periph | HAPTIC_RCC_APB1Periph | INTERRUPT_xMS_RCC_APB1Periph |
-                         TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph |
-                         SD_RCC_APB1Periph | TRAINER_RCC_APB1Periph /* |
-                         TELEMETRY_RCC_APB1Periph | SERIAL_RCC_APB1Periph |
-                         INTMODULE_RCC_APB1Periph | BT_RCC_APB1Periph*/, 
-						 ENABLE);
-
-  RCC_APB2PeriphClockCmd(BACKLIGHT_RCC_APB2Periph | ADC_RCC_APB2Periph /* |
-                         HAPTIC_RCC_APB2Periph | INTMODULE_RCC_APB2Periph |
-                         EXTMODULE_RCC_APB2Periph | HEARTBEAT_RCC_APB2Periph |
-                         BT_RCC_APB2Periph*/, ENABLE);
-
-#if !defined(PCBX9E)
-  // some X9E boards need that the pwrInit() is moved a little bit later
-  pwrInit();
-#endif
-
-#if defined(STATUS_LEDS)
-  ledInit();
-  ledGreen();
-#endif
-
+  RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2_LIST, ENABLE);
+  //pwrInit();
   keysInit();
   adcInit();
   delaysInit();
   lcdInit(); // delaysInit() must be called before
   //define this deiver
-  audioInit();
+  //audioInit();
   init2MhzTimer();
   init5msTimer();
   __enable_irq();
-  i2cInit();
-  //usbInit();
+  backlightInit();
+  backlightEnable(1);
+  //i2cInit();
+  ////usbInit();
 
 #if defined(DEBUG) && defined(SERIAL_GPIO)
   serial2Init(0, 0); // default serial mode (None if DEBUG not defined)
-  TRACE("\nTaranis board started :)");
+  TRACE("\FlySky board started :)");
 #endif
 
 #if defined(DEBUG)
