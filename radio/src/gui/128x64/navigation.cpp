@@ -325,25 +325,14 @@ int checkIncDec(event_t event, int val, int i_min, int i_max, unsigned int i_fla
     if (dblkey) {
       killEvents(KEY_UP);
       killEvents(KEY_DOWN);
-#if defined(KEY_RIGHT)	  
       killEvents(KEY_RIGHT);
-#endif
-#if defined(KEY_LEFT)	 
       killEvents(KEY_LEFT);
-#endif
       event = 0;
     }
   }
 #endif
 
-  if (
-#if defined(KEY_RIGHT)	
-  event==EVT_KEY_FIRST(KEY_RIGHT) || 
-#endif
-#if defined(KEY_LEFT)	
-  event==EVT_KEY_REPT(KEY_RIGHT) || 
-#endif 
-  (s_editMode>0 && (IS_ROTARY_RIGHT(event) || event==EVT_KEY_FIRST(KEY_UP) || event==EVT_KEY_REPT(KEY_UP)))) {
+  if (event==EVT_KEY_FIRST(KEY_RIGHT) || event==EVT_KEY_REPT(KEY_RIGHT) || (s_editMode>0 && (IS_ROTARY_RIGHT(event) || event==EVT_KEY_FIRST(KEY_UP) || event==EVT_KEY_REPT(KEY_UP)))) {
     do {
       newval++;
     } while (isValueAvailable && !isValueAvailable(newval) && newval<=i_max);
@@ -354,12 +343,7 @@ int checkIncDec(event_t event, int val, int i_min, int i_max, unsigned int i_fla
       AUDIO_KEY_ERROR();
     }
   }
-  else if (
-#if defined(KEY_LEFT)
-  event==EVT_KEY_FIRST(KEY_LEFT) ||
-  event==EVT_KEY_REPT(KEY_LEFT) ||
-#endif
-  (s_editMode>0 && (IS_ROTARY_LEFT(event) || event==EVT_KEY_FIRST(KEY_DOWN) || event==EVT_KEY_REPT(KEY_DOWN)))) {
+  else if (event==EVT_KEY_FIRST(KEY_LEFT) || event==EVT_KEY_REPT(KEY_LEFT) || (s_editMode>0 && (IS_ROTARY_LEFT(event) || event==EVT_KEY_FIRST(KEY_DOWN) || event==EVT_KEY_REPT(KEY_DOWN)))) {
     do {
       if (IS_KEY_REPT(event) && (i_flags & INCDEC_REP10)) {
         newval -= min(10, val-i_min);
@@ -879,27 +863,24 @@ void check(event_t event, uint8_t curr, const MenuHandlerFunc *menuTab, uint8_t 
           if (s_editMode >= 0)
             break;
 #endif
-#if defined(KEY_LEFT)
         case EVT_KEY_FIRST(KEY_LEFT):
           if (curr > 0)
             cc = curr - 1;
           else
             cc = menuTabSize-1;
           break;
-#endif
+
 #if defined(ROTARY_ENCODER_NAVIGATION)
         case EVT_ROTARY_RIGHT:
           if (s_editMode >= 0)
             break;
 #endif
-#if defined(KEY_RIGHT)
         case EVT_KEY_FIRST(KEY_RIGHT):
           if (curr < (menuTabSize-1))
             cc = curr + 1;
           else
             cc = 0;
           break;
-#endif
       }
 
       if (cc != curr) {
@@ -1002,14 +983,14 @@ void check(event_t event, uint8_t curr, const MenuHandlerFunc *menuTab, uint8_t 
         l_posHorz = 0;
       }
       break;
-#if defined(KEY_RIGHT)
+
     case EVT_KEY_REPT(KEY_RIGHT):  //inc
       if (l_posHorz==maxcol) break;
       // no break
 
     case EVT_KEY_FIRST(KEY_RIGHT)://inc
       if (!horTab || s_editMode>0) break;
-#endif
+
 #if defined(ROTARY_ENCODER_NAVIGATION)
     CASE_EVT_ROTARY_RIGHT
       if (s_editMode != 0) break;
@@ -1045,14 +1026,14 @@ void check(event_t event, uint8_t curr, const MenuHandlerFunc *menuTab, uint8_t 
       l_posHorz = min<horzpos_t>(l_posHorz, MAXCOL(l_posVert));
       break;
 #endif
-#if defined(KEY_LEFT)
+
     case EVT_KEY_REPT(KEY_LEFT):  //dec
       if (l_posHorz==0) break;
       // no break
 
     case EVT_KEY_FIRST(KEY_LEFT)://dec
       if (!horTab || s_editMode>0) break;
-#endif
+
 #if defined(ROTARY_ENCODER_NAVIGATION)
     CASE_EVT_ROTARY_LEFT
       if (s_editMode != 0) break;
