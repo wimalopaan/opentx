@@ -368,20 +368,16 @@ void backlightEnable(uint8_t level);
 }
 #endif
 
-// I2C driver: EEPROM + Audio Volume
+// I2C driver: EEPROM
+#define I2C_ADDRESS_EEPROM            0x50
+#define EEPROM_SIZE                   (16*1024)
+#define EEPROM_PAGE_SIZE     	      (64)
 
-#define EEPROM_SIZE                   (128*1024)
-#define EEPROM_BLOCK_SIZE     			(4*1024)
 void i2cInit(void);
-void eepromInit();
+
 void eepromReadBlock(uint8_t * buffer, size_t address, size_t size);
 void eepromStartWrite(uint8_t * buffer, size_t address, size_t size);
-
-void eepromBlockErase(uint32_t address);
-void eepromStartRead(uint8_t * buffer, size_t address, size_t size);
 uint8_t eepromIsTransferComplete();
-uint8_t eepromReadStatus();
-
 
 
 // Debug driver
@@ -488,5 +484,6 @@ void checkTrainerSettings(void);
 extern Fifo<uint8_t, TELEMETRY_FIFO_SIZE> telemetryFifo;
 extern DMAFifo<32> serial2RxFifo;
 #endif
+
 
 #endif // _BOARD_H_

@@ -356,9 +356,9 @@ int checkIncDec(event_t event, int val, int i_min, int i_max, unsigned int i_fla
   }
   else if (
 #if defined(KEY_LEFT)
-  event==EVT_KEY_FIRST(KEY_LEFT) || 
+  event==EVT_KEY_FIRST(KEY_LEFT) ||
   event==EVT_KEY_REPT(KEY_LEFT) ||
-#endif  
+#endif
   (s_editMode>0 && (IS_ROTARY_LEFT(event) || event==EVT_KEY_FIRST(KEY_DOWN) || event==EVT_KEY_REPT(KEY_DOWN)))) {
     do {
       if (IS_KEY_REPT(event) && (i_flags & INCDEC_REP10)) {

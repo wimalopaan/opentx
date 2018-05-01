@@ -49,6 +49,38 @@
 #define KEYS_GPIO_PIN_UP 1024
 #define KEYS_GPIO_PIN_DOWN 1024
 
+
+
+// LCD driver
+
+#define LCD_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOD | RCC_AHBPeriph_GPIOE)
+#define LCD_RCC_APB1Periph            0
+#define LCD_RCC_APB2Periph            0
+
+#define LCD_DATA_GPIO                 GPIOE
+#define LCD_RW_RST_RS_GPIO            GPIOB
+#define LCD_RD_CS_GPIO                GPIOD
+
+#define LCD_DATA_PIN                  (GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7)
+#define LCD_RW_PIN                    GPIO_Pin_5
+#define LCD_RST_PIN                   GPIO_Pin_4
+#define LCD_RS_PIN                    GPIO_Pin_3
+#define LCD_RD_PIN                    GPIO_Pin_7
+#define LCD_CS_PIN                    GPIO_Pin_2
+
+
+
+// I2C Bus: EEPROM
+#define I2C_RCC_APB1Periph            RCC_APB1Periph_I2C2
+#define I2C                           I2C2
+#define I2C_GPIO_AF                   GPIO_AF_1
+#define I2C_RCC_AHB1Periph            RCC_AHBPeriph_GPIOB
+#define I2C_GPIO                      GPIOB
+#define I2C_SCL_GPIO_PIN              GPIO_Pin_10
+#define I2C_SDA_GPIO_PIN              GPIO_Pin_11
+#define I2C_SCL_GPIO_PinSource        GPIO_PinSource10
+#define I2C_SDA_GPIO_PinSource        GPIO_PinSource11
+
 // ADC
 #define ADC_MAIN                        ADC1
 #define ADC_DMA                         DMA2
@@ -232,11 +264,11 @@
   #define HEARTBEAT_USART_IRQn          USART6_IRQn
   #define HEARTBEAT_DMA_Stream          DMA2_Stream1
   #define HEARTBEAT_DMA_Channel         DMA_Channel_5
-
+//only basic!!!
   #define BACKLIGHT_RCC_AHB1Periph      RCC_AHBPeriph_GPIOF
   #define BACKLIGHT_GPIO                GPIOF
   #define BACKLIGHT_GPIO_PIN            GPIO_Pin_3
-
+//tbd
   #define BACKLIGHT_TIMER_FREQ          (PERI1_FREQUENCY * TIMER_MULT_APB1)
   #define BACKLIGHT_TIMER               TIM5
   #define BACKLIGHT_GPIO_PinSource      GPIO_PinSource13
@@ -247,43 +279,8 @@
 
 
 
-// LCD driver
-
-  #define LCD_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOD | RCC_AHBPeriph_GPIOE)
-  #define LCD_RCC_APB1Periph            0
-  #define LCD_RCC_APB2Periph            0
-
-  #define LCD_DATA_GPIO                 GPIOE
-  #define LCD_RW_RST_RS_GPIO            GPIOB
-  #define LCD_RD_CS_GPIO                GPIOD
-
-  #define LCD_DATA_PIN                  (GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7)
-  #define LCD_RW_PIN                    GPIO_Pin_5
-  #define LCD_RST_PIN                   GPIO_Pin_4
-  #define LCD_RS_PIN                    GPIO_Pin_3
-  #define LCD_RD_PIN                    GPIO_Pin_7
-  #define LCD_CS_PIN                    GPIO_Pin_2
 
 
-
-// I2C Bus: EEPROM and CAT5137 digital pot for volume control
-#define I2C_RCC_APB1Periph              RCC_APB1Periph_I2C1
-#define I2C                             I2C1
-#define I2C_GPIO_AF                     GPIO_AF_I2C1
-
-  #define I2C_RCC_AHB1Periph            RCC_AHBPeriph_GPIOB
-  #define I2C_SPI_GPIO                  GPIOB
-  #define I2C_SCL_GPIO_PIN              GPIO_Pin_6  // PB.06
-  #define I2C_SDA_GPIO_PIN              GPIO_Pin_7  // PB.07
-  #define I2C_WP_GPIO                   GPIOB
-  #define I2C_WP_GPIO_PIN               GPIO_Pin_9  // PB.09
-  #define I2C_SCL_GPIO_PinSource        GPIO_PinSource6
-  #define I2C_SDA_GPIO_PinSource        GPIO_PinSource7
-
-  #define I2C_SPEED                     400000
-#define I2C_ADDRESS_EEPROM              0xA2
-#define I2C_ADDRESS_VOLUME              0x5C
-#define I2C_FLASH_PAGESIZE              64
 
 // Audio
 #define AUDIO_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_DMA1)
@@ -309,8 +306,8 @@
 #define TIMER_2MHz_TIMER                TIM7
 
 //all used RCC goes here
-#define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph)
-#define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph)
+#define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB)
+#define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph)
 #define RCC_APB2_LIST                   0
 
 #endif // _HAL_H_

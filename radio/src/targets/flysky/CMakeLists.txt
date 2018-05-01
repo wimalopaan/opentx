@@ -12,9 +12,10 @@ if(PCB STREQUAL I6X)
   set(LUA_EXPORT lua_export_x7)
   set(FLAVOUR x7)
   add_definitions(-DSTM32F072)
-  add_definitions(-DPCBI6X -DSOFTWARE_VOLUME)
-  add_definitions(-DEEPROM_VARIANT=0x4000)
+  add_definitions(-DPCBI6X)
   add_definitions(-DPWR_BUTTON_${PWR_BUTTON})
+  add_definitions(-DEEPROM_VARIANT=0)
+  add_definitions(-DSOFTWARE_VOLUME)
   set(GUI_DIR 128x64)
   set(BITMAPS_TARGET 9x_bitmaps)
   set(FONTS_TARGET 9x_fonts_1bit)
@@ -31,12 +32,10 @@ set(TARGET_SRC
 
 set(HSE_VALUE 8000000)
 set(SDCARD NO)
-set(EEPROM EEPROM_RAW)
+set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
-
-
-
+add_definitions(-DWATCHDOG_DISABLED)
 add_definitions(-DPCBFLYSKY -DAUDIO -DRTCLOCK)
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
@@ -49,7 +48,7 @@ set(GUI_SRC ${GUI_SRC}
   view_telemetry.cpp
   view_about.cpp
   )
-  
+
 add_definitions(-DBUZZER)
 set(SRC ${SRC} buzzer.cpp)
 
@@ -60,7 +59,6 @@ set(TARGET_SRC
   backlight_driver.cpp
   extmodule_driver.cpp
   adc_driver.cpp
-  eeprom_driver.cpp
   )
 
 set(FIRMWARE_TARGET_SRC
