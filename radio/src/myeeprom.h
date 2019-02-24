@@ -91,7 +91,7 @@
 #define MODEL_GVAR_MIN(idx)            (CFN_GVAR_CST_MIN + g_model.gvars[idx].min)
 #define MODEL_GVAR_MAX(idx)            (CFN_GVAR_CST_MAX - g_model.gvars[idx].max)
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) ||  defined(PCBI6)
   enum SwitchConfig {
     SWITCH_NONE,
     SWITCH_TOGGLE,
@@ -331,7 +331,9 @@ enum Protocols {
   PROTO_DSM2_DSM2,
   PROTO_DSM2_DSMX,
 #endif
+#if defined(CROSSFIRE)
   PROTO_CROSSFIRE,
+#endif
 #if defined(IRPROTOS)
   // only used on AVR
   // we will need 4 bits for proto :(
@@ -340,16 +342,22 @@ enum Protocols {
   PROTO_PICZ,
   PROTO_SWIFT,
 #endif
+#if defined(MULTIMODULE)
   PROTO_MULTIMODULE,
+#endif
   PROTO_SBUS,
+#if defined(PXX2)
   PROTO_PXX2,
+#endif
   PROTO_NONE
 };
 
 #if defined(PXX2)
 #define PROTO_PXX_EXTERNAL_MODULE PROTO_PXX2
-#else
+#elif defined(PXX)
 #define PROTO_PXX_EXTERNAL_MODULE PROTO_PXX
+#else
+#define PROTO_PXX_EXTERNAL_MODULE PROTO_NONE
 #endif
 
 enum XJTRFProtocols {

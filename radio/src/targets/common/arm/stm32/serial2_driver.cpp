@@ -22,10 +22,12 @@
 
 uint8_t serial2Mode = 0;
 Fifo<uint8_t, 512> serial2TxFifo;
+#if !defined(STM32F0)
 DMAFifo<32> serial2RxFifo __DMA (SERIAL_DMA_Stream_RX);
-
+#endif
 void uart3Setup(unsigned int baudrate, bool dma)
 {
+#if !defined(STM32F0)
   USART_InitTypeDef USART_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -79,6 +81,7 @@ void uart3Setup(unsigned int baudrate, bool dma)
     NVIC_SetPriority(SERIAL_USART_IRQn, 7);
     NVIC_EnableIRQ(SERIAL_USART_IRQn);
   }
+#endif
 }
 
 void serial2Init(unsigned int mode, unsigned int protocol)
@@ -127,7 +130,9 @@ void serial2SbusInit()
 
 void serial2Stop()
 {
+#if !defined(STM32F0)
   DMA_DeInit(SERIAL_DMA_Stream_RX);
+#endif
   USART_DeInit(SERIAL_USART);
 }
 

@@ -62,6 +62,7 @@ void drawSensorCustomValue(coord_t x, coord_t y, uint8_t sensor, int32_t value, 
     drawGPSSensorValue(x, y, telemetryItem, flags);
   }
   else if (telemetrySensor.unit == UNIT_BITFIELD) {
+#if defined(TELEMETRY_FRSKY_SPORT)
     if (IS_FRSKY_SPORT_PROTOCOL()) {
       if (telemetrySensor.id >= RBOX_STATE_FIRST_ID && telemetrySensor.id <= RBOX_STATE_LAST_ID) {
         if (telemetrySensor.subId == 0) {
@@ -107,6 +108,7 @@ void drawSensorCustomValue(coord_t x, coord_t y, uint8_t sensor, int32_t value, 
         }
       }
     }
+#endif
   }
   else if (telemetrySensor.unit == UNIT_TEXT) {
     lcdDrawSizedText(x, flags & DBLSIZE ? y+1 : y, telemetryItem.text, sizeof(telemetryItem.text), flags & ~DBLSIZE);

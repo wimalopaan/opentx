@@ -343,7 +343,7 @@ getvalue_t getValue(mixsrc_t i)
     return calc1000toRESX((int16_t)8 * getTrimValue(mixerCurrentFlightMode, i-MIXSRC_FIRST_TRIM));
   }
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
   else if ((i >= MIXSRC_FIRST_SWITCH) && (i <= MIXSRC_LAST_SWITCH)) {
     mixsrc_t sw = i-MIXSRC_FIRST_SWITCH;
     if (SWITCH_EXISTS(sw)) {
@@ -355,7 +355,7 @@ getvalue_t getValue(mixsrc_t i)
   }
 #else
   else if (i == MIXSRC_3POS) {
-    return (getSwitch(SW_ID0+1) ? -1024 : (getSwitch(SW_ID1+1) ? 0 : 1024));
+    return (getSwitch(SWSRC_ID0+1) ? -1024 : (getSwitch(SWSRC_ID1+1) ? 0 : 1024));
   }
   // don't use switchState directly to give getSwitch possibility to hack values if needed for switch warning
   else if (i < MIXSRC_SW1) {

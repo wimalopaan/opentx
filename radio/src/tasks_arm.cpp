@@ -26,8 +26,10 @@ RTOS_DEFINE_STACK(menusStack, MENUS_STACK_SIZE);
 RTOS_TASK_HANDLE mixerTaskId;
 RTOS_DEFINE_STACK(mixerStack, MIXER_STACK_SIZE);
 
+#if defined(VOICE)
 RTOS_TASK_HANDLE audioTaskId;
 RTOS_DEFINE_STACK(audioStack, AUDIO_STACK_SIZE);
+#endif
 
 RTOS_MUTEX_HANDLE audioMutex;
 RTOS_MUTEX_HANDLE mixerMutex;
@@ -46,7 +48,9 @@ void stackPaint()
 {
   menusStack.paint();
   mixerStack.paint();
+#if defined(VOICE)
   audioStack.paint();
+#endif
 #if defined(CLI)
   cliStack.paint();
 #endif
@@ -233,10 +237,10 @@ void tasksStart()
   cliStart();
 #endif
 
-  RTOS_CREATE_TASK(mixerTaskId, mixerTask, "Mixer", mixerStack, MIXER_STACK_SIZE, MIXER_TASK_PRIO);
+  //RTOS_CREATE_TASK(mixerTaskId, mixerTask, "Mixer", mixerStack, MIXER_STACK_SIZE, MIXER_TASK_PRIO);
   RTOS_CREATE_TASK(menusTaskId, menusTask, "Menus", menusStack, MENUS_STACK_SIZE, MENUS_TASK_PRIO);
 
-#if !defined(SIMU)
+#if !defined(SIMU) && defined(VOICE)
   RTOS_CREATE_TASK(audioTaskId, audioTask, "Audio", audioStack, AUDIO_STACK_SIZE, AUDIO_TASK_PRIO);
 #endif
 

@@ -33,6 +33,9 @@ const uint8_t BMP_HEADER[] = {
 
 const char * writeScreenshot()
 {
+#if !defined(SDCARD)
+return 0;
+#else
   FIL bmpFile;
   UINT written;
   char filename[42]; // /SCREENSHOTS/screen-2013-01-01-123540.bmp
@@ -73,4 +76,5 @@ const char * writeScreenshot()
   f_close(&bmpFile);
 
   return NULL;
+#endif
 }

@@ -73,6 +73,14 @@ PACK(struct CrossfirePulsesData {
 });
 
 union ModulePulsesData {
+  PpmPulsesData<pulse_duration_t> ppm;
+#if defined(PXX2)
+  Pxx2Pulses pxx2;
+#endif
+#if defined(CROSSFIRE)
+  CrossfirePulsesData crossfire;
+#endif
+#if defined(PXX)
 #if defined(INTMODULE_USART) || defined(EXTMODULE_USART)
   UartPxxPulses pxx_uart;
 #endif
@@ -81,19 +89,14 @@ union ModulePulsesData {
 #elif !defined(INTMODULE_USART) || !defined(EXTMODULE_USART)
   PwmPxxPulses pxx;
 #endif
-
-#if defined(PXX2)
-  Pxx2Pulses pxx2;
 #endif
-
+#if defined(DSM2)
 #if defined(PPM_PIN_SERIAL)
   Dsm2SerialPulsesData dsm2;
 #else
   Dsm2TimerPulsesData dsm2;
 #endif
-
-  PpmPulsesData<pulse_duration_t> ppm;
-  CrossfirePulsesData crossfire;
+#endif
 } __ALIGNED(4);
 
 /* The __ALIGNED keyword is required to align the struct inside the modulePulsesData below,

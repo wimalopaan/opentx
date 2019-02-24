@@ -19,7 +19,7 @@
  */
 
 #include "opentx.h"
-
+#if defined(BOOT)
 bool isBootloader(const char * filename)
 {
   FIL file;
@@ -75,3 +75,13 @@ void bootloaderFlash(const char * filename)
 
   f_close(&file);
 }
+#else
+bool isBootloader(const char * filename)
+{
+    return false;
+}
+void bootloaderFlash(const char * filename)
+{
+    
+}
+#endif

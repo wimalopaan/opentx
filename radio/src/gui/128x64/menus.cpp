@@ -66,9 +66,11 @@ void pushMenu(MenuHandlerFunc newMenu)
 void menuModelNotes(event_t event)
 {
   if (event == EVT_ENTRY) {
+#if defined(SDCARD)
     strcpy(s_text_file, MODELS_PATH "/");
     char *buf = strcat_modelname(&s_text_file[sizeof(MODELS_PATH)], g_eeGeneral.currModel);
     strcpy(buf, TEXT_EXT);
+#endif
   }
 
   menuTextView(event);

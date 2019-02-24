@@ -87,6 +87,7 @@ PLAY_FUNCTION(playValue, source_t idx)
   }
 }
 
+#if defined(VOICE)
 void playCustomFunctionFile(const CustomFunctionData * sd, uint8_t id)
 {
   if (sd->play.name[0] != '\0') {
@@ -98,7 +99,9 @@ void playCustomFunctionFile(const CustomFunctionData * sd, uint8_t id)
     PLAY_FILE(filename, sd->func == FUNC_BACKGND_MUSIC ? PLAY_BACKGROUND : 0, id);
   }
 }
+#endif
 
+#if defined(VOICE)
 bool isRepeatDelayElapsed(const CustomFunctionData * functions, CustomFunctionsContext & functionsContext, uint8_t index)
 {
   const CustomFunctionData * cfn = &functions[index];
@@ -115,6 +118,9 @@ bool isRepeatDelayElapsed(const CustomFunctionData * functions, CustomFunctionsC
     return false;
   }
 }
+#else
+#define isRepeatDelayElapsed(...) true
+#endif
 
 #define VOLUME_HYSTERESIS 10            // how much must a input value change to actually be considered for new volume setting
 getvalue_t requiredSpeakerVolumeRawLast = 1024 + 1; //initial value must be outside normal range
@@ -327,12 +333,11 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
 #else
           case FUNC_PLAY_SOUND:
           case FUNC_PLAY_TRACK:
-          case FUNC_PLAY_BOTH:
           case FUNC_PLAY_VALUE:
           {
             tmr10ms_t tmr10ms = get_tmr10ms();
             uint8_t repeatParam = CFN_PLAY_REPEAT(cfn);
-            if (!functionsContext.lastFunctionTime[i] || (CFN_FUNC(cfn)==FUNC_PLAY_BOTH && active!=(bool)(functionsContext.activeSwitches&switch_mask)) || (repeatParam && (signed)(tmr10ms-functionsContext.lastFunctionTime[i])>=1000*repeatParam)) {
+            if (!functionsContext.lastFunctionTime[i] || (active!=(bool)(functionsContext.activeSwitches&switch_mask)) || (repeatParam && (signed)(tmr10ms-functionsContext.lastFunctionTime[i])>=1000*repeatParam)) {
               functionsContext.lastFunctionTime[i] = tmr10ms;
               uint8_t param = CFN_PARAM(cfn);
               if (CFN_FUNC(cfn) == FUNC_PLAY_SOUND) {
@@ -346,7 +351,6 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
                 if (CFN_FUNC(cfn) == FUNC_PLAY_TRACK && param > 250)
                   param = GVAR_VALUE(param-251, getGVarFlightMode(mixerCurrentFlightMode, param-251));
 #endif
-                PUSH_CUSTOM_PROMPT(active ? param : param+1, PLAY_INDEX);
               }
             }
             if (!active) {

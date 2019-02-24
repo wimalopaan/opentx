@@ -1039,9 +1039,6 @@ enum AUDIO_SOUNDS {
 
 #include "buzzer.h"
 
-
-
-
 #include "translations.h"
 #include "fonts.h"
 

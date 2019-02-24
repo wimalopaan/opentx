@@ -34,8 +34,13 @@ void menuChannelsView(event_t event)
     case EVT_KEY_BREAK(KEY_EXIT):
       popMenu();
       break;
+#if defined(PCBI6)
+    case EVT_KEY_FIRST(KEY_UP):
+    case EVT_KEY_FIRST(KEY_DOWN):
+#else
     case EVT_KEY_FIRST(KEY_RIGHT):
     case EVT_KEY_FIRST(KEY_LEFT):
+#endif
       secondPage = !secondPage;
       break;
     case EVT_KEY_FIRST(KEY_ENTER):

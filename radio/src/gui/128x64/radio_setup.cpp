@@ -489,6 +489,7 @@ void menuRadioSetup(event_t event)
         break;
 #endif
 
+#if defined(VOICE)
       case ITEM_SETUP_LANGUAGE:
         lcdDrawTextAlignedLeft(y, STR_VOICELANG);
         lcdDrawText(RADIO_SETUP_2ND_COLUMN, y, currentLanguagePack->name, attr);
@@ -504,6 +505,7 @@ void menuRadioSetup(event_t event)
       case ITEM_SETUP_IMPERIAL:
         g_eeGeneral.imperial = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_UNITSSYSTEM, STR_VUNITSSYSTEM, g_eeGeneral.imperial, 0, 1, attr, event);
         break;
+#endif
 
 #if defined(FAI_CHOICE)
       case ITEM_SETUP_FAI:

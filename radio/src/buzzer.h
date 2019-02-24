@@ -21,6 +21,7 @@
 #ifndef _BUZZER_H_
 #define _BUZZER_H_
 
+
 #if defined(BUZZER)
 extern uint8_t g_beepCnt;
 extern uint8_t beepAgain;
@@ -55,12 +56,12 @@ inline void beep(uint8_t) { }
 #if !defined(AUDIO)
 
 #if defined(BUZZER)
-    #define AUDIO_HELLO()           PUSH_SYSTEM_PROMPT(AUDIO_HELLO)
+    #define AUDIO_HELLO()          PUSH_SYSTEM_PROMPT(AUDIO_HELLO)
     #define AUDIO_BYE()
     #define AUDIO_TX_BATTERY_LOW() PUSH_SYSTEM_PROMPT(AU_TX_BATTERY_LOW)
     #define AUDIO_INACTIVITY()     PUSH_SYSTEM_PROMPT(AU_INACTIVITY)
     #define AUDIO_ERROR_MESSAGE(e) PUSH_SYSTEM_PROMPT((e))
-    #define AUDIO_TIMER_MINUTE(t)  playDuration(t)
+    #define AUDIO_TIMER_MINUTE(t)  playDuration(t, 0, 0)
     // TODO
     #define AUDIO_TIMER_30()       PUSH_SYSTEM_PROMPT(AU_TIMER_30)
     #define AUDIO_TIMER_20()       PUSH_SYSTEM_PROMPT(AU_TIMER_20)
@@ -71,7 +72,7 @@ inline void beep(uint8_t) { }
   #define AUDIO_WARNING1()         beep(3)
   #define AUDIO_ERROR()            beep(4)
   #define AUDIO_MIX_WARNING(x)     beep(1)
-  #define AUDIO_POT_MIDDLE()       beep(2)
+  #define AUDIO_POT_MIDDLE(x)       beep(2)
   #define AUDIO_TIMER_COUNTDOWN(idx, val)  beep(2)
   #define AUDIO_TIMER_ELAPSED(idx) beep(3)
   #define AUDIO_VARIO_UP()         _beep(1)

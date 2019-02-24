@@ -135,7 +135,7 @@ inline bool isModulePXX(uint8_t idx)
   return isModuleXJT(idx) || isModuleR9M(idx);
 }
 
-#if defined(DSM2)
+
 inline bool isModuleDSM2(uint8_t idx)
 {
   return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_DSM2;
@@ -145,12 +145,6 @@ inline bool isModuleSBUS(uint8_t idx)
 {
   return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_SBUS;
 }
-#else
-inline bool isModuleDSM2(uint8_t idx)
-{
-  return false;
-}
-#endif
 
 // order is the same as in enum Protocols in myeeprom.h (none, ppm, pxx, dsm, crossfire, multi, r9m, sbus)
 static const int8_t maxChannelsModules[] = { 0, 8, 8, -2, 8, 4, 8, 8}; // relative to 8!

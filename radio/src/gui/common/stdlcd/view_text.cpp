@@ -27,6 +27,7 @@ char s_text_screen[LCD_LINES-1][LCD_COLS+1];
 
 void readTextFile(int & lines_count)
 {
+#if defined(SDCARD)
   FIL file;
   int result;
   char c;
@@ -92,6 +93,7 @@ void readTextFile(int & lines_count)
   if (lines_count == 0) {
     lines_count = current_line;
   }
+#endif
 }
 
 #if defined(PCBX7) || defined(PCBX9E)
@@ -104,6 +106,7 @@ void readTextFile(int & lines_count)
 
 void readModelNotes()
 {
+#if defined(SDCARD)
   LED_ERROR_BEGIN();
 
   strcpy(s_text_file, MODELS_PATH "/");
@@ -122,6 +125,7 @@ void readModelNotes()
   }
 
   LED_ERROR_END();
+#endif
 }
 
 void menuTextView(event_t event)

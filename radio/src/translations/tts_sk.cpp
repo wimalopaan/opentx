@@ -170,7 +170,7 @@ I18N_PLAY_FUNCTION(sk, playNumber, getvalue_t number, uint8_t unit, uint8_t att)
   }
 }
 
-I18N_PLAY_FUNCTION(sk, playDuration, int seconds PLAY_DURATION_ATT)
+I18N_PLAY_FUNCTION(sk, playDuration, int seconds, uint8_t flags)
 {
   if (seconds < 0) {
     PUSH_NUMBER_PROMPT(SK_PROMPT_MINUS);

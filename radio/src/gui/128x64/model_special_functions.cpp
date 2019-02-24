@@ -117,12 +117,16 @@ void onCustomFunctionsMenu(const char * result)
   }
 
   if (result == STR_COPY) {
+	#if defined(SDCARD)
     clipboard.type = CLIPBOARD_TYPE_CUSTOM_FUNCTION;
     clipboard.data.cfn = *cfn;
+	#endif
   }
   else if (result == STR_PASTE) {
+	#if defined(SDCARD)
     *cfn = clipboard.data.cfn;
     storageDirty(eeFlags);
+	#endif
   }
   else if (result == STR_CLEAR) {
     memset(cfn, 0, sizeof(CustomFunctionData));
@@ -159,8 +163,10 @@ void menuSpecialFunctions(event_t event, CustomFunctionData * functions, CustomF
     CustomFunctionData *cfn = &functions[sub];
     if (!CFN_EMPTY(cfn))
       POPUP_MENU_ADD_ITEM(STR_COPY);
+#if defined(SDCARD)
     if (clipboard.type == CLIPBOARD_TYPE_CUSTOM_FUNCTION && isAssignableFunctionAvailable(clipboard.data.cfn.func))
       POPUP_MENU_ADD_ITEM(STR_PASTE);
+#endif
     if (!CFN_EMPTY(cfn) && CFN_EMPTY(&functions[MAX_SPECIAL_FUNCTIONS-1]))
       POPUP_MENU_ADD_ITEM(STR_INSERT);
     if (!CFN_EMPTY(cfn))

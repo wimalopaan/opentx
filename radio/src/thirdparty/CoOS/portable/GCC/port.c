@@ -54,9 +54,9 @@ extern U8     Inc8(volatile U8 *data) ;
 extern U8     Dec8(volatile U8 *data) ; 
 extern void   IRQ_ENABLE_RESTORE(void);
 extern void   IRQ_DISABLE_SAVE(void);
-extern void   SetEnvironment(OS_STK *pstk) __attribute__ ((naked)); 	
-extern void   SwitchContext(void)          __attribute__ ((naked));
-extern void   PendSV_Handler(void)         __attribute__ ((naked));
+extern void   SetEnvironment(OS_STK *pstk) __attribute__ ((naked)) __attribute__((used)); 	
+extern void   SwitchContext(void)          __attribute__ ((naked)) __attribute__((used));
+extern void   PendSV_Handler(void)         __attribute__ ((naked)) __attribute__((used));
 
 
 /**

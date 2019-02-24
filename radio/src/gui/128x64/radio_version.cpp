@@ -44,10 +44,12 @@ void menuRadioVersion(event_t event)
      lcdDrawTextAlignedLeft(6*FH, "CoPr: ---");
   }
 #elif defined(EEPROM_RLC)
+#if defined(SDCARD)
   lcdDrawTextAlignedLeft(MENU_HEADER_HEIGHT+5*FH+1, STR_EEBACKUP);
+#endif
   lcdDrawTextAlignedLeft(MENU_HEADER_HEIGHT+6*FH+1, STR_FACTORYRESET);
   lcdDrawFilledRect(0, MENU_HEADER_HEIGHT+5*FH, LCD_W, 2*FH+1, SOLID);
-
+#if defined(SDCARD)
 #if defined(PCBXLITE)
   if (event == EVT_KEY_LONG(KEY_ENTER)) {
     killEvents(KEY_ENTER);
@@ -62,7 +64,8 @@ void menuRadioVersion(event_t event)
   if (event == EVT_KEY_LONG(KEY_ENTER)) {
     eepromBackup();
   }
-  else if (event == EVT_KEY_LONG(KEY_MENU)) {
+#endif
+  if (event == EVT_KEY_LONG(KEY_MENU)) {
     POPUP_CONFIRMATION(STR_CONFIRMRESET);
   }
 #endif

@@ -24,6 +24,12 @@ int16_t ppmInput[MAX_TRAINER_CHANNELS];
 uint8_t ppmInputValidityTimer;
 
 
+#if defined(STM32F0)
+void checkTrainerSignalWarning()
+{
+	
+}
+#else
 #include "audio_arm.h"
 
 void checkTrainerSignalWarning()
@@ -48,4 +54,4 @@ void checkTrainerSignalWarning()
     AUDIO_TRAINER_BACK();
   }
 }
-
+#endif

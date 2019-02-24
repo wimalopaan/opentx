@@ -47,9 +47,11 @@ Defines chip type,cortex-m3(1),cortex-m0(2), cortex-m4 without FPU(1), cortex-m4
 */
 
 #if defined(STM32F4)
-  #define CFG_CHIP_TYPE           (3)   // this add support for hardware floating point unit (saves registers on stack)
+	#define CFG_CHIP_TYPE           (3)   // this add support for hardware floating point unit (saves registers on stack)
+#elif defined(STM32F0)
+	#define CFG_CHIP_TYPE           (2)
 #else
-  #define CFG_CHIP_TYPE           (1)
+	#define CFG_CHIP_TYPE           (1)
 #endif
 
 /*!< 
@@ -76,6 +78,8 @@ System frequency (Hz).
 */    
 #if defined(STM32F4)
 #define CFG_CPU_FREQ            (168000000)
+#elif defined(STM32F0)
+#define CFG_CPU_FREQ            (48000000)
 #elif defined(STM32)
 #define CFG_CPU_FREQ            (120000000)
 #else

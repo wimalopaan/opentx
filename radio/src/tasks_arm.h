@@ -24,11 +24,15 @@
 #include "rtos.h"
 
 // stack sizes should be in multiples of 8 for better alignment
-#define MENUS_STACK_SIZE       2000
+// expressed in integers resulting size is 4 times bigger
+#if defined(STM32F0)
+#define MENUS_STACK_SIZE       1024
+#else
+#define MENUS_STACK_SIZE       2048
+#endif
 #define MIXER_STACK_SIZE       512
 #define AUDIO_STACK_SIZE       512
-#define CLI_STACK_SIZE         1000  // only consumed with CLI build option
-
+#define CLI_STACK_SIZE         1024  // only consumed with CLI build option
 #define MIXER_TASK_PRIO        5
 #define AUDIO_TASK_PRIO        7
 #define MENUS_TASK_PRIO        10

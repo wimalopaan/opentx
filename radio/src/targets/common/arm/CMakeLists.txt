@@ -78,7 +78,9 @@ if(MULTIMODULE)
   set(SRC ${SRC} pulses/multi_arm.cpp telemetry/spektrum.cpp telemetry/flysky_ibus.cpp telemetry/multi.cpp)
 endif()
 add_definitions(-DCPUARM)
-add_definitions(-DTELEMETRY_FRSKY -DTELEMETRY_FRSKY_SPORT -DGPS -DPXX -DDSM2)
+if(NOT PCB STREQUAL I6X)
+add_definitions(-DTELEMETRY_FRSKY -DTELEMETRY_FRSKY_SPORT -DGPS -DDSM2 -DPXX)
+endif()
 add_definitions(-DBOLD_FONT -DBATTGRAPH -DTHRTRACE)
 add_definitions(-DREQUIRED_SDCARD_VERSION="${SDCARD_VERSION}")
 include_directories(${COOS_DIR} ${COOS_DIR}/kernel ${COOS_DIR}/portable)
@@ -90,21 +92,30 @@ set(SRC
   ${SRC}
   main_arm.cpp
   tasks_arm.cpp
-  audio_arm.cpp
-  io/frsky_sport.cpp
   telemetry/telemetry.cpp
   telemetry/telemetry_holders.cpp
   telemetry/telemetry_sensors.cpp
-  telemetry/frsky.cpp
-  telemetry/frsky_d_arm.cpp
-  telemetry/frsky_sport.cpp
   crc16.cpp
   vario.cpp
   )
+  
+if(PCB STREQUAL I6X)
+else()
+set(SRC
+  ${SRC}
+  audio_arm.cpp
+  io/frsky_sport.cpp
+  telemetry/frsky.cpp
+  telemetry/frsky_d_arm.cpp
+  telemetry/frsky_sport.cpp
+  )
+endif()
+if(NOT CPU_TYPE STREQUAL STM32F0)
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
   diskio.cpp
 )
+endif()
 set(TARGET_SRC
   ${TARGET_SRC}
   pulses_driver.cpp
@@ -130,12 +141,16 @@ set(PULSES_SRC
   ${PULSES_SRC}
   pulses_arm.cpp
   ppm_arm.cpp
+ ) 
+if(NOT CPU_TYPE STREQUAL STM32F0)
+set(PULSES_SRC
+  ${PULSES_SRC}
   pxx.cpp
   pxx1.cpp
   dsm2_arm.cpp
   sbus_arm.cpp
   )
-
+endif()
 if(PXX2)
   set(PULSES_SRC
     ${PULSES_SRC}

@@ -1855,7 +1855,7 @@ void opentxInit(OPENTX_INIT_ARGS)
     readonly = false;
   }
 #endif
-
+#if defined(AUDIO)
   currentSpeakerVolume = requiredSpeakerVolume = g_eeGeneral.speakerVolume + VOLUME_LEVEL_DEF;
   #if !defined(SOFTWARE_VOLUME)
     setScaledVolume(currentSpeakerVolume);
@@ -1863,6 +1863,8 @@ void opentxInit(OPENTX_INIT_ARGS)
 
   referenceSystemAudioFiles();
   audioQueue.start();
+#endif
+
   BACKLIGHT_ENABLE();
 
 #if defined(PCBSKY9X)

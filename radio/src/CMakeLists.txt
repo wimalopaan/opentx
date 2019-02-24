@@ -1,7 +1,7 @@
 include(CMakeForceCompiler)
 include(Bitmaps)
 
-set(PCB_TYPES X7 XLITE X9D X9D+ X9E X10 X12S SKY9X 9XRPRO AR9X)
+set(PCB_TYPES X7 XLITE X9D X9D+ X9E X10 X12S SKY9X 9XRPRO AR9X I6X)
 set(GUI_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU NL)
 set(TTS_LANGUAGES CZ DE EN ES FR IT PT SK SE PL HU NL RU)
 
@@ -86,6 +86,8 @@ elseif(PCB STREQUAL X9E OR PCB STREQUAL X9D+ OR PCB STREQUAL X9D OR PCB STREQUAL
   include(targets/taranis/CMakeLists.txt)
 elseif(PCB STREQUAL SKY9X OR PCB STREQUAL 9XRPRO OR PCB STREQUAL AR9X)
   include(targets/sky9x/CMakeLists.txt)
+elseif(PCB STREQUAL I6X)
+  include(targets/flysky/CMakeLists.txt)
 else()
   message(FATAL_ERROR "Unknown PCB '${PCB}'")
 endif()
@@ -103,6 +105,10 @@ endif()
 
 if(CPU_TYPE STREQUAL STM32F2)
   include(targets/common/arm/stm32/f2/CMakeLists.txt)
+endif()
+
+if(CPU_TYPE STREQUAL STM32F0)
+  include(targets/common/arm/stm32/f0/CMakeLists.txt)
 endif()
 
 if(CPU_FAMILY STREQUAL STM32)
@@ -133,7 +139,7 @@ else()
   add_definitions(-DEEPROM -DEEPROM_RAW)
 endif()
 
-if(ARCH STREQUAL ARM AND NOT PCB STREQUAL X12S AND NOT PCB STREQUAL X10 AND NOT PCB STREQUAL XLITE)
+if(ARCH STREQUAL ARM AND NOT PCB STREQUAL X12S AND NOT PCB STREQUAL X10 AND NOT PCB STREQUAL XLITE  AND NOT PCB STREQUAL I6X)
   add_definitions(-DEEPROM_CONVERSIONS)
   set(SRC ${SRC} storage/eeprom_conversions.cpp)
 endif()
@@ -250,6 +256,8 @@ if(SDCARD)
   set(SRC ${SRC} sdcard.cpp rtc.cpp logs.cpp)
   set(FIRMWARE_SRC ${FIRMWARE_SRC} ${FATFS_SRC})
 endif()
+
+set(SRC ${SRC} rtc.cpp)
 
 if(SHUTDOWN_CONFIRMATION)
   add_definitions(-DSHUTDOWN_CONFIRMATION)
@@ -452,10 +460,10 @@ if(NOT MSVC)
       if(NOT LUA STREQUAL NO)
         # Lua needs %g and %f
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u _printf_float -u _scanf_float")
+		# Nano's malloc does work well with lua, use our own
+		add_definitions(-DUSE_BIN_ALLOCATOR)
+		set(SRC ${SRC} bin_allocator.cpp)
       endif()
-      # Nano's malloc does work well with lua, use our own
-      add_definitions(-DUSE_BIN_ALLOCATOR)
-      set(SRC ${SRC} bin_allocator.cpp)
     endif()
 
     if(PCB STREQUAL XLITE OR PCB STREQUAL X9D OR PCB STREQUAL X9D+ OR PCB STREQUAL X9E OR PCB STREQUAL X7 OR PCB STREQUAL X10 OR PCB STREQUAL X12S)

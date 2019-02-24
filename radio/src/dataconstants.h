@@ -69,6 +69,18 @@
   #define MAX_INPUTS                   32
   #define MAX_TRAINER_CHANNELS         16
   #define MAX_TELEMETRY_SENSORS        32
+#elif defined(PCBI6)
+  #define MAX_MODELS                   16
+  #define MAX_OUTPUT_CHANNELS          16 // number of real output channels CH1-CH16
+  #define MAX_FLIGHT_MODES             5
+  #define MAX_MIXERS                   32
+  #define MAX_EXPOS                    14
+  #define MAX_LOGICAL_SWITCHES         12
+  #define MAX_SPECIAL_FUNCTIONS        16 // number of functions assigned to switches
+  #define MAX_TRAINER_CHANNELS         8
+  #define MAX_INPUTS                   16
+  #define MAX_TELEMETRY_SENSORS        16
+  #define MAX_SCRIPTS				   0
 #else
   #define MAX_MODELS                   16
   #define MAX_OUTPUT_CHANNELS          16 // number of real output channels CH1-CH16
@@ -81,7 +93,7 @@
   #define MAX_TELEMETRY_SENSORS        0
 #endif
 
-  #define MAX_TIMERS                   3
+#define MAX_TIMERS                   3
 
 #define NUM_CYC                        3
 #define NUM_CAL_PPM                    4
@@ -187,7 +199,7 @@ enum BeeperMode {
   e_mode_all
 };
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
   enum ModuleIndex {
     INTERNAL_MODULE,
     EXTERNAL_MODULE,
@@ -227,6 +239,8 @@ enum BeeperMode {
 #define IS_INTERNAL_MODULE_ENABLED() (g_model.moduleData[INTERNAL_MODULE].type != MODULE_TYPE_NONE)
 #elif defined(PCBSKY9X)
   #define IS_INTERNAL_MODULE_ENABLED() (false)
+#elif defined(PCBI6)
+  #define IS_INTERNAL_MODULE_ENABLED() (true)
 #endif
 #define IS_EXTERNAL_MODULE_ENABLED() (g_model.moduleData[EXTERNAL_MODULE].type != MODULE_TYPE_NONE)
 
@@ -607,7 +621,7 @@ enum MixSources {
 
   MIXSRC_FIRST_SWITCH,
 
-#if defined(PCBXLITE)
+#if defined(PCBXLITE) || defined(PCBI6)
   MIXSRC_SA = MIXSRC_FIRST_SWITCH,  LUA_EXPORT("sa", "Switch A")
   MIXSRC_SB,                        LUA_EXPORT("sb", "Switch B")
   MIXSRC_SC,                        LUA_EXPORT("sc", "Switch C")

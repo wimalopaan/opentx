@@ -22,8 +22,10 @@
 
 #define STATUS_BAR_Y     (7*FH+1)
 #define TELEM_2ND_COLUMN (10*FW)
-
+#if defined(TELEMETRY_FRSKY)
 uint8_t s_frsky_view = 0;
+#endif
+
 
 #define BAR_LEFT    25
 #define BAR_WIDTH   100
@@ -162,6 +164,7 @@ bool displayNumbersTelemetryScreen(FrSkyScreenData & screen)
 
 bool displayCustomTelemetryScreen(uint8_t index)
 {
+#if defined(TELEMETRY_FRSKY)
   FrSkyScreenData & screen = g_model.frsky.screens[index];
 
   if (IS_BARS_SCREEN(s_frsky_view)) {
@@ -169,12 +172,13 @@ bool displayCustomTelemetryScreen(uint8_t index)
   }
 
   displayNumbersTelemetryScreen(screen);
-
+#endif
   return true;
 }
 
 bool displayTelemetryScreen()
 {
+#if defined(TELEMETRY_FRSKY)
 #if defined(LUA)
   if (TELEMETRY_SCREEN_TYPE(s_frsky_view) == TELEMETRY_SCREEN_TYPE_SCRIPT) {
     uint8_t state = isTelemetryScriptAvailable(s_frsky_view);
@@ -204,7 +208,7 @@ bool displayTelemetryScreen()
   }
 
 
-
+#endif
   return true;
 }
 
@@ -229,6 +233,7 @@ enum NavigationDirection {
 
 void menuViewTelemetryFrsky(event_t event)
 {
+#if defined(TELEMETRY_FRSKY)
   enum NavigationDirection direction = none;
 
   switch (event) {
@@ -291,6 +296,7 @@ void menuViewTelemetryFrsky(event_t event)
   drawTelemetryTopBar();
   lcdDrawText(2*FW, 3*FH, "No Telemetry Screens");
   displayRssiLine();
+#endif
 }
 
 #undef EVT_KEY_PREVIOUS_VIEW

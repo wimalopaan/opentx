@@ -65,10 +65,12 @@ uint8_t getRequiredProtocol(uint8_t port)
         case MODULE_TYPE_PPM:
           required_protocol = PROTO_PPM;
           break;
+#if defined(PXX) || defined(PXX2)
         case MODULE_TYPE_XJT:
         case MODULE_TYPE_R9M:
           required_protocol = PROTO_PXX_EXTERNAL_MODULE; // either PXX or PXX2 depending on compilation options
           break;
+#endif
         case MODULE_TYPE_SBUS:
           required_protocol = PROTO_SBUS;
           break;
@@ -124,6 +126,7 @@ uint8_t getRequiredProtocol(uint8_t port)
 
 void setupPulsesPXX(uint8_t port)
 {
+#if defined(PXX)
 #if defined(INTMODULE_USART) && defined(EXTMODULE_USART)
   modulePulsesData[port].pxx_uart.setupFrame(port);
 #elif !defined(INTMODULE_USART) && !defined(EXTMODULE_USART)
@@ -133,6 +136,7 @@ void setupPulsesPXX(uint8_t port)
     modulePulsesData[port].pxx_uart.setupFrame(port);
   else
     modulePulsesData[port].pxx.setupFrame(port);
+#endif
 #endif
 }
 
@@ -146,10 +150,11 @@ void setupPulses(uint8_t port)
   if (s_current_protocol[port] != required_protocol) {
     init_needed = true;
     switch (s_current_protocol[port]) { // stop existing protocol hardware
+#if defined(PXX)
       case PROTO_PXX:
         disable_pxx(port);
         break;
-
+#endif
 #if defined(DSM2)
       case PROTO_DSM2_LP45:
       case PROTO_DSM2_DSM2:
@@ -190,11 +195,12 @@ void setupPulses(uint8_t port)
 
   // Set up output data here
   switch (required_protocol) {
+#if defined(PXX)
     case PROTO_PXX:
       setupPulsesPXX(port);
       scheduleNextMixerCalculation(port, PXX_PERIOD);
       break;
-
+#endif
     case PROTO_SBUS:
       setupPulsesSbus(port);
       scheduleNextMixerCalculation(port, SBUS_PERIOD);
@@ -263,10 +269,11 @@ void setupPulses(uint8_t port)
 
   if (init_needed) {
     switch (required_protocol) { // Start new protocol hardware here
+#if defined(PXX)
       case PROTO_PXX:
         init_pxx(port);
         break;
-
+#endif
 #if defined(DSM2)
       case PROTO_DSM2_LP45:
       case PROTO_DSM2_DSM2:

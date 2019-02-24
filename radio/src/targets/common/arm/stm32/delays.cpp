@@ -2,7 +2,7 @@
  * Copyright (C) OpenTX
  *
  * Based on code named
- *   th9x - http://code.google.com/p/th9x 
+ *   th9x - http://code.google.com/p/th9x
  *   er9x - http://code.google.com/p/er9x
  *   gruvin9x - http://code.google.com/p/gruvin9x
  *
@@ -23,30 +23,57 @@
 #if defined(STM32F2)
   #include "dwt.h"    // the old ST library that we use does not define DWT register for STM32F2xx
 #endif
+#if defined(STM32F0)
+  #include "coocox.h"
+#endif
 
 #define SYSTEM_TICKS_1US    ((CFG_CPU_FREQ + 500000)  / 1000000)      // number of system ticks in 1us
 #define SYSTEM_TICKS_01US   ((CFG_CPU_FREQ + 5000000) / 10000000)     // number of system ticks in 0.1us (rounding needed for sys frequencies that are not multiple of 10MHz)
 
+#if defined(STM32F0)
+void delaysInit(void)
+{
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+}
+
+void delay_01us(uint16_t nb)
+{
+    TIM6->SR = 0;
+    TIM6->PSC = 0;
+    //104,166666667ns
+    TIM6->ARR = 4 * nb;
+    TIM6->CR1 |= TIM_CR1_CEN;
+    while (!(TIM6->SR & TIM_SR_UIF));
+}
+void delay_us(uint16_t nb)
+{
+    TIM6->SR = 0;
+    TIM6->PSC = 0;
+    TIM6->ARR = 47 * nb;
+    TIM6->CR1 |= TIM_CR1_CEN;
+    while (!(TIM6->SR & TIM_SR_UIF));
+}
+#else
 void delaysInit(void)
 {
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
   DWT->CYCCNT = 0;
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 }
-
 void delay_01us(uint16_t nb)
 {
   volatile uint32_t dwtStart = DWT->CYCCNT;
   volatile uint32_t dwtTotal = (SYSTEM_TICKS_01US * nb) - 10;
   while ((DWT->CYCCNT - dwtStart) < dwtTotal);
-}
 
+}
 void delay_us(uint16_t nb)
 {
   volatile uint32_t dwtStart = DWT->CYCCNT;
   volatile uint32_t dwtTotal = (SYSTEM_TICKS_1US * nb) - 10;
   while ((DWT->CYCCNT - dwtStart) < dwtTotal);
 }
+#endif
 
 void delay_ms(uint32_t ms)
 {

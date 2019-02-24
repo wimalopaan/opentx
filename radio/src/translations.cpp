@@ -238,7 +238,6 @@ const char STR_SWITCHWARNING[]  = TR_SWITCHWARNING;
 const char STR_POTWARNINGSTATE[]  = TR_POTWARNINGSTATE;
 const char STR_POTWARNING[]  = TR_POTWARNING;
 const char STR_SLIDERWARNING[]  = TR_SLIDERWARNING;
-#ifdef TELEMETRY_FRSKY
 const char STR_TIMEZONE[]  = TR_TIMEZONE;
 const char STR_ADJUST_RTC[]  = TR_ADJUST_RTC;
 const char STR_GPS[]  = TR_GPS;
@@ -247,7 +246,6 @@ const char STR_VARIO[]  = TR_VARIO;
 const char STR_PITCH_AT_ZERO[]  = TR_PITCH_AT_ZERO;
 const char STR_PITCH_AT_MAX[]  = TR_PITCH_AT_MAX;
 const char STR_REPEAT_AT_ZERO[]  = TR_REPEAT_AT_ZERO;
-#endif
 const char STR_RXCHANNELORD[]  = TR_RXCHANNELORD;
 const char STR_STICKS[]  = TR_STICKS;
 const char STR_POTS[]  = TR_POTS;
@@ -346,11 +344,9 @@ const char STR_MONITOR_OUTPUT_DESC[]  = TR_MONITOR_OUTPUT_DESC;
 const char STR_MONITOR_MIXER_DESC[]  = TR_MONITOR_MIXER_DESC;
 const char STR_MENUGLOBALVARS[]  = TR_MENUGLOBALVARS;
 
-#if defined(DSM2) || defined(PXX)
 const char STR_RECEIVER_NUM[]  = TR_RECEIVER_NUM;
 const char STR_RECEIVER[]  = TR_RECEIVER;
 const char STR_REBIND[]  = TR_REBIND;
-#endif
 
 const char STR_SYNCMENU[]  = TR_SYNCMENU;
 const char STR_INTERNALRF[]  = TR_INTERNALRF;
