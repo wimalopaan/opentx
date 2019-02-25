@@ -22,104 +22,106 @@
 #define _BUZZER_H_
 
 
-#if defined(BUZZER)
+extern void pushPrompt(uint16_t prompt);
+extern void pushUnit(uint8_t unit, uint8_t idx, uint8_t id);
+extern bool isPlaying();
+extern void audioEvent(unsigned int index);
+
 extern uint8_t g_beepCnt;
 extern uint8_t beepAgain;
 extern uint8_t beepAgainOrig;
 extern uint8_t beepOn;
 extern bool warble;
 extern bool warbleC;
+
 #if defined(HAPTIC)
 extern uint8_t hapticTick;
 #endif /* HAPTIC */
-#endif /* BUZZER */
 
-#if defined(BUZZER)
 
 #if defined(SIMU)
 inline void _beep(uint8_t b)
 {
-  g_beepCnt = b;
+	g_beepCnt = b;
 }
-#else /* SIMU */
+#else
 inline void _beep(uint8_t b)
 {
   buzzerSound(b);
 }
-#endif /* SIMU */
-
+#endif
 void beep(uint8_t val);
-#else /* BUZZER */
-inline void beep(uint8_t) { }
-#endif /* BUZZER */
 
-#if !defined(AUDIO)
 
-#if defined(BUZZER)
-    #define AUDIO_HELLO()          PUSH_SYSTEM_PROMPT(AUDIO_HELLO)
-    #define AUDIO_BYE()
-    #define AUDIO_TX_BATTERY_LOW() PUSH_SYSTEM_PROMPT(AU_TX_BATTERY_LOW)
-    #define AUDIO_INACTIVITY()     PUSH_SYSTEM_PROMPT(AU_INACTIVITY)
-    #define AUDIO_ERROR_MESSAGE(e) PUSH_SYSTEM_PROMPT((e))
-    #define AUDIO_TIMER_MINUTE(t)  playDuration(t, 0, 0)
-    // TODO
-    #define AUDIO_TIMER_30()       PUSH_SYSTEM_PROMPT(AU_TIMER_30)
-    #define AUDIO_TIMER_20()       PUSH_SYSTEM_PROMPT(AU_TIMER_20)
+#define AUDIO_HELLO()          PUSH_SYSTEM_PROMPT(AUDIO_HELLO)
+#define AUDIO_BYE()
+#define AUDIO_TX_BATTERY_LOW() PUSH_SYSTEM_PROMPT(AU_TX_BATTERY_LOW)
+#define AUDIO_INACTIVITY()     PUSH_SYSTEM_PROMPT(AU_INACTIVITY)
+#define AUDIO_ERROR_MESSAGE(e) PUSH_SYSTEM_PROMPT((e))
+#define AUDIO_TIMER_MINUTE(t)  playDuration(t, 0, 0)
+  // TODO
+#define AUDIO_TIMER_30()       PUSH_SYSTEM_PROMPT(AU_TIMER_30)
+#define AUDIO_TIMER_20()       PUSH_SYSTEM_PROMPT(AU_TIMER_20)
 
-  #define AUDIO_KEY_PRESS()        beep(0)
-  #define AUDIO_KEY_ERROR()        beep(2)
-  #define AUDIO_WARNING2()         beep(2)
-  #define AUDIO_WARNING1()         beep(3)
-  #define AUDIO_ERROR()            beep(4)
-  #define AUDIO_MIX_WARNING(x)     beep(1)
-  #define AUDIO_POT_MIDDLE(x)       beep(2)
-  #define AUDIO_TIMER_COUNTDOWN(idx, val)  beep(2)
-  #define AUDIO_TIMER_ELAPSED(idx) beep(3)
-  #define AUDIO_VARIO_UP()         _beep(1)
-  #define AUDIO_VARIO_DOWN()       _beep(1)
-  #define AUDIO_TRIM_PRESS(f)      { if (!IS_KEY_FIRST(event)) warble = true; beep(1); }
-  #define AUDIO_TRIM_MIDDLE()      beep(2)
-  #define AUDIO_TRIM_MIN()         beep(2)
-  #define AUDIO_TRIM_MAX()         beep(2)
-  #define AUDIO_PLAY(p)            beep(3)
+#define AUDIO_KEY_PRESS()        beep(0)
+#define AUDIO_KEY_ERROR()        beep(2)
+#define AUDIO_WARNING2()         beep(2)
+#define AUDIO_WARNING1()         beep(3)
+#define AUDIO_ERROR()            beep(4)
+#define AUDIO_MIX_WARNING(x)     beep(1)
+#define AUDIO_POT_MIDDLE(x)      beep(2)
+#define AUDIO_TIMER_COUNTDOWN(idx, val)  beep(2)
+#define AUDIO_TIMER_ELAPSED(idx) beep(3)
+#define AUDIO_VARIO_UP()         _beep(1)
+#define AUDIO_VARIO_DOWN()       _beep(1)
+#define AUDIO_TRIM_PRESS(f)      { if (!IS_KEY_FIRST(event)) warble = true; beep(1); }
+#define AUDIO_TRIM_MIDDLE()      beep(2)
+#define AUDIO_TRIM_MIN()         beep(2)
+#define AUDIO_TRIM_MAX()         beep(2)
+#define AUDIO_PLAY(p)            beep(3)
 
-  #define IS_AUDIO_BUSY() (g_beepCnt || beepAgain || beepOn)
-#else /* BUZZER */
-  #define AUDIO_HELLO()
-  #define AUDIO_BYE()
-  #define AUDIO_TX_BATTERY_LOW()
-  #define AUDIO_INACTIVITY()
-  #define AUDIO_ERROR_MESSAGE(e)
-  #define AUDIO_TIMER_MINUTE(t)
-  #define AUDIO_TIMER_30()
-  #define AUDIO_TIMER_20()
-  #define AUDIO_WARNING2()
-  #define AUDIO_WARNING1()
-  #define AUDIO_ERROR()
-  #define AUDIO_MIX_WARNING(x)
-  #define AUDIO_POT_MIDDLE()
-  #define AUDIO_TIMER_LT10(m, x)
-  #define AUDIO_TIMER_00(m)
-  #define AUDIO_VARIO_UP()
-  #define AUDIO_VARIO_DOWN()
-  #define AUDIO_TRIM(event, f)
-  #define AUDIO_TRIM_MIDDLE(f)
-  #define AUDIO_TRIM_END(f)
-  #define AUDIO_PLAY(p)
-  #define IS_AUDIO_BUSY() false
-#endif /* BUZZER */
+#define IS_AUDIO_BUSY() (g_beepCnt || beepAgain || beepOn)
 
-  #define AUDIO_RESET()
-  #define AUDIO_FLUSH()
+#define AUDIO_RESET()
+#define AUDIO_FLUSH()
 
-  #define PLAY_PHASE_OFF(phase)
-  #define PLAY_PHASE_ON(phase)
-  #define PLAY_SWITCH_MOVED(sw)
-  #define PLAY_LOGICAL_SWITCH_OFF(sw)
-  #define PLAY_LOGICAL_SWITCH_ON(sw)
-  #define PLAY_MODEL_NAME()
-  #define START_SILENCE_PERIOD()
-#endif /* !AUDIO */
+#define PLAY_PHASE_OFF(phase)
+#define PLAY_PHASE_ON(phase)
+#define PLAY_SWITCH_MOVED(sw)
+#define PLAY_LOGICAL_SWITCH_OFF(sw)
+#define PLAY_LOGICAL_SWITCH_ON(sw)
+#define PLAY_MODEL_NAME()
+#define START_SILENCE_PERIOD()
+
+#define PROMPT_CUSTOM_BASE      0
+#define PROMPT_I18N_BASE        256
+#define PROMPT_SYSTEM_BASE      480
+
+#define I18N_PLAY_FUNCTION(lng, x, ...) void lng ## _ ## x(__VA_ARGS__, uint8_t id)
+#define PLAY_FUNCTION(x, ...)           void x(__VA_ARGS__, uint8_t id)
+
+#define PUSH_CUSTOM_PROMPT(p, id)       pushPrompt(PROMPT_CUSTOM_BASE+(p))
+#define PUSH_NUMBER_PROMPT(p)           pushPrompt(PROMPT_I18N_BASE+(p))
+#define PUSH_SYSTEM_PROMPT(p)           pushPrompt(PROMPT_SYSTEM_BASE+(p))
+#define PLAY_NUMBER(n, u, a)            playNumber((n), (u), (a), id)
+#define PUSH_UNIT_PROMPT(p, i)   		pushUnit((p), (i), id)
+#define PLAY_DURATION(d, att)    		{}
+#define PLAY_TIME
+#define IS_PLAY_TIME()                  (0)
+#define IS_PLAYING(id)                  isPlaying()
+#define PLAY_VALUE(v, id)        		playValue((v), (id))
+
+#define AUDIO_RSSI_ORANGE()      audioEvent(AU_RSSI_ORANGE)
+#define AUDIO_RSSI_RED()         audioEvent(AU_RSSI_RED)
+#define AUDIO_RAS_RED()          audioEvent(AU_RAS_RED)
+#define AUDIO_TELEMETRY_LOST()   audioEvent(AU_TELEMETRY_LOST)
+#define AUDIO_TELEMETRY_BACK()   audioEvent(AU_TELEMETRY_BACK)
+#define AUDIO_TRAINER_LOST()     audioEvent(AU_TRAINER_LOST)
+#define AUDIO_TRAINER_BACK()     audioEvent(AU_TRAINER_BACK)
+
+#define AUDIO_VARIO(fq, t, p, f) {}
+
+#define setScaledVolume(v)
 
 
 #endif // _BUZZER_H_

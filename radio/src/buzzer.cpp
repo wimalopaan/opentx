@@ -39,7 +39,7 @@ static const uint8_t beepTab[]  = {
 
 void beep(uint8_t val)
 {
-#if defined(HAPTIC) && !defined(AUDIO)
+#if defined(HAPTIC)
   // completely untested
   if (val == 0)
     haptic.play(5, 0, PLAY_NOW);
@@ -47,14 +47,37 @@ void beep(uint8_t val)
     haptic.event(AU_ERROR);
 #endif
 
-#if !defined(AUDIO)
   if (g_eeGeneral.alarmsFlash && val>1) {
     flashCounter = FLASH_DURATION;
   }
-#endif
 
   if (g_eeGeneral.beepMode>0 || (g_eeGeneral.beepMode==0 && val!=0) || (g_eeGeneral.beepMode==-1 && val>=3)) {
     _beep(*(beepTab+5*(2+g_eeGeneral.beepLength)+val));
   }
 }
 
+
+void pushPrompt(uint16_t value)
+{
+
+}
+
+void pushCustomPrompt(uint8_t value)
+{
+  pushPrompt(PROMPT_CUSTOM_BASE + value);
+}
+
+void pushNumberPrompt(uint8_t value)
+{
+  pushPrompt(PROMPT_I18N_BASE + value);
+}
+void pushUnit(uint8_t unit, uint8_t idx, uint8_t id){
+
+}
+
+void audioEvent(unsigned int index){
+
+}
+bool isPlaying(){
+	return false;
+}

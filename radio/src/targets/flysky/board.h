@@ -57,7 +57,6 @@ extern "C" {
 
 
 #include "usb_driver.h"
-#include "voice.h"
 /*
 #if !defined(SIMU)
   #include "usbd_cdc_core.h"
