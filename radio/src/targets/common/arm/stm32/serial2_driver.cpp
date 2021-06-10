@@ -27,7 +27,7 @@ DMAFifo<32> serial2RxFifo __DMA (SERIAL_DMA_Stream_RX);
 #endif
 void uart3Setup(unsigned int baudrate, bool dma)
 {
-#if !defined(STM32F0)
+//#if !defined(STM32F0)
   USART_InitTypeDef USART_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -50,6 +50,7 @@ void uart3Setup(unsigned int baudrate, bool dma)
   USART_Init(SERIAL_USART, &USART_InitStructure);
 
   if (dma) {
+#if !defined(STM32F0)    
     DMA_InitTypeDef DMA_InitStructure;
     serial2RxFifo.clear();
     USART_ITConfig(SERIAL_USART, USART_IT_RXNE, DISABLE);
@@ -73,6 +74,7 @@ void uart3Setup(unsigned int baudrate, bool dma)
     USART_DMACmd(SERIAL_USART, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(SERIAL_USART, ENABLE);
     DMA_Cmd(SERIAL_DMA_Stream_RX, ENABLE);
+#endif    
   }
   else {
     USART_Cmd(SERIAL_USART, ENABLE);
@@ -81,7 +83,7 @@ void uart3Setup(unsigned int baudrate, bool dma)
     NVIC_SetPriority(SERIAL_USART_IRQn, 7);
     NVIC_EnableIRQ(SERIAL_USART_IRQn);
   }
-#endif
+//#endif
 }
 
 void serial2Init(unsigned int mode, unsigned int protocol)
@@ -92,7 +94,9 @@ void serial2Init(unsigned int mode, unsigned int protocol)
 
   switch (mode) {
     case UART_MODE_TELEMETRY_MIRROR:
+#if !defined(STM32F0)
       uart3Setup(FRSKY_SPORT_BAUDRATE, false);
+#endif
       break;
 #if defined(DEBUG) || defined(CLI)
     case UART_MODE_DEBUG:
@@ -100,9 +104,11 @@ void serial2Init(unsigned int mode, unsigned int protocol)
       break;
 #endif
     case UART_MODE_TELEMETRY:
+#if !defined(STM32F0)    
       if (protocol == PROTOCOL_FRSKY_D_SECONDARY) {
         uart3Setup(FRSKY_D_BAUDRATE, true);
       }
+#endif      
       break;
     case UART_MODE_LUA:
       uart3Setup(DEBUG_BAUDRATE, false);

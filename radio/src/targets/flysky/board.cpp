@@ -231,16 +231,16 @@ void boardInit()
   __enable_irq();
   backlightInit();
   backlightEnable(1);
-  //i2cInit();
+  eepromInit();
   ////usbInit();
 
 #if defined(DEBUG) && defined(SERIAL_GPIO)
-  serial2Init(0, 0); // default serial mode (None if DEBUG not defined)
-  TRACE("\FlySky board started :)");
+  serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
+  TRACE("FlySky board started :)");
 #endif
 
 #if defined(DEBUG)
-  DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP|DBGMCU_TIM1_STOP|DBGMCU_TIM2_STOP|DBGMCU_TIM3_STOP|DBGMCU_TIM6_STOP|DBGMCU_TIM8_STOP|DBGMCU_TIM10_STOP|DBGMCU_TIM13_STOP|DBGMCU_TIM14_STOP, ENABLE);
+  DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP|DBGMCU_TIM1_STOP|DBGMCU_TIM2_STOP|DBGMCU_TIM3_STOP|DBGMCU_TIM6_STOP|DBGMCU_TIM14_STOP, ENABLE);
 #endif
 
 #if defined(PWR_PRESS_BUTTON)

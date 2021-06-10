@@ -57,7 +57,6 @@ extern "C" {
 
 
 #include "usb_driver.h"
-/*
 #if !defined(SIMU)
   #include "usbd_cdc_core.h"
   #include "usbd_msc_core.h"
@@ -67,7 +66,6 @@ extern "C" {
   #include "usb_conf.h"
   #include "usbd_conf.h"
 #endif
-*/
 
 #include "hal.h"
 
@@ -321,6 +319,12 @@ enum Analogs {
   POT1 = POT_FIRST,
   POT2,
   POT_LAST = POT2,
+  SLIDER_FIRST,             // Setting switches as sliders as I still don't know how to 
+  SLIDER1 = SLIDER_FIRST,   // make 3POS or 2POS from analog data 
+  SLIDER2,
+  SLIDER3,
+  SLIDER4,
+  SLIDER_LAST = SLIDER4,
   TX_VOLTAGE,
   NUM_ANALOGS
 };
@@ -349,7 +353,7 @@ extern uint16_t adcValues[NUM_ANALOGS];
 uint16_t getAnalogValue(uint8_t index);
 uint16_t getBatteryVoltage();   // returns current battery voltage in 10mV steps
 
-#define BATT_SCALE                    150
+#define BATT_SCALE                    151
 
 #if defined(__cplusplus) && !defined(SIMU)
 extern "C" {
@@ -392,18 +396,16 @@ void backlightEnable(uint8_t level);
 #endif
 
 // I2C driver: EEPROM
-#define I2C_ADDRESS_EEPROM            0x50
-#define EEPROM_SIZE                   (16*1024)
-#define EEPROM_PAGE_SIZE     	      (64)
-
+#define I2C_ADDRESS_EEPROM    0xA0 // 0x50
+#define EEPROM_SIZE           (16*1024)
+#define EEPROM_PAGE_SIZE      (64)
 #define EEPROM_SIZE           (16*1024)
 #define EEPROM_BLOCK_SIZE     (64)
 
 void i2cInit(void);
 
-void eepromReadBlock(uint8_t * buffer, size_t address, size_t size);
+//void eepromReadBlock(uint8_t * buffer, size_t address, size_t size);
 uint8_t eepromIsTransferComplete();
-
 void eepromInit();
 uint8_t eepromReadStatus();
 void eepromBlockErase(uint32_t address);
@@ -454,13 +456,13 @@ void hapticOff(void);
 // Second serial port driver
 #if defined(SERIAL_GPIO)
 #define DEBUG_BAUDRATE                  115200
-//#define SERIAL2
-//extern uint8_t serial2Mode;
-//void serial2Init(unsigned int mode, unsigned int protocol);
-//void serial2Putc(char c);
-//#define serial2TelemetryInit(protocol) serial2Init(UART_MODE_TELEMETRY, protocol)
-//void serial2SbusInit(void);
-//void serial2Stop(void);f
+#define SERIAL2
+extern uint8_t serial2Mode;
+void serial2Init(unsigned int mode, unsigned int protocol);
+void serial2Putc(char c);
+#define serial2TelemetryInit(protocol) serial2Init(UART_MODE_TELEMETRY, protocol)
+void serial2SbusInit(void);
+void serial2Stop(void);
 #endif
 
 // BT driver

@@ -73,12 +73,14 @@ void eepromWaitTransferComplete()
 
 void eepromEraseBlock(uint32_t address, bool blocking=true)
 {
-  // TRACE("eepromEraseBlock(%d)", address);
+  TRACE("eepromEraseBlock(%d) blocking: %d", address, blocking);
 
   eepromBlockErase(address);
 
   if (blocking) {
+    TRACE("eepromWaitTransferComplete...");
     eepromWaitTransferComplete();
+    TRACE("eepromWaitReadStatus...");
     eepromWaitReadStatus();
   }
 }

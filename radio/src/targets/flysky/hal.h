@@ -196,20 +196,35 @@
 #define SD_GPIO_PRESENT_GPIO 0
 // Serial Port
 
-  #define TRAINER_BATTERY_COMPARTMENT
-  #define SERIAL_RCC_AHB1Periph         (RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_DMA1)
-  #define SERIAL_RCC_APB1Periph         RCC_APB1Periph_USART3
-  #define SERIAL_GPIO                   GPIOB
-  #define SERIAL_GPIO_PIN_TX            GPIO_Pin_10 // PB.10
-  #define SERIAL_GPIO_PIN_RX            GPIO_Pin_11 // PB.11
-  #define SERIAL_GPIO_PinSource_TX      GPIO_PinSource10
-  #define SERIAL_GPIO_PinSource_RX      GPIO_PinSource11
-  #define SERIAL_GPIO_AF                GPIO_AF_USART3
-  #define SERIAL_USART                  USART3
-  #define SERIAL_USART_IRQHandler       USART3_IRQHandler
-  #define SERIAL_USART_IRQn             USART3_IRQn
-  #define SERIAL_DMA_Stream_RX          DMA1_Stream1
-  #define SERIAL_DMA_Channel_RX         DMA_Channel_4
+#define TRAINER_BATTERY_COMPARTMENT
+// #define SERIAL_RCC_AHB1Periph         (RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_DMA1)
+// #define SERIAL_RCC_APB1Periph         RCC_APB1Periph_USART3
+// #define SERIAL_GPIO                   GPIOB
+// #define SERIAL_GPIO_PIN_TX            GPIO_Pin_10 // PB.10
+// #define SERIAL_GPIO_PIN_RX            GPIO_Pin_11 // PB.11
+// #define SERIAL_GPIO_PinSource_TX      GPIO_PinSource10
+// #define SERIAL_GPIO_PinSource_RX      GPIO_PinSource11
+// #define SERIAL_GPIO_AF                GPIO_AF_USART3
+// #define SERIAL_USART                  USART3
+// #define SERIAL_USART_IRQHandler       USART3_IRQHandler
+// #define SERIAL_USART_IRQn             USART3_IRQn
+// #define SERIAL_DMA_Stream_RX          DMA1_Stream1
+// #define SERIAL_DMA_Channel_RX         DMA_Channel_4
+
+// serial interno
+#define SERIAL_RCC_AHB1Periph         (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_DMA1)
+#define SERIAL_RCC_APB2Periph         RCC_APB2Periph_USART1
+#define SERIAL_GPIO                   GPIOA
+#define SERIAL_GPIO_PIN_TX            GPIO_Pin_9 // PB9
+#define SERIAL_GPIO_PIN_RX            GPIO_Pin_10 // PB10
+#define SERIAL_GPIO_PinSource_TX      GPIO_PinSource9
+#define SERIAL_GPIO_PinSource_RX      GPIO_PinSource10
+#define SERIAL_GPIO_AF                GPIO_AF_1
+#define SERIAL_USART                  USART1
+#define SERIAL_USART_IRQHandler       USART1_IRQHandler
+#define SERIAL_USART_IRQn             USART1_IRQn
+#define SERIAL_DMA_Stream_RX          DMA1_Stream1
+#define SERIAL_DMA_Channel_RX         DMA_Channel_4
 
 /*
 // Telemetry
@@ -246,9 +261,6 @@
   #define PCBREV_GPIO                   GPIOA
   #define PCBREV_GPIO_PIN               GPIO_Pin_14  // PA.14
 
-
-
-
 // Heartbeat
 
   #define TRAINER_MODULE_HEARTBEAT
@@ -276,11 +288,6 @@
   #define BACKLIGHT_CCMR1               TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_2 // Channel2, PWM
   #define BACKLIGHT_CCER                TIM_CCER_CC2E
   #define BACKLIGHT_COUNTER_REGISTER    BACKLIGHT_TIMER->CCR2
-
-
-
-
-
 
 // Audio
 #define AUDIO_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_DMA1)
