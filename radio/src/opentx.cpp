@@ -1518,9 +1518,9 @@ void opentxStart(const uint8_t startType = OPENTX_START_DEFAULT_ARGS)
   if (startType & OPENTX_START_NO_CHECKS) {
     return;
   }
-
+TRACE("gonna do chksum");
   uint8_t calibration_needed = (g_eeGeneral.chkSum != evalChkSum());
-
+TRACE("calibration needed %d", calibration_needed);
 #if defined(GUI)
   if (!calibration_needed && !(startType & OPENTX_START_NO_SPLASH)) {
     doSplash();
@@ -1540,7 +1540,7 @@ void opentxStart(const uint8_t startType = OPENTX_START_DEFAULT_ARGS)
 #if defined(NIGHTLY_BUILD_WARNING)
   ALERT(STR_NIGHTLY_WARNING, TR_NIGHTLY_NOTSAFE, AU_ERROR);
 #endif
-
+TRACE("GUI");
 #if defined(GUI)
   if (calibration_needed) {
     chainMenu(menuFirstCalib);
@@ -1777,6 +1777,7 @@ void opentxInit(OPENTX_INIT_ARGS)
 #endif
 
 #if defined(EEPROM)
+TRACE("storageReadRadioSettings");
   storageReadRadioSettings();
 #endif
 
@@ -1793,13 +1794,14 @@ void opentxInit(OPENTX_INIT_ARGS)
 
 #if defined(SDCARD) && !defined(PCBMEGA2560)
   // SDCARD related stuff, only done if not unexpectedShutdown
-  if (!unexpectedShutdown) {
+  if (!unexpectedShutbacklight enabledown) {
     sdInit();
     logsInit();
   }
 #endif
 
 #if defined(EEPROM)
+TRACE("storageReadCurrentModel");
   storageReadCurrentModel();
 #endif
 
@@ -1841,7 +1843,7 @@ void opentxInit(OPENTX_INIT_ARGS)
 #endif
 #endif  // #if !defined(EEPROM)
 
-#if defined(SERIAL2)
+#if defined(SERIAL2) && !defined(DEBUG)
   serial2Init(g_eeGeneral.serial2Mode, modelTelemetryProtocol());
 #endif
 
@@ -1864,7 +1866,7 @@ void opentxInit(OPENTX_INIT_ARGS)
   referenceSystemAudioFiles();
   audioQueue.start();
 #endif
-
+TRACE("backlight enable");
   BACKLIGHT_ENABLE();
 
 #if defined(PCBSKY9X)
@@ -1889,24 +1891,25 @@ void opentxInit(OPENTX_INIT_ARGS)
   if (!unexpectedShutdown) {
     opentxStart();
   }
-
+TRACE("start done");
 	// TODO Horus does not need this
   if (!g_eeGeneral.unexpectedShutdown) {
     g_eeGeneral.unexpectedShutdown = 1;
     storageDirty(EE_GENERAL);
   }
+TRACE("storage dirty done");
 
 #if defined(GUI)
   lcdSetContrast();
 #endif
   backlightOn();
-
+TRACE("bklt done");
 #if defined(PCBSKY9X) && !defined(SIMU)
   init_trainer_capture();
 #endif
 
-
-  startPulses();
+TRACE("start pulses");
+ // startPulses();
 
   wdt_enable(WDTO_500MS);
 }

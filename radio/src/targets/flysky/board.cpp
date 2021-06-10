@@ -21,7 +21,8 @@
 #include "opentx.h"
 
 #if defined(__cplusplus) && !defined(SIMU)
-extern "C" {
+extern "C"
+{
 #endif
 #include "usb_dcd_int.h"
 #include "usb_bsp.h"
@@ -29,25 +30,27 @@ extern "C" {
 }
 #endif
 
-extern "C" {
-__attribute__ ((naked)) __attribute__((used)) void HardFault_HandlerAsm(void){
-
-__asm( ".syntax unified\n"
-"MOVS R0, #4 \n"
-"MOV R1, LR \n"
-"TST R0, R1 \n"
-"BEQ _MSP \n"
-"MRS R0, PSP \n"
-"B HardFault_HandlerC \n"
-"_MSP: \n"
-"MRS R0, MSP \n"
-"B HardFault_HandlerC \n"
-".syntax divided\n") ;
-}
-
- __attribute__((used)) void HardFault_HandlerC(unsigned long *hardfault_args)
+extern "C"
 {
-	/*
+  __attribute__((naked)) __attribute__((used)) void HardFault_HandlerAsm(void)
+  {
+
+    __asm(".syntax unified\n"
+          "MOVS R0, #4 \n"
+          "MOV R1, LR \n"
+          "TST R0, R1 \n"
+          "BEQ _MSP \n"
+          "MRS R0, PSP \n"
+          "B HardFault_HandlerC \n"
+          "_MSP: \n"
+          "MRS R0, MSP \n"
+          "B HardFault_HandlerC \n"
+          ".syntax divided\n");
+  }
+
+  __attribute__((used)) void HardFault_HandlerC(unsigned long *hardfault_args)
+  {
+    /*
   volatile unsigned long stacked_r0 ;
   volatile unsigned long stacked_r1 ;
   volatile unsigned long stacked_r2 ;
@@ -92,47 +95,39 @@ __asm( ".syntax unified\n"
   // Bus Fault Address Register
   _BFAR = (*((volatile unsigned long *)(0xE000ED38))) ;
 */
-  __asm("BKPT #0\n") ; // Break into the debugger
-}
+    __asm("BKPT #0\n"); // Break into the debugger
+  }
 }
 //audio
 void audioConsumeCurrentBuffer()
 {
-
-
 }
 void audioInit()
 {
-
-
 }
 
-void referenceSystemAudioFiles(){
-
-
+void referenceSystemAudioFiles()
+{
 }
 
-void setSampleRate(uint32_t frequency){
-
-
+void setSampleRate(uint32_t frequency)
+{
 }
-
-
 
 void watchdogInit(unsigned int duration)
 {
-  IWDG->KR = 0x5555;      // Unlock registers
-  IWDG->PR = 3;           // Divide by 32 => 1kHz clock
-  IWDG->KR = 0x5555;      // Unlock registers
-  IWDG->RLR = duration;   // 1.5 seconds nominal
-  IWDG->KR = 0xAAAA;      // reload
-  IWDG->KR = 0xCCCC;      // start
+  IWDG->KR = 0x5555;    // Unlock registers
+  IWDG->PR = 3;         // Divide by 32 => 1kHz clock
+  IWDG->KR = 0x5555;    // Unlock registers
+  IWDG->RLR = duration; // 1.5 seconds nominal
+  IWDG->KR = 0xAAAA;    // reload
+  IWDG->KR = 0xCCCC;    // start
 }
 
 // Starts TIMER at 2MHz
 void init2MhzTimer()
 {
-  TIMER_2MHz_TIMER->PSC = (PERI1_FREQUENCY * TIMER_MULT_APB1) / 2000000 - 1 ;       // 0.5 uS, 2 MHz
+  TIMER_2MHz_TIMER->PSC = (PERI1_FREQUENCY * TIMER_MULT_APB1) / 2000000 - 1; // 0.5 uS, 2 MHz
   TIMER_2MHz_TIMER->ARR = 65535;
   TIMER_2MHz_TIMER->CR2 = 0;
   TIMER_2MHz_TIMER->CR1 = TIM_CR1_CEN;
@@ -141,29 +136,30 @@ void init2MhzTimer()
 // Starts TIMER at 200Hz (5ms)
 void init5msTimer()
 {
-  INTERRUPT_xMS_TIMER->ARR = 4999 ; // 5mS in uS
-  INTERRUPT_xMS_TIMER->PSC = (PERI1_FREQUENCY * TIMER_MULT_APB1) / 1000000 - 1 ; // 1uS
-  INTERRUPT_xMS_TIMER->CCER = 0 ;
-  INTERRUPT_xMS_TIMER->CCMR1 = 0 ;
-  INTERRUPT_xMS_TIMER->EGR = 0 ;
-  INTERRUPT_xMS_TIMER->CR1 = 5 ;
-  INTERRUPT_xMS_TIMER->DIER |= 1 ;
+  INTERRUPT_xMS_TIMER->ARR = 4999;                                              // 5mS in uS
+  INTERRUPT_xMS_TIMER->PSC = (PERI1_FREQUENCY * TIMER_MULT_APB1) / 1000000 - 1; // 1uS
+  INTERRUPT_xMS_TIMER->CCER = 0;
+  INTERRUPT_xMS_TIMER->CCMR1 = 0;
+  INTERRUPT_xMS_TIMER->EGR = 0;
+  INTERRUPT_xMS_TIMER->CR1 = 5;
+  INTERRUPT_xMS_TIMER->DIER |= 1;
 
-  NVIC_EnableIRQ(INTERRUPT_xMS_IRQn) ;
+  NVIC_EnableIRQ(INTERRUPT_xMS_IRQn);
   NVIC_SetPriority(INTERRUPT_xMS_IRQn, 7);
 }
 
-void stop5msTimer( void )
+void stop5msTimer(void)
 {
-  INTERRUPT_xMS_TIMER->CR1 = 0 ;        // stop timer
-  NVIC_DisableIRQ(INTERRUPT_xMS_IRQn) ;
+  INTERRUPT_xMS_TIMER->CR1 = 0; // stop timer
+  NVIC_DisableIRQ(INTERRUPT_xMS_IRQn);
 }
 
 void interrupt5ms()
 {
-  static uint32_t pre_scale ;       // Used to get 10 Hz counter
-  if (++pre_scale >= 2) {
-    pre_scale = 0 ;
+  static uint32_t pre_scale; // Used to get 10 Hz counter
+  if (++pre_scale >= 2)
+  {
+    pre_scale = 0;
     DEBUG_TIMER_START(debugTimerPer10ms);
     DEBUG_TIMER_SAMPLE(debugTimerPer10msPeriod);
     per10ms();
@@ -174,44 +170,34 @@ void interrupt5ms()
 #if !defined(SIMU)
 extern "C" void INTERRUPT_xMS_IRQHandler()
 {
-  INTERRUPT_xMS_TIMER->SR &= ~TIM_SR_UIF ;
-  interrupt5ms() ;
+  INTERRUPT_xMS_TIMER->SR &= ~TIM_SR_UIF;
+  interrupt5ms();
   DEBUG_INTERRUPT(INT_5MS);
 }
 #endif
 
 #if defined(PWR_PRESS_BUTTON) && !defined(SIMU)
-  #define PWR_PRESS_DURATION_MIN        100 // 1s
-  #define PWR_PRESS_DURATION_MAX        500 // 5s
+#define PWR_PRESS_DURATION_MIN 100 // 1s
+#define PWR_PRESS_DURATION_MAX 500 // 5s
 #endif
-/*
-volatile uint8_t active = 0;
-void boardInit()
+
+void init_gpio()
 {
-  RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
-  RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2_LIST, ENABLE);
-  delaysInit();
-  init2MhzTimer();
-  init5msTimer();
-  __enable_irq();
-  backlightInit();
+  RCC_AHBPeriphClockCmd(I2C_RCC_AHB1Periph, ENABLE);
+  RCC_APB1PeriphClockCmd(I2C_RCC_APB1Periph, ENABLE);
 
-  while(1){
-      delay_ms(500);
-      if(active == 0){
-          active = 1;
-          backlightEnable(1);
-      }
-     else {
-          active = 0;
-          backlightDisable();
-      }
-  }
+  GPIO_InitTypeDef gpio_init;
+  gpio_init.GPIO_Pin = I2C_SCL_GPIO_PIN | I2C_SDA_GPIO_PIN;
+  //gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+  gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+  gpio_init.GPIO_Mode = GPIO_Mode_AF;
+  gpio_init.GPIO_OType = GPIO_OType_OD;
+  gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_Init(I2C_GPIO, &gpio_init);
 
-
+  GPIO_PinAFConfig(I2C_GPIO, I2C_SCL_GPIO_PinSource, I2C_GPIO_AF);
+  GPIO_PinAFConfig(I2C_GPIO, I2C_SDA_GPIO_PinSource, I2C_GPIO_AF);
 }
-*/
 
 void boardInit()
 {
@@ -231,20 +217,59 @@ void boardInit()
   __enable_irq();
   backlightInit();
   backlightEnable(1);
+  serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
+  TRACE("init_gpio");
+  init_gpio();
+  TRACE("eepromInit");
   eepromInit();
   ////usbInit();
 
+#define BUFSIZE 128
+  uint8_t buffer[BUFSIZE];
+  uint32_t i;
+
+  for (i = 0; i < BUFSIZE; i++)
+  {
+    buffer[i] = 0x69;
+  }
+  eepromStartRead(buffer, 0, BUFSIZE);
+
+  for (i = 0; i < BUFSIZE; i++)
+  {
+    buffer[i] = 0x47;
+  }
+  eepromStartWrite(buffer, 0, 64);
+  for (i = 0; i < 10000; i++);
+
+  eepromStartWrite(buffer + 64, 64, 64);
+  for (i = 0; i < 10000; i++);
+
+  TRACE("written buff:");
+  DUMP(buffer, BUFSIZE);
+  
+  for (i = 0; i < BUFSIZE; i++)
+  {
+    buffer[i] = 0x00;
+  }
+  
+  eepromStartRead(buffer, 0, BUFSIZE);
+  TRACE("read buff:");
+  DUMP(buffer, BUFSIZE);
+  while (1)
+    ;
+
 #if defined(DEBUG) && defined(SERIAL_GPIO)
-  serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
-  TRACE("FlySky board started :)");
+  //serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
+  TRACE("---------------------- FlySky board started :) -------------------------");
 #endif
 
 #if defined(DEBUG)
-  DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP|DBGMCU_TIM1_STOP|DBGMCU_TIM2_STOP|DBGMCU_TIM3_STOP|DBGMCU_TIM6_STOP|DBGMCU_TIM14_STOP, ENABLE);
+  DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP | DBGMCU_TIM1_STOP | DBGMCU_TIM2_STOP | DBGMCU_TIM3_STOP | DBGMCU_TIM6_STOP | DBGMCU_TIM14_STOP, ENABLE);
 #endif
 
 #if defined(PWR_PRESS_BUTTON)
-  if (!WAS_RESET_BY_WATCHDOG_OR_SOFTWARE()) {
+  if (!WAS_RESET_BY_WATCHDOG_OR_SOFTWARE())
+  {
     lcdClear();
 #if defined(PCBX9E)
     lcdDrawBitmap(76, 2, bmp_lock, 0, 60);
@@ -257,27 +282,34 @@ void boardInit()
     tmr10ms_t start = get_tmr10ms();
     tmr10ms_t duration = 0;
     uint8_t pwr_on = 0;
-    while (pwrPressed()) {
+    while (pwrPressed())
+    {
       duration = get_tmr10ms() - start;
-      if (duration < PWR_PRESS_DURATION_MIN) {
+      if (duration < PWR_PRESS_DURATION_MIN)
+      {
         unsigned index = duration / (PWR_PRESS_DURATION_MIN / 4);
         lcdClear();
 #if defined(PCBX9E)
-        lcdDrawBitmap(76, 2, bmp_startup, index*60, 60);
+        lcdDrawBitmap(76, 2, bmp_startup, index * 60, 60);
 #else
-        for(uint8_t i= 0; i < 4; i++) {
-          if (index >= i) {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+          if (index >= i)
+          {
             lcdDrawFilledRect(LCD_W / 2 - 18 + 10 * i, LCD_H / 2 - 3, 6, 6, SOLID, 0);
           }
         }
 #endif
       }
-      else if (duration >= PWR_PRESS_DURATION_MAX) {
+      else if (duration >= PWR_PRESS_DURATION_MAX)
+      {
         drawSleepBitmap();
         backlightDisable();
       }
-      else {
-        if (pwr_on != 1) {
+      else
+      {
+        if (pwr_on != 1)
+        {
           pwr_on = 1;
           pwrInit();
           backlightInit();
@@ -287,11 +319,13 @@ void boardInit()
       lcdRefresh();
       lcdRefreshWait();
     }
-    if (duration < PWR_PRESS_DURATION_MIN || duration >= PWR_PRESS_DURATION_MAX) {
+    if (duration < PWR_PRESS_DURATION_MIN || duration >= PWR_PRESS_DURATION_MAX)
+    {
       boardOff();
     }
   }
-  else {
+  else
+  {
     pwrInit();
     backlightInit();
   }
@@ -302,7 +336,8 @@ void boardInit()
   backlightInit();
 #endif
 
-  if (HAS_SPORT_UPDATE_CONNECTOR()) {
+  if (HAS_SPORT_UPDATE_CONNECTOR())
+  {
     sportUpdateInit();
   }
 #endif // !defined(SIMU)
@@ -321,7 +356,8 @@ void boardOff()
 #endif
 
 #if defined(PWR_PRESS_BUTTON)
-  while (pwrPressed()) {
+  while (pwrPressed())
+  {
     wdt_reset();
   }
 #endif
@@ -335,15 +371,17 @@ uint8_t currentTrainerMode = 0xff;
 void checkTrainerSettings()
 {
   uint8_t requiredTrainerMode = g_model.trainerMode;
-  if (requiredTrainerMode != currentTrainerMode) {
-    switch (currentTrainerMode) {
-      case TRAINER_MODE_MASTER_TRAINER_JACK:
-        stop_trainer_capture();
-        break;
-      case TRAINER_MODE_SLAVE:
-        stop_trainer_ppm();
-        break;
-        /*
+  if (requiredTrainerMode != currentTrainerMode)
+  {
+    switch (currentTrainerMode)
+    {
+    case TRAINER_MODE_MASTER_TRAINER_JACK:
+      stop_trainer_capture();
+      break;
+    case TRAINER_MODE_SLAVE:
+      stop_trainer_ppm();
+      break;
+      /*
       case TRAINER_MODE_MASTER_CPPM_EXTERNAL_MODULE:
         stop_cppm_on_heartbeat_capture() ;
         break;
@@ -351,18 +389,19 @@ void checkTrainerSettings()
         stop_sbus_on_heartbeat_capture() ;
         break;*/
 #if defined(TRAINER_BATTERY_COMPARTMENT)
-      case TRAINER_MODE_MASTER_BATTERY_COMPARTMENT:
-        //serial2Stop();
-		break;
+    case TRAINER_MODE_MASTER_BATTERY_COMPARTMENT:
+      //serial2Stop();
+      break;
 #endif
     }
 
     currentTrainerMode = requiredTrainerMode;
-    switch (requiredTrainerMode) {
-      case TRAINER_MODE_SLAVE:
-        init_trainer_ppm();
-        break;
-        /*
+    switch (requiredTrainerMode)
+    {
+    case TRAINER_MODE_SLAVE:
+      init_trainer_ppm();
+      break;
+      /*
       case TRAINER_MODE_MASTER_CPPM_EXTERNAL_MODULE:
          init_cppm_on_heartbeat_capture();
          break;
@@ -371,18 +410,18 @@ void checkTrainerSettings()
          break;*/
 
 #if defined(TRAINER_BATTERY_COMPARTMENT)
-      case TRAINER_MODE_MASTER_BATTERY_COMPARTMENT:
-        /*
+    case TRAINER_MODE_MASTER_BATTERY_COMPARTMENT:
+      /*
         if (g_eeGeneral.serial2Mode == UART_MODE_SBUS_TRAINER) {
           serial2SbusInit();
           break;
       }*/
-        // no break
+      // no break
 #endif
-      default:
-        // master is default
-        init_trainer_capture();
-        break;
+    default:
+      // master is default
+      init_trainer_capture();
+      break;
     }
   }
 }
@@ -390,7 +429,7 @@ void checkTrainerSettings()
 uint16_t getBatteryVoltage()
 {
   int32_t instant_vbat = anaIn(TX_VOLTAGE); // using filtered ADC value on purpose
-  instant_vbat = (instant_vbat * BATT_SCALE * (128 + g_eeGeneral.txVoltageCalibration) ) / 26214;
+  instant_vbat = (instant_vbat * BATT_SCALE * (128 + g_eeGeneral.txVoltageCalibration)) / 26214;
   instant_vbat += 20; // add 0.2V because of the diode TODO check if this is needed, but removal will beak existing calibrations!!!
   return (uint16_t)instant_vbat;
 }

@@ -64,12 +64,13 @@ set(TARGET_SRC
   backlight_driver.cpp
   extmodule_driver.cpp
   adc_driver.cpp
+  i2c_common_v2.cpp
+  i2c_driver.cpp
   )
 
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
   lcd_driver.cpp
-  i2c_driver.cpp
   pwr_driver.cpp
   )
 set(FIRMWARE_DEPENDENCIES ${FIRMWARE_DEPENDENCIES} ${BITMAPS_TARGET})
