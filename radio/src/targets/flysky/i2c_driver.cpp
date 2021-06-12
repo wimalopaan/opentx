@@ -20,167 +20,13 @@
 
 #include "opentx.h"
 
-#define I2C_TIMEOUT_MAX 1000
-
-/**
-  * @brief reads a certain byte of data from a certain starting address of a device on the I2C2 bus into the array
-     * @param driver_Addr: I2C device address
-     * @param start_Addr: start byte address
-     * @param number_Bytes: the number of bytes to be read (less than one page)
-     * @param read_Buffer: Array pointer to store read data
-     * @retval read successfully
-  */
-uint8_t I2C2_Read_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *read_Buffer)
-{
-  uint8_t read_Num;
-  uint8_t I2C_Timeout;
-
-  while(I2C_GetFlagStatus(I2C2, I2C_FLAG_BUSY) == SET){
-    TRACE("Wait busy set");
-  }
-
-  I2C_TransferHandling(I2C2, driver_Addr, 1, I2C_SoftEnd_Mode, I2C_Generate_Start_Write); //I2C_No_StartStop I2C_Generate_Start_Write
-  I2C_SendData(I2C2, start_Addr);
-  I2C_TransferHandling(I2C2, driver_Addr, number_Bytes, I2C_AutoEnd_Mode, I2C_Generate_Start_Read);
-
-  for (read_Num = 0; read_Num < number_Bytes; read_Num++)
-  {
-    read_Buffer[read_Num] = I2C_ReceiveData(I2C2);
-  }
-  while (I2C_GetFlagStatus(I2C2, I2C_FLAG_STOPF) == RESET)
-    ;
-  return 0;
-}
-
-uint8_t I2C2_Write_NBytes(uint8_t driver_Addr, uint8_t start_Addr, uint8_t number_Bytes, uint8_t *write_Buffer)
-{
-  uint8_t write_Num;
-  uint8_t I2C_Timeout;
-  
-  while(I2C_GetFlagStatus(I2C2, I2C_FLAG_BUSY) == SET){
-    TRACE("Wait busy set");
-  }
-  I2C_TransferHandling(I2C2, driver_Addr, number_Bytes + 1, I2C_AutoEnd_Mode, I2C_Generate_Start_Write);
-  
-  I2C_Timeout = 100000;
-  while (I2C_GetFlagStatus(I2C2, I2C_FLAG_TXIS) == RESET)
-  {
-    if ((I2C_Timeout--) == 0)
-    {
-      TRACE("Timeout before write");
-      return 1;
-    }
-  }
-
-  I2C_SendData(I2C2, start_Addr);
-  //while(I2C_GetFlagStatus(I2C2, I2C_FLAG_TXIS) == RESET);
-
-  //I2C_TransferHandling(I2C2, driver_Addr, number_Bytes, I2C_AutoEnd_Mode, I2C_No_StartStop);
-  for (write_Num = 0; write_Num < number_Bytes; write_Num++)
-  {
-    I2C_SendData(I2C2, write_Buffer[write_Num]);
-  }
-  I2C_Timeout = 100000;
-  while (I2C_GetFlagStatus(I2C2, I2C_FLAG_TXIS) == RESET)
-  {
-    if ((I2C_Timeout--) == 0)
-    {
-      TRACE("Timeout after write");
-      return 1;
-    }
-  }
-  return 0;
-}
-
-void eepromReadBlock(uint8_t *buffer, size_t address, size_t size)
-{
-  I2C2_Read_NBytes(I2C_ADDRESS_EEPROM, address, size, buffer);
-}
-
-void eepromPageWrite(uint8_t *pBuffer, uint16_t WriteAddr, uint8_t NumByteToWrite)
-{
-  I2C2_Write_NBytes(I2C_ADDRESS_EEPROM, WriteAddr, NumByteToWrite, pBuffer);
-}
-
-uint8_t eepromIsTransferComplete()
-{
-  return 1;
-}
-
-/**
-  * @brief  Wait for EEPROM Standby state
-  * @param  None
-  * @retval None
-  */
-bool I2C_EE_WaitEepromStandbyState(void)
-{
-  return true;
-}
-
-void eepromWaitEepromStandbyState(void)
-{
-  while (!I2C_EE_WaitEepromStandbyState())
-  {
-    eepromInit();
-  }
-}
-uint8_t eepromReadStatus()
-{
-  return 1;
-}
-
-/**
-  * @brief  Writes buffer of data to the I2C EEPROM.
-  * @param  buffer : pointer to the buffer containing the data to be
-  *   written to the EEPROM.
-  * @param  address : EEPROM's internal address to write to.
-  * @param  size : number of bytes to write to the EEPROM.
-  * @retval None
-  */
-void eepromWriteBlock(uint8_t *buffer, size_t address, size_t size)
-{
-  uint8_t offset = address % EEPROM_PAGE_SIZE;
-  uint8_t count = EEPROM_PAGE_SIZE - offset;
-  if (size < count)
-  {
-    count = size;
-  }
-  while (count > 0)
-  {
-    eepromPageWrite(buffer, address, count);
-    eepromWaitEepromStandbyState();
-    address += count;
-    buffer += count;
-    size -= count;
-    count = EEPROM_PAGE_SIZE;
-    if (size < EEPROM_PAGE_SIZE)
-    {
-      count = size;
-    }
-  }
-}
-
-void eepromStartRead(uint8_t *buffer, size_t address, size_t size)
-{
-  eepromReadBlock(buffer, address, size);
-}
-
-void eepromStartWrite(uint8_t *buffer, size_t address, size_t size)
-{
-  eepromWriteBlock(buffer, address, size);
-}
-
-void eepromBlockErase(uint32_t address)
-{
-}
-
 // Resolve clash with libopencm3 defines
 
 #undef FLASH_BASE
 #undef PERIPH_BASE
+#undef I2C1_BASE
 #undef I2C2_BASE
-#undef I2C2_BASE
-#undef I2C2
+#undef I2C1
 #undef I2C2
 #undef I2C_CR1_PECEN
 #undef I2C_CR1_ALERTEN
@@ -234,8 +80,6 @@ void eepromBlockErase(uint32_t address)
 #undef I2C_ICR_STOPCF
 #undef I2C_ICR_NACKCF
 #undef I2C_ICR_ADDRCF
-#undef I2C1_BASE
-#undef I2C1
 
 #include "i2c_common_v2.h"
 
@@ -248,8 +92,6 @@ void eepromInit()
   uint32_t i2c;
 
   i2c = I2C2;
-
-  TRACE("eepromInit");
   i2c_reset(i2c);
 
   /* Disable the I2C before changing any configuration. */
@@ -264,5 +106,131 @@ void eepromInit()
 
   /* If everything is configured -> enable the peripheral. */
   i2c_peripheral_enable(i2c);
+}
+
+void eepromPageRead(uint8_t *buffer, size_t address, size_t size)
+{
+  uint8_t wb[2];
+  wb[0] = (uint8_t)(address >> 8);
+  wb[1] = (uint8_t)(address & 0xFF);
+  TRACE("eepromPageRead %02X%02X %d bytes", wb[0], wb[1], size);
+  i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, wb, 2, buffer, size);
+  delay_ms(1);
+  DUMP(buffer, size);
+}
+
+void eepromPageWrite(uint8_t *buffer, uint16_t address, uint8_t size)
+{
+  static uint8_t temp[2 + EEPROM_PAGE_SIZE];
+  temp[0] = (uint8_t)(address >> 8);
+  temp[1] = (uint8_t)(address & 0xFF);
+  TRACE("eepromPageWrite %02X%02X %d bytes", temp[0], temp[1], size);
+  memcpy(temp + 2, buffer, size);
+  DUMP(temp, size + 2);
+  i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, temp, size + 2, NULL, 0);
+  delay_ms(5);
+
+#if defined(EEPROM_VERIFY_WRITES)
+  eepromPageRead(temp, address, size);
+  for (int i = 0; i < size; i++)
+  {
+    if (temp[i] != buffer[i])
+    {
+      TRACE("--------- eeprom verify failed  ----------");
+      while(1);
+    }
+  }
+
+#endif
+}
+
+void eepromStartRead(uint8_t *buffer, size_t address, size_t size)
+{
+  TRACE("eepromStartRead %04X %d bytes", address, size);
+  // first segment, until page limit
+  uint8_t offset = address % EEPROM_PAGE_SIZE;
+  uint8_t count = EEPROM_PAGE_SIZE - offset;
+  if (size < count)
+  {
+    count = size;
+  }
+  eepromPageRead(buffer, address, count);
+  if (size > count)
+  {
+    // second segment, entire pages in between
+    uint16_t remaining = (size - count) % EEPROM_PAGE_SIZE;
+    uint8_t reads = (size - count) / EEPROM_PAGE_SIZE;
+    uint8_t i;
+    for (i = 0; i < reads; i++)
+    {
+      eepromPageRead(buffer + count + (i * EEPROM_PAGE_SIZE), address + count + (i * EEPROM_PAGE_SIZE), EEPROM_PAGE_SIZE);
+    }
+    if (remaining)
+    {
+      eepromPageRead(buffer + count + (reads * EEPROM_PAGE_SIZE), address + count + (reads * EEPROM_PAGE_SIZE), remaining);
+    }
+  }
+
+  //DUMP(buffer, size);
+}
+
+void eepromStartWrite(uint8_t *buffer, size_t address, size_t size)
+{
+  TRACE("eepromStartWrite %04X %d bytes", address, size);
+  // first segment, until page limit
+  uint8_t offset = address % EEPROM_PAGE_SIZE;
+  uint8_t count = EEPROM_PAGE_SIZE - offset;
+  if (size < count)
+  {
+    count = size;
+  }
+  eepromPageWrite(buffer, address, count);
+  if (size > count)
+  {
+    // second segment, entire pages in between
+    uint16_t remaining = (size - count) % EEPROM_PAGE_SIZE;
+    uint8_t writes = (size - count) / EEPROM_PAGE_SIZE;
+    uint8_t i;
+    for (i = 0; i < writes; i++)
+    {
+      eepromPageWrite(buffer + count + (i * EEPROM_PAGE_SIZE), address + count + (i * EEPROM_PAGE_SIZE), EEPROM_PAGE_SIZE);
+    }
+
+    // third segment, remainder
+    if (remaining)
+    {
+      eepromPageWrite(buffer + count + (writes * EEPROM_PAGE_SIZE), address + count + (writes * EEPROM_PAGE_SIZE), remaining);
+    }
+  }
+}
+
+void i2c_test()
+{
+  static uint8_t temp[128];
+  uint8_t i;
+  for (i = 0; i < 128; i++)
+  {
+    temp[i] = i;
+  }
+  DUMP(temp, 128);
+  eepromStartWrite(temp, 10, 128);
+  memset(temp, 0, 128);
+  eepromStartRead(temp, 10, 128);
+}
+
+void eepromBlockErase(uint32_t address)
+{
+  TRACE("eepromBlockErase");
+  static uint8_t erasedBlock[EEPROM_BLOCK_SIZE]; // can't be on the stack!
+  memset(erasedBlock, 0xFF, sizeof(erasedBlock));
+  eepromStartWrite(erasedBlock, address, EEPROM_BLOCK_SIZE);
   TRACE("done");
+}
+uint8_t eepromReadStatus()
+{
+  return 1;
+}
+uint8_t eepromIsTransferComplete()
+{
+  return 1;
 }

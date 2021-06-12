@@ -50,126 +50,126 @@ static void adc_dma_arm(void)
 
 void adcInit()
 {
-  // -- init rcc --
-  // ADC CLOCK = 24 / 4 = 6MHz
-  RCC_ADCCLKConfig(RCC_ADCCLK_PCLK_Div2);
+  // // -- init rcc --
+  // // ADC CLOCK = 24 / 4 = 6MHz
+  // RCC_ADCCLKConfig(RCC_ADCCLK_PCLK_Div2);
 
-  // enable ADC clock
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+  // // enable ADC clock
+  // RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 
-  // enable dma clock
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+  // // enable dma clock
+  // RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-  // periph clock enable for port
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
+  // // periph clock enable for port
+  // RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
 
-  // init gpio
-  GPIO_InitTypeDef gpio_init;
-  GPIO_StructInit(&gpio_init);
+  // // init gpio
+  // GPIO_InitTypeDef gpio_init;
+  // GPIO_StructInit(&gpio_init);
 
-  // set up analog inputs ADC0...ADC7(PA0...PA7)
-  gpio_init.GPIO_Pin = 0b11111111;
-  gpio_init.GPIO_Mode = GPIO_Mode_AN;
-  GPIO_Init(GPIOA, &gpio_init);
+  // // set up analog inputs ADC0...ADC7(PA0...PA7)
+  // gpio_init.GPIO_Pin = 0b11111111;
+  // gpio_init.GPIO_Mode = GPIO_Mode_AN;
+  // GPIO_Init(GPIOA, &gpio_init);
 
-  // set up analog inputs ADC8, ADC9(PB0, PB1)
-  gpio_init.GPIO_Pin = 0b11;
-  gpio_init.GPIO_Mode = GPIO_Mode_AN;
-  GPIO_Init(GPIOB, &gpio_init);
+  // // set up analog inputs ADC8, ADC9(PB0, PB1)
+  // gpio_init.GPIO_Pin = 0b11;
+  // gpio_init.GPIO_Mode = GPIO_Mode_AN;
+  // GPIO_Init(GPIOB, &gpio_init);
 
-  // battery voltage is on PC0(ADC10)
-  gpio_init.GPIO_Pin = 0b1;
-  gpio_init.GPIO_Mode = GPIO_Mode_AN;
-  GPIO_Init(GPIOC, &gpio_init);
+  // // battery voltage is on PC0(ADC10)
+  // gpio_init.GPIO_Pin = 0b1;
+  // gpio_init.GPIO_Mode = GPIO_Mode_AN;
+  // GPIO_Init(GPIOC, &gpio_init);
 
-  // init mode
-  ADC_InitTypeDef adc_init;
-  ADC_StructInit(&adc_init);
+  // // init mode
+  // ADC_InitTypeDef adc_init;
+  // ADC_StructInit(&adc_init);
 
-  // ADC configuration
-  adc_init.ADC_ContinuousConvMode = ENABLE; // ! select continuous conversion mode
-  adc_init.ADC_ExternalTrigConv = 0;
-  adc_init.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None; // select no ext triggering
-  adc_init.ADC_DataAlign = ADC_DataAlign_Right;                      // r 12-bit data alignment in ADC reg
-  adc_init.ADC_Resolution = ADC_Resolution_12b;
-  adc_init.ADC_ScanDirection = ADC_ScanDirection_Upward;
+  // // ADC configuration
+  // adc_init.ADC_ContinuousConvMode = ENABLE; // ! select continuous conversion mode
+  // adc_init.ADC_ExternalTrigConv = 0;
+  // adc_init.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None; // select no ext triggering
+  // adc_init.ADC_DataAlign = ADC_DataAlign_Right;                      // r 12-bit data alignment in ADC reg
+  // adc_init.ADC_Resolution = ADC_Resolution_12b;
+  // adc_init.ADC_ScanDirection = ADC_ScanDirection_Upward;
 
-  // load structure values to control and status registers
-  ADC_Init(ADC1, &adc_init);
+  // // load structure values to control and status registers
+  // ADC_Init(ADC1, &adc_init);
 
-  // configure each channel
-  ADC_ChannelConfig(ADC1, ADC_Channel_0, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_1, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_2, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_3, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_4, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_5, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_6, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_7, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_8, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_9, ADC_SampleTime_41_5Cycles);
-  ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_41_5Cycles);
+  // // configure each channel
+  // ADC_ChannelConfig(ADC1, ADC_Channel_0, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_1, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_2, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_3, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_4, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_5, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_6, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_7, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_8, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_9, ADC_SampleTime_41_5Cycles);
+  // ADC_ChannelConfig(ADC1, ADC_Channel_10, ADC_SampleTime_41_5Cycles);
 
-  // enable ADC
-  ADC_Cmd(ADC1, ENABLE);
+  // // enable ADC
+  // ADC_Cmd(ADC1, ENABLE);
 
-  // enable DMA for ADC
-  ADC_DMACmd(ADC1, ENABLE);
+  // // enable DMA for ADC
+  // ADC_DMACmd(ADC1, ENABLE);
 
-  // -- init dma --
+  // // -- init dma --
 
-  DMA_InitTypeDef dma_init;
-  DMA_StructInit(&dma_init);
+  // DMA_InitTypeDef dma_init;
+  // DMA_StructInit(&dma_init);
 
-  // reset DMA1 channe1 to default values
-  DMA_DeInit(ADC_DMA_CHANNEL);
+  // // reset DMA1 channe1 to default values
+  // DMA_DeInit(ADC_DMA_CHANNEL);
 
-  // set up dma to convert 2 adc channels to two mem locations:
-  // channel will be used for memory to memory transfer
-  dma_init.DMA_M2M = DMA_M2M_Disable;
-  // setting normal mode(non circular)
-  dma_init.DMA_Mode = DMA_Mode_Circular;
-  // medium priority
-  dma_init.DMA_Priority = DMA_Priority_High;
-  // source and destination 16bit
-  dma_init.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-  dma_init.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-  // automatic memory destination increment enable.
-  dma_init.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  // source address increment disable
-  dma_init.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-  // Location assigned to peripheral register will be source
-  dma_init.DMA_DIR = DMA_DIR_PeripheralSRC;
-  // chunk of data to be transfered
-  dma_init.DMA_BufferSize = NUM_ANALOGS;
-  // source and destination start addresses
-  dma_init.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
-  dma_init.DMA_MemoryBaseAddr = (uint32_t)adcValues;
-  // send values to DMA registers
-  DMA_Init(ADC_DMA_CHANNEL, &dma_init);
+  // // set up dma to convert 2 adc channels to two mem locations:
+  // // channel will be used for memory to memory transfer
+  // dma_init.DMA_M2M = DMA_M2M_Disable;
+  // // setting normal mode(non circular)
+  // dma_init.DMA_Mode = DMA_Mode_Circular;
+  // // medium priority
+  // dma_init.DMA_Priority = DMA_Priority_High;
+  // // source and destination 16bit
+  // dma_init.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  // dma_init.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  // // automatic memory destination increment enable.
+  // dma_init.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  // // source address increment disable
+  // dma_init.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  // // Location assigned to peripheral register will be source
+  // dma_init.DMA_DIR = DMA_DIR_PeripheralSRC;
+  // // chunk of data to be transfered
+  // dma_init.DMA_BufferSize = NUM_ANALOGS;
+  // // source and destination start addresses
+  // dma_init.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
+  // dma_init.DMA_MemoryBaseAddr = (uint32_t)adcValues;
+  // // send values to DMA registers
+  // DMA_Init(ADC_DMA_CHANNEL, &dma_init);
 
-  // enable the DMA1 - Channel1
-  DMA_Cmd(ADC_DMA_CHANNEL, ENABLE);
+  // // enable the DMA1 - Channel1
+  // DMA_Cmd(ADC_DMA_CHANNEL, ENABLE);
 
-  // start conversion:
-  adc_dma_arm();
+  // // start conversion:
+  // adc_dma_arm();
 }
 
 void adcRead()
 {
   // adc dma finished?
-  if (DMA_GetITStatus(ADC_DMA_TC_FLAG))
-  {
+//   if (DMA_GetITStatus(ADC_DMA_TC_FLAG))
+//   {
    
-#if NUM_PWMANALOGS > 0
-    if (ANALOGS_PWM_ENABLED())
-    {
-      analogPwmRead(adcValues);
-    }
-#endif
-    // fine, arm DMA again:
-    adc_dma_arm();
-  }
+// #if NUM_PWMANALOGS > 0
+//     if (ANALOGS_PWM_ENABLED())
+//     {
+//       analogPwmRead(adcValues);
+//     }
+// #endif
+//     // fine, arm DMA again:
+//     adc_dma_arm();
+//  }
  
 }
 

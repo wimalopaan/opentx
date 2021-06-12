@@ -198,13 +198,66 @@ void init_gpio()
   GPIO_PinAFConfig(I2C_GPIO, I2C_SCL_GPIO_PinSource, I2C_GPIO_AF);
   GPIO_PinAFConfig(I2C_GPIO, I2C_SDA_GPIO_PinSource, I2C_GPIO_AF);
 }
-
+void resetReason()
+{
+  TRACE("Reset reason:");
+  if (RCC->CSR & RCC_CSR_LSION)
+  {
+    TRACE("Internal Low Speed oscillator enable");
+  }
+  if (RCC->CSR & RCC_CSR_LSIRDY)
+  {
+    TRACE("Internal Low Speed oscillator Ready");
+  }
+  if (RCC->CSR & RCC_CSR_V18PWRRSTF)
+  {
+    TRACE("V1.8 power domain reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_RMVF)
+  {
+    TRACE("Remove reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_OBLRSTF)
+  {
+    TRACE("OBL reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_PINRSTF)
+  {
+    TRACE("PIN reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_PORRSTF)
+  {
+    TRACE("POR/PDR reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_SFTRSTF)
+  {
+    TRACE("Software Reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_IWDGRSTF)
+  {
+    TRACE("Independent Watchdog reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_WWDGRSTF)
+  {
+    TRACE("Window watchdog reset flag");
+  }
+  if (RCC->CSR & RCC_CSR_LPWRRSTF)
+  {
+    TRACE("Low-Power reset flag");
+  }
+}
 void boardInit()
 {
 #if !defined(SIMU)
   RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2_LIST, ENABLE);
+#if defined(DEBUG) && defined(SERIAL_GPIO)
+  serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
+  TRACE("---------------------- FlySky board started :) -------------------------");
+#endif
+  // Reset reason
+  resetReason();
   //pwrInit();
   keysInit();
   adcInit();
@@ -217,51 +270,15 @@ void boardInit()
   __enable_irq();
   backlightInit();
   backlightEnable(1);
-  serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
-  TRACE("init_gpio");
   init_gpio();
-  TRACE("eepromInit");
   eepromInit();
   ////usbInit();
+  // TRACE("i2c test");
+  // i2c_test();
 
-#define BUFSIZE 128
-  uint8_t buffer[BUFSIZE];
-  uint32_t i;
-
-  for (i = 0; i < BUFSIZE; i++)
-  {
-    buffer[i] = 0x69;
-  }
-  eepromStartRead(buffer, 0, BUFSIZE);
-
-  for (i = 0; i < BUFSIZE; i++)
-  {
-    buffer[i] = 0x47;
-  }
-  eepromStartWrite(buffer, 0, 64);
-  for (i = 0; i < 10000; i++);
-
-  eepromStartWrite(buffer + 64, 64, 64);
-  for (i = 0; i < 10000; i++);
-
-  TRACE("written buff:");
-  DUMP(buffer, BUFSIZE);
-  
-  for (i = 0; i < BUFSIZE; i++)
-  {
-    buffer[i] = 0x00;
-  }
-  
-  eepromStartRead(buffer, 0, BUFSIZE);
-  TRACE("read buff:");
-  DUMP(buffer, BUFSIZE);
-  while (1)
-    ;
-
-#if defined(DEBUG) && defined(SERIAL_GPIO)
-  //serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
-  TRACE("---------------------- FlySky board started :) -------------------------");
-#endif
+  // while (1)
+  // {
+  // }
 
 #if defined(DEBUG)
   DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP | DBGMCU_TIM1_STOP | DBGMCU_TIM2_STOP | DBGMCU_TIM3_STOP | DBGMCU_TIM6_STOP | DBGMCU_TIM14_STOP, ENABLE);
