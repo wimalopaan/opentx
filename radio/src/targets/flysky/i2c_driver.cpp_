@@ -63,7 +63,7 @@ void eepromWaitEepromStandbyState(void)
   sEE_WaitEepromStandbyState();
   TRACE("done");
 }
-
+void i2cInit();
 void eepromInit()
 {
   TRACE("eeprom init...");
@@ -77,8 +77,7 @@ void eepromStartRead(uint8_t *buffer, size_t address, size_t size)
 
   TRACE("sEE_ReadBuffer addr %d size %d", address, size);
   sEE_ReadBuffer(buffer, address, (uint16_t *)(&NumDataRead));
-  TRACE("read: %02X%02X%02X%02X%02X%02X%02X%02X",
-        buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7]);
+  DUMP(buffer, size);
 }
 
 void eepromStartWrite(uint8_t *buffer, size_t address, size_t size)
@@ -98,8 +97,7 @@ void i2cInit()
 
   GPIO_InitTypeDef gpio_init;
   gpio_init.GPIO_Pin = I2C_SCL_GPIO_PIN | I2C_SDA_GPIO_PIN;
-  gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
-  //gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+  gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
   gpio_init.GPIO_Mode = GPIO_Mode_AF;
   gpio_init.GPIO_OType = GPIO_OType_OD;
   gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
@@ -110,7 +108,9 @@ void i2cInit()
 
   I2C_InitTypeDef i2c_init;
   //rise time 100ns fall 10ns 100khz standard mode
-  i2c_init.I2C_Timing = 0x00210507; // 0x10805E89; <- original // 0x00210507 <- example // 0x10420F13 <- mine
+  // 48Mhz clock 0x10805E89
+  // 8Mhz clock 0x00201D2B
+  i2c_init.I2C_Timing = 0x10805E89; // 0x10805E89; <- original // 0x00210507 <- example // 0x10420F13 <- mine
   i2c_init.I2C_AnalogFilter = I2C_AnalogFilter_Enable;
   i2c_init.I2C_DigitalFilter = 0;
   i2c_init.I2C_OwnAddress1 = 0x00;

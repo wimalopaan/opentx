@@ -401,9 +401,8 @@ void backlightEnable(uint8_t level);
 #define EEPROM_PAGE_SIZE      (64)
 #define EEPROM_SIZE           (16*1024)
 #define EEPROM_BLOCK_SIZE     (64)
-#if defined(DEBUG)
 #define EEPROM_VERIFY_WRITES
-#endif
+
 void eepromInit();
 void eepromStartRead(uint8_t * buffer, size_t address, size_t size);
 void eepromStartWrite(uint8_t * buffer, size_t address, size_t size);

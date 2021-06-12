@@ -809,6 +809,7 @@ void doLoopCommonActions()
 
 void backlightOn()
 {
+  TRACE("backlightOn");
   lightOffCounter = ((uint16_t)g_eeGeneral.lightAutoOff * 250) << 1;
 }
 
@@ -2107,9 +2108,9 @@ void opentxInit(OPENTX_INIT_ARGS)
 #endif
 
   TRACE("start pulses");
-  startPulses();
+  //startPulses();
 
-  wdt_enable(WDTO_500MS);
+  //wdt_enable(WDTO_500MS);
 }
 
 #if defined(SIMU)
