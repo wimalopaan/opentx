@@ -94,7 +94,7 @@ void menuRadioHardware(event_t event)
 }
 #endif // PCBSKY9X
 
-#if defined(PCBTARANIS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBI6X)
 enum MenuRadioHardwareItems {
   ITEM_RADIO_HARDWARE_LABEL_STICKS,
   ITEM_RADIO_HARDWARE_STICK1,

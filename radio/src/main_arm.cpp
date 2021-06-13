@@ -142,12 +142,12 @@ void checkBattery()
   }
   else {
     batSum += getBatteryVoltage();
-    // TRACE("checkBattery(): sampled = %d", getBatteryVoltage());
+    //TRACE("checkBattery(): sampled = %d", getBatteryVoltage());
     if (++sampleCount >= BAT_AVG_SAMPLES) {
       g_vbat100mV = (batSum + BAT_AVG_SAMPLES * 5 ) / (BAT_AVG_SAMPLES * 10);
       batSum = 0;
       sampleCount = 0;
-      // TRACE("checkBattery(): g_vbat100mV = %d", g_vbat100mV);
+      //TRACE("checkBattery(): g_vbat100mV = %d", g_vbat100mV);
     }
   }
 }

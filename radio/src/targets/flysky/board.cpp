@@ -445,8 +445,6 @@ void checkTrainerSettings()
 
 uint16_t getBatteryVoltage()
 {
-  int32_t instant_vbat = anaIn(TX_VOLTAGE); // using filtered ADC value on purpose
-  instant_vbat = (instant_vbat * BATT_SCALE * (128 + g_eeGeneral.txVoltageCalibration)) / 26214;
-  instant_vbat += 20; // add 0.2V because of the diode TODO check if this is needed, but removal will beak existing calibrations!!!
-  return (uint16_t)instant_vbat;
+  uint32_t mv = (adcValues[TX_VOLTAGE]  * (3300 * 150) ) / (4095 * 51);
+  return (uint16_t) (mv / 10) + 20;
 }

@@ -257,8 +257,7 @@ void eeSwapModels(uint8_t id1, uint8_t id2)
 
 // For conversions ...
 uint16_t eeLoadGeneralSettingsData()
-{
-  TRACE("eeLoadGeneralSettingsData size %d", sizeof(g_eeGeneral));
+{  
   return readFile(0, (uint8_t *)&g_eeGeneral, sizeof(g_eeGeneral));
 }
 
@@ -280,9 +279,11 @@ void writeModel(int index)
 
 bool eeLoadGeneral()
 {
-  TRACE("eeLoadGeneral");
   eeLoadGeneralSettingsData();
-  TRACE("eeLoadGeneral done");
+  
+  TRACE("eeLoadGeneralSettingsData size %d", sizeof(g_eeGeneral));
+  DUMP((uint8_t *)&g_eeGeneral, sizeof(g_eeGeneral));
+
   if (g_eeGeneral.version != EEPROM_VER)
   {
     TRACE("EEPROM version %d instead of %d", g_eeGeneral.version, EEPROM_VER);
@@ -350,8 +351,11 @@ void storageCheck(bool immediately)
 
   if (storageDirtyMsk & EE_GENERAL)
   {
-    TRACE("eeprom write general");
+    TRACE("eeprom write general.", g_eeGeneral);
+    DUMP((uint8_t *)&g_eeGeneral, sizeof(g_eeGeneral));
+
     storageDirtyMsk -= EE_GENERAL;
+
     writeGeneralSettings();
     if (immediately)
       eepromWriteWait();

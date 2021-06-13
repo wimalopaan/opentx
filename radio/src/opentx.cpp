@@ -82,12 +82,17 @@ void watchdogSuspend(uint32_t timeout)
 void per10ms()
 {
   g_tmr10ms++;
-
-  if (watchdogTimeout)
-  {
-    watchdogTimeout -= 1;
-    wdt_reset(); // Retrigger hardware watchdog
+  static uint16_t wdt_cnt = 0;
+  wdt_cnt++;
+  if(wdt_cnt>10){ // per 100ms
+    wdt_cnt=0;
+    wdt_reset();
   }
+  // if (watchdogTimeout)
+  // {
+  //   watchdogTimeout -= 1;
+  //   wdt_reset(); // Retrigger hardware watchdog
+  // }
 
 #if defined(GUI)
   if (lightOffCounter)
@@ -326,15 +331,12 @@ void generalDefault()
 uint16_t evalChkSum()
 {
   uint16_t sum = 0;
-  const int16_t *calibValues = (const int16_t *)&g_eeGeneral.calib[0];
-  TRACE("calibValues");
-
-  for (int i = 0; i < 12; i++)
+  // calculate first 4 channels
+  for (int8_t i = 0; i < 4; i++)
   {
-    TRACE("%u", (unsigned int)calibValues[i]);
+    struct CalibData cal = g_eeGeneral.calib[i];
+    sum += cal.mid + cal.spanNeg + cal.spanPos;
   }
-  for (int i = 0; i < 12; i++)
-    sum += calibValues[i];
   return sum;
 }
 
@@ -809,7 +811,6 @@ void doLoopCommonActions()
 
 void backlightOn()
 {
-  TRACE("backlightOn");
   lightOffCounter = ((uint16_t)g_eeGeneral.lightAutoOff * 250) << 1;
 }
 
@@ -1686,9 +1687,8 @@ void opentxStart(const uint8_t startType = OPENTX_START_DEFAULT_ARGS)
   {
     return;
   }
-  TRACE("gonna do chksum");
-  //uint8_t calibration_needed = (g_eeGeneral.chkSum != evalChkSum());
-  uint8_t calibration_needed=1;
+  uint8_t calibration_needed = (g_eeGeneral.chkSum != evalChkSum());
+  TRACE("gonna do chksum. saved: %d calculated: %d", g_eeGeneral.chkSum, evalChkSum());
   TRACE("calibration needed %d", calibration_needed);
 #if defined(GUI)
   if (!calibration_needed && !(startType & OPENTX_START_NO_SPLASH))
@@ -2108,9 +2108,9 @@ void opentxInit(OPENTX_INIT_ARGS)
 #endif
 
   TRACE("start pulses");
-  //startPulses();
+  startPulses();
 
-  //wdt_enable(WDTO_500MS);
+  wdt_enable(WDTO_500MS);
 }
 
 #if defined(SIMU)

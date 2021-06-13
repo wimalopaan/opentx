@@ -8,3 +8,12 @@
 build*/
 cmake-build-*/
 /debian/
+/CMakeFiles/*
+radio/src/CmakeFiles/*
+/.vscode/
+*.cmake
+*.make
+*.marks
+/nbproject/
+*.bin
+/radio/src/CMakeFiles/firmware.dir/link.txt

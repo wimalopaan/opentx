@@ -113,10 +113,12 @@ void eepromPageRead(uint8_t *buffer, size_t address, size_t size)
   uint8_t wb[2];
   wb[0] = (uint8_t)(address >> 8);
   wb[1] = (uint8_t)(address & 0xFF);
-  TRACE("eepromPageRead %02X%02X %d bytes", wb[0], wb[1], size);
+  uint8_t start_page = address / 64;
+  uint8_t end_page = (address + size -1) / 64;
+  TRACE("eepromPageRead addr %d size %d [from %d to %d]", address, size, start_page, end_page);
   i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, wb, 2, buffer, size);
   delay_ms(1);
-  DUMP(buffer, size);
+  //DUMP(buffer, size);
 }
 
 void eepromPageWrite(uint8_t *buffer, uint16_t address, uint8_t size)
@@ -124,9 +126,11 @@ void eepromPageWrite(uint8_t *buffer, uint16_t address, uint8_t size)
   static uint8_t temp[2 + EEPROM_PAGE_SIZE];
   temp[0] = (uint8_t)(address >> 8);
   temp[1] = (uint8_t)(address & 0xFF);
-  TRACE("eepromPageWrite %02X%02X %d bytes", temp[0], temp[1], size);
+  uint8_t start_page = address / 64;
+  uint8_t end_page = (address + size - 1) / 64;
+  TRACE("eepromPageWrite addr %d size %d [start page %d end page %d]", address, size, start_page, end_page);
   memcpy(temp + 2, buffer, size);
-  DUMP(temp, size + 2);
+  //DUMP(temp, size + 2);
   i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, temp, size + 2, NULL, 0);
   delay_ms(5);
 
@@ -137,7 +141,8 @@ void eepromPageWrite(uint8_t *buffer, uint16_t address, uint8_t size)
     if (temp[i] != buffer[i])
     {
       TRACE("--------- eeprom verify failed  ----------");
-      while(1);
+      while (1)
+        ;
     }
   }
 
@@ -159,15 +164,21 @@ void eepromStartRead(uint8_t *buffer, size_t address, size_t size)
   {
     // second segment, entire pages in between
     uint16_t remaining = (size - count) % EEPROM_PAGE_SIZE;
-    uint8_t reads = (size - count) / EEPROM_PAGE_SIZE;
+    uint8_t full_pages = (size - count) / EEPROM_PAGE_SIZE;
     uint8_t i;
-    for (i = 0; i < reads; i++)
+    for (i = 0; i < full_pages; i++)
     {
-      eepromPageRead(buffer + count + (i * EEPROM_PAGE_SIZE), address + count + (i * EEPROM_PAGE_SIZE), EEPROM_PAGE_SIZE);
+      eepromPageRead(
+        buffer + count + (i * EEPROM_PAGE_SIZE), 
+        address + count + (i * EEPROM_PAGE_SIZE), 
+        EEPROM_PAGE_SIZE);
     }
     if (remaining)
     {
-      eepromPageRead(buffer + count + (reads * EEPROM_PAGE_SIZE), address + count + (reads * EEPROM_PAGE_SIZE), remaining);
+      eepromPageRead(
+        buffer + count + (full_pages * EEPROM_PAGE_SIZE), 
+        address + count + (full_pages * EEPROM_PAGE_SIZE), 
+        remaining);
     }
   }
 
@@ -189,17 +200,23 @@ void eepromStartWrite(uint8_t *buffer, size_t address, size_t size)
   {
     // second segment, entire pages in between
     uint16_t remaining = (size - count) % EEPROM_PAGE_SIZE;
-    uint8_t writes = (size - count) / EEPROM_PAGE_SIZE;
+    uint8_t full_pages = (size - count) / EEPROM_PAGE_SIZE;
     uint8_t i;
-    for (i = 0; i < writes; i++)
+    for (i = 0; i < full_pages; i++)
     {
-      eepromPageWrite(buffer + count + (i * EEPROM_PAGE_SIZE), address + count + (i * EEPROM_PAGE_SIZE), EEPROM_PAGE_SIZE);
+      eepromPageWrite(
+        buffer + count + (i * EEPROM_PAGE_SIZE),
+        address + count + (i * EEPROM_PAGE_SIZE),
+        EEPROM_PAGE_SIZE);
     }
 
     // third segment, remainder
     if (remaining)
     {
-      eepromPageWrite(buffer + count + (writes * EEPROM_PAGE_SIZE), address + count + (writes * EEPROM_PAGE_SIZE), remaining);
+      eepromPageWrite(
+        buffer + count + (full_pages * EEPROM_PAGE_SIZE), 
+        address + count + (full_pages * EEPROM_PAGE_SIZE), 
+        remaining);
     }
   }
 }
@@ -220,11 +237,11 @@ void i2c_test()
 
 void eepromBlockErase(uint32_t address)
 {
-  TRACE("eepromBlockErase");
-  static uint8_t erasedBlock[EEPROM_BLOCK_SIZE]; // can't be on the stack!
-  memset(erasedBlock, 0xFF, sizeof(erasedBlock));
-  eepromStartWrite(erasedBlock, address, EEPROM_BLOCK_SIZE);
-  TRACE("done");
+  // TRACE("eepromBlockErase");
+  // static uint8_t erasedBlock[EEPROM_BLOCK_SIZE]; // can't be on the stack!
+  // memset(erasedBlock, 0xFF, sizeof(erasedBlock));
+  // eepromStartWrite(erasedBlock, address, EEPROM_BLOCK_SIZE);
+  // TRACE("done");
 }
 uint8_t eepromReadStatus()
 {

@@ -244,16 +244,16 @@ int sbusGetByte(uint8_t * byte);
 // Keys driver
 enum EnumKeys
 {
-  KEY_MENU,
-  KEY_ENTER=KEY_MENU,
+  KEY_ENTER,
   KEY_EXIT,
   KEY_DOWN,
   KEY_MINUS = KEY_DOWN,
   KEY_UP,
   KEY_PLUS = KEY_UP,
-  KEY_RIGHT,
+  KEY_MENU,
+  KEY_BIND = KEY_MENU,
   KEY_LEFT,
-  KEY_BIND,
+  KEY_RIGHT,
   TRM_BASE,
   TRM_LH_DWN = TRM_BASE,
   TRM_LH_UP,
@@ -275,9 +275,9 @@ enum EnumSwitches
   SW_SD,
 };
 
-#define IS_3POS(x)                      ((x) == SW_SC)
+#define IS_3POS(x)            ((x) == SW_SC)
 #define IS_TOGGLE(x)					((x) != SW_SC)
-#define NUM_SWITCHES                  4
+#define NUM_SWITCHES          4
 
 void keysInit(void);
 uint8_t keyState(uint8_t index);
@@ -296,6 +296,7 @@ uint32_t readTrims(void);
 
 // WDT driver
 #define WDTO_500MS                      500
+#define WDTO_1000MS                     1000
 #if defined(WATCHDOG_DISABLED) || defined(SIMU)
   #define wdt_enable(x)
   #define wdt_reset()
@@ -315,23 +316,21 @@ enum Analogs {
   STICK2,
   STICK3,
   STICK4,
+  SW_A,   
+  SW_B,
+  SW_C,
+  SW_D,
   POT_FIRST,
   POT1 = POT_FIRST,
   POT2,
   POT_LAST = POT2,
-  SLIDER_FIRST,             // Setting switches as sliders as I still don't know how to 
-  SLIDER1 = SLIDER_FIRST,   // make 3POS or 2POS from analog data 
-  SLIDER2,
-  SLIDER3,
-  SLIDER4,
-  SLIDER_LAST = SLIDER4,
   TX_VOLTAGE,
   NUM_ANALOGS
 };
 
 #define NUM_POTS                        (POT_LAST-POT_FIRST+1)
 #define NUM_XPOTS                       0						//disable xpot for now
-#define NUM_SLIDERS                     (TX_VOLTAGE-POT_LAST-1)
+#define NUM_SLIDERS                     0
 
 enum CalibratedAnalogs {
   CALIBRATED_STICK1,
@@ -340,8 +339,6 @@ enum CalibratedAnalogs {
   CALIBRATED_STICK4,
   CALIBRATED_POT_FIRST,
   CALIBRATED_POT_LAST = CALIBRATED_POT_FIRST + NUM_POTS - 1,
-  CALIBRATED_SLIDER_FIRST,
-  CALIBRATED_SLIDER_LAST = CALIBRATED_SLIDER_FIRST + NUM_SLIDERS - 1,
   NUM_CALIBRATED_ANALOGS
 };
 
@@ -373,7 +370,7 @@ uint32_t pwrPressedDuration(void);
 #if defined(SIMU)
 #define UNEXPECTED_SHUTDOWN()           false
 #else
-#define UNEXPECTED_SHUTDOWN()           (WAS_RESET_BY_WATCHDOG() || g_eeGeneral.unexpectedShutdown)
+#define UNEXPECTED_SHUTDOWN()           (WAS_RESET_BY_WATCHDOG())
 #endif
 
 // Backlight driver
@@ -401,7 +398,7 @@ void backlightEnable(uint8_t level);
 #define EEPROM_PAGE_SIZE      (64)
 #define EEPROM_SIZE           (16*1024)
 #define EEPROM_BLOCK_SIZE     (64)
-#define EEPROM_VERIFY_WRITES
+//#define EEPROM_VERIFY_WRITES
 
 void eepromInit();
 void eepromStartRead(uint8_t * buffer, size_t address, size_t size);
@@ -410,6 +407,7 @@ void eepromBlockErase(uint32_t address);
 uint8_t eepromReadStatus();
 uint8_t eepromIsTransferComplete();
 void i2c_test();
+bool dump_next_operation = false;
 
 // Debug driver
 void debugPutc(const char c);
