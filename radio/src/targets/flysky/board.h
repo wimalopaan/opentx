@@ -401,8 +401,8 @@ void backlightEnable(uint8_t level);
 //#define EEPROM_VERIFY_WRITES
 
 void eepromInit();
-void eepromStartRead(uint8_t * buffer, size_t address, size_t size);
-void eepromStartWrite(uint8_t * buffer, size_t address, size_t size);
+void eepromReadBlock(uint8_t * buffer, size_t address, size_t size);
+void eepromWriteBlock(uint8_t * buffer, size_t address, size_t size);
 void eepromBlockErase(uint32_t address);
 uint8_t eepromReadStatus();
 uint8_t eepromIsTransferComplete();
