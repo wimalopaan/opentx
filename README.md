@@ -26,3 +26,4 @@ Completed tasks:
 * Fix crash in calibration checksum 
 * Bind key as MENU 
 * Left horizontal trim as LEFT & RIGHT keys. We don't need trims with Betaflight or iNav.
+* Graceful shutdown with right horizontal trim up
