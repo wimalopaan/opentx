@@ -90,7 +90,7 @@ void eepromEraseBlock(uint32_t address, bool blocking = true)
 
 void eepromRead(uint8_t *buffer, size_t address, size_t size)
 {
-  TRACE("eepromRead(%p, %d, %d)", buffer, address, size);
+  TRACE("eepromRead(addr: %d size: %d)", address, size);
 
   eepromStartRead(buffer, address, size);
   eepromWaitTransferComplete();
@@ -98,7 +98,7 @@ void eepromRead(uint8_t *buffer, size_t address, size_t size)
 
 void eepromWrite(uint8_t *buffer, size_t address, size_t size, bool blocking = true)
 {
-  TRACE("eepromWrite(%p, %d, %d)", buffer, address, size);
+  TRACE("eepromWrite(addr: %d size: %d)", address, size);
 
   eepromStartWrite(buffer, address, size);
 
@@ -365,7 +365,7 @@ void storageCheck(bool immediately)
 
   if (storageDirtyMsk & EE_MODEL)
   {
-    TRACE("eeprom write model");
+    TRACE("eeprom write model %d bytes", sizeof(g_model));
     storageDirtyMsk -= EE_MODEL;
     writeModel(g_eeGeneral.currModel);
     if (immediately)
@@ -648,4 +648,5 @@ const char *eeRestoreModel(uint8_t i_fileDst, char *model_name)
 
   return NULL;
 }
+
 #endif

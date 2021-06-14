@@ -136,69 +136,69 @@ void readKeysAndTrims()
   {
     keys[index++].input(keys_input & i);
   }
-  if (keys_input)
-  {
-    if (keys_input & (1 << TRM_RH_UP))
-    {
-      TRACE("TRM_RH_UP");
-    }
-    if (keys_input & (1 << TRM_RH_DWN))
-    {
-      TRACE("TRM_RH_DWN");
-    }
-    if (keys_input & (1 << TRM_RV_UP))
-    {
-      TRACE("TRM_RV_UP");
-    }
-    if (keys_input & (1 << TRM_RV_DWN))
-    {
-      TRACE("TRM_RV_DWN");
-    }
-    if (keys_input & (1 << TRM_LV_UP))
-    {
-      TRACE("TRM_LV_UP");
-    }
-    if (keys_input & (1 << TRM_LV_DWN))
-    {
-      TRACE("TRM_LV_DWN");
-    }
-    if (keys_input & (1 << TRM_LH_UP))
-    {
-      TRACE("TRM_LH_UP");
-    }
-    if (keys_input & (1 << TRM_LH_DWN))
-    {
-      TRACE("TRM_LH_DWN");
-    }
-    if (keys_input & (1 << KEY_DOWN))
-    {
-      TRACE("KEY_DOWN");
-    }
-    if (keys_input & (1 << KEY_UP))
-    {
-      TRACE("KEY_UP");
-    }
-    if (keys_input & (1 << KEY_ENTER))
-    {
-      TRACE("KEY_ENTER");
-    }
-    if (keys_input & (1 << KEY_EXIT))
-    {
-      TRACE("KEY_EXIT");
-    }
-    if (keys_input & (1 << KEY_MENU))
-    {
-      TRACE("KEY_MENU");
-    }
-    if (keys_input & (1 << KEY_LEFT))
-    {
-      TRACE("KEY_LEFT");
-    }
-    if (keys_input & (1 << KEY_RIGHT))
-    {
-      TRACE("KEY_RIGHT");
-    }
-  }
+  // if (keys_input)
+  // {
+  //   if (keys_input & (1 << TRM_RH_UP))
+  //   {
+  //     TRACE("TRM_RH_UP");
+  //   }
+  //   if (keys_input & (1 << TRM_RH_DWN))
+  //   {
+  //     TRACE("TRM_RH_DWN");
+  //   }
+  //   if (keys_input & (1 << TRM_RV_UP))
+  //   {
+  //     TRACE("TRM_RV_UP");
+  //   }
+  //   if (keys_input & (1 << TRM_RV_DWN))
+  //   {
+  //     TRACE("TRM_RV_DWN");
+  //   }
+  //   if (keys_input & (1 << TRM_LV_UP))
+  //   {
+  //     TRACE("TRM_LV_UP");
+  //   }
+  //   if (keys_input & (1 << TRM_LV_DWN))
+  //   {
+  //     TRACE("TRM_LV_DWN");
+  //   }
+  //   if (keys_input & (1 << TRM_LH_UP))
+  //   {
+  //     TRACE("TRM_LH_UP");
+  //   }
+  //   if (keys_input & (1 << TRM_LH_DWN))
+  //   {
+  //     TRACE("TRM_LH_DWN");
+  //   }
+  //   if (keys_input & (1 << KEY_DOWN))
+  //   {
+  //     TRACE("KEY_DOWN");
+  //   }
+  //   if (keys_input & (1 << KEY_UP))
+  //   {
+  //     TRACE("KEY_UP");
+  //   }
+  //   if (keys_input & (1 << KEY_ENTER))
+  //   {
+  //     TRACE("KEY_ENTER");
+  //   }
+  //   if (keys_input & (1 << KEY_EXIT))
+  //   {
+  //     TRACE("KEY_EXIT");
+  //   }
+  //   if (keys_input & (1 << KEY_MENU))
+  //   {
+  //     TRACE("KEY_MENU");
+  //   }
+  //   if (keys_input & (1 << KEY_LEFT))
+  //   {
+  //     TRACE("KEY_LEFT");
+  //   }
+  //   if (keys_input & (1 << KEY_RIGHT))
+  //   {
+  //     TRACE("KEY_RIGHT");
+  //   }
+  // }
   if (keys_input && (g_eeGeneral.backlightMode & e_backlight_mode_keys))
   {
     // on keypress turn the light on

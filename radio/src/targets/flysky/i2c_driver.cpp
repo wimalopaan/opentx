@@ -115,7 +115,7 @@ void eepromPageRead(uint8_t *buffer, size_t address, size_t size)
   wb[1] = (uint8_t)(address & 0xFF);
   uint8_t start_page = address / 64;
   uint8_t end_page = (address + size -1) / 64;
-  TRACE("eepromPageRead addr %d size %d [from %d to %d]", address, size, start_page, end_page);
+  //TRACE("eepromPageRead addr %d size %d [from %d to %d]", address, size, start_page, end_page);
   i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, wb, 2, buffer, size);
   delay_ms(1);
   //DUMP(buffer, size);
@@ -128,7 +128,7 @@ void eepromPageWrite(uint8_t *buffer, uint16_t address, uint8_t size)
   temp[1] = (uint8_t)(address & 0xFF);
   uint8_t start_page = address / 64;
   uint8_t end_page = (address + size - 1) / 64;
-  TRACE("eepromPageWrite addr %d size %d [start page %d end page %d]", address, size, start_page, end_page);
+  //TRACE("eepromPageWrite addr %d size %d [start page %d end page %d]", address, size, start_page, end_page);
   memcpy(temp + 2, buffer, size);
   //DUMP(temp, size + 2);
   i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, temp, size + 2, NULL, 0);
@@ -151,7 +151,7 @@ void eepromPageWrite(uint8_t *buffer, uint16_t address, uint8_t size)
 
 void eepromStartRead(uint8_t *buffer, size_t address, size_t size)
 {
-  TRACE("eepromStartRead %04X %d bytes", address, size);
+  //TRACE("eepromStartRead addr %d %d bytes", address, size);
   // first segment, until page limit
   uint8_t offset = address % EEPROM_PAGE_SIZE;
   uint8_t count = EEPROM_PAGE_SIZE - offset;
@@ -187,7 +187,7 @@ void eepromStartRead(uint8_t *buffer, size_t address, size_t size)
 
 void eepromStartWrite(uint8_t *buffer, size_t address, size_t size)
 {
-  TRACE("eepromStartWrite %04X %d bytes", address, size);
+  //TRACE("eepromStartWrite addr %d %d bytes", address, size);
   // first segment, until page limit
   uint8_t offset = address % EEPROM_PAGE_SIZE;
   uint8_t count = EEPROM_PAGE_SIZE - offset;

@@ -407,7 +407,6 @@ void eepromBlockErase(uint32_t address);
 uint8_t eepromReadStatus();
 uint8_t eepromIsTransferComplete();
 void i2c_test();
-bool dump_next_operation = false;
 
 // Debug driver
 void debugPutc(const char c);
