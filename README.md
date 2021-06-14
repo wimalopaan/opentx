@@ -10,7 +10,6 @@ Currently working on:
 * Pulses. Currently no A7105 support.
 * Switches. Swithes are analog in i6x, This needs discrete switch emulation or treating them as POTs.
 * USB support (board.h usbplugged)
-* Graceful shutdown. Maybe hold some button repurposed as power off.
 * UART DMA fifo transfers.
 
 Completed tasks:
