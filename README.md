@@ -4,6 +4,7 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 Next to tackle:
 
+* Switches warnings don't dissapear by moving the switches.
 * Radio and model settings crashes. A complete review of each screen is needed.
 * Internal module. Currently no A7105 support.
 * External module support. PXX, CRSF. Sbus?
@@ -15,7 +16,7 @@ Next to tackle:
 Completed tasks:
 
 * Switches working!
-* Removed graceful shutdown with right horizontal trim up. Not needed.
+* Removed graceful shutdown with right horizontal trim up. Not needed it seems.
 * Restored Enter key as MENU.
 * Factory reset fixed on version screen.
 * Throttle on left. Default mode: 2
