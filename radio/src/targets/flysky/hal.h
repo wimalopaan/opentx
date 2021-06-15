@@ -21,9 +21,6 @@
 #ifndef _HAL_H_
 #define _HAL_H_
 
-#define PCBI6X
-#undef RTCLOCK
-
 #define KEYS_MATRIX_LINES_GPIO          GPIOD
 #define KEYS_MATRIX_COLUMNS_GPIO        GPIOC
 

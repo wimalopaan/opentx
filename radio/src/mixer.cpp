@@ -347,7 +347,9 @@ getvalue_t getValue(mixsrc_t i)
   else if ((i >= MIXSRC_FIRST_SWITCH) && (i <= MIXSRC_LAST_SWITCH)) {
     mixsrc_t sw = i-MIXSRC_FIRST_SWITCH;
     if (SWITCH_EXISTS(sw)) {
-      return (switchState(3*sw) ? -1024 : (switchState(3*sw+1) ? 0 : 1024));
+      int32_t val = (switchState(3*sw) ? -1024 : (switchState(3*sw+1) ? 0 : 1024));
+      TRACE("sw %d val %d",sw,val);
+      return val;
     }
     else {
       return 0;

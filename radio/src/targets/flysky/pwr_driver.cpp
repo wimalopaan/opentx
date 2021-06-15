@@ -31,12 +31,11 @@ void pwrOn()
 }
 
 void pwrOff()
-{
-  PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
+{  
 }
 //if !PWR_PRESS_BUTTON logic is reversed
 uint32_t pwrPressed()
 {
-  return (readKeys() & (1 << TRM_RH_UP));
-  //return 1;
+  //return (readKeys() & (1 << TRM_RH_UP));
+  return 1;
 }

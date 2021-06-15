@@ -272,6 +272,8 @@ void boardInit()
   backlightEnable(1);
   init_gpio();
   eepromInit();
+  //storageEraseAll(false);
+  
   ////usbInit();
   // TRACE("i2c test");
   // i2c_test();

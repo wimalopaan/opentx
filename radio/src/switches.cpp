@@ -57,7 +57,7 @@ LogicalSwitchesFlightModeContext lswFm[MAX_FLIGHT_MODES];
 #define LS_LAST_VALUE(fm, idx) lswFm[fm].lsw[idx].lastValue
 
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
 #if defined(PCBX9E)
 tmr10ms_t switchesMidposStart[16];
 #else
@@ -126,14 +126,19 @@ uint64_t check3PosSwitchPosition(uint8_t idx, uint8_t sw, bool startup)
 #define CHECK_2POS(sw)       newPos |= check2PosSwitchPosition(sw ## 0)
 #define CHECK_3POS(idx, sw)  newPos |= check3PosSwitchPosition(idx, sw ## 0, startup)
 
-void getSwitchesPosition(bool startup)
-{
+void getSwitchesPosition(bool startup){
   uint64_t newPos = 0;
+#if defined(PCBI6)
+  CHECK_2POS(SW_SA);
+  CHECK_2POS(SW_SB);
+  CHECK_3POS(2, SW_SC);
+  CHECK_2POS(SW_SD);
+#else
   CHECK_3POS(0, SW_SA);
   CHECK_3POS(1, SW_SB);
   CHECK_3POS(2, SW_SC);
   CHECK_3POS(3, SW_SD);
-#if !defined(PCBX7) && !defined(PCBXLITE)
+#if !defined(PCBX7) && !defined(PCBXLITE) 
   CHECK_3POS(4, SW_SE);
 #endif
 #if !defined(PCBXLITE)
@@ -157,7 +162,7 @@ void getSwitchesPosition(bool startup)
   CHECK_3POS(14, SW_SQ);
   CHECK_3POS(15, SW_SR);
 #endif
-
+#endif
   switchesPos = newPos;
 
   for (int i=0; i<NUM_XPOTS; i++) {
@@ -501,7 +506,7 @@ swsrc_t getMovedSwitch()
   static tmr10ms_t s_move_last_time = 0;
   swsrc_t result = 0;
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
   for (int i=0; i<NUM_SWITCHES; i++) {
     if (SWITCH_EXISTS(i)) {
       swarnstate_t mask = ((swarnstate_t)0x03 << (i*2));

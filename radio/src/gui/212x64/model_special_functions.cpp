@@ -146,10 +146,13 @@ enum CustomFunctionsItems {
 
 void menuSpecialFunctions(event_t event, CustomFunctionData * functions, CustomFunctionsContext * functionsContext)
 {
+  TRACE("menuSpecialFunctions");
   int sub = menuVerticalPosition;
   uint8_t eeFlags = (functions == g_model.customFn) ? EE_MODEL : EE_GENERAL;
   if (menuHorizontalPosition<0 && event==EVT_KEY_LONG(KEY_ENTER) && !READ_ONLY()) {
     killEvents(event);
+    TRACE("Functions:");
+    DUMP(functions, sizeof(CustomFunctionData));
     CustomFunctionData *cfn = &functions[sub];
     if (!CFN_EMPTY(cfn))
       POPUP_MENU_ADD_ITEM(STR_COPY);

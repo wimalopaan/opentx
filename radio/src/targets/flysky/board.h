@@ -90,9 +90,9 @@ extern "C" {
 #define strcat_P strcat
 
 
-#define BATTERY_WARN                  37 // 8.7V
-#define BATTERY_MIN                   36 // 8.5V
-#define BATTERY_MAX                   42 // 11.5V
+#define BATTERY_WARN                  45 // 4.5V
+#define BATTERY_MIN                   43 // 4.3V
+#define BATTERY_MAX                   60 // 6.0V
 
 //maybe bind?
 #define IS_SHIFT_KEY(index)             (false)
@@ -245,13 +245,13 @@ int sbusGetByte(uint8_t * byte);
 enum EnumKeys
 {
   KEY_ENTER,
+  KEY_MENU = KEY_ENTER,
   KEY_EXIT,
   KEY_DOWN,
   KEY_MINUS = KEY_DOWN,
   KEY_UP,
   KEY_PLUS = KEY_UP,
-  KEY_MENU,
-  KEY_BIND = KEY_MENU,
+  KEY_BIND,
   KEY_LEFT,
   KEY_RIGHT,
   TRM_BASE,
@@ -273,11 +273,26 @@ enum EnumSwitches
   SW_SB,
   SW_SC,
   SW_SD,
+  NUM_SWITCHES
 };
 
+enum EnumSwitchesPositions
+{
+  SW_SA0,
+  SW_SA1,
+  SW_SA2,
+  SW_SB0,
+  SW_SB1,
+  SW_SB2,
+  SW_SC0,
+  SW_SC1,
+  SW_SC2,
+  SW_SD0,
+  SW_SD1,
+  SW_SD2,
+};
 #define IS_3POS(x)            ((x) == SW_SC)
-#define IS_TOGGLE(x)					((x) != SW_SC)
-#define NUM_SWITCHES          4
+#define IS_TOGGLE(x)					false
 
 void keysInit(void);
 uint8_t keyState(uint8_t index);
@@ -349,8 +364,6 @@ void adcRead(void);
 extern uint16_t adcValues[NUM_ANALOGS];
 uint16_t getAnalogValue(uint8_t index);
 uint16_t getBatteryVoltage();   // returns current battery voltage in 10mV steps
-
-#define BATT_SCALE                    151
 
 #if defined(__cplusplus) && !defined(SIMU)
 extern "C" {

@@ -483,9 +483,13 @@ typedef uint32_t swarnstate_t;
 typedef uint64_t swconfig_t;
 typedef uint64_t swarnstate_t;
 typedef uint32_t swarnenable_t;
-#elif defined(PCBTARANIS) || defined(PCBI6)
+#elif defined(PCBTARANIS)
 typedef uint16_t swconfig_t;
 typedef uint16_t swarnstate_t;
+typedef uint8_t swarnenable_t;
+#elif defined(PCBI6)
+typedef uint8_t swconfig_t;
+typedef uint8_t swarnstate_t;
 typedef uint8_t swarnenable_t;
 #else
 typedef uint8_t swarnstate_t;
@@ -687,7 +691,7 @@ PACK(struct TrainerData {
   #define EXTRA_GENERAL_FIELDS \
     EXTRA_GENERAL_FIELDS_ARM \
 	uint8_t  serial2Mode:4; \
-	uint32_t switchConfig; \
+	swconfig_t switchConfig; \
     uint8_t  potsConfig:4; /* two bits per pot */\
 	char switchNames[NUM_SWITCHES][LEN_SWITCH_NAME]; \
     char anaNames[NUM_STICKS+NUM_POTS+NUM_SLIDERS][LEN_ANA_NAME];

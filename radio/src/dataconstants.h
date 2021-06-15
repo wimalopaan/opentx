@@ -372,7 +372,7 @@ enum SwitchSources {
 
   SWSRC_FIRST_SWITCH,
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
   SWSRC_SA0 = SWSRC_FIRST_SWITCH,
   SWSRC_SA1,
   SWSRC_SA2,
@@ -385,22 +385,22 @@ enum SwitchSources {
   SWSRC_SD0,
   SWSRC_SD1,
   SWSRC_SD2,
-#if !defined(PCBX7) && !defined(PCBXLITE)
+#if !defined(PCBX7) && !defined(PCBXLITE) && !defined(PCBI6)
   SWSRC_SE0,
   SWSRC_SE1,
   SWSRC_SE2,
 #endif
-#if !defined(PCBXLITE)
+#if !defined(PCBXLITE) && !defined(PCBI6)
   SWSRC_SF0,
   SWSRC_SF1,
   SWSRC_SF2,
 #endif
-#if !defined(PCBX7) && !defined(PCBXLITE)
+#if !defined(PCBX7) && !defined(PCBXLITE) && !defined(PCBI6)
   SWSRC_SG0,
   SWSRC_SG1,
   SWSRC_SG2,
 #endif
-#if !defined(PCBXLITE)
+#if !defined(PCBXLITE) && !defined(PCBI6)
   SWSRC_SH0,
   SWSRC_SH1,
   SWSRC_SH2,
@@ -437,10 +437,10 @@ enum SwitchSources {
   SWSRC_SR1,
   SWSRC_SR2,
 #endif
-#if defined(PCBX9E)
+#if defined(PCBX9E) 
   SWSRC_TRAINER = SWSRC_SH2,
   SWSRC_LAST_SWITCH = SWSRC_SR2,
-#elif defined(PCBXLITE)
+#elif defined(PCBXLITE) || defined(PCBI6)
   SWSRC_TRAINER = SWSRC_SD2,
   SWSRC_LAST_SWITCH = SWSRC_SD2,
 #else

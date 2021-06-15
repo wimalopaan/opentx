@@ -3,7 +3,7 @@ option(LCD_DUAL_BUFFER "Dual LCD Buffer" OFF)
 option(TARANIS_INTERNAL_PPM "Taranis internal module hack to output PPM" OFF)
 
 if(PCB STREQUAL I6X)
-  set(PWR_BUTTON "PRESS")
+  set(PWR_BUTTON "SWITCH")
   set(SPLASH "OFF")
   set(CPU_TYPE STM32F0)
   set(CPU_TYPE_FULL STM32F072)  # for size report
@@ -19,6 +19,7 @@ if(PCB STREQUAL I6X)
   set(NAVIGATION_TYPE 9x)
   set(BITMAPS_TARGET 9x_bitmaps)
   set(FONTS_TARGET 9x_fonts_1bit)
+  set(DEFAULT_MODE 2)
   add_definitions(-DSTM32F072)
   add_definitions(-DPWR_BUTTON_${PWR_BUTTON})
   add_definitions(-DEEPROM_VARIANT=0)
@@ -42,7 +43,7 @@ set(SDCARD NO)
 set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
-add_definitions(-DPCBI6 -DBUZZER -DRTCLOCK) 
+add_definitions(-DPCBI6 -DBUZZER) 
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
   model_mix_edit.cpp

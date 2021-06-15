@@ -91,7 +91,7 @@
 #define MODEL_GVAR_MIN(idx)            (CFN_GVAR_CST_MIN + g_model.gvars[idx].min)
 #define MODEL_GVAR_MAX(idx)            (CFN_GVAR_CST_MAX - g_model.gvars[idx].max)
 
-#if defined(PCBTARANIS) || defined(PCBHORUS) ||  defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
   enum SwitchConfig {
     SWITCH_NONE,
     SWITCH_TOGGLE,
