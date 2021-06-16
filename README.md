@@ -12,6 +12,7 @@ Next to tackle:
 * Telemetry
 * USB support (board.h usbplugged)
 * UART DMA fifo transfers.
+* Buzzer
 
 Completed tasks:
 
