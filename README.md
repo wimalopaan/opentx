@@ -17,8 +17,8 @@ Completed tasks:
 
 * Switches working!
 * Removed graceful shutdown with right horizontal trim up. Not needed it seems.
-* Restored Enter key as MENU.
-* Factory reset fixed on version screen.
+* Restored Enter key as MENU. Hold for model settings.
+* Factory reset fixed on version screen. Navigate to the left as Special functions menu crashes currently.
 * Throttle on left. Default mode: 2
 * EEPROM compression enabled. No more errors, lots of free space.
 * EEPROM reading and writing.
