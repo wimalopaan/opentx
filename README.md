@@ -12,6 +12,7 @@ Next to tackle:
 * USB support (board.h usbplugged)
 * UART DMA fifo transfers.
 * Buzzer
+* Screen contrast
 
 Completed tasks:
 
