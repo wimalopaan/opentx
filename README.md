@@ -11,6 +11,7 @@ Next to tackle:
 * Telemetry
 * USB support (board.h usbplugged)
 * UART DMA fifo transfers.
+* Buzzer
 
 Completed tasks:
 
@@ -29,4 +30,4 @@ Completed tasks:
 * Fix inverted sticks and POTS.
 * Fix battery voltage calculation.
 * Fix crash in calibration checksum. 
-* Left horizontal trim as LEFT & RIGHT keys. We don't need trims with Betaflight or iNav.
+* Left horizontal trim as LEFT & RIGHT keys. Thinking of better ways to implement this to free the trims.
