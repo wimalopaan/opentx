@@ -447,6 +447,6 @@ void checkTrainerSettings()
 
 uint16_t getBatteryVoltage()
 {
-  uint32_t mv = (adcValues[TX_VOLTAGE]  * (3300 * 150) ) / (4095 * 51);
+  uint32_t mv = (adcValues[TX_VOLTAGE]  * (3300 * BATT_SCALE) ) / (4095 * 51);
   return (uint16_t) (mv / 10) + 20;
 }

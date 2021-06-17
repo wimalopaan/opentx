@@ -558,7 +558,7 @@ void checkSwitches()
 
   while (1) {
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
   #define GETADC_COUNT 1
 #endif
 
