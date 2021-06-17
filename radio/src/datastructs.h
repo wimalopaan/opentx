@@ -692,9 +692,9 @@ PACK(struct TrainerData {
     EXTRA_GENERAL_FIELDS_ARM \
 	uint8_t  serial2Mode:4; \
 	swconfig_t switchConfig; \
-    uint8_t  potsConfig:4; /* two bits per pot */\
+  uint8_t  potsConfig:4; /* two bits per pot */\
 	char switchNames[NUM_SWITCHES][LEN_SWITCH_NAME]; \
-    char anaNames[NUM_STICKS+NUM_POTS+NUM_SLIDERS][LEN_ANA_NAME];
+  char anaNames[NUM_STICKS+NUM_POTS+NUM_SLIDERS][LEN_ANA_NAME];
 #else
   #define EXTRA_GENERAL_FIELDS  EXTRA_GENERAL_FIELDS_ARM
 #endif

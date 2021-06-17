@@ -326,8 +326,16 @@ void generalDefault()
   strcpy(g_eeGeneral.themeName, theme->getName());
   theme->init();
 #endif
-
+#if defined(PCBI6)
+	for (uint8_t i = 0; i < NUM_CALIBRATED_ANALOGS; ++i) {
+		g_eeGeneral.calib[i].mid = 0x400;
+		g_eeGeneral.calib[i].spanNeg = 0x300;
+		g_eeGeneral.calib[i].spanPos = 0x300;
+	}
+  g_eeGeneral.chkSum = evalChkSum();
+#else
   g_eeGeneral.chkSum = 0xFFFF;
+#endif
 }
 
 uint16_t evalChkSum()
@@ -360,6 +368,7 @@ void defaultInputs()
     expo->chn = i;
     expo->weight = 100;
     expo->mode = 3; // TODO constant
+
 #if defined(TRANSLATIONS_CZ)
     for (int c = 0; c < 4; c++)
     {

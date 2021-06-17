@@ -39,7 +39,7 @@ const char STR_OPEN9X[]  =
 #endif
     ISTR(TRNMODE)
     ISTR(TRNCHN)
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
     ISTR(UART3MODES)
     ISTR(SWTYPES)
     ISTR(POTTYPES)

@@ -68,41 +68,35 @@ uint32_t scanMatrix(uint32_t columnStart, uint32_t columnEnd)
 
 uint32_t readKeys()
 {
-  uint32_t result = scanMatrix(0, 2);
-  // bind active low
+  uint32_t result = scanMatrix(2, 2);
+  //bind active low
   if ((KEYS_BIND_GPIO->IDR & KEYS_BIND_PIN) == 0)
   {
-    TRACE("BIND");
-    result |= 1 << KEY_BIND;
+    if (!result)
+    {
+      result |= 1 << KEY_BIND;
+    }
+    else
+    {
+      //bind as shift
+      if (result & (1 << KEY_DOWN))
+      {
+        result &= ~(1 << KEY_DOWN);
+        result |= 1 << KEY_LEFT;
+      }
+      if (result & (1 << KEY_UP))
+      {
+        result &= ~(1 << KEY_UP);
+        result |= 1 << KEY_RIGHT;
+      }
+    }
   }
-  //     else{
-  //         //bind as shift
-  //         if(result & (1<<KEY_DOWN)) {
-  //             result &= ~(1<<KEY_DOWN);
-  //             result |= 1 << KEY_LEFT;
-  //         }
-  //         if(result & (1<<KEY_UP)) {
-  //             result &= ~(1<<KEY_UP);
-  //             result |= 1 << KEY_RIGHT;
-  //         }
-  //     }
-  // }
-
   return result;
 }
 
 uint32_t readTrims()
 {
-  uint32_t result = scanMatrix(0, 1);
-  if (result & (1 << TRM_LH_DWN))
-  {
-    result &= ~(1 << TRM_LH_DWN); // Trim disabled, used as KEY_LEFT
-  }
-  if (result & (1 << TRM_LH_UP))
-  {
-    result &= ~(1 << TRM_LH_UP); // Trim disabled, used as KEY_RIGHT
-  }
-  return result;
+  return scanMatrix(0, 1);
 }
 
 uint8_t trimDown(uint8_t idx)
@@ -112,94 +106,84 @@ uint8_t trimDown(uint8_t idx)
 
 bool keyDown()
 {
-  return readKeys();
+  return readKeys() || readTrims();
 }
 
 /* TODO common to ARM */
 void readKeysAndTrims()
 {
   uint8_t index = 0;
-  uint32_t keys_input = readKeys();
-  // TRM_LH_DWN -> LEFT
-  // TRM_LH_UP  -> RIGHT
-  if (keys_input & (1 << TRM_LH_DWN))
+  uint32_t keys_in = readKeys();
+  for (uint8_t i = 1; i != uint8_t(1 << TRM_BASE); i <<= 1)
   {
-    keys_input |= 1 << KEY_LEFT;
-    keys_input &= ~(1 << TRM_LH_DWN); // Trim disabled
+    keys[index++].input(keys_in & i);
   }
-  if (keys_input & (1 << TRM_LH_UP))
+
+  uint32_t trims_in = readTrims();
+  for (uint8_t i = 1; i != uint8_t(1 << 8); i <<= 1)
   {
-    keys_input |= 1 << KEY_RIGHT;
-    keys_input &= ~(1 << TRM_LH_UP); // Trim disabled
+    keys[index++].input(trims_in & i);
   }
-  for (uint8_t i = 1; i != uint8_t(1 << NUM_KEYS); i <<= 1)
+if ((keys_in || trims_in))
   {
-    keys[index++].input(keys_input & i);
+    if (trims_in & (1 << TRM_RH_UP))
+    {
+      TRACE("TRM_RH_UP");
+    }
+    if (trims_in & (1 << TRM_RH_DWN))
+    {
+      TRACE("TRM_RH_DWN");
+    }
+    if (trims_in & (1 << TRM_RV_UP))
+    {
+      TRACE("TRM_RV_UP");
+    }
+    if (trims_in & (1 << TRM_RV_DWN))
+    {
+      TRACE("TRM_RV_DWN");
+    }
+    if (trims_in & (1 << TRM_LV_UP))
+    {
+      TRACE("TRM_LV_UP");
+    }
+    if (trims_in & (1 << TRM_LV_DWN))
+    {
+      TRACE("TRM_LV_DWN");
+    }
+    if (trims_in & (1 << TRM_LH_UP))
+    {
+      TRACE("TRM_LH_UP");
+    }
+    if (trims_in & (1 << TRM_LH_DWN))
+    {
+      TRACE("TRM_LH_DWN");
+    }
+    if (trims_in & (1 << KEY_DOWN))
+    {
+      TRACE("KEY_DOWN");
+    }
+    if ((keys_in) & (1 << KEY_UP))
+    {
+      TRACE("KEY_UP");
+    }
+    if ((keys_in) & (1 << KEY_ENTER))
+    {
+      TRACE("KEY_ENTER");
+    }
+    if ((keys_in) & (1 << KEY_EXIT))
+    {
+      TRACE("KEY_EXIT");
+    }
+    if ((keys_in) & (1 << KEY_LEFT))
+    {
+      TRACE("KEY_LEFT");
+    }
+    if ((keys_in) & (1 << KEY_RIGHT))
+    {
+      TRACE("KEY_RIGHT");
+    }
   }
-  // if (keys_input)
-  // {
-  //   if (keys_input & (1 << TRM_RH_UP))
-  //   {
-  //     TRACE("TRM_RH_UP");
-  //   }
-  //   if (keys_input & (1 << TRM_RH_DWN))
-  //   {
-  //     TRACE("TRM_RH_DWN");
-  //   }
-  //   if (keys_input & (1 << TRM_RV_UP))
-  //   {
-  //     TRACE("TRM_RV_UP");
-  //   }
-  //   if (keys_input & (1 << TRM_RV_DWN))
-  //   {
-  //     TRACE("TRM_RV_DWN");
-  //   }
-  //   if (keys_input & (1 << TRM_LV_UP))
-  //   {
-  //     TRACE("TRM_LV_UP");
-  //   }
-  //   if (keys_input & (1 << TRM_LV_DWN))
-  //   {
-  //     TRACE("TRM_LV_DWN");
-  //   }
-  //   if (keys_input & (1 << TRM_LH_UP))
-  //   {
-  //     TRACE("TRM_LH_UP");
-  //   }
-  //   if (keys_input & (1 << TRM_LH_DWN))
-  //   {
-  //     TRACE("TRM_LH_DWN");
-  //   }
-  //   if (keys_input & (1 << KEY_DOWN))
-  //   {
-  //     TRACE("KEY_DOWN");
-  //   }
-  //   if (keys_input & (1 << KEY_UP))
-  //   {
-  //     TRACE("KEY_UP");
-  //   }
-  //   if (keys_input & (1 << KEY_ENTER))
-  //   {
-  //     TRACE("KEY_ENTER");
-  //   }
-  //   if (keys_input & (1 << KEY_EXIT))
-  //   {
-  //     TRACE("KEY_EXIT");
-  //   }
-  //   if (keys_input & (1 << KEY_MENU))
-  //   {
-  //     TRACE("KEY_MENU");
-  //   }
-  //   if (keys_input & (1 << KEY_LEFT))
-  //   {
-  //     TRACE("KEY_LEFT");
-  //   }
-  //   if (keys_input & (1 << KEY_RIGHT))
-  //   {
-  //     TRACE("KEY_RIGHT");
-  //   }
-  // }
-  if (keys_input && (g_eeGeneral.backlightMode & e_backlight_mode_keys))
+  if ((keys_in || trims_in) && (g_eeGeneral.backlightMode & e_backlight_mode_keys))
   {
     // on keypress turn the light on
     backlightOn();
@@ -211,6 +195,7 @@ uint8_t keyState(uint8_t index)
   return keys[index].state();
 }
 
+#if !defined(BOOT)
 uint32_t switchState(uint8_t index)
 {
   uint32_t xxx = 0;
@@ -238,6 +223,7 @@ uint32_t switchState(uint8_t index)
   //TRACE("switch idx %d sw_num %d value %d pos %d xxx %d", index, sw_num, value, pos, xxx);
   return xxx;
 }
+#endif
 
 void keysInit()
 {

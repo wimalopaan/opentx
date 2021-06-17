@@ -4,7 +4,7 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 Next to tackle:
 
-* Radio and model settings crashes. A complete review of each screen is needed.
+* Trims not working correctly.
 * Internal module. Currently no A7105 support.
 * External module support. PXX, CRSF. Sbus?
 * Add settings for ExpressLRS, since no LUA.
@@ -15,11 +15,14 @@ Next to tackle:
 
 Completed tasks:
 
+* Set good calibration defaults on factory reset, taken from erfly6.
+* Restored BIND as SHIFT. SHIFT+UP for LEFT, SHIT+DN for RIGHT. Trims freed.
+* Fixed radio and model settings garbled text and crashes.
 * Switches warnings now dissapear by moving the switches.
 * Switches working!
 * Removed graceful shutdown with right horizontal trim up. Not needed it seems.
 * Restored Enter key as MENU. Hold for model settings.
-* Factory reset fixed on version screen. Navigate to the left as Special functions menu crashes currently.
+* Factory reset fixed on version screen.
 * Throttle on left. Default mode: 2
 * EEPROM compression enabled. No more errors, lots of free space.
 * EEPROM reading and writing.
@@ -30,4 +33,3 @@ Completed tasks:
 * Fix inverted sticks and POTS.
 * Fix battery voltage calculation.
 * Fix crash in calibration checksum. 
-* Left horizontal trim as LEFT & RIGHT keys. Thinking of better ways to implement this to free the trims.

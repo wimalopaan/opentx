@@ -244,16 +244,16 @@ int sbusGetByte(uint8_t * byte);
 // Keys driver
 enum EnumKeys
 {
-  KEY_ENTER,
-  KEY_MENU = KEY_ENTER,
+  KEY_MENU,
+  KEY_ENTER=KEY_MENU,
   KEY_EXIT,
   KEY_DOWN,
   KEY_MINUS = KEY_DOWN,
   KEY_UP,
   KEY_PLUS = KEY_UP,
-  KEY_BIND,
-  KEY_LEFT,
   KEY_RIGHT,
+  KEY_LEFT,
+  KEY_BIND,
   TRM_BASE,
   TRM_LH_DWN = TRM_BASE,
   TRM_LH_UP,
