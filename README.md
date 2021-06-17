@@ -17,7 +17,7 @@ Next to tackle:
 Completed tasks:
 
 * Set good calibration defaults on factory reset, taken from erfly6.
-* Restored BIND as SHIFT. SHIFT+UP for LEFT, SHIT+DN for RIGHT. Trims freed.
+* Restored BIND as SHIFT. SHIFT+UP for LEFT, SHIFT+DN for RIGHT. Trims freed.
 * Fixed radio and model settings garbled text and crashes.
 * Switches warnings now dissapear by moving the switches.
 * Switches working!
