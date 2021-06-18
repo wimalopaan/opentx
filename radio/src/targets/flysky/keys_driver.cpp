@@ -112,78 +112,22 @@ bool keyDown()
 /* TODO common to ARM */
 void readKeysAndTrims()
 {
+  uint8_t i;
   uint8_t index = 0;
-  uint32_t keys_in = readKeys();
-  for (uint8_t i = 1; i != uint8_t(1 << TRM_BASE); i <<= 1)
+  uint32_t keys_input = readKeys();
+
+  for (i = 0; i < TRM_BASE; i++)
   {
-    keys[index++].input(keys_in & i);
+    keys[index++].input(keys_input & (1 << i));
   }
 
-  uint32_t trims_in = readTrims();
-  for (uint8_t i = 1; i != uint8_t(1 << 8); i <<= 1)
+  uint32_t trims_input = readTrims();
+  for (i = TRM_BASE; i <= TRM_LAST; i++)
   {
-    keys[index++].input(trims_in & i);
+    keys[index++].input(trims_input & (1 << i));
   }
-if ((keys_in || trims_in))
-  {
-    if (trims_in & (1 << TRM_RH_UP))
-    {
-      TRACE("TRM_RH_UP");
-    }
-    if (trims_in & (1 << TRM_RH_DWN))
-    {
-      TRACE("TRM_RH_DWN");
-    }
-    if (trims_in & (1 << TRM_RV_UP))
-    {
-      TRACE("TRM_RV_UP");
-    }
-    if (trims_in & (1 << TRM_RV_DWN))
-    {
-      TRACE("TRM_RV_DWN");
-    }
-    if (trims_in & (1 << TRM_LV_UP))
-    {
-      TRACE("TRM_LV_UP");
-    }
-    if (trims_in & (1 << TRM_LV_DWN))
-    {
-      TRACE("TRM_LV_DWN");
-    }
-    if (trims_in & (1 << TRM_LH_UP))
-    {
-      TRACE("TRM_LH_UP");
-    }
-    if (trims_in & (1 << TRM_LH_DWN))
-    {
-      TRACE("TRM_LH_DWN");
-    }
-    if (trims_in & (1 << KEY_DOWN))
-    {
-      TRACE("KEY_DOWN");
-    }
-    if ((keys_in) & (1 << KEY_UP))
-    {
-      TRACE("KEY_UP");
-    }
-    if ((keys_in) & (1 << KEY_ENTER))
-    {
-      TRACE("KEY_ENTER");
-    }
-    if ((keys_in) & (1 << KEY_EXIT))
-    {
-      TRACE("KEY_EXIT");
-    }
-    if ((keys_in) & (1 << KEY_LEFT))
-    {
-      TRACE("KEY_LEFT");
-    }
-    if ((keys_in) & (1 << KEY_RIGHT))
-    {
-      TRACE("KEY_RIGHT");
-    }
-  }
-  if ((keys_in || trims_in) && (g_eeGeneral.backlightMode & e_backlight_mode_keys))
+
+  if ((keys_input || trims_input) && (g_eeGeneral.backlightMode & e_backlight_mode_keys))
   {
     // on keypress turn the light on
     backlightOn();

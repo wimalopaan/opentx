@@ -4,7 +4,6 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 Next to tackle:
 
-* Trims not working correctly.
 * Internal module. Currently no A7105 support.
 * External module support. PXX, CRSF. Sbus?
 * Add settings for ExpressLRS, since no LUA.
@@ -16,6 +15,7 @@ Next to tackle:
 
 Completed tasks:
 
+* Trims working correctly.
 * Set good calibration defaults on factory reset, taken from erfly6.
 * Restored BIND as SHIFT. SHIFT+UP for LEFT, SHIFT+DN for RIGHT. Trims freed.
 * Fixed radio and model settings garbled text and crashes.
