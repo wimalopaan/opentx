@@ -17,3 +17,7 @@ radio/src/CmakeFiles/*
 /nbproject/
 *.bin
 /radio/src/CMakeFiles/firmware.dir/link.txt
+.push.settings.jsonc
+build.sh
+firm.sh
+flash.sh

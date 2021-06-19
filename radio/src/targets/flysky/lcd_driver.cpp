@@ -111,7 +111,7 @@ const static unsigned char lcdInitSequence[] =
 	LCD_CMD_POWERCTRL_ALL_ON,
 	LCD_CMD_REG_RATIO_011,
 	LCD_CMD_EV,
-	40,//contrast 0...63
+	LCD_CONTRAST_DEFAULT,
 	LCD_CMD_SET_STARTLINE,
     LCD_CMD_SET_PAGESTART,
 	LCD_CMD_SET_COL_LO,
@@ -193,9 +193,15 @@ void lcdOff(){
     lcdSendCtl(LCD_CMD_MODE_ALLBLACK);
 }
 
-void lcdSetRefVolt(uint8_t val)
-{
-
+void lcdSetRefVolt(uint8_t val){
+    if(val<LCD_CONTRAST_MIN){
+        val = LCD_CONTRAST_MIN;
+    }
+    if(val>LCD_CONTRAST_MAX){
+        val = LCD_CONTRAST_MAX;
+    }
+    lcdSendCtl(LCD_CMD_EV);
+    lcdSendCtl(val);
 }
 
 void lcdRefresh(){
@@ -218,6 +224,4 @@ void lcdReset(){
       lcdSendCtl(lcdInitSequence[i]);
     }
     lcdRefreshInternal(1);
-    g_eeGeneral.contrast = 0x22;
-
 }

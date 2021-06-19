@@ -15,6 +15,7 @@ Next to tackle:
 
 Completed tasks:
 
+* LCD contrast setting
 * Trims working correctly.
 * Set good calibration defaults on factory reset, taken from erfly6.
 * Restored BIND as SHIFT. SHIFT+UP for LEFT, SHIFT+DN for RIGHT. Trims freed.

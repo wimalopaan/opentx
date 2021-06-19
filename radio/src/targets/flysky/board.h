@@ -495,9 +495,9 @@ void ledBlue(void);
 #define LCD_H                           64
 #define LCD_DEPTH                       1
 #define IS_LCD_RESET_NEEDED()           true
-#define LCD_CONTRAST_MIN                10
-#define LCD_CONTRAST_MAX                30
-#define LCD_CONTRAST_DEFAULT            20
+#define LCD_CONTRAST_MIN                30
+#define LCD_CONTRAST_MAX                45
+#define LCD_CONTRAST_DEFAULT            36
 
 void lcdInit(void);
 void lcdInitFinish(void);
