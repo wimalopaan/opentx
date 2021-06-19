@@ -847,11 +847,12 @@ void doSplash()
 #if defined(PWR_BUTTON_PRESS)
   bool refresh = false;
 #endif
+    TRACE("doSplash");
 
-  if (SPLASH_NEEDED())
+  if (SPLASH_NEEDED() || 1)
   {
     backlightOn();
-    drawSplash();
+
 
 #if defined(PCBSKY9X)
     tmr10ms_t curTime = get_tmr10ms() + 10;
@@ -863,12 +864,14 @@ void doSplash()
 
     inputsMoved();
 
-    tmr10ms_t tgtime = get_tmr10ms() + SPLASH_TIMEOUT;
+    tmr10ms_t tgtime = get_tmr10ms() + SPLASH_TIMEOUT; 
 
     while (tgtime > get_tmr10ms())
     {
-      RTOS_WAIT_TICKS(1);
-
+      drawSecondSplash(); // light
+      RTOS_WAIT_TICKS(4);
+      drawSplash();       // dark
+      RTOS_WAIT_TICKS(8);
       getADC();
 
       if (keyDown() || inputsMoved())
@@ -901,7 +904,7 @@ void doSplash()
       if (!secondSplash && get_tmr10ms() >= tgtime - 200)
       {
         secondSplash = true;
-        drawSecondSplash();
+        //drawSecondSplash();
       }
 #endif
 
@@ -917,7 +920,7 @@ void doSplash()
       }
 #endif
 
-      doLoopCommonActions();
+      //doLoopCommonActions();
     }
   }
 }
@@ -2159,7 +2162,7 @@ int main()
 #endif
 
 #if defined(GUI) && !defined(PCBTARANIS)
-  // lcdSetRefVolt(25);
+  //lcdSetRefVolt(25);
 #endif
 
 #if defined(SPLASH) && (defined(PCBTARANIS) || defined(PCBHORUS))

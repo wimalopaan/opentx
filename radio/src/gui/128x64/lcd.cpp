@@ -934,7 +934,6 @@ void lcdSetContrast()
 
 #define LCD_BYTE_FILTER(p, keep, add) *(p) = (*(p) & (keep)) | (add)
 
-
 void lcdDraw1bitBitmap(coord_t x, coord_t y, const uint8_t * img, uint8_t idx, LcdFlags att)
 {
   const uint8_t * q = img;
