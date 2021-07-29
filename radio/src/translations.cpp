@@ -97,6 +97,7 @@ const char STR_OPEN9X[]  =
     ISTR(TELEMETRY_PROTOCOLS)
     ISTR(XJT_PROTOCOLS)
     ISTR(DSM_PROTOCOLS)
+    ISTR(I6X_PROTOCOLS)
 #if defined(MULTIMODULE)
     ISTR(MULTI_PROTOCOLS)
 #endif
@@ -691,7 +692,7 @@ const char STR_BLCOLOR[]   = TR_BLCOLOR;
   const char STR_MODS_FORBIDDEN[]  = TR_MODS_FORBIDDEN;
 #endif
 
-#if defined(PCBTARANIS) || defined(DSM2)
+#if defined(PCBTARANIS) || defined(DSM2) || defined(PCBI6)
   const char STR_MODULE_RANGE[]  = TR_MODULE_RANGE;
 #endif
 

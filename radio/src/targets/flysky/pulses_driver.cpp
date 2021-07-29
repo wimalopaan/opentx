@@ -24,54 +24,45 @@ void intmoduleStop(void);
 void extmoduleStop(void);
 
 void intmoduleNoneStart(void);
-void intmodulePxxStart(void);
+void intmoduleAfhds2aStart(void);
 
-void extmoduleNoneStart(void);
 void extmodulePpmStart(void);
 void extmodulePxxStart(void);
 void extmoduleCrossfireStart(void);
 
-void init_pxx(uint32_t port)
-{
-  if (port == INTERNAL_MODULE)
-    intmodulePxxStart();
-  else
-    extmodulePxxStart();
+void init_afhds2a(uint32_t port) {
+  TRACE("init_afhds2a");
+  if (port == INTERNAL_MODULE) {
+    intmoduleAfhds2aStart();
+  }
 }
 
-void disable_pxx(uint32_t port)
-{
-  if (port == INTERNAL_MODULE)
+void disable_afhds2a(uint32_t port) {
+  TRACE("disable_afhds2a");
+  if (port == INTERNAL_MODULE){
     intmoduleStop();
-  else
-    extmoduleStop();
+  }
 }
 
-
-void init_ppm(uint32_t port)
-{
+void init_ppm(uint32_t port) {
   if (port == EXTERNAL_MODULE) {
     extmodulePpmStart();
   }
 }
 
-void disable_ppm(uint32_t port)
-{
+void disable_ppm(uint32_t port) {
   if (port == EXTERNAL_MODULE) {
     extmoduleStop();
   }
 }
 
-void init_no_pulses(uint32_t port)
-{
-  if (port == INTERNAL_MODULE)
+void init_no_pulses(uint32_t port) {
+  if (port == INTERNAL_MODULE){
     intmoduleNoneStart();
-  else
-    extmoduleNoneStart();
+  }    
 }
 
-void disable_no_pulses(uint32_t port)
-{
+void disable_no_pulses(uint32_t port) {
   if (port == INTERNAL_MODULE)
     intmoduleStop();
   else
@@ -82,12 +73,8 @@ void init_sbusOut(uint32_t module_index) {}
 void disable_sbusOut(uint32_t module_index){}
 void setupPulsesSbus(uint8_t port){}
 
-void init_serial(uint32_t port, uint32_t baudrate, uint32_t period_half_us)
-{
-
+void init_serial(uint32_t port, uint32_t baudrate, uint32_t period_half_us) {
 }
 
-void disable_serial(uint32_t port)
-{
-
+void disable_serial(uint32_t port) {
 }

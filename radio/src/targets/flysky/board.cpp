@@ -197,7 +197,34 @@ void init_gpio()
 
   GPIO_PinAFConfig(I2C_GPIO, I2C_SCL_GPIO_PinSource, I2C_GPIO_AF);
   GPIO_PinAFConfig(I2C_GPIO, I2C_SDA_GPIO_PinSource, I2C_GPIO_AF);
+
+  __IO uint32_t tmpreg;
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOBEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOBEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOCEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOCEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIODEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIODEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOEEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOEEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOFEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOFEN);
+ 
 }
+
 void resetReason()
 {
   TRACE("Reset reason:");

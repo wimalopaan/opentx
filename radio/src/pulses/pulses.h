@@ -73,7 +73,6 @@ enum ModuleFlag
 
   #define IS_SBUS_PROTOCOL(protocol)         (protocol == PROTO_SBUS)
 
-
   #include "pulses_arm.h"
 
 #endif // _PULSES_H_

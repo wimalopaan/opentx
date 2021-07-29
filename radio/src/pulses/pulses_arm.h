@@ -99,6 +99,8 @@ union ModulePulsesData {
 #endif
 } __ALIGNED(4);
 
+//TRACE("sizeof ModulePulsesData %d",sizeof(ModulePulsesData));
+
 /* The __ALIGNED keyword is required to align the struct inside the modulePulsesData below,
  * which is also defined to be __DMA  (which includes __ALIGNED) aligned.
  * Arrays in C/C++ are always defined to be *contiguously*. The first byte of the second element is therefore always
@@ -135,7 +137,7 @@ inline void startPulses()
 {
   s_pulses_paused = false;
 
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
   setupPulses(INTERNAL_MODULE);
   setupPulses(EXTERNAL_MODULE);
 #else

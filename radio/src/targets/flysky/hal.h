@@ -128,6 +128,214 @@
 */
 
 // Internal Module
+/*--------------interrupt handlers-------------------------------------------*/ 
+// Audio timer from erfly6
+// void TIM14_IRQHandler(void); 
+
+// PPM
+void TIM15_IRQHandler(void);
+
+// Internal RF
+void EXTI2_3_IRQHandler(void);
+void TIM16_IRQHandler(void);
+
+#define READBIT(A, B) ((A >> (B & 7)) & 1)
+#define SETBIT(T, B, V) (T = V ? T | (1<<B) : T & ~(1<<B))
+#define SET_BIT(REG, BIT)     ((REG) |= (BIT))
+#define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
+#define READ_BIT(REG, BIT)    ((REG) & (BIT))
+#define CLEAR_REG(REG)        ((REG) = (0x0))
+#define WRITE_REG(REG, VAL)   ((REG) = (VAL))
+#define READ_REG(REG)         ((REG))
+#define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
+
+#define RF_SCK_GPIO_PORT GPIOE
+#define RF_SCK_PIN_MASK GPIO_IDR_13
+
+#define RF_SDIO_GPIO_PORT GPIOE
+#define RF_SDIO_PIN_MASK GPIO_IDR_15
+
+#define RF_SCN_GPIO_PORT GPIOE
+#define RF_SCN_SET_PIN GPIO_BSRR_BS_12
+#define RF_SCN_RESET_PIN GPIO_BSRR_BR_12
+
+#define RF_GIO2_GPIO_PORT GPIOB
+#define RF_GIO2_PIN EXTI_IMR_IM2
+
+#define RF_RxTx_GPIO_PORT GPIOE
+#define RF_RxTx_PIN_MASK 0x00000300U
+
+#define RF_Rx_SET_PIN GPIO_BSRR_BS_8
+#define RF_Rx_RESET_PIN GPIO_BSRR_BR_8
+
+#define RF_Tx_SET_PIN GPIO_PIN_BSRR_BS_9
+#define RF_Tx_RESET_PIN GPIO_PIN_BSRR_BR_9
+
+#define RF_RF0_GPIO_PORT GPIOE
+#define RF_RF0_SET_PIN GPIO_BSRR_BS_10
+#define RF_RF0_RESET_PIN GPIO_BSRR_BR_10
+
+#define RF_RF1_GPIO_PORT GPIOE
+#define RF_RF1_SET_PIN GPIO_BSRR_BS_11
+#define RF_RF1_RESET_PIN GPIO_BSRR_BR_11
+
+void SPI_RADIO_SendBlock(uint8_t *BufferPtr, uint16_t Size);
+void SPI_RADIO_ReceiveBlock(uint8_t *BufferPtr, uint16_t Size);
+void a7105_csn_on(void); 
+void a7105_csn_off(void);
+void RF0_SetVal(void);
+void RF0_ClrVal(void);
+void RF1_SetVal(void);
+void RF1_ClrVal(void);
+void TX_RX_PutVal(uint32_t Val);
+void EnableGIO(void);
+void DisableGIO(void);
+void initAFHDS2A();
+void ActionAFHDS2A();
+void init_afhds2a(uint32_t port);
+void disable_afhds2a(uint32_t port);
+#define A7105_CSN_ON a7105_csn_on()  
+#define A7105_CSN_OFF a7105_csn_off()
+
+/******************************************************************************/
+/*                                                                            */
+/*                 External Interrupt/Event Controller (EXTI)                 */
+/*                                                                            */
+/******************************************************************************/
+
+/* References Defines */
+#define  EXTI_IMR_IM0 EXTI_IMR_MR0
+#define  EXTI_IMR_IM1 EXTI_IMR_MR1
+#define  EXTI_IMR_IM2 EXTI_IMR_MR2
+#define  EXTI_IMR_IM3 EXTI_IMR_MR3
+#define  EXTI_IMR_IM4 EXTI_IMR_MR4
+#define  EXTI_IMR_IM5 EXTI_IMR_MR5
+#define  EXTI_IMR_IM6 EXTI_IMR_MR6
+#define  EXTI_IMR_IM7 EXTI_IMR_MR7
+#define  EXTI_IMR_IM8 EXTI_IMR_MR8
+#define  EXTI_IMR_IM9 EXTI_IMR_MR9
+#define  EXTI_IMR_IM10 EXTI_IMR_MR10
+#define  EXTI_IMR_IM11 EXTI_IMR_MR11
+#define  EXTI_IMR_IM12 EXTI_IMR_MR12
+#define  EXTI_IMR_IM13 EXTI_IMR_MR13
+#define  EXTI_IMR_IM14 EXTI_IMR_MR14
+#define  EXTI_IMR_IM15 EXTI_IMR_MR15
+#define  EXTI_IMR_IM16 EXTI_IMR_MR16
+#define  EXTI_IMR_IM17 EXTI_IMR_MR17
+#define  EXTI_IMR_IM18 EXTI_IMR_MR18
+#define  EXTI_IMR_IM19 EXTI_IMR_MR19
+#define  EXTI_IMR_IM20 EXTI_IMR_MR20
+#define  EXTI_IMR_IM21 EXTI_IMR_MR21
+#define  EXTI_IMR_IM22 EXTI_IMR_MR22
+#define  EXTI_IMR_IM23 EXTI_IMR_MR23
+#define  EXTI_IMR_IM25 EXTI_IMR_MR25
+#define  EXTI_IMR_IM26 EXTI_IMR_MR26
+#define  EXTI_IMR_IM27 EXTI_IMR_MR27
+#define  EXTI_IMR_IM31 EXTI_IMR_MR31
+
+/* References Defines */
+#define  EXTI_EMR_EM0 EXTI_EMR_MR0
+#define  EXTI_EMR_EM1 EXTI_EMR_MR1
+#define  EXTI_EMR_EM2 EXTI_EMR_MR2
+#define  EXTI_EMR_EM3 EXTI_EMR_MR3
+#define  EXTI_EMR_EM4 EXTI_EMR_MR4
+#define  EXTI_EMR_EM5 EXTI_EMR_MR5
+#define  EXTI_EMR_EM6 EXTI_EMR_MR6
+#define  EXTI_EMR_EM7 EXTI_EMR_MR7
+#define  EXTI_EMR_EM8 EXTI_EMR_MR8
+#define  EXTI_EMR_EM9 EXTI_EMR_MR9
+#define  EXTI_EMR_EM10 EXTI_EMR_MR10
+#define  EXTI_EMR_EM11 EXTI_EMR_MR11
+#define  EXTI_EMR_EM12 EXTI_EMR_MR12
+#define  EXTI_EMR_EM13 EXTI_EMR_MR13
+#define  EXTI_EMR_EM14 EXTI_EMR_MR14
+#define  EXTI_EMR_EM15 EXTI_EMR_MR15
+#define  EXTI_EMR_EM16 EXTI_EMR_MR16
+#define  EXTI_EMR_EM17 EXTI_EMR_MR17
+#define  EXTI_EMR_EM18 EXTI_EMR_MR18
+#define  EXTI_EMR_EM19 EXTI_EMR_MR19
+#define  EXTI_EMR_EM20 EXTI_EMR_MR0
+#define  EXTI_EMR_EM21 EXTI_EMR_MR21
+#define  EXTI_EMR_EM22 EXTI_EMR_MR22
+#define  EXTI_EMR_EM23 EXTI_EMR_MR23
+#define  EXTI_EMR_EM25 EXTI_EMR_MR25
+#define  EXTI_EMR_EM26 EXTI_EMR_MR26
+#define  EXTI_EMR_EM27 EXTI_EMR_MR27
+#define  EXTI_EMR_EM31 EXTI_EMR_MR31
+
+/* References Defines */
+#define EXTI_RTSR_RT0 EXTI_RTSR_TR0
+#define EXTI_RTSR_RT1 EXTI_RTSR_TR1
+#define EXTI_RTSR_RT2 EXTI_RTSR_TR2
+#define EXTI_RTSR_RT3 EXTI_RTSR_TR3
+#define EXTI_RTSR_RT4 EXTI_RTSR_TR4
+#define EXTI_RTSR_RT5 EXTI_RTSR_TR5
+#define EXTI_RTSR_RT6 EXTI_RTSR_TR6
+#define EXTI_RTSR_RT7 EXTI_RTSR_TR7
+#define EXTI_RTSR_RT8 EXTI_RTSR_TR8
+#define EXTI_RTSR_RT9 EXTI_RTSR_TR9
+#define EXTI_RTSR_RT10 EXTI_RTSR_TR10
+#define EXTI_RTSR_RT11 EXTI_RTSR_TR11
+#define EXTI_RTSR_RT12 EXTI_RTSR_TR12
+#define EXTI_RTSR_RT13 EXTI_RTSR_TR13
+#define EXTI_RTSR_RT14 EXTI_RTSR_TR14
+#define EXTI_RTSR_RT15 EXTI_RTSR_TR15
+#define EXTI_RTSR_RT16 EXTI_RTSR_TR16
+#define EXTI_RTSR_RT17 EXTI_RTSR_TR17
+#define EXTI_RTSR_RT19 EXTI_RTSR_TR19
+#define EXTI_RTSR_RT20 EXTI_RTSR_TR20
+#define EXTI_RTSR_RT21 EXTI_RTSR_TR21
+#define EXTI_RTSR_RT22 EXTI_RTSR_TR22
+
+/* References Defines */
+#define EXTI_SWIER_SWI0 EXTI_SWIER_SWIER0
+#define EXTI_SWIER_SWI1 EXTI_SWIER_SWIER1
+#define EXTI_SWIER_SWI2 EXTI_SWIER_SWIER2
+#define EXTI_SWIER_SWI3 EXTI_SWIER_SWIER3
+#define EXTI_SWIER_SWI4 EXTI_SWIER_SWIER4
+#define EXTI_SWIER_SWI5 EXTI_SWIER_SWIER5
+#define EXTI_SWIER_SWI6 EXTI_SWIER_SWIER6
+#define EXTI_SWIER_SWI7 EXTI_SWIER_SWIER7
+#define EXTI_SWIER_SWI8 EXTI_SWIER_SWIER8
+#define EXTI_SWIER_SWI9 EXTI_SWIER_SWIER9
+#define EXTI_SWIER_SWI10 EXTI_SWIER_SWIER10
+#define EXTI_SWIER_SWI11 EXTI_SWIER_SWIER11
+#define EXTI_SWIER_SWI12 EXTI_SWIER_SWIER12
+#define EXTI_SWIER_SWI13 EXTI_SWIER_SWIER13
+#define EXTI_SWIER_SWI14 EXTI_SWIER_SWIER14
+#define EXTI_SWIER_SWI15 EXTI_SWIER_SWIER15
+#define EXTI_SWIER_SWI16 EXTI_SWIER_SWIER16
+#define EXTI_SWIER_SWI17 EXTI_SWIER_SWIER17
+#define EXTI_SWIER_SWI19 EXTI_SWIER_SWIER19
+#define EXTI_SWIER_SWI20 EXTI_SWIER_SWIER20
+#define EXTI_SWIER_SWI21 EXTI_SWIER_SWIER21
+#define EXTI_SWIER_SWI22 EXTI_SWIER_SWIER22
+
+/* References Defines */
+#define EXTI_PR_PIF0 EXTI_PR_PR0
+#define EXTI_PR_PIF1 EXTI_PR_PR1
+#define EXTI_PR_PIF2 EXTI_PR_PR2
+#define EXTI_PR_PIF3 EXTI_PR_PR3
+#define EXTI_PR_PIF4 EXTI_PR_PR4
+#define EXTI_PR_PIF5 EXTI_PR_PR5
+#define EXTI_PR_PIF6 EXTI_PR_PR6
+#define EXTI_PR_PIF7 EXTI_PR_PR7
+#define EXTI_PR_PIF8 EXTI_PR_PR8
+#define EXTI_PR_PIF9 EXTI_PR_PR9
+#define EXTI_PR_PIF10 EXTI_PR_PR10
+#define EXTI_PR_PIF11 EXTI_PR_PR11
+#define EXTI_PR_PIF12 EXTI_PR_PR12
+#define EXTI_PR_PIF13 EXTI_PR_PR13
+#define EXTI_PR_PIF14 EXTI_PR_PR14
+#define EXTI_PR_PIF15 EXTI_PR_PR15
+#define EXTI_PR_PIF16 EXTI_PR_PR16
+#define EXTI_PR_PIF17 EXTI_PR_PR17
+#define EXTI_PR_PIF19 EXTI_PR_PR19
+#define EXTI_PR_PIF20 EXTI_PR_PR20
+#define EXTI_PR_PIF21 EXTI_PR_PR21
+#define EXTI_PR_PIF22 EXTI_PR_PR22
+
+#define UID_BASE              ((uint32_t)0x1FFFF7ACU)       /*!< Unique device ID register base address */
 
  /* #define INTMODULE_PULSES
  PXX and DSM!!!!!
@@ -151,6 +359,21 @@
   #define INTMODULE_DMA_FLAG_TC         DMA_IT_TCIF5
   #define INTMODULE_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
 */
+
+// External Module
+
+/*---------------------PPM_IN------------------------------------------------*/
+#define PPM_IN_GPIO_PORT GPIOF
+#define PPM_IN_PIN_PIN_MASK GPIO_IDR_9
+/*---------------------PPM_OUT------------------------------------------------*/
+#define PPM_OUT_GPIO_PORT GPIOF
+#define PPM_OUT_PIN_MASK GPIO_IDR_10
+
+extern void ISR_TIMER0_COMP_vect(void);
+extern void ISR_TIMER2_OVF_vect(void);
+extern void ISR_TIMER1_COMPA_vect(void);
+extern void ISR_TIMER3_CAPT_vect(void);
+
 // Trainer Port
 #if defined(PCBXLITE)
   #define TRAINER_RCC_AHBPeriph        0

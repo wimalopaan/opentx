@@ -517,6 +517,9 @@ void modelDefault(uint8_t id)
   g_model.moduleData[INTERNAL_MODULE].channelsCount = defaultModuleChannels_M8(INTERNAL_MODULE);
 #elif defined(PCBSKY9X)
   g_model.moduleData[EXTERNAL_MODULE].type = MODULE_TYPE_PPM;
+#elif defined(PCBI6)  
+  g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
+  g_model.moduleData[INTERNAL_MODULE].channelsCount = 16;
 #endif
 
 #if defined(PCBXLITE)
@@ -1656,7 +1659,7 @@ void doMixerCalculations()
       }
     }
 
-#if defined(PXX) || defined(DSM2)
+#if defined(PXX) || defined(DSM2) || defined(PCBI6)
     static uint8_t countRangecheck = 0;
     for (uint8_t i = 0; i < NUM_MODULES; ++i)
     {
@@ -1699,8 +1702,8 @@ void opentxStart(const uint8_t startType = OPENTX_START_DEFAULT_ARGS)
     return;
   }
   uint8_t calibration_needed = (g_eeGeneral.chkSum != evalChkSum());
-  TRACE("gonna do chksum. saved: %d calculated: %d", g_eeGeneral.chkSum, evalChkSum());
-  TRACE("calibration needed %d", calibration_needed);
+  //TRACE("gonna do chksum. saved: %d calculated: %d", g_eeGeneral.chkSum, evalChkSum());
+  //TRACE("calibration needed %d", calibration_needed);
 #if defined(GUI)
   if (!calibration_needed && !(startType & OPENTX_START_NO_SPLASH))
   {
@@ -1722,7 +1725,7 @@ void opentxStart(const uint8_t startType = OPENTX_START_DEFAULT_ARGS)
 #if defined(NIGHTLY_BUILD_WARNING)
   ALERT(STR_NIGHTLY_WARNING, TR_NIGHTLY_NOTSAFE, AU_ERROR);
 #endif
-  TRACE("GUI");
+
 #if defined(GUI)
   if (calibration_needed)
   {

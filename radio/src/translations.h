@@ -22,47 +22,47 @@
 #define _TRANSLATIONS_H_
 
 #if defined(TRANSLATIONS_FR)
-#include "translations/fr.h"
-#define LEN_SPECIAL_CHARS 3
+  #include "translations/fr.h"
+  #define LEN_SPECIAL_CHARS 3
 #elif defined(TRANSLATIONS_IT)
-#include "translations/it.h"
-#define LEN_SPECIAL_CHARS 1
+  #include "translations/it.h"
+  #define LEN_SPECIAL_CHARS 1
 #elif defined(TRANSLATIONS_SE)
-#include "translations/se.h"
-#define LEN_SPECIAL_CHARS 6
+  #include "translations/se.h"
+  #define LEN_SPECIAL_CHARS 6
 #elif defined(TRANSLATIONS_FI)
-#include "translations/fi.h"
-#define LEN_SPECIAL_CHARS 6
+  #include "translations/fi.h"
+  #define LEN_SPECIAL_CHARS 6
 #elif defined(TRANSLATIONS_DE)
-#include "translations/de.h"
-#define LEN_SPECIAL_CHARS 6
+  #include "translations/de.h"
+  #define LEN_SPECIAL_CHARS 6
 #elif defined(TRANSLATIONS_CZ)
-#include "translations/cz.h"
-#define LEN_SPECIAL_CHARS 17
+  #include "translations/cz.h"
+  #define LEN_SPECIAL_CHARS 17
 #elif defined(TRANSLATIONS_ES)
-#include "translations/es.h"
-#define LEN_SPECIAL_CHARS 0
+  #include "translations/es.h"
+  #define LEN_SPECIAL_CHARS 0
 #elif defined(TRANSLATIONS_PL)
-#include "translations/pl.h"
-#define LEN_SPECIAL_CHARS 0
+  #include "translations/pl.h"
+  #define LEN_SPECIAL_CHARS 0
 #elif defined(TRANSLATIONS_PT)
-#include "translations/pt.h"
-#define LEN_SPECIAL_CHARS 0
+  #include "translations/pt.h"
+  #define LEN_SPECIAL_CHARS 0
 #elif defined(TRANSLATIONS_NL)
-#include "translations/nl.h"
-#define LEN_SPECIAL_CHARS 0
+  #include "translations/nl.h"
+  #define LEN_SPECIAL_CHARS 0
 #else
-#include "translations/en.h"
-#define LEN_SPECIAL_CHARS 0
+  #include "translations/en.h"
+  #define LEN_SPECIAL_CHARS 0
 #endif
 
 #define PSIZE(x) ( sizeof(x) - 1 )
 #define EOFS(x)  ( OFS_##x + sizeof(TR_##x) )
 
 #if defined(PCBTARANIS)
-#define HINT(s) " " s " "
+  #define HINT(s) " " s " "
 #else
-#define HINT(s) s
+  #define HINT(s) s
 #endif
 
 #if LCD_W >= 480
@@ -110,20 +110,20 @@ extern const char STR_OPEN9X[];
 #define OFS_MMMINV             (OFS_OFFON + sizeof(TR_OFFON))
 #define OFS_NCHANNELS          (OFS_MMMINV + sizeof(TR_MMMINV))
 #if defined(GRAPHICS)
-#define OFS_VBEEPMODE          (OFS_NCHANNELS + sizeof(TR_NCHANNELS))
+  #define OFS_VBEEPMODE          (OFS_NCHANNELS + sizeof(TR_NCHANNELS))
 #else
-#define OFS_VBEEPLEN           (OFS_NCHANNELS + sizeof(TR_NCHANNELS))
-#define OFS_VBEEPMODE          (OFS_VBEEPLEN + sizeof(TR_VBEEPLEN))
+  #define OFS_VBEEPLEN           (OFS_NCHANNELS + sizeof(TR_NCHANNELS))
+  #define OFS_VBEEPMODE          (OFS_VBEEPLEN + sizeof(TR_VBEEPLEN))
 #endif
 #if defined(ROTARY_ENCODERS)
-#define OFS_VRENAVIG           (OFS_VBEEPMODE + sizeof(TR_VBEEPMODE))
-#define OFS_VRENCODERS         (OFS_VRENAVIG + sizeof(TR_VRENAVIG))
-#define OFS_TRNMODE            (OFS_VRENCODERS + sizeof(TR_VRENCODERS))
+  #define OFS_VRENAVIG           (OFS_VBEEPMODE + sizeof(TR_VBEEPMODE))
+  #define OFS_VRENCODERS         (OFS_VRENAVIG + sizeof(TR_VRENAVIG))
+  #define OFS_TRNMODE            (OFS_VRENCODERS + sizeof(TR_VRENCODERS))
 #elif defined(ROTARY_ENCODER_NAVIGATION)
-#define OFS_VRENCODERS         (OFS_VBEEPMODE + sizeof(TR_VBEEPMODE))
-#define OFS_TRNMODE            (OFS_VRENCODERS + sizeof(TR_VRENCODERS))
+  #define OFS_VRENCODERS         (OFS_VBEEPMODE + sizeof(TR_VBEEPMODE))
+  #define OFS_TRNMODE            (OFS_VRENCODERS + sizeof(TR_VRENCODERS))
 #else
-#define OFS_TRNMODE            (OFS_VBEEPMODE + sizeof(TR_VBEEPMODE))
+  #define OFS_TRNMODE            (OFS_VBEEPMODE + sizeof(TR_VBEEPMODE))
 #endif
 #define OFS_TRNCHN             (OFS_TRNMODE + sizeof(TR_TRNMODE))
 #if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
@@ -154,16 +154,16 @@ extern const char STR_OPEN9X[];
 #define OFS_VFSWRESET          (OFS_VFSWFUNC + sizeof(TR_VFSWFUNC))
 #define OFS_FUNCSOUNDS         (OFS_VFSWRESET + sizeof(TR_VFSWRESET))
 #define OFS_VTELEMCHNS         (OFS_FUNCSOUNDS + sizeof(TR_FUNCSOUNDS))
-    #define OFS_VTELEMUNIT      (OFS_VTELEMCHNS)
-    #define OFS_VALARM          (OFS_VTELEMUNIT + sizeof(TR_VTELEMUNIT))
-  #define OFS_VALARMFN          (OFS_VALARM + sizeof(TR_VALARM))
-  #define OFS_VTELPROTO         (OFS_VALARMFN + sizeof(TR_VALARMFN))
-  #define OFS_GPSFORMAT         (OFS_VTELPROTO + sizeof(TR_VTELPROTO))
-  #define OFS_AMPSRC            (OFS_GPSFORMAT + sizeof(TR_GPSFORMAT))
-  #define OFS_VARIOSRC          (OFS_AMPSRC + sizeof(TR_AMPSRC))
-  #define OFS_VSCREEN           (OFS_VARIOSRC + sizeof(TR_VARIOSRC))
-  #define OFS_VTEMPLATES        (OFS_VSCREEN + sizeof(TR_VTELEMSCREENTYPE))
-  #define OFS_VSWASHTYPE        (OFS_VTEMPLATES)
+#define OFS_VTELEMUNIT         (OFS_VTELEMCHNS)
+#define OFS_VALARM             (OFS_VTELEMUNIT + sizeof(TR_VTELEMUNIT))
+#define OFS_VALARMFN           (OFS_VALARM + sizeof(TR_VALARM))
+#define OFS_VTELPROTO          (OFS_VALARMFN + sizeof(TR_VALARMFN))
+#define OFS_GPSFORMAT          (OFS_VTELPROTO + sizeof(TR_VTELPROTO))
+#define OFS_AMPSRC             (OFS_GPSFORMAT + sizeof(TR_GPSFORMAT))
+#define OFS_VARIOSRC           (OFS_AMPSRC + sizeof(TR_AMPSRC))
+#define OFS_VSCREEN            (OFS_VARIOSRC + sizeof(TR_VARIOSRC))
+#define OFS_VTEMPLATES         (OFS_VSCREEN + sizeof(TR_VTELEMSCREENTYPE))
+#define OFS_VSWASHTYPE         (OFS_VTEMPLATES)
 #if defined(HELI)
   #define OFS_VKEYS             (OFS_VSWASHTYPE + sizeof(TR_VSWASHTYPE))
 #else
@@ -178,27 +178,28 @@ extern const char STR_OPEN9X[];
   #define OFS_VTMRMODES           (OFS_VSRCRAW + sizeof(TR_VSRCRAW))
 #endif
 #define OFS_DATETIME            (OFS_VTMRMODES + sizeof(TR_VTMRMODES))
-  #define OFS_VPERSISTENT       (OFS_DATETIME + sizeof(TR_DATETIME))
-  #define OFS_VLCD              (OFS_VPERSISTENT + sizeof(TR_VPERSISTENT))
-  #define OFS_VUNITSSYSTEM      (OFS_VLCD + sizeof(TR_VLCD))
-  #define OFS_VBEEPCOUNTDOWN    (OFS_VUNITSSYSTEM + sizeof(TR_VUNITSSYSTEM))
-  #define OFS_VVARIOCENTER      (OFS_VBEEPCOUNTDOWN + sizeof(TR_VBEEPCOUNTDOWN))
-  #define OFS_COUNTRYCODES      (OFS_VVARIOCENTER + sizeof(TR_VVARIOCENTER))
-  #define OFS_USBMODES          (OFS_COUNTRYCODES + sizeof(TR_COUNTRYCODES))
-  #define OFS_VFAILSAFE         (OFS_USBMODES + sizeof(TR_USBMODES))
-  #define OFS_VTRAINERMODES     (OFS_VFAILSAFE + sizeof(TR_VFAILSAFE))
-  #define OFS_TARANIS_PROTOCOLS        (OFS_VTRAINERMODES + sizeof(TR_VTRAINERMODES))
-  #define OFS_R9M_REGION                (OFS_TARANIS_PROTOCOLS + sizeof(TR_TARANIS_PROTOCOLS))
-  #define OFS_R9M_FCC_POWER_VALUES     (OFS_R9M_REGION + sizeof(TR_R9M_REGION))
-  #define OFS_R9M_LBT_POWER_VALUES     (OFS_R9M_FCC_POWER_VALUES + sizeof(TR_R9M_FCC_POWER_VALUES))
-  #define OFS_TELEMETRY_PROTOCOLS      (OFS_R9M_LBT_POWER_VALUES + sizeof(TR_R9M_LBT_POWER_VALUES))
-  #define OFS_XJT_PROTOCOLS            (OFS_TELEMETRY_PROTOCOLS + sizeof(TR_TELEMETRY_PROTOCOLS))
-  #define OFS_DSM_PROTOCOLS            (OFS_XJT_PROTOCOLS + sizeof(TR_XJT_PROTOCOLS))
+#define OFS_VPERSISTENT         (OFS_DATETIME + sizeof(TR_DATETIME))
+#define OFS_VLCD                (OFS_VPERSISTENT + sizeof(TR_VPERSISTENT))
+#define OFS_VUNITSSYSTEM        (OFS_VLCD + sizeof(TR_VLCD))
+#define OFS_VBEEPCOUNTDOWN      (OFS_VUNITSSYSTEM + sizeof(TR_VUNITSSYSTEM))
+#define OFS_VVARIOCENTER        (OFS_VBEEPCOUNTDOWN + sizeof(TR_VBEEPCOUNTDOWN))
+#define OFS_COUNTRYCODES        (OFS_VVARIOCENTER + sizeof(TR_VVARIOCENTER))
+#define OFS_USBMODES            (OFS_COUNTRYCODES + sizeof(TR_COUNTRYCODES))
+#define OFS_VFAILSAFE           (OFS_USBMODES + sizeof(TR_USBMODES))
+#define OFS_VTRAINERMODES       (OFS_VFAILSAFE + sizeof(TR_VFAILSAFE))
+#define OFS_TARANIS_PROTOCOLS        (OFS_VTRAINERMODES + sizeof(TR_VTRAINERMODES))
+#define OFS_R9M_REGION               (OFS_TARANIS_PROTOCOLS + sizeof(TR_TARANIS_PROTOCOLS))
+#define OFS_R9M_FCC_POWER_VALUES     (OFS_R9M_REGION + sizeof(TR_R9M_REGION))
+#define OFS_R9M_LBT_POWER_VALUES     (OFS_R9M_FCC_POWER_VALUES + sizeof(TR_R9M_FCC_POWER_VALUES))
+#define OFS_TELEMETRY_PROTOCOLS      (OFS_R9M_LBT_POWER_VALUES + sizeof(TR_R9M_LBT_POWER_VALUES))
+#define OFS_XJT_PROTOCOLS            (OFS_TELEMETRY_PROTOCOLS + sizeof(TR_TELEMETRY_PROTOCOLS))
+#define OFS_DSM_PROTOCOLS            (OFS_XJT_PROTOCOLS + sizeof(TR_XJT_PROTOCOLS))
+#define OFS_I6X_PROTOCOLS            (OFS_DSM_PROTOCOLS + sizeof(TR_DSM_PROTOCOLS))
 #if defined(MULTIMODULE)
-  #define OFS_MULTI_PROTOCOLS   (OFS_DSM_PROTOCOLS + sizeof(TR_DSM_PROTOCOLS))
+  #define OFS_MULTI_PROTOCOLS   (OFS_I6X_PROTOCOLS + sizeof(TR_I6X_PROTOCOLS))
   #define OFS_VOLTSRC           (OFS_MULTI_PROTOCOLS + sizeof(TR_MULTI_PROTOCOLS))
 #else
-  #define OFS_VOLTSRC           (OFS_DSM_PROTOCOLS + sizeof(TR_DSM_PROTOCOLS))
+  #define OFS_VOLTSRC           (OFS_I6X_PROTOCOLS + sizeof(TR_I6X_PROTOCOLS))
 #endif
   #define OFS_CURVE_TYPES       (OFS_VOLTSRC + sizeof(TR_VOLTSRC))
   #define OFS_VSENSORTYPES      (OFS_CURVE_TYPES + sizeof(TR_CURVE_TYPES))
@@ -300,6 +301,7 @@ extern const char STR_OPEN9X[];
   #define STR_TELEMETRY_PROTOCOLS      (STR_OPEN9X + OFS_TELEMETRY_PROTOCOLS)
   #define STR_XJT_PROTOCOLS     (STR_OPEN9X + OFS_XJT_PROTOCOLS)
   #define STR_DSM_PROTOCOLS     (STR_OPEN9X + OFS_DSM_PROTOCOLS)
+  #define STR_I6X_PROTOCOLS     (STR_OPEN9X + OFS_I6X_PROTOCOLS)
 #if defined(MULTIMODULE)
   #define STR_MULTI_PROTOCOLS   (STR_OPEN9X + OFS_MULTI_PROTOCOLS)
 #endif
@@ -953,7 +955,7 @@ extern const char STR_BLCOLOR[];
   extern const char STR_MODS_FORBIDDEN[];
 #endif
 
-#if defined(PCBTARANIS) || defined(DSM2)
+#if defined(PCBTARANIS) || defined(DSM2) || defined(PCBI6)
   extern const char STR_MODULE_RANGE[];
 #endif
 

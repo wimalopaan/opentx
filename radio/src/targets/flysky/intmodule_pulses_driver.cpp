@@ -18,40 +18,132 @@
  * GNU General Public License for more details.
  */
 
+#include "iface_a7105.h"
 #include "opentx.h"
 
-void intmoduleStop()
-{
+static bool initialized = false;
+
+/*----------------------PRT Timer----------------------------------------------*/
+void EnablePRTTim(void) {
+  SET_BIT(TIM16->CR1, TIM_CR1_CEN);
+}
+void DisablePRTTim(void) {
+  CLEAR_BIT(TIM16->CR1, TIM_CR1_CEN);
 }
 
-void intmoduleNoneStart()
-{
-
+void intmoduleStop() {
+  TRACE("intmoduleStop: Stopping internal RF");
+  if (initialized) {
+    DisablePRTTim();
+    A7105_Sleep();
+    initialized = false;
+  }
 }
 
-void intmoduleSendNextFrame()
-{
-
+void intmoduleNoneStart() {
+  TRACE("intmoduleNoneStart: Init internal RF");
 }
 
-void intmodulePxxStart()
-{
- 
+void intmoduleAfhds2aStart() {
+  TRACE("intmoduleAfhds2aStart");
+  // RF
+  __IO uint32_t tmpreg;
+  /* SPI1 clock enable */
+  SET_BIT(RCC->APB2ENR, RCC_APB2ENR_SPI1EN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_SPI1EN);
+  /**SPI1 GPIO Configuration
+  PE13   ------> SPI1_SCK
+  PE14   ------> SPI1_MISO
+  PE15   ------> SPI1_MOSI
+  */
+  //PE13
+  GPIOE->OSPEEDR |= GPIO_OSPEEDR_OSPEEDR13;  // high output speed
+  GPIOE->OTYPER |= 0x00000000U;              // Output PUSHPULL
+  GPIOE->PUPDR |= 0x00000000U;               // PULL_NO
+  GPIOE->MODER |= GPIO_MODER_MODER13_1;      // Select alternate function mode
+  GPIOE->AFR[1] |= (0x0000001U << (5 * 4));  // Select alternate function 1
+  //PE14
+  GPIOE->OSPEEDR |= GPIO_OSPEEDR_OSPEEDR14;  // high output speed
+  GPIOE->OTYPER |= 0x00000000U;              // Output PUSHPULL
+  GPIOE->PUPDR |= 0x00000000U;               // PULL_NO
+  GPIOE->MODER |= GPIO_MODER_MODER14_1;      // Select alternate function mode
+  GPIOE->AFR[1] |= (0x0000001U << (6 * 4));  // Select alternate function 1
+  //PE15
+  GPIOE->OSPEEDR |= GPIO_OSPEEDR_OSPEEDR15;  // high output speed
+  GPIOE->OTYPER |= 0x00000000U;              // Output PUSHPULL
+  GPIOE->PUPDR |= 0x00000000U;               //GPIO_PUPDR_PUPDR15_0;//                  // PULL_NO
+  GPIOE->MODER |= GPIO_MODER_MODER15_1;      // Select alternate function mode
+  GPIOE->AFR[1] |= (0x0000001U << (7 * 4));  // Select alternate function 1
+
+  //  SPI1->CR1 = (SPI_CR1_BIDIMODE | SPI_CR1_BIDIOE);          /*!< Half-Duplex Tx mode. Tx transfer on 1 line */
+  SPI1->CR1 |= (SPI_CR1_MSTR | SPI_CR1_SSI); /*!< Master configuration  */
+  SPI1->CR1 |= 0x00000000U;                  /*!< SPI_POLARITY_LOW */
+  SPI1->CR1 |= 0x00000000U;                  /*!< First clock transition is the first data capture edge  */
+  SPI1->CR1 |= SPI_CR1_SSM;                  /*!< NSS managed internally. NSS pin not used and free */
+  SPI1->CR1 |= SPI_CR1_BR_1;                 /*!< BaudRate control equal to fPCLK/8   */
+  SPI1->CR1 |= 0x00000000U;                  /*!< Data is transmitted/received with the MSB first */
+  SPI1->CR1 |= 0x00000000U;                  /*!< CRC calculation disabled */
+
+  SPI1->CR2 |= (SPI_CR2_DS_2 | SPI_CR2_DS_1 | SPI_CR2_DS_0); /*!< Data length for SPI transfer:  8 bits */
+  SPI1->CR2 |= 0x00000000U;                                  /*!< Motorola mode. Used as default value */
+  SPI1->CR2 |= SPI_CR2_FRXTH;
+
+  CLEAR_BIT(SPI1->CR2, SPI_CR2_NSSP); /* Disable NSS pulse management */
+  SET_BIT(SPI1->CR1, SPI_CR1_SPE);    // SPI_ENABLE
+
+  //RF_SCN output
+  RF_SCN_GPIO_PORT->MODER |= GPIO_MODER_MODER12_0;
+  //RF_RxTx output
+  RF_RxTx_GPIO_PORT->MODER |= GPIO_MODER_MODER8_0 | GPIO_MODER_MODER9_0;
+  //RF_RF0 output
+  RF_RF0_GPIO_PORT->MODER |= GPIO_MODER_MODER10_0;
+  //RF_RF1 output
+  RF_RF1_GPIO_PORT->MODER |= GPIO_MODER_MODER11_0;
+
+  /* SYSCFG clock enable */
+  SET_BIT(RCC->APB2ENR, RCC_APB2ENR_SYSCFGCOMPEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_SYSCFGCOMPEN);
+  // RF_GIO1
+  SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI2_PB;  // Set EXTI Source
+  EXTI->FTSR |= EXTI_FTSR_TR2;                   // Falling edge
+
+  NVIC_SetPriority(EXTI2_3_IRQn, 2);
+  NVIC_EnableIRQ(EXTI2_3_IRQn);
+  /*------------------Radio_Protocol_Timer_Init(3860 uS TIM16)------------------*/
+  /* TIM16 clock enable */
+  SET_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM16EN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM16EN);
+  CLEAR_BIT(TIM16->CR1, TIM_CR1_ARPE);   // Disable ARR Preload
+  CLEAR_BIT(TIM16->SMCR, TIM_SMCR_MSM);  // Disable Master Slave Mode
+  WRITE_REG(TIM16->PSC, 2);              // Prescaler
+  WRITE_REG(TIM16->ARR, 61759);          // Preload
+  /* TIM6 interrupt Init */
+  SET_BIT(TIM16->DIER, TIM_DIER_UIE);  // Enable update interrupt (UIE)
+  NVIC_SetPriority(TIM16_IRQn, 2);
+  NVIC_EnableIRQ(TIM16_IRQn);
+
+  (void)tmpreg;
+  initialized = true;
+  initAFHDS2A();
+  EnablePRTTim();
 }
 
-#if defined(TARANIS_INTERNAL_PPM)
-void intmodulePpmStart()
-{
-
+/*-------------handler for RADIO GIO2 (FALLING AGE)---------------------------*/
+void EXTI2_3_IRQHandler(void) {
+  if (EXTI->PR & RF_GIO2_PIN) {
+    WRITE_REG(EXTI->PR, RF_GIO2_PIN);
+    DisableGIO();
+    SETBIT(RadioState, CALLER, GPIO_CALL);
+    ActionAFHDS2A();
+  }
 }
-#endif // defined(TARANIS_INTERNAL_PPM)
-
-extern "C" void INTMODULE_DMA_STREAM_IRQHandler()
-{
-
-}
-
-extern "C" void INTMODULE_TIMER_CC_IRQHandler()
-{
-
+/*------------handler for Radio_Protocol_Timer 3860 uS------------------------*/
+void TIM16_IRQHandler(void) {
+  WRITE_REG(TIM16->SR, ~(TIM_SR_UIF));  // Clear the update interrupt flag (UIF)
+  SETBIT(RadioState, CALLER, TIM_CALL);
+  setupPulses(INTERNAL_MODULE);
+  ActionAFHDS2A();
 }

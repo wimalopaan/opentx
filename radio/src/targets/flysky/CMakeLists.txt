@@ -20,6 +20,9 @@ if(PCB STREQUAL I6X)
   set(BITMAPS_TARGET 9x_bitmaps)
   set(FONTS_TARGET 9x_fonts_1bit)
   set(DEFAULT_MODE 2)
+# add_definitions(-DTELEMETRY_FRSKY)
+  add_definitions(-DNAVIGATION_POT1)
+  add_definitions(-DNAVIGATION_POT2)
   add_definitions(-DSTM32F072)
   add_definitions(-DPWR_BUTTON_${PWR_BUTTON})
   add_definitions(-DEEPROM_VARIANT=0)
@@ -34,6 +37,8 @@ endif()
 
 set(TARGET_SRC
   ${TARGET_SRC}
+  A7105_SPI.cpp
+  AFHDS2A_a7105.cpp
   intmodule_pulses_driver.cpp
   trainer_driver.cpp
   )

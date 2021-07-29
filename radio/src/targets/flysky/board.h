@@ -187,18 +187,24 @@ uint32_t isBootloaderStart(const uint8_t * buffer);
 #else
   #define IS_UART_MODULE(port)          false
 #endif
+
+enum AFHDS2A_Subtype
+{
+	PWM_IBUS = 0,
+	PPM_IBUS = 1,
+	PWM_SBUS = 2,
+	PPM_SBUS = 3,
+};
+
+
 void init_no_pulses(uint32_t port);
 void disable_no_pulses(uint32_t port);
 void init_ppm( uint32_t module_index );
 void disable_ppm( uint32_t module_index );
 void init_pxx( uint32_t module_index );
 void disable_pxx( uint32_t module_index );
-void init_dsm2( uint32_t module_index );
-void disable_dsm2( uint32_t module_index );
 void init_crossfire( uint32_t module_index );
 void disable_crossfire( uint32_t module_index );
-void init_sbusOut(uint32_t module_index);
-void disable_sbusOut(uint32_t module_index);
 void init_serial( uint32_t module_index, uint32_t baudrate, uint32_t period);
 void disable_serial( uint32_t module_index);
 //jsut to allow compilation
@@ -353,7 +359,9 @@ enum CalibratedAnalogs {
   CALIBRATED_STICK3,
   CALIBRATED_STICK4,
   CALIBRATED_POT_FIRST,
-  CALIBRATED_POT_LAST = CALIBRATED_POT_FIRST + NUM_POTS - 1,
+  CALIBRATED_POT1=CALIBRATED_POT_FIRST,
+  CALIBRATED_POT2,
+  CALIBRATED_POT_LAST = CALIBRATED_POT2,
   NUM_CALIBRATED_ANALOGS
 };
 

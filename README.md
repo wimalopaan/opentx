@@ -4,14 +4,24 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 Next to tackle:
 
-* Internal module. Currently no A7105 support.
-* External module support. PXX, CRSF. Sbus?
+* Internal module
+    - AFHDS2A
+        - Binding [done]
+        - Channels transmission [done]
+        - Range test (low power mode with RSSI indication) [done]
+        - Roll and Yaw channels are sent swapped
+        - Failsafe not set up correctly
+        - Missing menu settings: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
+        - Improve mixer scheduling
+        - Can't restart internal module after turning it off.
+        - Telemetry (RSSI/LQI, RX voltage, etc.)
+* External module support
+    - PPM
+    - Crossfire
 * Add settings for ExpressLRS, since no LUA.
-* Telemetry
 * USB support (board.h usbplugged)
 * UART DMA fifo transfers.
 * Buzzer
-* Screen contrast
 
 Completed tasks:
 

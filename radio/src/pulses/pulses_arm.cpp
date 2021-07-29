@@ -42,17 +42,22 @@ uint8_t getRequiredProtocol(uint8_t port)
   uint8_t required_protocol;
 
   switch (port) {
-#if defined(PCBTARANIS) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
     case INTERNAL_MODULE:
       switch (g_model.moduleData[INTERNAL_MODULE].type) {
-#if defined(TARANIS_INTERNAL_PPM)
+  #if defined(TARANIS_INTERNAL_PPM)
         case MODULE_TYPE_PPM:
           required_protocol = PROTO_PPM;
           break;
-#endif
+  #endif
+  #if defined(PXX) 
         case MODULE_TYPE_XJT:
           required_protocol = PROTO_PXX;
           break;
+  #endif
+        case MODULE_TYPE_AFHDS2A_SPI:
+          required_protocol = PROTO_AFHDS2A_SPI;
+         break;
         default:
           required_protocol = PROTO_NONE;
           break;
@@ -142,6 +147,8 @@ void setupPulsesPXX(uint8_t port)
 
 void setupPulses(uint8_t port)
 {
+  // TRACE("setupPulses");
+  // TRACE("moduleFlag %d", moduleFlag[INTERNAL_MODULE]);
   bool init_needed = false;
   uint8_t required_protocol = getRequiredProtocol(port);
 
@@ -178,6 +185,10 @@ void setupPulses(uint8_t port)
 #if defined(MULTIMODULE)
       case PROTO_MULTIMODULE:
 #endif
+      case PROTO_AFHDS2A_SPI:
+        disable_afhds2a(port);
+        break;
+
       case PROTO_SBUS:
         disable_serial(port);
         break;
@@ -263,6 +274,11 @@ void setupPulses(uint8_t port)
       scheduleNextMixerCalculation(port, PPM_PERIOD(port));
       break;
 
+    case PROTO_AFHDS2A_SPI:
+      // this is kept inside targets/flysky
+      //setupPulsesAfhds2aSpi(port);
+    break;
+
     default:
       break;
   }
@@ -307,7 +323,9 @@ void setupPulses(uint8_t port)
       case PROTO_PPM:
         init_ppm(port);
         break;
-
+      case PROTO_AFHDS2A_SPI:
+        init_afhds2a(port);
+        break;
       default:
         init_no_pulses(port);
         break;

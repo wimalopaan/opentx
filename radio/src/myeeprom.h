@@ -349,6 +349,9 @@ enum Protocols {
 #if defined(PXX2)
   PROTO_PXX2,
 #endif
+#if defined(PCBI6)
+  PROTO_AFHDS2A_SPI,
+#endif
   PROTO_NONE
 };
 
@@ -366,6 +369,12 @@ enum XJTRFProtocols {
   RF_PROTO_D8,
   RF_PROTO_LR12,
   RF_PROTO_LAST = RF_PROTO_LR12
+};
+
+enum I6XProtocols{
+  RF_I6X_PROTO_OFF = -1,
+  RF_I6X_PROTO_AFHDS2A,
+  RF_I6X_PROTO_LAST = RF_I6X_PROTO_AFHDS2A
 };
 
 enum R9MSubTypes
@@ -446,7 +455,11 @@ enum MMRFrskySubtypes {
 };
 
 #define HAS_RF_PROTOCOL_FAILSAFE(rf)   ((rf) == RF_PROTO_X16)
-#define HAS_RF_PROTOCOL_MODELINDEX(rf) (((rf) == RF_PROTO_X16) || ((rf) == RF_PROTO_LR12))
+#if defined(PCBI6)
+  #define HAS_RF_PROTOCOL_MODELINDEX(rf) (1)
+#else
+  #define HAS_RF_PROTOCOL_MODELINDEX(rf) (((rf) == RF_PROTO_X16) || ((rf) == RF_PROTO_LR12))
+#endif
 
 enum DSM2Protocols {
   DSM2_PROTO_LP45,
@@ -463,6 +476,7 @@ enum ModuleTypes {
   MODULE_TYPE_MULTIMODULE,
   MODULE_TYPE_R9M,
   MODULE_TYPE_SBUS,
+  MODULE_TYPE_AFHDS2A_SPI,
   MODULE_TYPE_COUNT
 };
 

@@ -145,7 +145,7 @@ enum CurveType {
   #define MAX_CURVE_POINTS             512
 #endif
 
-#if defined(PCBTARANIS) || defined(PCBSKY9X) || defined(PCBHORUS)
+#if defined(PCBTARANIS) || defined(PCBSKY9X) || defined(PCBHORUS) || defined(PCBI6)
   #define NUM_MODULES                  2
 #else
   #define NUM_MODULES                  1
