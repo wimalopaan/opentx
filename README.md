@@ -4,12 +4,12 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 Navigation:
 
-|---|---|
-UP     |Hold for STATS                                    
-DOWN   |Hold for DEBUG                                    
-OK     |ENTER. Hold for Model menu                        
-CANCEL |EXIT                                              
-BIND   |Go RIGHT. Go to next PAGE. Hold for general menu. 
+| --- | --- |
+| UP     | Hold for STATS                                    
+| DOWN   | Hold for DEBUG                                    
+| OK     | ENTER. Hold for Model menu                        
+| CANCEL | EXIT                                              
+| BIND   | Go RIGHT. Go to next PAGE. Hold for general menu. 
 
 Next tasks:
 
