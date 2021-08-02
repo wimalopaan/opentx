@@ -4,6 +4,7 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 Navigation:
 
+|---|---|
 UP     |Hold for STATS                                    
 DOWN   |Hold for DEBUG                                    
 OK     |ENTER. Hold for Model menu                        
