@@ -251,9 +251,14 @@ void displayVoltageOrAlarm()
 #define EVT_KEY_NEXT_VIEW              EVT_KEY_BREAK(KEY_DOWN)
 #define EVT_KEY_NEXT_PAGE              EVT_KEY_BREAK(KEY_RIGHT)
 #define EVT_KEY_PREVIOUS_PAGE          EVT_KEY_BREAK(KEY_LEFT)
-#define EVT_KEY_MODEL_MENU             EVT_KEY_LONG(KEY_RIGHT)
+#if defined(PCBI6)
+#define EVT_KEY_GENERAL_MENU           EVT_KEY_LONG(KEY_RIGHT)
+#define EVT_KEY_MODEL_MENU             EVT_KEY_LONG(KEY_MENU)
+#else
 #define EVT_KEY_GENERAL_MENU           EVT_KEY_LONG(KEY_LEFT)
+#define EVT_KEY_MODEL_MENU             EVT_KEY_LONG(KEY_RIGHT)
 #define EVT_KEY_LAST_MENU              EVT_KEY_LONG(KEY_MENU)
+#endif
 #define EVT_KEY_TELEMETRY              EVT_KEY_LONG(KEY_DOWN)
 #define EVT_KEY_STATISTICS             EVT_KEY_LONG(KEY_UP)
 #endif

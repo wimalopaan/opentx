@@ -72,24 +72,24 @@ uint32_t readKeys()
   //bind active low
   if ((KEYS_BIND_GPIO->IDR & KEYS_BIND_PIN) == 0)
   {
-    if (!result)
-    {
-      result |= 1 << KEY_BIND;
-    }
-    else
-    {
-      //bind as shift
-      if (result & (1 << KEY_DOWN))
-      {
-        result &= ~(1 << KEY_DOWN);
-        result |= 1 << KEY_LEFT;
-      }
-      if (result & (1 << KEY_UP))
-      {
-        result &= ~(1 << KEY_UP);
-        result |= 1 << KEY_RIGHT;
-      }
-    }
+    // if (!result)
+    // {
+      result |= 1 << KEY_RIGHT;
+    // }
+    // else
+    // {
+    //   //bind as shift
+    //   if (result & (1 << KEY_DOWN))
+    //   {
+    //     result &= ~(1 << KEY_DOWN);
+    //     result |= 1 << KEY_LEFT;
+    //   }
+    //   if (result & (1 << KEY_UP))
+    //   {
+    //     result &= ~(1 << KEY_UP);
+    //     result |= 1 << KEY_RIGHT;
+    //   }
+    // }
   }
   return result;
 }

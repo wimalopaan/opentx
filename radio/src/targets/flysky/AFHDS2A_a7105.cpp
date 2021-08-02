@@ -36,24 +36,6 @@ void DisableGIO(void) {
   CLEAR_BIT(EXTI->IMR, RF_GIO2_PIN);
 }
 
-//#define GIO1 GIO1_GetVal(GIO1_DeviceData)
-
-// Channel value is converted to ppm 860<->2140 -125%<->+125% and 988<->2012 -100%<->+100%
-/*
-#define PPM_CENTER 1500
-uint16_t convert_channel_ppm(uint8_t num)
-{
-	uint16_t val = g_chans512[num] / 2 + PPM_CENTER;
-	return val;
-}
-*/
-
-uint16_t convert_failsafe_ppm(uint8_t num) {
-  int8_t in_val = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[num];
-  uint16_t val = (in_val * (RESX / 4)) / 50 + RADIO_PPM_CENTER;
-  return val;
-}
-
 static void AFHDS2A_calc_channels() {
   uint8_t idx = 0;
   uint32_t rnd = ID.MProtocol_id;
@@ -203,7 +185,6 @@ static void AFHDS2A_build_bind_packet(void) {
 }
 
 void AFHDS2A_build_packet(uint8_t type) {
-  //	uint16_t val;
   memcpy(&packet[1], ID.rx_tx_addr, 4);
   memcpy(&packet[5], g_model.moduleData[INTERNAL_MODULE].rxID, 4);
   switch (type) {
@@ -211,22 +192,11 @@ void AFHDS2A_build_packet(uint8_t type) {
       packet[0] = 0x58;
       for (uint8_t ch = 0; ch < 14; ch++) {
         uint16_t channelMicros;
-        // if (g_model.failsafeRepeat){
-        //   channelMicros = convert_failsafe_ppm(ch);
-        // } else {
-        // -1024 a 1024
+        // channelOutputs: -1024 to 1024
         channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
-
-        //}
         packet[9 + ch * 2] = channelMicros & 0xFF;
         packet[10 + ch * 2] = (channelMicros >> 8) & 0xFF;
       }
-
-      // TRACE("%d %d %d %d", 
-      // channelOutputs[0]/ 2 + RADIO_PPM_CENTER, 
-      // channelOutputs[1]/ 2 + RADIO_PPM_CENTER,
-      // channelOutputs[2]/ 2 + RADIO_PPM_CENTER,
-      // channelOutputs[3]/ 2 + RADIO_PPM_CENTER);
 
 #ifdef AFHDS2A_LQI_CH
       // override channel with LQI
@@ -238,18 +208,9 @@ void AFHDS2A_build_packet(uint8_t type) {
     case AFHDS2A_PACKET_FAILSAFE:
       packet[0] = 0x56;
       for (uint8_t ch = 0; ch < 14; ch++) {
-        /*
-        enum FailsafeModes {
-          FAILSAFE_NOT_SET,
-          FAILSAFE_HOLD,
-          FAILSAFE_CUSTOM,
-          FAILSAFE_NOPULSES,
-          FAILSAFE_RECEIVER,
-          FAILSAFE_LAST = FAILSAFE_RECEIVER
-        };
-        */
-        if (g_model.moduleData[INTERNAL_MODULE].failsafeMode != FAILSAFE_NOT_SET) {  // Failsafe values
-          uint16_t failsafeMicros = convert_failsafe_ppm(ch);
+        if (g_model.moduleData[INTERNAL_MODULE].failsafeMode == FAILSAFE_CUSTOM
+        && g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch]<FAILSAFE_CHANNEL_HOLD) {
+          uint16_t failsafeMicros = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] / 2 + RADIO_PPM_CENTER;
           packet[9 + ch * 2] = failsafeMicros & 0xff;
           packet[10 + ch * 2] = (failsafeMicros >> 8) & 0xff;
         } else {  // no values
@@ -465,7 +426,6 @@ SendNoAntSwitch_:
 }
 
 void initAFHDS2A() {
-  protocol = PROTO_AFHDS2A;
   RadioState = ((TIM_CALL << CALLER) | (SEND << SEND_RES) | (AFHDS2A_DATA));
   ID.MProtocol_id = GetChipID();
   AFHDS2A_calc_channels();

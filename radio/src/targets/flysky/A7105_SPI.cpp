@@ -23,7 +23,6 @@
 volatile uint8_t RadioState;
 
 uint8_t protocol_flags=0,protocol_flags2=0;
-uint8_t protocol;
 uint8_t prev_power=0xFD; // unused power value
 
 // test telemetry
@@ -46,7 +45,6 @@ uint8_t  hopping_frequency_no;
 //uint8_t  rx_id[5];
 uint8_t option;   // option value should be between 0 and 70 which gives a value between 50 and 400Hz
 uint8_t sub_protocol;
-//const uint8_t CH_AETR[]={AILERON, ELEVATOR, THROTTLE, RUDDER, CH5, CH6, CH7, CH8, CH9, CH10, CH11, CH12, CH13, CH14, CH15, CH16};
 
 
 /******************************************************************************/

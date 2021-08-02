@@ -66,157 +66,6 @@ enum A7105_POWER
 #define	CH15	14
 #define	CH16	15
 
-#define AETR
-
-//Channel order
-#ifdef AETR
-	#define	AILERON  0
-	#define	ELEVATOR 1
-	#define	THROTTLE 2
-	#define	RUDDER   3
-#endif
-#ifdef AERT
-	#define	AILERON  0
-	#define	ELEVATOR 1
-	#define	THROTTLE 3
-	#define	RUDDER   2
-#endif
-#ifdef ARET
-	#define	AILERON  0
-	#define	ELEVATOR 2
-	#define	THROTTLE 3
-	#define	RUDDER   1
-#endif
-#ifdef ARTE
-	#define	AILERON  0
-	#define	ELEVATOR 3
-	#define	THROTTLE 2
-	#define	RUDDER   1
-#endif
-#ifdef ATRE
-	#define	AILERON  0
-	#define	ELEVATOR 3
-	#define	THROTTLE 1
-	#define	RUDDER   2
-#endif
-#ifdef ATER
-	#define	AILERON  0
-	#define	ELEVATOR 2
-	#define	THROTTLE 1
-	#define	RUDDER   3
-#endif
-
-#ifdef EATR
-	#define	AILERON  1
-	#define	ELEVATOR 0
-	#define	THROTTLE 2
-	#define	RUDDER   3
-#endif
-#ifdef EART
-	#define	AILERON  1
-	#define	ELEVATOR 0
-	#define	THROTTLE 3
-	#define	RUDDER   2
-#endif
-#ifdef ERAT
-	#define	AILERON  2
-	#define	ELEVATOR 0
-	#define	THROTTLE 3
-	#define	RUDDER   1
-#endif
-#ifdef ERTA
-	#define	AILERON  3
-	#define	ELEVATOR 0
-	#define	THROTTLE 2
-	#define	RUDDER   1
-#endif
-#ifdef ETRA
-	#define	AILERON  3
-	#define	ELEVATOR 0
-	#define	THROTTLE 1
-	#define	RUDDER   2
-#endif
-#ifdef ETAR
-	#define	AILERON  2
-	#define	ELEVATOR 0
-	#define	THROTTLE 1
-	#define	RUDDER   3
-#endif
-
-#ifdef TEAR
-	#define	AILERON  2
-	#define	ELEVATOR 1
-	#define	THROTTLE 0
-	#define	RUDDER   3
-#endif
-#ifdef TERA
-	#define	AILERON  3
-	#define	ELEVATOR 1
-	#define	THROTTLE 0
-	#define	RUDDER   2
-#endif
-#ifdef TREA
-	#define	AILERON  3
-	#define	ELEVATOR 2
-	#define	THROTTLE 0
-	#define	RUDDER   1
-#endif
-#ifdef TRAE
-	#define	AILERON  2
-	#define	ELEVATOR 3
-	#define	THROTTLE 0
-	#define	RUDDER   1
-#endif
-#ifdef TARE
-	#define	AILERON  1
-	#define	ELEVATOR 3
-	#define	THROTTLE 0
-	#define	RUDDER   2
-#endif
-#ifdef TAER
-	#define	AILERON  1
-	#define	ELEVATOR 2
-	#define	THROTTLE 0
-	#define	RUDDER   3
-#endif
-
-#ifdef RETA
-	#define	AILERON  3
-	#define	ELEVATOR 1
-	#define	THROTTLE 2
-	#define	RUDDER   0
-#endif
-#ifdef REAT
-	#define	AILERON  2
-	#define	ELEVATOR 1
-	#define	THROTTLE 3
-	#define	RUDDER   0
-#endif
-#ifdef RAET
-	#define	AILERON  1
-	#define	ELEVATOR 2
-	#define	THROTTLE 3
-	#define	RUDDER   0
-#endif
-#ifdef RATE
-	#define	AILERON  1
-	#define	ELEVATOR 3
-	#define	THROTTLE 2
-	#define	RUDDER   0
-#endif
-#ifdef RTAE
-	#define	AILERON  2
-	#define	ELEVATOR 3
-	#define	THROTTLE 1
-	#define	RUDDER   0
-#endif
-#ifdef RTEA
-	#define	AILERON  3
-	#define	ELEVATOR 2
-	#define	THROTTLE 1
-	#define	RUDDER   0
-#endif
-
 extern uint8_t protocol_flags,protocol_flags2;
 extern uint8_t protocol;
 extern uint8_t prev_power; // unused power value
@@ -258,19 +107,6 @@ extern uint8_t  option;   // option value should be between 0 and 70 which gives
 extern uint8_t  RX_num;
 extern uint8_t  sub_protocol;
 extern volatile uint8_t RadioState;
-//extern const uint8_t CH_AETR[];//={AILERON, ELEVATOR, THROTTLE, RUDDER, CH5, CH6, CH7, CH8, CH9, CH10, CH11, CH12, CH13, CH14, CH15, CH16};
-
-//******************
-// Protocols
-//******************
-enum PROTOCOLS
-{
-	PROTO_FLYSKY 	= 1,	// =>A7105
-	PROTO_HUBSAN	= 2,	// =>A7105
-	PROTO_AFHDS2A	= 28,	// =>A7105
-	PROTO_BUGS		= 41,	// =>A7105
-	PROTO_FLYZONE	= 53,	// =>A7105
-};
 
 #define BIND_IN_PROGRESS	protocol_flags &= ~_BV(7)
 #define BIND_DONE			protocol_flags |= _BV(7)
@@ -282,11 +118,9 @@ enum PROTOCOLS
 #define IS_BIND_START		( ( protocol_flags & _BV(6) ) !=0 )
 #define IS_BIND_STOP       	( ( protocol_flags & _BV(6) ) ==0 )
 
-
 #define RANGE_FLAG_on		protocol_flags |= _BV(3)
 #define RANGE_FLAG_off		protocol_flags &= ~_BV(3)
 #define IS_RANGE_FLAG_on	( ( protocol_flags & _BV(3) ) !=0 )
-
 
 enum A7105_State {
     A7105_SLEEP     = 0x80,
@@ -385,8 +219,6 @@ enum ePhase {
 #define NOT_PASS       0
 #define PASS           1
 
-
-
 void A7105_Sleep(void);
 void A7105_Init(void);
 void A7105_AdjustLOBaseFreq(void);
@@ -397,8 +229,6 @@ void A7105_SetPower();
 void A7105_SetTxRxMode(uint8_t mode);
 void A7105_Strobe(uint8_t address);
 void A7105_WriteData(uint8_t len, uint8_t channel);
-uint16_t convert_channel_ppm(uint8_t num);
-uint16_t convert_failsafe_ppm(uint8_t num);
 void A7105_AntSwitch(void);
 
 #endif

@@ -251,7 +251,7 @@ int sbusGetByte(uint8_t * byte);
 enum EnumKeys
 {
   KEY_MENU,
-  KEY_ENTER=KEY_MENU,
+  KEY_ENTER = KEY_MENU,
   KEY_EXIT,
   KEY_DOWN,
   KEY_MINUS = KEY_DOWN,
