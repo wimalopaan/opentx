@@ -4,7 +4,6 @@
 /.autotools
 /*.user
 /*.user.*
-/doc/
 build*/
 cmake-build-*/
 /debian/

@@ -1,8 +1,8 @@
-## FlySky i6x port of OpenTX
+# FlySky i6x port of OpenTX
 
 Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
-Navigation:
+## Navigation:
 
 | Key | Function |
 | --- | --- |
@@ -12,7 +12,7 @@ Navigation:
 | CANCEL | EXIT |                      
 | BIND   | Go RIGHT. Go to next PAGE. Hold for general menu. |
 
-Next tasks:
+## Next tasks:
 
 * Internal module
     - AFHDS2A
@@ -28,7 +28,8 @@ Next tasks:
 * UART DMA fifo transfers.
 * Buzzer
 
-Completed tasks:
+## Completed tasks:
+
 * AFHDS2A - Binding
 * AFHDS2A - Channels transmission
 * AFHDS2A - Range test (low power mode with RSSI indication)
@@ -51,3 +52,5 @@ Completed tasks:
 * Fix inverted sticks and POTS.
 * Fix battery voltage calculation.
 * Fix crash in calibration checksum. 
+
+## ST-Link pinout
