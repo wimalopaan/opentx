@@ -54,3 +54,5 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 * Fix crash in calibration checksum. 
 
 ## ST-Link pinout
+
+![ST-Link pinout](https://raw.githubusercontent.com/marianomd/opentx/2.3_M0/doc/flysky/flysky-i6x%20st-link%20pinout%20small.png)
