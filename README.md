@@ -6,9 +6,9 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 | Key | Function |
 | --- | --- |
-| UP     | Hold for STATS |                              
-| DOWN   | Hold for DEBUG |                                  
-| OK     | ENTER. Hold for Model menu |
+| UP     | Hold for stats |                              
+| DOWN   | Hold for telemetry |                                  
+| OK     | Hold for Model menu |
 | CANCEL | EXIT |                      
 | BIND   | Go RIGHT. Go to next PAGE. Hold for general menu. |
 
@@ -19,7 +19,6 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
         - Missing menu settings: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
         - Improve mixer scheduling (currently low refresh rate)
         - Can't restart internal module after turning it off.
-        - Telemetry (RSSI/LQI, RX voltage, etc.)
 * External module support
     - PPM
     - Crossfire
@@ -27,9 +26,12 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 * USB support (board.h usbplugged)
 * UART DMA fifo transfers.
 * Buzzer
+* Bootloader if it fits. Mass storage to backup EEPROM and update firmware.
+* SDCARD support if it fits in flash.
 
 ## Completed tasks:
 
+* AFHDS2A - Telemetry (RSSI/LQI, RX voltage, etc.)
 * AFHDS2A - Binding
 * AFHDS2A - Channels transmission
 * AFHDS2A - Range test (low power mode with RSSI indication)
@@ -39,7 +41,7 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 * Set good calibration defaults on factory reset, taken from erfly6.
 * Fixed radio and model settings garbled text and crashes.
 * Switches warnings now dissapear by moving the switches.
-* Switches working!
+* Switches working.
 * Removed graceful shutdown with right horizontal trim up. Not needed it seems.
 * Factory reset fixed on version screen.
 * Throttle on left. Default mode: 2

@@ -33,8 +33,7 @@
  *
  */
 
-
-#define FLYSKY_TELEMETRY_LENGTH (2+7*4)
+#define FLYSKY_TELEMETRY_LENGTH (2 + 7 * 4)
 
 struct FlySkySensor {
   const uint16_t id;
@@ -43,42 +42,37 @@ struct FlySkySensor {
   const uint8_t precision;
 };
 
-#define TX_RSSI_ID              300      // Pseudo id outside 1 byte range of FlySky sensors
-#define FS_ID_TEMP              0x01
-#define FS_ID_SNR               0xfa
-#define FS_ID_NOISE             0xfb
-#define FS_ID_RSSI              0xfc
-
-const FlySkySensor flySkySensors[] = {
-
-  // RX Voltage (remapped, really 0x0)
-  {0x100,           ZSTR_A1,                UNIT_VOLTS,                  2},
-  // Temperature
-  {FS_ID_TEMP,      ZSTR_TEMP1,             UNIT_CELSIUS,                1},
-  // RPM
-  {0x02,            ZSTR_RPM,               UNIT_RAW,                    0},
-  // External voltage
-  {0x03,            ZSTR_A3,                UNIT_VOLTS,                  2},
-  // RX SNR
-  {FS_ID_SNR,       ZSTR_RX_SNR,            UNIT_DB,                     0},
-  // RX Noise
-  {FS_ID_NOISE,     ZSTR_RX_NOISE,          UNIT_DB,                     0},
-  // RX RSSI (0xfc)
-  {FS_ID_RSSI,      ZSTR_RSSI,              UNIT_DB,                     0},
-  // RX error rate
-  {0xfe,            ZSTR_RX_QUALITY,        UNIT_RAW,                    0},
-  // 0xff is an unused sensor slot
-  // Pseudo sensor for TRSSI
-  {TX_RSSI_ID,      ZSTR_TX_RSSI,           UNIT_RAW,                    0},
-  // sentinel
-  {0x00,            NULL,                   UNIT_RAW,                    0},
+enum {
+  AFHDS2A_SENSOR_RX_VOLTAGE = 0x00,
+  AFHDS2A_SENSOR_RX_TEMP = 0x01,
+  AFHDS2A_SENSOR_RX_RPM = 0x02,
+  AFHDS2A_SENSOR_A3_VOLTAGE = 0x03,
+  AFHDS2A_SENSOR_RX_ERR_RATE = 0xfe,
+  AFHDS2A_SENSOR_RX_RSSI = 0xfc,
+  AFHDS2A_SENSOR_RX_NOISE = 0xfb,
+  AFHDS2A_SENSOR_RX_SNR = 0xfa,
+  AFHDS2A_SENSOR_TX_RSSI_ID = 300  // Pseudo id outside 1 byte range of FlySky sensors
 };
 
-static void processFlySkySensor(const uint8_t *packet)
-{
+const FlySkySensor flySkySensors[] = {
+    // RX Voltage (remapped, really 0x0)
+    {0x100, ZSTR_A1, UNIT_VOLTS, 2},
+    {AFHDS2A_SENSOR_RX_TEMP, ZSTR_TEMP1, UNIT_CELSIUS, 1},
+    {AFHDS2A_SENSOR_RX_RPM, ZSTR_RPM, UNIT_RAW, 0},
+    // External voltage
+    {AFHDS2A_SENSOR_A3_VOLTAGE, ZSTR_A3, UNIT_VOLTS, 2},
+    {AFHDS2A_SENSOR_RX_SNR, ZSTR_RX_SNR, UNIT_DB, 0},
+    {AFHDS2A_SENSOR_RX_NOISE, ZSTR_RX_NOISE, UNIT_DB, 0},
+    {AFHDS2A_SENSOR_RX_RSSI, ZSTR_RSSI, UNIT_DB, 0},
+    {AFHDS2A_SENSOR_RX_ERR_RATE, ZSTR_RX_QUALITY, UNIT_RAW, 0},
+    {AFHDS2A_SENSOR_TX_RSSI_ID, ZSTR_TX_RSSI, UNIT_RAW, 0},
+    {0x00, NULL, UNIT_RAW, 0},
+};
+
+static void processFlySkySensor(const uint8_t *packet) {
   uint16_t id = packet[0];
   const uint8_t instance = packet[1];
-  int32_t value = (packet[3] << 8)  + packet[2];
+  int32_t value = (packet[3] << 8) + packet[2];
 
   if (id == 0xff) {
     // No sensor
@@ -90,17 +84,18 @@ static void processFlySkySensor(const uint8_t *packet)
     id = 0x100;
   }
 
-  if (id == FS_ID_SNR) {
-    telemetryData.rssi.set(value);
+  if (id == AFHDS2A_SENSOR_RX_ERR_RATE) {
+    telemetryData.rssi.set(100 - value);
+    value = 100 - value;
   }
 
-  for (const FlySkySensor * sensor = flySkySensors; sensor->id; sensor++) {
+  for (const FlySkySensor *sensor = flySkySensors; sensor->id; sensor++) {
     // Extract value, skip header
     if (sensor->id == id) {
       // The Noise and Signal sensors that are specified in dB send the absolute value
-      if (id == FS_ID_NOISE || id == FS_ID_RSSI)
-        value = -value;
-      else if (id == FS_ID_TEMP)
+      if (id == AFHDS2A_SENSOR_RX_NOISE || id == AFHDS2A_SENSOR_RX_RSSI)
+        value = 135 - value;
+      else if (id == AFHDS2A_SENSOR_RX_TEMP)
         // Temperature sensors have 40 degree offset
         value -= 400;
       else if (sensor->unit == UNIT_VOLTS)
@@ -113,20 +108,18 @@ static void processFlySkySensor(const uint8_t *packet)
   setTelemetryValue(TELEM_PROTO_FLYSKY_IBUS, id, 0, instance, value, UNIT_RAW, 0);
 }
 
-void processFlySkyPacket(const uint8_t *packet)
-{
+void processFlySkyPacket(const uint8_t *packet) {
   // Set TX RSSI Value, reverse MULTIs scaling
-  setTelemetryValue(TELEM_PROTO_FLYSKY_IBUS, TX_RSSI_ID, 0, 0, packet[0], UNIT_RAW, 0);
+  setTelemetryValue(TELEM_PROTO_FLYSKY_IBUS, AFHDS2A_SENSOR_TX_RSSI_ID, 0, 0, packet[0], UNIT_RAW, 0);
 
   for (int sensor = 0; sensor < 7; sensor++) {
     int index = 1 + (4 * sensor);
-    processFlySkySensor(packet+index);
+    processFlySkySensor(packet + index);
   }
   telemetryStreaming = TELEMETRY_TIMEOUT10ms;
 }
 
-void processFlySkyTelemetryData(uint8_t data)
-{
+void processFlySkyTelemetryData(uint8_t data) {
   if (telemetryRxBufferCount == 0 && data != 0xAA) {
     TRACE("[IBUS] invalid start byte 0x%02X", data);
     return;
@@ -134,12 +127,10 @@ void processFlySkyTelemetryData(uint8_t data)
 
   if (telemetryRxBufferCount < TELEMETRY_RX_PACKET_SIZE) {
     telemetryRxBuffer[telemetryRxBufferCount++] = data;
-  }
-  else {
+  } else {
     TRACE("[IBUS] array size %d error", telemetryRxBufferCount);
     telemetryRxBufferCount = 0;
   }
-
 
   if (telemetryRxBufferCount >= FLYSKY_TELEMETRY_LENGTH) {
     // debug print the content of the packets
@@ -152,22 +143,20 @@ void processFlySkyTelemetryData(uint8_t data)
     }
     debugPrintf("\r\n");
 #endif
-    processFlySkyPacket(telemetryRxBuffer+1);
+    processFlySkyPacket(telemetryRxBuffer + 1);
     telemetryRxBufferCount = 0;
   }
 }
 
-const FlySkySensor *getFlySkySensor(uint16_t id)
-{
-  for (const FlySkySensor * sensor = flySkySensors; sensor->id; sensor++) {
+const FlySkySensor *getFlySkySensor(uint16_t id) {
+  for (const FlySkySensor *sensor = flySkySensors; sensor->id; sensor++) {
     if (id == sensor->id)
       return sensor;
   }
   return nullptr;
 }
 
-void flySkySetDefault(int index, uint16_t id, uint8_t subId, uint8_t instance)
-{
+void flySkySetDefault(int index, uint16_t id, uint8_t subId, uint8_t instance) {
   TelemetrySensor &telemetrySensor = g_model.telemetrySensors[index];
   telemetrySensor.id = id;
   telemetrySensor.subId = subId;
@@ -183,8 +172,7 @@ void flySkySetDefault(int index, uint16_t id, uint8_t subId, uint8_t instance)
       telemetrySensor.custom.ratio = 1;
       telemetrySensor.custom.offset = 1;
     }
-  }
-  else {
+  } else {
     telemetrySensor.init(id);
   }
 

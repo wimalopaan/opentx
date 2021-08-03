@@ -21,6 +21,8 @@
 #ifndef _FLYSKY_IBUS_H
 #define _FLYSKY_IBUS_H
 
+#include <stdint.h>
+
 void processFlySkyTelemetryData(uint8_t data);
 void flySkySetDefault(int index, uint16_t id, uint8_t subId, uint8_t instance);
 

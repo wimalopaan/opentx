@@ -13,6 +13,7 @@
  along with Multiprotocol.  If not, see <http://www.gnu.org/licenses/>.
  */
 // Last sync with hexfet new_protocols/flysky_a7105.c dated 2015-09-28
+#include "../../telemetry/flysky_ibus.h"
 #include "iface_a7105.h"
 #include "opentx.h"
 
@@ -91,14 +92,18 @@ SNR1:   39dB
 void AFHDS2A_update_telemetry() {
   if (packet[0] == 0xAA && packet[9] == 0xFD)
     return;  // ignore packets which contain the RX configuration: FD FF 32 00 01 00 FF FF FF 05 DC 05 DE FA FF FF FF FF FF FF FF FF FF FF FF FF FF FF
-             // Read TX RSSI
 
-  /*
-	int16_t temp=256-(A7105_ReadReg(A7105_1D_RSSI_THOLD)*8)/5;		// value from A7105 is between 8 for maximum signal strength to 160 or less
-	if(temp<0) temp=0;
-	else if(temp>255) temp=255;
-	TX_RSSI=temp;
-*/
+  if (packet[0] == 0xAA) {
+    int16_t tx_rssi = 256 - (A7105_ReadReg(A7105_1D_RSSI_THOLD) * 8) / 5;  // value from A7105 is between 8 for maximum signal strength to 160 or less
+    if (tx_rssi < 0)
+      tx_rssi = 0;
+    else if (tx_rssi > 255)
+      tx_rssi = 255;
+    packet[8] = tx_rssi;
+    processFlySkyPacket(packet + 8);
+  }
+  return;
+  
   //  1     4      4
   // AA | TXID | rx_id | sensor id | sensor # | value 16 bit big endian | sensor id ......
   // AC | TXID | rx_id | sensor id | sensor # | length | bytes | sensor id ......
@@ -185,6 +190,7 @@ static void AFHDS2A_build_bind_packet(void) {
 }
 
 void AFHDS2A_build_packet(uint8_t type) {
+  uint16_t val = 0;
   memcpy(&packet[1], ID.rx_tx_addr, 4);
   memcpy(&packet[5], g_model.moduleData[INTERNAL_MODULE].rxID, 4);
   switch (type) {
@@ -197,19 +203,15 @@ void AFHDS2A_build_packet(uint8_t type) {
         packet[9 + ch * 2] = channelMicros & 0xFF;
         packet[10 + ch * 2] = (channelMicros >> 8) & 0xFF;
       }
-
-#ifdef AFHDS2A_LQI_CH
       // override channel with LQI
-      val = 2000 - 10 * RX_LQI;
-      packet[9 + ((AFHDS2A_LQI_CH - 1) * 2)] = val & 0xff;
-      packet[10 + ((AFHDS2A_LQI_CH - 1) * 2)] = (val >> 8) & 0xff;
-#endif
+      val = 2000 - 10 * telemetryData.rssi.value;
+      packet[9 + ((14 - 1) * 2)] = val & 0xff;
+      packet[10 + ((14 - 1) * 2)] = (val >> 8) & 0xff;
       break;
     case AFHDS2A_PACKET_FAILSAFE:
       packet[0] = 0x56;
       for (uint8_t ch = 0; ch < 14; ch++) {
-        if (g_model.moduleData[INTERNAL_MODULE].failsafeMode == FAILSAFE_CUSTOM
-        && g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch]<FAILSAFE_CHANNEL_HOLD) {
+        if (g_model.moduleData[INTERNAL_MODULE].failsafeMode == FAILSAFE_CUSTOM && g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] < FAILSAFE_CHANNEL_HOLD) {
           uint16_t failsafeMicros = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] / 2 + RADIO_PPM_CENTER;
           packet[9 + ch * 2] = failsafeMicros & 0xff;
           packet[10 + ch * 2] = (failsafeMicros >> 8) & 0xff;

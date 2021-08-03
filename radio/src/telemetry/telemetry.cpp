@@ -62,7 +62,9 @@ void processTelemetryData(uint8_t data)
   }
 #endif
 #if defined(TELEMETRY_FRSKY)
+#if !defined(PCBI6)
   processFrskyTelemetryData(data);
+#endif
 #endif
 }
 

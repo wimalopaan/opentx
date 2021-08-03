@@ -106,7 +106,7 @@ enum MenuModelTelemetryFrskyItems {
 #if defined (PCBTARANIS)
   #define TELEMETRY_TYPE_SHOW_TELEMETRY  (! IS_INTERNAL_MODULE_ENABLED() && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_PPM) ? (uint8_t)0 : HIDDEN_ROW
 #else
-  #define TELEMETRY_TYPE_SHOW_TELEMETRY  (g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_PPM) ? (uint8_t)0 : HIDDEN_ROW
+  #define TELEMETRY_TYPE_SHOW_TELEMETRY  0 // (g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_PPM) ? (uint8_t)0 : HIDDEN_ROW
 #endif
 
 
@@ -447,7 +447,6 @@ void menuModelTelemetryFrsky(event_t event)
 
     LcdFlags blink = ((s_editMode>0) ? BLINK|INVERS : INVERS);
     LcdFlags attr = (sub == k ? blink : 0);
-
 
     if (k>=ITEM_TELEMETRY_SENSOR1 && k<ITEM_TELEMETRY_SENSOR1+MAX_TELEMETRY_SENSORS) {
       int index = k - ITEM_TELEMETRY_SENSOR1;
