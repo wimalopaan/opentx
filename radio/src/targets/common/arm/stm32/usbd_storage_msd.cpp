@@ -20,7 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "opentx.h"
-#include "FatFs/diskio.h"
+#if defined(SDCARD)
+  #include "FatFs/diskio.h"
+#endif
 #include "stamp.h"
 
 #if defined(__cplusplus) && !defined(SIMU)
@@ -31,7 +33,9 @@ extern "C" {
 #include "usb_conf.h"
 
 enum MassstorageLuns {
+  #if defined(SDCARD)
   STORAGE_SDCARD_LUN,
+  #endif
   STORAGE_EEPROM_LUN,
   STORAGE_LUN_NBR
 };
@@ -113,19 +117,21 @@ const USBD_STORAGE_cb_TypeDef  * const USBD_STORAGE_fops = &USBD_MICRO_SDIO_fops
 
 int8_t STORAGE_Init (uint8_t lun)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
-  NVIC_InitStructure.NVIC_IRQChannel = SDIO_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
+  #if defined(SDCARD)
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = SDIO_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    return 0;
+  #endif
 /* TODO if no SD ... if( SD_Init() != 0)
   {
     return (-1); 
   } 
 */
-  return (0);
+  return (-1);
 }
 
 /**
@@ -149,7 +155,7 @@ int8_t STORAGE_GetCapacity (uint8_t lun, uint32_t *block_num, uint32_t *block_si
 
   if (!SD_CARD_PRESENT())
     return -1;
-  
+#if defined(SDCARD)
   *block_size = BLOCK_SIZE;
 
   static DWORD sector_count = 0;
@@ -161,7 +167,7 @@ int8_t STORAGE_GetCapacity (uint8_t lun, uint32_t *block_num, uint32_t *block_si
   }
 
   *block_num  = sector_count;
-
+#endif
   return 0;
 }
 
@@ -169,7 +175,9 @@ uint8_t lunReady[STORAGE_LUN_NBR];
 
 void usbPluggedIn()
 {
+  #if defined(SDCARD)
   lunReady[STORAGE_SDCARD_LUN] = 1;
+  #endif
   lunReady[STORAGE_EEPROM_LUN] = 1;
 }
 
@@ -185,8 +193,10 @@ int8_t  STORAGE_IsReady (uint8_t lun)
     return (lunReady[STORAGE_EEPROM_LUN] != 0) ? 0 : -1;
   }
 #endif
-
+#if defined(SDCARD)
   return (lunReady[STORAGE_SDCARD_LUN] != 0 && SD_CARD_PRESENT()) ? 0 : -1;
+#endif
+  return 0;
 }
 
 /**
@@ -218,9 +228,11 @@ int8_t STORAGE_Read (uint8_t lun,
   if (lun == STORAGE_EEPROM_LUN) {
     return (fat12Read(buf, blk_addr, blk_len) == 0) ? 0 : -1;
   }
-
+#if defined(SDCARD)
   // read without cache
   return (__disk_read(0, buf, blk_addr, blk_len) == RES_OK) ? 0 : -1;
+#endif
+  return -1;
 }
 /**
   * @brief  Write data to the medium
@@ -241,9 +253,11 @@ int8_t STORAGE_Write (uint8_t lun,
   if (lun == STORAGE_EEPROM_LUN)	{
     return (fat12Write(buf, blk_addr, blk_len) == 0) ? 0 : -1;
   }
-
+#if defined(SDCARD)
   // write without cache
   return (__disk_write(0, buf, blk_addr, blk_len) == RES_OK) ? 0 : -1;
+#endif
+  return -1;
 }
 
 /**
@@ -512,13 +526,11 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
     else if (sector == 3) {
       memcpy(buffer, g_DIRroot, sizeof(g_DIRroot) ) ;
     }
-    else if (sector == 4)
-    {
+    else if (sector == 4) {
       memcpy(buffer, firmware_txt, sizeof(firmware_txt));
       memcpy(buffer + sizeof(firmware_txt), getOtherVersion(nullptr), strlen(getOtherVersion(nullptr)));
     }
-    else if (sector < RESERVED_SECTORS)
-    {
+    else if (sector < RESERVED_SECTORS) {
       // allocated to firmware.txt
     }
     else if (sector < RESERVED_SECTORS + (FLASHSIZE/BLOCK_SIZE )) {

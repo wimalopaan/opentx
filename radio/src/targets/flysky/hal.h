@@ -417,6 +417,27 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define EXTMODULE_RCC_APB2Periph 0
 #define BT_RCC_APB2Periph 0
 #define SD_GPIO_PRESENT_GPIO 0
+
+// USB
+#define USB_RCC_AHBPeriph_GPIO         RCC_AHBPeriph_GPIOA
+#define USB_GPIO                        GPIOA
+#define USB_GPIO_PIN_VBUS               GPIO_Pin_9  // PA.09
+#define USB_GPIO_PIN_DP GPIO_Pin_12
+#define USB_GPIO_PIN_DM GPIO_Pin_11
+#define USB_GPIO_PinSource_DM           GPIO_PinSource11
+#define USB_GPIO_PinSource_DP           GPIO_PinSource12
+#define USB_GPIO_AF                     ((uint8_t)0xA)         // taken from F2, works?
+#define RCC_AHBPeriph_OTG_FS            ((uint32_t)0x00000080) // taken from F2, works?
+#define OTG_FS_IRQn                  (67)     //  USB OTG FS global Interrupt  
+
+// Flash (taken from f2)
+#define FLASH_CR_SER               ((uint32_t)0x00000002)
+#define FLASH_PSIZE_BYTE           ((uint32_t)0x00000000)
+#define FLASH_PSIZE_HALF_WORD      ((uint32_t)0x00000100)
+#define FLASH_PSIZE_WORD           ((uint32_t)0x00000200)
+#define FLASH_PSIZE_DOUBLE_WORD    ((uint32_t)0x00000300)
+#define CR_PSIZE_MASK              ((uint32_t)0xFFFFFCFF)
+
 // Serial Port
 
 #define TRAINER_BATTERY_COMPARTMENT

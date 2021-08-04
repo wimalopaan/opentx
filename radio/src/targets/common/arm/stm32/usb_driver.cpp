@@ -98,11 +98,15 @@ void usbStart()
       USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_CDC_cb, &USR_cb);
       break;
 #endif
+// Flysky I6X doesn't have enough RAM for mass storage mode
+// Enable only in bootloader
+#if !defined(PCBI6)||defined(BOOT) 
     default:
     case USB_MASS_STORAGE_MODE:
       // initialize USB as MSC device
       USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_MSC_cb, &USR_cb);
       break;
+#endif
   }
   usbDriverStarted = true;
 }
@@ -140,10 +144,10 @@ void usbJoystickUpdate()
       if ( channelOutputs[i+8] > 0 ) {
         HID_Buffer[0] |= (1 << i);
       }
-      if ( channelOutputs[i+16] > 0 ) {
+      if ( MAX_OUTPUT_CHANNELS>=24 && channelOutputs[i+16] > 0 ) {
         HID_Buffer[1] |= (1 << i);
       }
-      if ( channelOutputs[i+24] > 0 ) {
+      if ( MAX_OUTPUT_CHANNELS>=32 && channelOutputs[i+24] > 0 ) {
         HID_Buffer[2] |= (1 << i);
       }
     }

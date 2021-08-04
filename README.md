@@ -14,6 +14,7 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 ## Next tasks:
 
+* Timers are counting at half the speed.
 * Internal module
     - AFHDS2A
         - Missing menu settings: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
@@ -28,7 +29,7 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 * Buzzer
 * Bootloader if it fits. Mass storage to backup EEPROM and update firmware.
 * SDCARD support if it fits in flash.
-
+* Go over the radio menus and correct blank spaces, remove unused options.
 ## Completed tasks:
 
 * AFHDS2A - Telemetry (RSSI/LQI, RX voltage, etc.)

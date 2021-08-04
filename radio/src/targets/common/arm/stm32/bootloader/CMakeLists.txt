@@ -28,6 +28,23 @@ elseif(PCB STREQUAL X9E)
     ../../../../../${STM32LIB_DIR}/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.c
     ../../../../../${STM32LIB_DIR}/STM32F4xx_StdPeriph_Driver/src/misc.c
     )
+elseif(CPU_TYPE STREQUAL STM32F0)
+  set(BOOTLOADER_SRC
+    ${BOOTLOADER_SRC}
+    ../f0/system_stm32f0xx.c    
+    ../../../../../${STM32LIB_DIR}/CMSIS/Device/ST/STM32F0xx/Source/Templates/gcc_ride7/startup_stm32f072.s
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_misc.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_gpio.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_dbgmcu.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_rcc.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_spi.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_i2c.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_dma.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_rtc.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_pwr.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_usart.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_adc.c
+    )    
 else()
   set(BOOTLOADER_SRC
     ${BOOTLOADER_SRC}

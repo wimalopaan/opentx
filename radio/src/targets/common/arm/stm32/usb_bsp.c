@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "usb_bsp.h"
+
 #include "board.h"
 #include "usbd_conf.h"
 
@@ -33,38 +34,46 @@ extern uint32_t SystemCoreClock;
 * @retval None
 */
 
-void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev)
-{
-  GPIO_InitTypeDef GPIO_InitStructure;  
-  
+void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev) {
+  GPIO_InitTypeDef GPIO_InitStructure;
+#if defined(STM32F0)
+  RCC_AHBPeriphClockCmd(USB_RCC_AHBPeriph_GPIO, ENABLE);
+#else
   RCC_AHB1PeriphClockCmd(USB_RCC_AHB1Periph_GPIO, ENABLE);
-  
+#endif
   /* Configure DM and DP Pins */
   GPIO_InitStructure.GPIO_Pin = USB_GPIO_PIN_DM | USB_GPIO_PIN_DP;
+#if defined(STM32F0)
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+#else
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
+#endif
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(USB_GPIO, &GPIO_InitStructure);
-  
+
   GPIO_PinAFConfig(USB_GPIO, USB_GPIO_PinSource_DM, USB_GPIO_AF);
   GPIO_PinAFConfig(USB_GPIO, USB_GPIO_PinSource_DP, USB_GPIO_AF);
-  
+
   /* Configure VBUS Pin */
   GPIO_InitStructure.GPIO_Pin = USB_GPIO_PIN_VBUS;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(USB_GPIO, &GPIO_InitStructure);
-  
+
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-  RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ; 
+  #if defined(STM32F0)
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_OTG_FS, ENABLE);
+  #else
+  RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE);
+  #endif
 }
 
-void USB_OTG_BSP_Deinit(USB_OTG_CORE_HANDLE *pdev)
-{
-  //nothing to do  
+void USB_OTG_BSP_Deinit(USB_OTG_CORE_HANDLE *pdev) {
+  //nothing to do
 }
 
 /**
@@ -73,9 +82,8 @@ void USB_OTG_BSP_Deinit(USB_OTG_CORE_HANDLE *pdev)
 * @param  None
 * @retval None
 */
-void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev)
-{
-  NVIC_SetPriority(OTG_FS_IRQn, 11); // Lower priority interrupt
+void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev) {
+  NVIC_SetPriority(OTG_FS_IRQn, 11);  // Lower priority interrupt
   NVIC_EnableIRQ(OTG_FS_IRQn);
 }
 
@@ -85,11 +93,9 @@ void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev)
 * @param  None
 * @retval None
 */
-void USB_OTG_BSP_DisableInterrupt(USB_OTG_CORE_HANDLE *pdev)
-{
+void USB_OTG_BSP_DisableInterrupt(USB_OTG_CORE_HANDLE *pdev) {
   NVIC_DisableIRQ(OTG_FS_IRQn);
 }
-
 
 /**
 * @brief  USB_OTG_BSP_uDelay
@@ -97,11 +103,9 @@ void USB_OTG_BSP_DisableInterrupt(USB_OTG_CORE_HANDLE *pdev)
 * @param  usec : Value of delay required in micro sec
 * @retval None
 */
-void USB_OTG_BSP_uDelay (const uint32_t usec)
-{
+void USB_OTG_BSP_uDelay(const uint32_t usec) {
   delay_us(usec);
 }
-
 
 /**
 * @brief  USB_OTG_BSP_mDelay
@@ -109,10 +113,8 @@ void USB_OTG_BSP_uDelay (const uint32_t usec)
 * @param  msec : Value of delay required in milli sec
 * @retval None
 */
-void USB_OTG_BSP_mDelay (const uint32_t msec)
-{
+void USB_OTG_BSP_mDelay(const uint32_t msec) {
   delay_ms(msec);
 }
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

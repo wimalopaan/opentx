@@ -314,6 +314,7 @@ void menuMainView(event_t event)
 {
   uint8_t view = g_eeGeneral.view;
   uint8_t view_base = view & 0x0f;
+  uint8_t num_pages = MAX_OUTPUT_CHANNELS / 8;
 
   switch (event) {
     case EVT_ENTRY:
@@ -337,7 +338,9 @@ void menuMainView(event_t event)
         if (view_base == VIEW_INPUTS)
           g_eeGeneral.view ^= ALTERNATE_VIEW;
         else
-          g_eeGeneral.view = (g_eeGeneral.view + (4*ALTERNATE_VIEW) + ((event==EVT_KEY_PREVIOUS_PAGE) ? -ALTERNATE_VIEW : ALTERNATE_VIEW)) % (4*ALTERNATE_VIEW);
+          g_eeGeneral.view = (g_eeGeneral.view + (num_pages*ALTERNATE_VIEW) + 
+          ((event==EVT_KEY_PREVIOUS_PAGE) ? -ALTERNATE_VIEW : ALTERNATE_VIEW)) 
+          % (num_pages*ALTERNATE_VIEW);
         storageDirty(EE_GENERAL);
         AUDIO_KEY_PRESS();
       }
@@ -459,7 +462,8 @@ void menuMainView(event_t event)
   if (view_base < VIEW_INPUTS) {
     // scroll bar
     lcdDrawHorizontalLine(38, 34, 54, DOTTED);
-    lcdDrawSolidHorizontalLine(38 + (g_eeGeneral.view / ALTERNATE_VIEW) * 13, 34, 13, SOLID);
+    uint8_t segment_width = 54 / num_pages;
+    lcdDrawSolidHorizontalLine(38 + (g_eeGeneral.view / ALTERNATE_VIEW) * segment_width, 34, segment_width, SOLID);
 
     for (uint8_t i=0; i<8; i++) {
       uint8_t x0,y0;

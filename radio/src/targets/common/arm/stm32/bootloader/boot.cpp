@@ -19,8 +19,9 @@
  */
 #include "opentx.h"
 #include "boot.h"
-#include "bin_files.h"
-
+#if defined(SDCARD)
+  #include "bin_files.h"
+#endif
 #if defined(PCBXLITE)
 #define BOOTLOADER_KEYS                 0x0f
 #else
@@ -132,6 +133,7 @@ uint32_t isValidBufferStart(const uint8_t * buffer)
 #endif
 }
 
+#if defined(SDCARD)
 FlashCheckRes checkFlashFile(unsigned int index, FlashCheckRes res)
 {
   if (res != FC_UNCHECKED)
@@ -170,6 +172,7 @@ int menuFlashFile(uint32_t index, event_t event)
 
   return -1;
 }
+#endif // SDCARD
 
 static uint32_t PowerUpDelay;
 
@@ -250,7 +253,9 @@ int main()
   init10msTimer();
 
   // SD card detect pin
-  sdInit();
+  #if defined(SDCARD)
+    sdInit();
+  #endif
   usbInit();
 
   // init screen

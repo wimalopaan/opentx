@@ -101,12 +101,15 @@ void AFHDS2A_update_telemetry() {
       tx_rssi = 255;
     packet[8] = tx_rssi;
     processFlySkyPacket(packet + 8);
+  } else {
+    // TRACE("extended IBUS received");
   }
   return;
-  
+
   //  1     4      4
   // AA | TXID | rx_id | sensor id | sensor # | value 16 bit big endian | sensor id ......
   // AC | TXID | rx_id | sensor id | sensor # | length | bytes | sensor id ......
+  /*
   if (packet[0] == 0xAA) {  // 0xAA Normal telemetry, 0xAC Extended telemetry not decoded here
     for (uint8_t sensor = 0; sensor < 7; sensor++) {
       // Send FrSkyD telemetry to TX
@@ -149,12 +152,13 @@ void AFHDS2A_update_telemetry() {
           // telem_AFHDS2A[RX_Temp],
           // telem_AFHDS2A[RX_Err]);
           return;
-          /*default:
+          //default:
           // unknown sensor ID
-          break;*/
+          //break;
       }
     }
   }
+  */
 }
 
 static void AFHDS2A_build_bind_packet(void) {

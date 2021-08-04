@@ -48,6 +48,14 @@ set(FIRMWARE_TARGET_SRC
   ../common/arm/stm32/flash_driver.cpp
   ../common/arm/stm32/usbd_storage_msd.cpp
   )
+else()
+#set(FIRMWARE_TARGET_SRC
+#  ${FIRMWARE_TARGET_SRC}
+#  ../common/arm/stm32/usb_bsp.c
+#  ../common/arm/stm32/usbd_desc.c
+#  ../common/arm/stm32/usbd_usr.cpp
+#  ../common/arm/stm32/usb_driver.cpp
+#  )
 endif()
 
 if(DEBUG OR CLI OR USB_SERIAL)

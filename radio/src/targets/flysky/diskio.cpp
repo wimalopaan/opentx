@@ -19,6 +19,7 @@
  */
 
 #include "opentx.h"
+#if defined(SDCARD)
 #include "FatFs/diskio.h"
 #include "FatFs/ff.h"
 
@@ -1044,3 +1045,4 @@ uint32_t sdGetSpeed()
 {
   return 330000;
 }
+#endif

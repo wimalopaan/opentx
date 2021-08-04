@@ -53,6 +53,7 @@
 #endif
 
 /* lcd putc flags */
+#define CENTERED                       0x20
 #define CONDENSED                      0x08
 #define FIXEDWIDTH                     0x10
 /* lcd puts flags */
