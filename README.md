@@ -14,7 +14,6 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 ## Next tasks:
 
-* Timers are counting at half the speed.
 * Internal module
     - AFHDS2A
         - Missing menu settings: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency

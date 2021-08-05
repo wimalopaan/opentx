@@ -83,8 +83,8 @@ extern "C" {
 #define PERI1_FREQUENCY               48000000
 #define PERI2_FREQUENCY               48000000
 
-#define TIMER_MULT_APB1                 2
-#define TIMER_MULT_APB2                 2
+#define TIMER_MULT_APB1                 1 //2
+#define TIMER_MULT_APB2                 1 //2
 
 #define strcpy_P strcpy
 #define strcat_P strcat
