@@ -76,9 +76,11 @@ uint8_t getRequiredProtocol(uint8_t port)
           required_protocol = PROTO_PXX_EXTERNAL_MODULE; // either PXX or PXX2 depending on compilation options
           break;
 #endif
+#if !defined(PCBI6)
         case MODULE_TYPE_SBUS:
           required_protocol = PROTO_SBUS;
           break;
+#endif
 #if defined(MULTIMODULE)
         case MODULE_TYPE_MULTIMODULE:
           required_protocol = PROTO_MULTIMODULE;
@@ -149,6 +151,13 @@ void setupPulses(uint8_t port)
 {
   // TRACE("setupPulses");
   // TRACE("moduleFlag %d", moduleFlag[INTERNAL_MODULE]);
+  // TRACE("setupPulses module type %d",g_model.moduleData[INTERNAL_MODULE].type);
+#if defined(PCBI6)  
+  // For backwards compatibility with old config that included other types.
+  if(g_model.moduleData[INTERNAL_MODULE].type>=MODULE_TYPE_COUNT){
+    g_model.moduleData[INTERNAL_MODULE].type=MODULE_TYPE_AFHDS2A_SPI;
+  }
+#endif
   bool init_needed = false;
   uint8_t required_protocol = getRequiredProtocol(port);
 
@@ -188,11 +197,11 @@ void setupPulses(uint8_t port)
       case PROTO_AFHDS2A_SPI:
         disable_afhds2a(port);
         break;
-
+#if !defined(PCBI6)
       case PROTO_SBUS:
         disable_serial(port);
         break;
-
+#endif
       case PROTO_PPM:
         disable_ppm(port);
         break;
@@ -212,10 +221,13 @@ void setupPulses(uint8_t port)
       scheduleNextMixerCalculation(port, PXX_PERIOD);
       break;
 #endif
+
+#if !defined(PCBI6)
     case PROTO_SBUS:
       setupPulsesSbus(port);
       scheduleNextMixerCalculation(port, SBUS_PERIOD);
       break;
+#endif
 
 #if defined(DSM2)
     case PROTO_DSM2_LP45:
@@ -315,11 +327,11 @@ void setupPulses(uint8_t port)
         init_serial(port, MULTIMODULE_BAUDRATE, MULTIMODULE_PERIOD * 2000);
         break;
 #endif
-
+#if !defined(PCBI6)
       case PROTO_SBUS:
         init_serial(port, SBUS_BAUDRATE, SBUS_PERIOD_HALF_US);
         break;
-
+#endif
       case PROTO_PPM:
         init_ppm(port);
         break;

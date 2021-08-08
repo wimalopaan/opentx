@@ -465,6 +465,12 @@ bool isR9MModeAvailable(int mode) {
 #endif
 }
 
+#if defined(PCBI6)
+bool isSubtypeAvailable(int i){
+  return true;
+}
+#endif
+
 bool isModuleAvailable(int module) {
 #if defined(CROSSFIRE)
   if (module == MODULE_TYPE_CROSSFIRE && g_model.moduleData[INTERNAL_MODULE].type != MODULE_TYPE_NONE) {
@@ -475,15 +481,17 @@ bool isModuleAvailable(int module) {
     return false;
   }
 #endif
-#if !defined(DSM2)
-  if (module == MODULE_TYPE_DSM2) {
-    return false;
-  }
-#endif
-#if !defined(MULTIMODULE)
-  if (module == MODULE_TYPE_MULTIMODULE) {
-    return false;
-  }
+#if !defined(PCBI6)
+  #if !defined(DSM2)
+    if (module == MODULE_TYPE_DSM2) {
+      return false;
+    }
+  #endif
+  #if !defined(MULTIMODULE)
+    if (module == MODULE_TYPE_MULTIMODULE) {
+      return false;
+    }
+  #endif
 #endif
   return true;
 }

@@ -459,8 +459,8 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define SERIAL_RCC_AHB1Periph         (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_DMA1)
 #define SERIAL_RCC_APB2Periph         RCC_APB2Periph_USART1
 #define SERIAL_GPIO                   GPIOA
-#define SERIAL_GPIO_PIN_TX            GPIO_Pin_9 // PB9
-#define SERIAL_GPIO_PIN_RX            GPIO_Pin_10 // PB10
+#define SERIAL_GPIO_PIN_TX            GPIO_Pin_9 // PA9
+#define SERIAL_GPIO_PIN_RX            GPIO_Pin_10 // PA10
 #define SERIAL_GPIO_PinSource_TX      GPIO_PinSource9
 #define SERIAL_GPIO_PinSource_RX      GPIO_PinSource10
 #define SERIAL_GPIO_AF                GPIO_AF_1

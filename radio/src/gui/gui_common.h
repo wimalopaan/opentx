@@ -58,6 +58,7 @@ bool isModuleAvailable(int module);
 bool isRfProtocolAvailable(int protocol);
 bool isTelemetryProtocolAvailable(int protocol);
 bool isTrainerModeAvailable(int mode);
+bool isSubtypeAvailable(int i);
 
 bool isSensorUnit(int sensor, uint8_t unit);
 bool isCellsSensor(int sensor);

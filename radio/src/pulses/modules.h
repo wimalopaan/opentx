@@ -65,7 +65,11 @@ inline bool isModuleXJT(uint8_t idx)
 #else
 inline bool isModuleXJT(uint8_t idx)
 {
+  #if defined(PCBI6)
+  return false;
+  #else
   return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_XJT;
+  #endif
 }
 #endif
 
@@ -111,7 +115,11 @@ inline bool isModulePPM(uint8_t idx)
 
 inline bool isModuleR9M(uint8_t idx)
 {
+  #if defined(PCBI6)
+  return false;
+  #else
   return g_model.moduleData[idx].type == MODULE_TYPE_R9M;
+  #endif
 }
 
 inline bool isModuleR9M_FCC(uint8_t idx)
@@ -145,15 +153,22 @@ inline bool isModulePXX(uint8_t idx)
   return isModuleXJT(idx) || isModuleR9M(idx);
 }
 
-
 inline bool isModuleDSM2(uint8_t idx)
 {
-  return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_DSM2;
+  #if defined(PCBI6)
+    return false;
+  #else
+    return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_DSM2;
+  #endif
 }
 
 inline bool isModuleSBUS(uint8_t idx)
 {
-  return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_SBUS;
+  #if defined(PCBI6)
+    return false;
+  #else
+    return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_SBUS;
+  #endif
 }
 
 // order is the same as in enum Protocols in myeeprom.h (none, ppm, pxx, dsm, crossfire, multi, r9m, sbus)

@@ -107,12 +107,15 @@ endforeach()
 
 set(SRC
   ${SRC}
-  telemetry/crossfire.cpp
   io/bootloader_flash.cpp
   )
+endif()
 
+set(SRC
+  ${SRC}
+  telemetry/crossfire.cpp
+  )
 set(PULSES_SRC
   ${PULSES_SRC}
   crossfire.cpp
   )
-endif()

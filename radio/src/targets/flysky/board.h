@@ -190,12 +190,19 @@ uint32_t isBootloaderStart(const uint8_t * buffer);
 
 enum AFHDS2A_Subtype
 {
-	PWM_IBUS = 0,
-	PPM_IBUS = 1,
-	PWM_SBUS = 2,
-	PPM_SBUS = 3,
+  AFHDS2A_SUBTYPE_FIRST,
+	AFHDS2A_SUBTYPE_PWM_IBUS = AFHDS2A_SUBTYPE_FIRST,
+	AFHDS2A_SUBTYPE_PPM_IBUS,
+	AFHDS2A_SUBTYPE_PWM_SBUS,
+	AFHDS2A_SUBTYPE_PPM_SBUS,
+  AFHDS2A_SUBTYPE_LAST = AFHDS2A_SUBTYPE_PPM_SBUS
 };
-
+const char STR_SUBTYPE_AFHDS2A[] =
+    "\010"
+    "PWM,IBUS"
+    "PPM,IBUS"
+    "PWM,SBUS"
+    "PPM,SBUS";
 
 void init_no_pulses(uint32_t port);
 void disable_no_pulses(uint32_t port);
@@ -207,6 +214,9 @@ void init_crossfire( uint32_t module_index );
 void disable_crossfire( uint32_t module_index );
 void init_serial( uint32_t module_index, uint32_t baudrate, uint32_t period);
 void disable_serial( uint32_t module_index);
+void init_module_timer( uint32_t module_index, uint32_t period, uint8_t state);
+void disable_module_timer( uint32_t module_index);
+
 //jsut to allow compilation
 void setupPulsesSbus(uint8_t port);
 // Trainer driver

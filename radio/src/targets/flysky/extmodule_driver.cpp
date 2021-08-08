@@ -60,6 +60,7 @@ void extmoduleStop() {
 
 void extmodulePpmStart() {
   TRACE("extmodulePpmStart");
+  return;
   /*------------PPM_TIMER_Init(TIM15 clock 3mHz)------------------------------*/
   /**TIM15 GPIO Configuration
   PF9   ------> TIM15_CH1
@@ -95,9 +96,11 @@ void extmodulePpmStart() {
   NVIC_EnableIRQ(TIM15_IRQn);
   
   (void)tmpreg;
-
+TRACE("EnablePPMTim...");
   EnablePPMTim();
+  TRACE("EnablePPMOut...");
   EnablePPMOut();
+  TRACE("Done.");
 }
 
 void extmodulePxxStart() {
@@ -111,7 +114,36 @@ void extmoduleCrossfireStart() {
 void extmoduleSendNextFrame() {
   TRACE("extmoduleSendNextFrame");
 }
+void extmoduleTimerStart(uint32_t period, uint8_t state)
+{
+  // if (state)
+  //   EXTERNAL_MODULE_ON();
+  // else if (!IS_TRAINER_EXTERNAL_MODULE())
+  //   EXTERNAL_MODULE_OFF();
 
+  // GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
+
+  // GPIO_InitTypeDef GPIO_InitStructure;
+  // GPIO_InitStructure.GPIO_Pin = EXTMODULE_TX_GPIO_PIN;
+  // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  // GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  // GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  // GPIO_Init(EXTMODULE_TX_GPIO, &GPIO_InitStructure);
+  // GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN); // Set high
+
+  // EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
+  // EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1; // 0.5uS from 30MHz
+  // EXTMODULE_TIMER->ARR = (2000 * period);
+  // EXTMODULE_TIMER->CCR2 = (2000 * period) - 1000;
+  // EXTMODULE_TIMER->EGR = 1; // Restart
+  // EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;
+  // EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE; // Enable this interrupt
+  // EXTMODULE_TIMER->CR1 |= TIM_CR1_CEN;
+
+  // NVIC_EnableIRQ(EXTMODULE_TIMER_CC_IRQn);
+  // NVIC_SetPriority(EXTMODULE_TIMER_CC_IRQn, 7);
+}
 /*--------------handler for PPM Timer ----------------------------------------*/
 void TIM15_IRQHandler(void) {
   // TODO decide to bring implementation of pulses.cpp from erfly6 or not

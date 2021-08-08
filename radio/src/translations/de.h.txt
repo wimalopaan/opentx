@@ -102,11 +102,14 @@
 #define TR_USBMODES            TR("Fragen""Joyst\0""SDCard""Serial", "Fragen\0 ""Joystick""Speicher""Seriell\0")
 
 #define LEN_TARANIS_PROTOCOLS  "\004"
-#define TR_TARANIS_PROTOCOLS   "AUS\0""PPM\0""XJT\0""DSM?""CRSF""MULT""R9M\0""SBUS"
+#if defined(PCBI6)
+  #define TR_TARANIS_PROTOCOLS   "OFF\0""PPM\0""CRSF"
+#else
+  #define TR_TARANIS_PROTOCOLS   "OFF\0""PPM\0""XJT\0""DSM2""CRSF""MULT""R9M\0""SBUS"
+#endif
 
-#define LEN_TELEMETRY_PROTOCOLS "\017"
-#define TR_TELEMETRY_PROTOCOLS "FrSky S.PORT\0  ""FrSky D\0       ""FrSky D (Kabel)""TBS Crossfire\0 ""Spektrum\0      ""AFHDS2A IBUS\0  ""Multi Telemetry"
-
+#define LEN_TELEMETRY_PROTOCOLS        "\017"
+#define TR_TELEMETRY_PROTOCOLS         "FrSky S.PORT\0  ""FrSky D\0       ""FrSky D (Kabel)""TBS Crossfire\0 ""Spektrum\0      ""AFHDS2A IBUS\0  ""Multi Telemetry"
 
 #define LEN_XJT_PROTOCOLS      "\004"
 #define TR_XJT_PROTOCOLS       "AUS\0""D16\0""D8\0 ""LR12"

@@ -208,7 +208,7 @@ void AFHDS2A_build_packet(uint8_t type) {
         packet[10 + ch * 2] = (channelMicros >> 8) & 0xFF;
       }
       // override channel with LQI
-      val = 2000 - 10 * telemetryData.rssi.value;
+      val = 1000 + 10 * telemetryData.rssi.value;
       packet[9 + ((14 - 1) * 2)] = val & 0xff;
       packet[10 + ((14 - 1) * 2)] = (val >> 8) & 0xff;
       break;
@@ -235,14 +235,9 @@ void AFHDS2A_build_packet(uint8_t type) {
         g_model.moduleData[INTERNAL_MODULE].servoFreq = 50;  // default is 50Hz
       }
 
-      if (g_model.moduleData[INTERNAL_MODULE].subType != PWM_IBUS) {
-        TRACE("forcing PWM-IBUS");
-        g_model.moduleData[INTERNAL_MODULE].subType = PWM_IBUS;
-      }
-
       packet[11] = g_model.moduleData[INTERNAL_MODULE].servoFreq;
       packet[12] = g_model.moduleData[INTERNAL_MODULE].servoFreq >> 8;
-      if (g_model.moduleData[INTERNAL_MODULE].subType & (PPM_IBUS | PPM_SBUS)) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType & (AFHDS2A_SUBTYPE_PPM_IBUS | AFHDS2A_SUBTYPE_PPM_SBUS)) {
         packet[13] = 0x01;  // PPM output enabled
       } else {
         packet[13] = 0x00;
@@ -254,7 +249,7 @@ void AFHDS2A_build_packet(uint8_t type) {
       packet[18] = 0x05;  // ?
       packet[19] = 0xdc;  // ?
       packet[20] = 0x05;  // ?
-      if (g_model.moduleData[INTERNAL_MODULE].subType & (PWM_SBUS | PPM_SBUS)) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType & (AFHDS2A_SUBTYPE_PWM_SBUS | AFHDS2A_SUBTYPE_PPM_SBUS)) {
         packet[21] = 0xdd;  // SBUS output enabled
       } else {
         packet[21] = 0xde;  // IBUS

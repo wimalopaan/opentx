@@ -29,6 +29,7 @@ void intmoduleAfhds2aStart(void);
 void extmodulePpmStart(void);
 void extmodulePxxStart(void);
 void extmoduleCrossfireStart(void);
+void extmoduleTimerStart(uint32_t period, uint8_t state);
 
 void init_afhds2a(uint32_t port) {
   TRACE("init_afhds2a");
@@ -77,4 +78,18 @@ void init_serial(uint32_t port, uint32_t baudrate, uint32_t period_half_us) {
 }
 
 void disable_serial(uint32_t port) {
+}
+
+void init_module_timer(uint32_t port, uint32_t period, uint8_t state)
+{
+  if (port == EXTERNAL_MODULE) {
+    extmoduleTimerStart(period, state);
+  }
+}
+
+void disable_module_timer(uint32_t port)
+{
+  if (port == EXTERNAL_MODULE) {
+    extmoduleStop();
+  }
 }
