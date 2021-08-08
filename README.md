@@ -15,10 +15,8 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 ## Next tasks:
 
 * Internal module
-    - AFHDS2A
-        - Missing menu settings: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
-        - Improve mixer scheduling (currently low refresh rate)
-        - Can't restart internal module after turning it off.
+    - Improve mixer scheduling (currently low refresh rate)
+    - Can't restart internal module after turning it off.
 * External module support
     - PPM
     - Crossfire
@@ -29,8 +27,10 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 * Bootloader if it fits. Mass storage to backup EEPROM and update firmware.
 * SDCARD support if it fits in flash.
 * Go over the radio menus and correct blank spaces, remove unused options.
+
 ## Completed tasks:
 
+* AFHDS2A - Remaining settings complete: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
 * AFHDS2A - Telemetry (RSSI/LQI, RX voltage, etc.)
 * AFHDS2A - Binding
 * AFHDS2A - Channels transmission
