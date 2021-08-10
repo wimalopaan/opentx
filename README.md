@@ -9,8 +9,9 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 | UP     | Hold for stats |                              
 | DOWN   | Hold for telemetry |                                  
 | OK     | Hold for Model menu |
-| CANCEL | EXIT |                      
+| CANCEL | EXIT. Hold for graceful shutdown (Needed to save timers) |                      
 | BIND   | Go RIGHT. Go to next PAGE. Hold for general menu. |
+| RIGHT POT | Scroll right or left |
 
 ## Next tasks:
 

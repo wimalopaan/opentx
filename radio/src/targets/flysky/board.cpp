@@ -390,10 +390,6 @@ void boardInit()
 
 void boardOff()
 {
-#if defined(STATUS_LEDS)
-  ledOff();
-#endif
-
   BACKLIGHT_DISABLE();
 
 #if defined(TOPLCD_GPIO)

@@ -20,22 +20,31 @@
 
 #include "opentx.h"
 
-void pwrInit()
-{
-
+void pwrInit() {
   pwrOn();
 }
 
-void pwrOn()
-{
+void pwrOn() {
 }
 
-void pwrOff()
-{  
+void pwrOff() {
+  for (;;) {
+    // Wait for switch off
+  }
 }
-//if !PWR_PRESS_BUTTON logic is reversed
-uint32_t pwrPressed()
-{
-  //return (readKeys() & (1 << TRM_RH_UP));
-  return 1;
+
+static uint16_t pwr_key_cnt = 0;
+
+uint32_t pwrPressed() {
+  // HOLD EXIT KEY
+  if ((readKeys() & (1 << KEY_EXIT))) {
+    pwr_key_cnt++;
+    //TRACE("cnt %d", pwr_key_cnt);
+    if (pwr_key_cnt > 200) {
+      return 1;
+    }
+  } else if (pwr_key_cnt > 0) {
+    pwr_key_cnt = 0;
+  }
+  return 0;
 }
