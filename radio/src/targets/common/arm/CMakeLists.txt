@@ -98,7 +98,7 @@ set(SRC
   telemetry/telemetry.cpp
   telemetry/telemetry_holders.cpp
   telemetry/telemetry_sensors.cpp
-  crc16.cpp
+  crc.cpp
   vario.cpp
   )
   

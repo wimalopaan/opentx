@@ -19,6 +19,7 @@
  */
 
 #include "opentx.h"
+#include "mixer_scheduler.h"
 
 RTOS_TASK_HANDLE menusTaskId;
 RTOS_DEFINE_STACK(menusStack, MENUS_STACK_SIZE);
@@ -44,8 +45,7 @@ enum TaskIndex {
   MAIN_TASK_INDEX = 255
 };
 
-void stackPaint()
-{
+void stackPaint() {
   menusStack.paint();
   mixerStack.paint();
 #if defined(VOICE)
@@ -58,40 +58,56 @@ void stackPaint()
 
 volatile uint16_t timeForcePowerOffPressed = 0;
 
-bool isForcePowerOffRequested()
-{
+bool isForcePowerOffRequested() {
   if (pwrOffPressed()) {
     if (timeForcePowerOffPressed == 0) {
       timeForcePowerOffPressed = get_tmr10ms();
-    }
-    else {
+    } else {
       uint16_t delay = (uint16_t)get_tmr10ms() - timeForcePowerOffPressed;
-      if (delay > 1000/*10s*/) {
+      if (delay > 1000 /*10s*/) {
         return true;
       }
     }
-  }
-  else {
+  } else {
     resetForcePowerOffRequest();
   }
   return false;
 }
 
+bool isModuleSynchronous(uint8_t moduleIdx) {
+  switch (g_model.moduleData[moduleIdx].type) {
+    case MODULE_TYPE_CROSSFIRE:
+    case MODULE_TYPE_NONE:
+      return true;
+  }
+  return false;
+}
+
+void sendSynchronousPulses(uint8_t runMask) {
+  if ((runMask & (1 << EXTERNAL_MODULE)) && isModuleSynchronous(EXTERNAL_MODULE)) {
+    if(setupPulses(EXTERNAL_MODULE)){
+      extmoduleSendNextFrame();
+    }    
+  }
+}
 uint32_t nextMixerTime[NUM_MODULES];
 
-TASK_FUNCTION(mixerTask)
-{
-  static uint32_t lastRunTime;
+TASK_FUNCTION(mixerTask) {
   s_pulses_paused = true;
 
-  while(1) {
+  mixerSchedulerInit();
+  mixerSchedulerStart();
 
+  while (true) {
 #if defined(SBUS)
     processSbusInput();
 #endif
 
-    RTOS_WAIT_TICKS(1);
+    // run mixer at least every 30ms
+    bool timeout = mixerSchedulerWaitForTrigger(30);
 
+    // re-enable trigger
+    mixerSchedulerEnableTrigger();
 #if defined(SIMU)
     if (pwrCheck() == e_power_off)
       TASK_RETURN();
@@ -101,35 +117,18 @@ TASK_FUNCTION(mixerTask)
     }
 #endif
 
-    uint32_t now = RTOS_GET_TIME();
-    bool run = false;
-#if !defined(SIMU) && defined(STM32)
-    if ((now - lastRunTime) >= (usbStarted() ? 5 : 10)) {     // run at least every 20ms (every 10ms if USB is active)
-#else
-    if ((now - lastRunTime) >= 10) {     // run at least every 20ms
-#endif
-      run = true;
-    }
-    else if (now == nextMixerTime[0]) {
-      run = true;
-    }
-#if NUM_MODULES >= 2
-    else if (now == nextMixerTime[1]) {
-      run = true;
-    }
-#endif
-    if (!run) {
-      continue;  // go back to sleep
-    }
-
-    lastRunTime = now;
-
     if (!s_pulses_paused) {
       uint16_t t0 = getTmr2MHz();
 
       DEBUG_TIMER_START(debugTimerMixer);
       RTOS_LOCK_MUTEX(mixerMutex);
+
       doMixerCalculations();
+
+      sendSynchronousPulses((1 << INTERNAL_MODULE) | (1 << EXTERNAL_MODULE));
+
+      doMixerPeriodicUpdates();
+
       DEBUG_TIMER_START(debugTimerMixerCalcToUsage);
       DEBUG_TIMER_SAMPLE(debugTimerMixerIterval);
       RTOS_UNLOCK_MUTEX(mixerMutex);
@@ -157,36 +156,27 @@ TASK_FUNCTION(mixerTask)
       }
 
       t0 = getTmr2MHz() - t0;
-      if (t0 > maxMixerDuration) maxMixerDuration = t0 ;
+      if (t0 > maxMixerDuration)
+        maxMixerDuration = t0;
     }
   }
 }
 
-void scheduleNextMixerCalculation(uint8_t module, uint16_t period_ms)
-{
-  // Schedule next mixer calculation time,
-  // for now assume mixer calculation takes 2 ms.
-  nextMixerTime[module] = (uint32_t)RTOS_GET_TIME() + period_ms / 2 - 1/*2ms*/;
-  DEBUG_TIMER_STOP(debugTimerMixerCalcToUsage);
-}
-
-#define MENU_TASK_PERIOD_TICKS      25    // 50ms
+#define MENU_TASK_PERIOD_TICKS 25  // 50ms
 
 #if defined(COLORLCD) && defined(CLI)
 bool perMainEnabled = true;
 #endif
 
-TASK_FUNCTION(menusTask)
-{
+TASK_FUNCTION(menusTask) {
   opentxInit();
 
 #if defined(PWR_BUTTON_PRESS)
-  while (1) {
+  while (true) {
     uint32_t pwr_check = pwrCheck();
     if (pwr_check == e_power_off) {
       break;
-    }
-    else if (pwr_check == e_power_press) {
+    } else if (pwr_check == e_power_press) {
       RTOS_WAIT_TICKS(MENU_TASK_PERIOD_TICKS);
       continue;
     }
@@ -224,13 +214,12 @@ TASK_FUNCTION(menusTask)
 
   drawSleepBitmap();
   opentxClose();
-  boardOff(); // Only turn power off if necessary
+  boardOff();  // Only turn power off if necessary
 
   TASK_RETURN();
 }
 
-void tasksStart()
-{
+void tasksStart() {
   RTOS_INIT();
 
 #if defined(CLI)

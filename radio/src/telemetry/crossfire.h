@@ -21,6 +21,9 @@
 #ifndef _CROSSFIRE_H_
 #define _CROSSFIRE_H_
 
+#include <inttypes.h>
+#include "dataconstants.h"
+
 // Device address
 #define BROADCAST_ADDRESS              0x00
 #define RADIO_ADDRESS                  0xEA
@@ -28,6 +31,7 @@
 
 // Frame id
 #define GPS_ID                         0x02
+#define CF_VARIO_ID                    0x07
 #define BATTERY_ID                     0x08
 #define LINK_ID                        0x14
 #define CHANNELS_ID                    0x16
@@ -36,7 +40,12 @@
 #define PING_DEVICES_ID                0x28
 #define DEVICE_INFO_ID                 0x29
 #define REQUEST_SETTINGS_ID            0x2A
+#define COMMAND_ID                     0x32
+#define RADIO_ID                       0x3A
 
+#define UART_SYNC                      0xC8
+#define SUBCOMMAND_CRSF                0x10
+#define COMMAND_MODEL_SELECT_ID        0x05
 
 struct CrossfireSensor {
   const uint8_t id;
@@ -60,6 +69,7 @@ enum CrossfireSensorIndexes {
   BATT_VOLTAGE_INDEX,
   BATT_CURRENT_INDEX,
   BATT_CAPACITY_INDEX,
+  BATT_REMAINING_INDEX,
   GPS_LATITUDE_INDEX,
   GPS_LONGITUDE_INDEX,
   GPS_GROUND_SPEED_INDEX,
@@ -70,12 +80,13 @@ enum CrossfireSensorIndexes {
   ATTITUDE_ROLL_INDEX,
   ATTITUDE_YAW_INDEX,
   FLIGHT_MODE_INDEX,
+  VERTICAL_SPEED_INDEX,
   UNKNOWN_INDEX,
 };
 
 void processCrossfireTelemetryData(uint8_t data);
 void crossfireSetDefault(int index, uint8_t id, uint8_t subId);
 bool isCrossfireOutputBufferAvailable();
-
+uint8_t createCrossfireModelIDFrame(uint8_t * frame);
 
 #endif // _CROSSFIRE_H_

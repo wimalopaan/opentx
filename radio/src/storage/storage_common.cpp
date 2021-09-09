@@ -20,16 +20,15 @@
 
 #include "opentx.h"
 
-uint8_t   storageDirtyMsk;
+uint8_t storageDirtyMsk;
 tmr10ms_t storageDirtyTime10ms;
 
 #if defined(RAMBACKUP)
-uint8_t   rambackupDirtyMsk;
+uint8_t rambackupDirtyMsk;
 tmr10ms_t rambackupDirtyTime10ms;
 #endif
 
-void storageDirty(uint8_t msk)
-{
+void storageDirty(uint8_t msk) {
   storageDirtyMsk |= msk;
   storageDirtyTime10ms = get_tmr10ms();
 
@@ -39,9 +38,8 @@ void storageDirty(uint8_t msk)
 #endif
 }
 
-void preModelLoad()
-{
-  watchdogSuspend(500/*5s*/);
+void preModelLoad() {
+  watchdogSuspend(500 /*5s*/);
 
 #if defined(SDCARD)
   logsClose();
@@ -54,16 +52,14 @@ void preModelLoad()
   pauseMixerCalculations();
 }
 #if defined(PCBTARANIS) || defined(PCBHORUS)
-static void fixUpModel()
-{
+static void fixUpModel() {
   // Ensure that when rfProtocol is RF_PROTO_OFF the type of the module is MODULE_TYPE_NONE
   if (g_model.moduleData[INTERNAL_MODULE].type == MODULE_TYPE_XJT && g_model.moduleData[INTERNAL_MODULE].rfProtocol == RF_PROTO_OFF)
     g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_NONE;
 }
 #endif
 
-void postModelLoad(bool alarms)
-{
+void postModelLoad(bool alarms) {
 #if defined(PCBTARANIS) || defined(PCBHORUS)
   fixUpModel();
 #endif
@@ -74,11 +70,13 @@ void postModelLoad(bool alarms)
 
   restoreTimers();
 
-  for (int i=0; i<MAX_TELEMETRY_SENSORS; i++) {
-    TelemetrySensor & sensor = g_model.telemetrySensors[i];
+  for (int i = 0; i < MAX_TELEMETRY_SENSORS; i++) {
+    TelemetrySensor& sensor = g_model.telemetrySensors[i];
     if (sensor.type == TELEM_TYPE_CALCULATED && sensor.persistent) {
       telemetryItems[i].value = sensor.persistentValue;
-      telemetryItems[i].lastReceived = TELEMETRY_VALUE_OLD;   // #3595: make value visible even before the first new value is received)
+      telemetryItems[i].timeout = 0;  // #3595: make value visible even before the first new value is received)
+    } else {
+      telemetryItems[i].timeout = TELEMETRY_SENSOR_TIMEOUT_UNAVAILABLE;
     }
   }
 
@@ -112,12 +110,11 @@ void postModelLoad(bool alarms)
   SEND_FAILSAFE_1S();
 }
 
-void storageFlushCurrentModel()
-{
+void storageFlushCurrentModel() {
   saveTimers();
 
-  for (int i=0; i<MAX_TELEMETRY_SENSORS; i++) {
-    TelemetrySensor & sensor = g_model.telemetrySensors[i];
+  for (int i = 0; i < MAX_TELEMETRY_SENSORS; i++) {
+    TelemetrySensor& sensor = g_model.telemetrySensors[i];
     if (sensor.type == TELEM_TYPE_CALCULATED && sensor.persistent && sensor.persistentValue != telemetryItems[i].value) {
       sensor.persistentValue = telemetryItems[i].value;
       storageDirty(EE_MODEL);
@@ -125,7 +122,7 @@ void storageFlushCurrentModel()
   }
 
   if (g_model.potsWarnMode == POTS_WARN_AUTO) {
-    for (int i=0; i<NUM_POTS+NUM_SLIDERS; i++) {
+    for (int i = 0; i < NUM_POTS + NUM_SLIDERS; i++) {
       if (!(g_model.potsWarnEnabled & (1 << i))) {
         SAVE_POT_POSITION(i);
       }

@@ -27,18 +27,18 @@
 extern "C++" {
 #endif
 
-#define doNothing()                     do { } while(0)   // seems unused? don't ever use this with SIMU
-
 #if defined(SIMU)
-
   #include <pthread.h>
   #include <semaphore.h>
 
   #define SIMU_SLEEP_OR_EXIT_MS(x)       simuSleep(x)
+  #define RTOS_MS_PER_TICK  1
 
   typedef pthread_t RTOS_TASK_HANDLE;
   typedef pthread_mutex_t RTOS_MUTEX_HANDLE;
+
   typedef uint32_t RTOS_FLAG_HANDLE;
+
   typedef sem_t * RTOS_EVENT_HANDLE;
 
   extern uint64_t simuTimerMicros(void);
@@ -59,7 +59,7 @@ extern "C++" {
 
   static inline void RTOS_WAIT_TICKS(uint32_t x)
   {
-    RTOS_WAIT_MS(x * 2);
+    RTOS_WAIT_MS(x * RTOS_MS_PER_TICK);
   }
 
 #ifdef __cplusplus
@@ -78,15 +78,25 @@ extern "C++" {
       pthread_mutex_unlock(&mutex);
   }
 
-  static inline void RTOS_CREATE_FLAG(uint32_t &flag)
+  static inline void RTOS_CREATE_FLAG(RTOS_FLAG_HANDLE flag)
   {
-    flag = 0; // TODO: real flags (use semaphores?)
   }
 
-  static inline void RTOS_SET_FLAG(uint32_t &flag)
+  static inline void RTOS_SET_FLAG(RTOS_FLAG_HANDLE flag)
   {
-    flag = 1;
   }
+
+  static inline void RTOS_CLEAR_FLAG(RTOS_FLAG_HANDLE flag)
+  {
+  }
+
+  static inline bool RTOS_WAIT_FLAG(RTOS_FLAG_HANDLE flag, uint32_t timeout)
+  {
+    simuSleep(timeout);
+    return false;
+  }
+
+  #define RTOS_ISR_SET_FLAG RTOS_SET_FLAG
 
   template<int SIZE>
   class FakeTaskStack
@@ -100,12 +110,12 @@ extern "C++" {
       {
       }
 
-      uint16_t size()
+      uint32_t size()
       {
         return SIZE;
       }
 
-      uint16_t available()
+      uint32_t available()
       {
         return SIZE / 2;
       }
@@ -114,15 +124,25 @@ extern "C++" {
 
   #define TASK_FUNCTION(task)           void * task(void * pdata)
 
-  template<int SIZE>
-  inline void RTOS_CREATE_TASK(pthread_t &taskId, void * task(void *), const char *, FakeTaskStack<SIZE> &, unsigned, unsigned)
+  inline void RTOS_CREATE_TASK(pthread_t &taskId, void * task(void *), const char * name)
   {
     pthread_create(&taskId, nullptr, task, nullptr);
+#ifdef __linux__
+    pthread_setname_np(taskId, name);
+#endif
+  }
+
+template<int SIZE>
+  inline void RTOS_CREATE_TASK(pthread_t &taskId, void * task(void *), const char * name, FakeTaskStack<SIZE> &, unsigned size = 0, unsigned priority = 0)
+  {
+    UNUSED(size);
+    UNUSED(priority);
+    RTOS_CREATE_TASK(taskId, task, name);
   }
 
   #define TASK_RETURN()                 return nullptr
 
-  constexpr uint16_t stackAvailable()
+  constexpr uint32_t stackAvailable()
   {
     return 500;
   }
@@ -138,9 +158,8 @@ extern "C++" {
   {
     return (uint32_t)(simuTimerMicros() / 1000);
   }
-
+  
 #elif defined(RTOS_COOS)
-
 #ifdef __cplusplus
   extern "C" {
 #endif
@@ -149,7 +168,7 @@ extern "C++" {
   }
 #endif
 
-  #define RTOS_MS_PER_TICK              (CFG_CPU_FREQ / CFG_SYSTICK_FREQ / (CFG_CPU_FREQ / 1000))  // RTOS timer tick length in ms (currently 2)
+  #define RTOS_MS_PER_TICK              (1000 / CFG_SYSTICK_FREQ)  // RTOS timer tick length in ms (currently 1 for STM32, 2 for others)
 
   typedef OS_TID RTOS_TASK_HANDLE;
   typedef OS_MutexID RTOS_MUTEX_HANDLE;
@@ -200,31 +219,42 @@ extern "C++" {
   }
 #endif  // __cplusplus
 
-  static inline uint16_t getStackAvailable(void * address, uint16_t size)
+  static inline uint32_t getStackAvailable(void * address, uint32_t size)
   {
     uint32_t * array = (uint32_t *)address;
-    uint16_t i = 0;
+    uint32_t i = 0;
     while (i < size && array[i] == 0x55555555) {
       i++;
     }
-    return i*4;
+    return i;
   }
 
   extern int _estack;
   extern int _main_stack_start;
-  static inline uint16_t stackSize()
+  static inline uint32_t stackSize()
   {
     return ((unsigned char *)&_estack - (unsigned char *)&_main_stack_start) / 4;
   }
 
-  static inline uint16_t stackAvailable()
+  static inline uint32_t stackAvailable()
   {
     return getStackAvailable(&_main_stack_start, stackSize());
   }
 
   #define RTOS_CREATE_FLAG(flag)        flag = CoCreateFlag(false, false)
   #define RTOS_SET_FLAG(flag)           (void)CoSetFlag(flag)
+  #define RTOS_CLEAR_FLAG(flag)         (void)CoClearFlag(flag)
+  #define RTOS_WAIT_FLAG(flag,timeout)  (CoWaitForSingleFlag(flag,timeout) == E_TIMEOUT)
 
+  static inline void RTOS_ISR_SET_FLAG(RTOS_FLAG_HANDLE flag)
+  {
+    CoEnterISR();
+    CoSchedLock();
+    isr_SetFlag(flag);
+    CoSchedUnlock();
+    CoExitISR();
+  }
+  
 #ifdef __cplusplus
   template<int SIZE>
   class TaskStack
@@ -241,12 +271,12 @@ extern "C++" {
         }
       }
 
-      uint16_t size()
+      uint32_t size()
       {
         return SIZE * 4;
       }
 
-      uint16_t available()
+      uint32_t available()
       {
         return getStackAvailable(stack, SIZE);
       }

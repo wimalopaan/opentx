@@ -24,40 +24,40 @@
 #include "io/pxx2.h"
 #include "pulses/pxx2.h"
 #endif
+#include "mixer_scheduler.h"
 
 uint8_t s_pulses_paused = 0;
-uint8_t s_current_protocol[NUM_MODULES] = { MODULES_INIT(255) };
-uint16_t failsafeCounter[NUM_MODULES] = { MODULES_INIT(100) };
-uint8_t moduleFlag[NUM_MODULES] = { 0 };
+uint8_t s_current_protocol[NUM_MODULES] = {MODULES_INIT(255)};
+uint16_t failsafeCounter[NUM_MODULES] = {MODULES_INIT(100)};
+uint8_t moduleFlag[NUM_MODULES] = {0};
 
 ModulePulsesData modulePulsesData[NUM_MODULES] __DMA;
 TrainerPulsesData trainerPulsesData __DMA;
 
 #if defined(CROSSFIRE)
-uint8_t createCrossfireChannelsFrame(uint8_t * frame, int16_t * pulses);
+uint8_t createCrossfireChannelsFrame(uint8_t* frame, int16_t* pulses);
 #endif
 
-uint8_t getRequiredProtocol(uint8_t port)
-{
+uint8_t getRequiredProtocol(uint8_t port) {
   uint8_t required_protocol;
 
   switch (port) {
 #if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
     case INTERNAL_MODULE:
       switch (g_model.moduleData[INTERNAL_MODULE].type) {
-  #if defined(TARANIS_INTERNAL_PPM)
+#if defined(TARANIS_INTERNAL_PPM)
         case MODULE_TYPE_PPM:
           required_protocol = PROTO_PPM;
           break;
-  #endif
-  #if defined(PXX) 
+#endif
+#if defined(PXX)
         case MODULE_TYPE_XJT:
           required_protocol = PROTO_PXX;
           break;
-  #endif
+#endif
         case MODULE_TYPE_AFHDS2A_SPI:
           required_protocol = PROTO_AFHDS2A_SPI;
-         break;
+          break;
         default:
           required_protocol = PROTO_NONE;
           break;
@@ -73,7 +73,7 @@ uint8_t getRequiredProtocol(uint8_t port)
 #if defined(PXX) || defined(PXX2)
         case MODULE_TYPE_XJT:
         case MODULE_TYPE_R9M:
-          required_protocol = PROTO_PXX_EXTERNAL_MODULE; // either PXX or PXX2 depending on compilation options
+          required_protocol = PROTO_PXX_EXTERNAL_MODULE;  // either PXX or PXX2 depending on compilation options
           break;
 #endif
 #if !defined(PCBI6)
@@ -88,7 +88,7 @@ uint8_t getRequiredProtocol(uint8_t port)
 #endif
 #if defined(DSM2)
         case MODULE_TYPE_DSM2:
-          required_protocol = limit<uint8_t>(PROTO_DSM2_LP45, PROTO_DSM2_LP45+g_model.moduleData[EXTERNAL_MODULE].rfProtocol, PROTO_DSM2_DSMX);
+          required_protocol = limit<uint8_t>(PROTO_DSM2_LP45, PROTO_DSM2_LP45 + g_model.moduleData[EXTERNAL_MODULE].rfProtocol, PROTO_DSM2_DSMX);
           // The module is set to OFF during one second before BIND start
           {
             static tmr10ms_t bindStartTime = 0;
@@ -98,8 +98,7 @@ uint8_t getRequiredProtocol(uint8_t port)
                 required_protocol = PROTO_NONE;
                 break;
               }
-            }
-            else {
+            } else {
               bindStartTime = 0;
             }
           }
@@ -131,8 +130,7 @@ uint8_t getRequiredProtocol(uint8_t port)
   return required_protocol;
 }
 
-void setupPulsesPXX(uint8_t port)
-{
+void setupPulsesPXX(uint8_t port) {
 #if defined(PXX)
 #if defined(INTMODULE_USART) && defined(EXTMODULE_USART)
   modulePulsesData[port].pxx_uart.setupFrame(port);
@@ -147,25 +145,26 @@ void setupPulsesPXX(uint8_t port)
 #endif
 }
 
-void setupPulses(uint8_t port)
-{
+bool setupPulses(uint8_t port) {
   // TRACE("setupPulses");
   // TRACE("moduleFlag %d", moduleFlag[INTERNAL_MODULE]);
   // TRACE("setupPulses module type %d",g_model.moduleData[INTERNAL_MODULE].type);
-#if defined(PCBI6)  
+#if defined(PCBI6)
   // For backwards compatibility with old config that included other types.
-  if(g_model.moduleData[INTERNAL_MODULE].type>=MODULE_TYPE_COUNT){
-    g_model.moduleData[INTERNAL_MODULE].type=MODULE_TYPE_AFHDS2A_SPI;
+  if (g_model.moduleData[INTERNAL_MODULE].type >= MODULE_TYPE_COUNT) {
+    g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
   }
 #endif
   bool init_needed = false;
+  bool external_module_enabled = false;
+
   uint8_t required_protocol = getRequiredProtocol(port);
 
   heartbeat |= (HEART_TIMER_PULSES << port);
 
   if (s_current_protocol[port] != required_protocol) {
     init_needed = true;
-    switch (s_current_protocol[port]) { // stop existing protocol hardware
+    switch (s_current_protocol[port]) {  // stop existing protocol hardware
 #if defined(PXX)
       case PROTO_PXX:
         disable_pxx(port);
@@ -241,7 +240,13 @@ void setupPulses(uint8_t port)
 #if defined(CROSSFIRE)
     case PROTO_CROSSFIRE:
       if (telemetryProtocol == PROTOCOL_PULSES_CROSSFIRE && !init_needed) {
-        uint8_t * crossfire = modulePulsesData[port].crossfire.pulses;
+        ModuleSyncStatus& status = getModuleSyncStatus(EXTERNAL_MODULE);
+        if (status.isValid())
+          mixerSchedulerSetPeriod(EXTERNAL_MODULE, status.getAdjustedRefreshRate());
+        else
+          mixerSchedulerSetPeriod(EXTERNAL_MODULE, CROSSFIRE_PERIOD);
+
+        uint8_t* crossfire = modulePulsesData[port].crossfire.pulses;
         uint8_t len;
 #if defined(LUA)
         if (outputTelemetryBufferTrigger != 0x00 && outputTelemetryBufferSize > 0) {
@@ -249,15 +254,15 @@ void setupPulses(uint8_t port)
           len = outputTelemetryBufferSize;
           outputTelemetryBufferTrigger = 0x00;
           outputTelemetryBufferSize = 0;
-        }
-        else
+        } else
 #endif
         {
           len = createCrossfireChannelsFrame(crossfire, &channelOutputs[g_model.moduleData[port].channelsStart]);
         }
-        sportSendBuffer(crossfire, len);
+        // sportSendBuffer(crossfire, len); // Now it's done in extmodule_driver.cpp
+        external_module_enabled = true;
       }
-      scheduleNextMixerCalculation(port, CROSSFIRE_PERIOD);
+
       break;
 #endif
 
@@ -283,20 +288,21 @@ void setupPulses(uint8_t port)
     case PROTO_NONE:
 #endif
       setupPulsesPPMModule(port);
-      scheduleNextMixerCalculation(port, PPM_PERIOD(port));
+      mixerSchedulerSetPeriod(port, PPM_PERIOD(port));
       break;
 
     case PROTO_AFHDS2A_SPI:
       // this is kept inside targets/flysky
+      //mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
       //setupPulsesAfhds2aSpi(port);
-    break;
+      break;
 
     default:
       break;
   }
 
   if (init_needed) {
-    switch (required_protocol) { // Start new protocol hardware here
+    switch (required_protocol) {  // Start new protocol hardware here
 #if defined(PXX)
       case PROTO_PXX:
         init_pxx(port);
@@ -313,6 +319,8 @@ void setupPulses(uint8_t port)
 #if defined(CROSSFIRE)
       case PROTO_CROSSFIRE:
         init_module_timer(port, CROSSFIRE_PERIOD, true);
+        mixerSchedulerSetPeriod(EXTERNAL_MODULE, CROSSFIRE_PERIOD);
+        external_module_enabled = true;
         break;
 #endif
 
@@ -337,22 +345,22 @@ void setupPulses(uint8_t port)
         break;
       case PROTO_AFHDS2A_SPI:
         init_afhds2a(port);
+        mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
         break;
       default:
         init_no_pulses(port);
         break;
     }
   }
+  return external_module_enabled;
 }
 
-void setCustomFailsafe(uint8_t moduleIndex)
-{
+void setCustomFailsafe(uint8_t moduleIndex) {
   if (moduleIndex < NUM_MODULES) {
-    for (int ch=0; ch<MAX_OUTPUT_CHANNELS; ch++) {
+    for (int ch = 0; ch < MAX_OUTPUT_CHANNELS; ch++) {
       if (ch < g_model.moduleData[moduleIndex].channelsStart || ch >= sentModuleChannels(moduleIndex) + g_model.moduleData[moduleIndex].channelsStart) {
         g_model.moduleData[moduleIndex].failsafeChannels[ch] = 0;
-      }
-      else if (g_model.moduleData[moduleIndex].failsafeChannels[ch] < FAILSAFE_CHANNEL_HOLD) {
+      } else if (g_model.moduleData[moduleIndex].failsafeChannels[ch] < FAILSAFE_CHANNEL_HOLD) {
         g_model.moduleData[moduleIndex].failsafeChannels[ch] = channelOutputs[ch];
       }
     }

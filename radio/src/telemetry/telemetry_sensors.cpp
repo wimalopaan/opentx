@@ -72,8 +72,17 @@ uint32_t getDistFromEarthAxis(int32_t latitude) {
   return 139 * (((uint32_t)10000000 - ((angle2 * (uint32_t)123370) / 81) + (angle4 / 25)) / 12500);
 }
 
+void TelemetryItem::setValue(const TelemetrySensor& sensor, const char* val, uint32_t, uint32_t) {
+  strncpy(text, val, sizeof(text));
+  setFresh();
+}
+
 void TelemetryItem::setValue(const TelemetrySensor& sensor, int32_t val, uint32_t unit, uint32_t prec) {
   int32_t newVal = val;
+
+  if (prec == 255) {
+    prec = sensor.prec;
+  }
 
   if (unit == UNIT_CELLS) {
     uint32_t data = uint32_t(newVal);
@@ -137,7 +146,7 @@ void TelemetryItem::setValue(const TelemetrySensor& sensor, int32_t val, uint32_
       distFromEarthAxis = getDistFromEarthAxis(newVal);
     }
     gps.latitude = newVal;
-    lastReceived = now();
+    setFresh();
     return;
   } else if (unit == UNIT_GPS_LONGITUDE) {
 #if defined(INTERNAL_GPS)
@@ -149,7 +158,7 @@ void TelemetryItem::setValue(const TelemetrySensor& sensor, int32_t val, uint32_
       pilotLongitude = newVal;
     }
     gps.longitude = newVal;
-    lastReceived = now();
+    setFresh();
     return;
   } else if (unit == UNIT_DATETIME_YEAR) {
     datetime.year = newVal;
@@ -172,8 +181,7 @@ void TelemetryItem::setValue(const TelemetrySensor& sensor, int32_t val, uint32_
       newVal = (newVal * sensor.custom.offset) / sensor.custom.ratio;
     }
   } else if (unit == UNIT_TEXT) {
-    *((uint32_t*)&text[prec]) = newVal;
-    lastReceived = now();
+    // Should be handled at telemetry protocol level
     return;
   } else {
     newVal = sensor.getValue(newVal, unit, prec);
@@ -228,7 +236,7 @@ void TelemetryItem::setValue(const TelemetrySensor& sensor, int32_t val, uint32_
   }
 
   value = newVal;
-  lastReceived = now();
+  setFresh();
 }
 
 void TelemetryItem::per10ms(const TelemetrySensor& sensor) {
@@ -240,7 +248,7 @@ void TelemetryItem::per10ms(const TelemetrySensor& sensor) {
         if (!currentItem.isAvailable()) {
           return;
         } else if (currentItem.isOld()) {
-          lastReceived = TELEMETRY_VALUE_OLD;
+          setOld();
           return;
         }
         int32_t current = convertTelemetryValue(currentItem.value, currentSensor.unit, currentSensor.prec, UNIT_AMPS, 1);
@@ -249,7 +257,7 @@ void TelemetryItem::per10ms(const TelemetrySensor& sensor) {
           currentItem.consumption.prescale -= 3600;
           setValue(sensor, value + 1, sensor.unit, sensor.prec);
         }
-        lastReceived = now();
+        setFresh();
       }
       break;
 
@@ -264,7 +272,7 @@ void TelemetryItem::eval(const TelemetrySensor& sensor) {
       if (sensor.cell.source) {
         TelemetryItem& cellsItem = telemetryItems[sensor.cell.source - 1];
         if (cellsItem.isOld()) {
-          lastReceived = TELEMETRY_VALUE_OLD;
+          setOld();
         } else {
           unsigned int index = sensor.cell.index;
           if (index == TELEM_CELL_INDEX_LOWEST || index == TELEM_CELL_INDEX_HIGHEST || index == TELEM_CELL_INDEX_DELTA) {
@@ -309,7 +317,7 @@ void TelemetryItem::eval(const TelemetrySensor& sensor) {
         if (!gpsItem.isAvailable()) {
           return;
         } else if (gpsItem.isOld()) {
-          lastReceived = TELEMETRY_VALUE_OLD;
+          setOld();
           return;
         }
         if (sensor.dist.alt) {
@@ -317,7 +325,7 @@ void TelemetryItem::eval(const TelemetrySensor& sensor) {
           if (!altItem->isAvailable()) {
             return;
           } else if (altItem->isOld()) {
-            lastReceived = TELEMETRY_VALUE_OLD;
+            setOld();
             return;
           }
         }
@@ -369,7 +377,7 @@ void TelemetryItem::eval(const TelemetrySensor& sensor) {
             if (!telemetryItem.isAvailable()) {
               return;
             } else if (telemetryItem.isOld()) {
-              lastReceived = TELEMETRY_VALUE_OLD;
+              setOld();
               return;
             }
           }
@@ -394,7 +402,7 @@ void TelemetryItem::eval(const TelemetrySensor& sensor) {
       if (sensor.formula == TELEM_FORMULA_AVERAGE) {
         if (count == 0) {
           if (available)
-            lastReceived = TELEMETRY_VALUE_OLD;
+            setOld();
           return;
         } else {
           value = (value + count / 2) / count;
@@ -457,7 +465,8 @@ bool isValidIdAndInstance(uint16_t id, uint8_t instance) {
   return true;
 }
 
-int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, uint8_t instance, int32_t value, uint32_t unit, uint32_t prec) {
+template <class T>
+int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, uint8_t instance, T value, uint32_t unit = 0, uint32_t prec = 0) {
   bool available = false;
 
   for (int index = 0; index < MAX_TELEMETRY_SENSORS; index++) {
@@ -516,6 +525,14 @@ int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, ui
     POPUP_WARNING(STR_TELEMETRYFULL);
     return -1;
   }
+}
+
+int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, uint8_t instance, int32_t value, uint32_t unit, uint32_t prec) {
+  return setTelemetryValue<int32_t>(protocol, id, subId, instance, value, unit, prec);
+}
+
+int setTelemetryText(TelemetryProtocol protocol, uint16_t id, uint8_t subId, uint8_t instance, const char* text) {
+  return setTelemetryValue<const char*>(protocol, id, subId, instance, text);
 }
 
 void TelemetrySensor::init(const char* label, uint8_t unit, uint8_t prec) {

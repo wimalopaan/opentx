@@ -20,6 +20,7 @@
 
 #include "iface_a7105.h"
 #include "opentx.h"
+#include "mixer_scheduler.h"
 
 static bool initialized = false;
 
@@ -114,12 +115,14 @@ void intmoduleAfhds2aStart() {
   /*------------------Radio_Protocol_Timer_Init(3860 uS TIM16)------------------*/
   /* TIM16 clock enable */
   SET_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM16EN);
+
   /* Delay after an RCC peripheral clock enabling */
   tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM16EN);
   CLEAR_BIT(TIM16->CR1, TIM_CR1_ARPE);   // Disable ARR Preload
   CLEAR_BIT(TIM16->SMCR, TIM_SMCR_MSM);  // Disable Master Slave Mode
   WRITE_REG(TIM16->PSC, 2);              // Prescaler
   WRITE_REG(TIM16->ARR, 61759);          // Preload
+
   /* TIM6 interrupt Init */
   SET_BIT(TIM16->DIER, TIM_DIER_UIE);  // Enable update interrupt (UIE)
   NVIC_SetPriority(TIM16_IRQn, 2);
@@ -144,6 +147,7 @@ void EXTI2_3_IRQHandler(void) {
 void TIM16_IRQHandler(void) {
   WRITE_REG(TIM16->SR, ~(TIM_SR_UIF));  // Clear the update interrupt flag (UIF)
   SETBIT(RadioState, CALLER, TIM_CALL);
+  mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
   setupPulses(INTERNAL_MODULE);
   ActionAFHDS2A();
 }

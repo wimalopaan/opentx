@@ -556,9 +556,16 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define TIMER_2MHz_RCC_APB1Periph       RCC_APB1Periph_TIM7
 #define TIMER_2MHz_TIMER                TIM7
 
+// Mixer scheduler timer
+#define MIXER_SCHEDULER_TIMER_RCC_APB1Periph RCC_APB2Periph_TIM17
+#define MIXER_SCHEDULER_TIMER                TIM17
+#define MIXER_SCHEDULER_TIMER_FREQ           (PERI1_FREQUENCY * TIMER_MULT_APB1)
+#define MIXER_SCHEDULER_TIMER_IRQn           TIM17_IRQn
+#define MIXER_SCHEDULER_TIMER_IRQHandler     TIM17_IRQHandler
+
 //all used RCC goes here
 #define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB)
-#define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph)
-#define RCC_APB2_LIST                   0
+#define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph )
+#define RCC_APB2_LIST                   MIXER_SCHEDULER_TIMER_RCC_APB1Periph
 
 #endif // _HAL_H_

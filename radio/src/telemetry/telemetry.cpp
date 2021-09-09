@@ -19,6 +19,7 @@
  */
 
 #include "opentx.h"
+#include "mixer_scheduler.h"
 
 uint8_t telemetryStreaming = 0;
 uint8_t telemetryRxBuffer[TELEMETRY_RX_PACKET_SIZE];   // Receive buffer. 9 bytes (full packet), worst case 18 bytes with byte-stuffing (+1)
@@ -129,7 +130,7 @@ void telemetryWakeup()
     for (int i=0; i<MAX_TELEMETRY_SENSORS; i++) {
       if (isTelemetryFieldAvailable(i)) {
         TelemetryItem & item = telemetryItems[i];
-        if (item.hasReceiveTime() && item.getDelaySinceLastValue() > TELEMETRY_VALUE_OLD_THRESHOLD) {
+        if (item.timeout == 0) {
           TelemetrySensor * sensor = & g_model.telemetrySensors[i];
           if (sensor->unit != UNIT_DATETIME) {
             item.setOld();
@@ -310,3 +311,58 @@ uint8_t outputTelemetryBufferTrigger = 0;
 #if defined(LUA)
 Fifo<uint8_t, LUA_TELEMETRY_INPUT_FIFO_SIZE> * luaInputTelemetryFifo = NULL;
 #endif
+
+static ModuleSyncStatus moduleSyncStatus;
+
+ModuleSyncStatus &getModuleSyncStatus(uint8_t moduleIdx)
+{
+  return moduleSyncStatus;
+}
+
+ModuleSyncStatus::ModuleSyncStatus()
+{
+  memset(this, 0, sizeof(ModuleSyncStatus));
+}
+
+void ModuleSyncStatus::update(uint16_t newRefreshRate, uint16_t newInputLag)
+{
+  if (!newRefreshRate)
+    return;
+  
+  if (newRefreshRate < MIN_REFRESH_RATE)
+    newRefreshRate = newRefreshRate * (MIN_REFRESH_RATE / (newRefreshRate + 1));
+  else if (newRefreshRate > MAX_REFRESH_RATE)
+    newRefreshRate = MAX_REFRESH_RATE;
+
+  refreshRate = newRefreshRate;
+  inputLag    = newInputLag;
+  currentLag  = newInputLag;
+  lastUpdate  = get_tmr10ms();
+
+  TRACE("[SYNC] update rate = %dus; lag = %dus",refreshRate,currentLag);
+}
+
+uint16_t ModuleSyncStatus::getAdjustedRefreshRate()
+{
+  int16_t lag = currentLag;
+  int32_t newRefreshRate = refreshRate;
+
+  if (lag == 0) {
+    return refreshRate;
+  }
+  
+  newRefreshRate += lag;
+  
+  if (newRefreshRate < MIN_REFRESH_RATE) {
+      newRefreshRate = MIN_REFRESH_RATE;
+  }
+  else if (newRefreshRate > MAX_REFRESH_RATE) {
+    newRefreshRate = MAX_REFRESH_RATE;
+  }
+
+  currentLag -= newRefreshRate - refreshRate;
+  TRACE("[SYNC] mod rate = %dus; lag = %dus",newRefreshRate,currentLag);
+  
+  return (uint16_t)newRefreshRate;
+}
+

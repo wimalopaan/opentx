@@ -56,6 +56,8 @@ void telemetryWakeup();
 void telemetryReset();
 void telemetryInterrupt10ms();
 int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, uint8_t instance, int32_t value, uint32_t unit, uint32_t prec);
+int setTelemetryText(TelemetryProtocol protocol, uint16_t id, uint8_t subId, uint8_t instance, const char * text);
+
 void delTelemetryIndex(uint8_t index);
 int availableTelemetryIndex();
 int lastUsedTelemetryIndex();
@@ -275,6 +277,35 @@ extern Fifo<uint8_t, LUA_TELEMETRY_INPUT_FIFO_SIZE> * luaInputTelemetryFifo;
 #else
   #define IS_TELEMETRY_INTERNAL_MODULE() (false)
 #endif
+
+// Module pulse synchronization
+struct ModuleSyncStatus
+{
+  // feedback input: last received values
+  uint16_t  refreshRate; // in us
+  int16_t   inputLag;    // in us
+
+  tmr10ms_t lastUpdate;  // in 10ms
+  int16_t   currentLag;  // in us
+  
+  inline bool isValid() {
+    // 2 seconds
+    return (get_tmr10ms() - lastUpdate < 200);
+  }
+
+  // Set feedback from RF module
+  void update(uint16_t newRefreshRate, uint16_t newInputLag);
+
+  // Get computed settings for scheduler
+  uint16_t getAdjustedRefreshRate();
+
+  // Status string for the UI
+  void getRefreshString(char* refreshText);
+
+  ModuleSyncStatus();
+};
+
+ModuleSyncStatus& getModuleSyncStatus(uint8_t moduleIdx);
 
 #endif // _TELEMETRY_H_
 

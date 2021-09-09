@@ -76,8 +76,9 @@ enum MenuModelSetupItems {
   #if defined(PCBI6)
   ITEM_MODEL_INTERNAL_MODULE_SUBTYPE,
   ITEM_MODEL_INTERNAL_MODULE_SERVOFREQ,
-  #endif
+  #else
   ITEM_MODEL_INTERNAL_MODULE_CHANNELS,      // 31
+  #endif
   ITEM_MODEL_INTERNAL_MODULE_BIND,          // 32
   ITEM_MODEL_INTERNAL_MODULE_FAILSAFE,      // 33
 #if defined(PCBXLITE)
@@ -299,7 +300,9 @@ void menuModelSetup(event_t event)
     NUM_STICKS+NUM_POTS+NUM_SLIDERS+NUM_ROTARY_ENCODERS-1, 0,
     LABEL(InternalModule),
     INTERNAL_MODULE_MODE_ROWS,
+#if !defined(PCBI6)      
     INTERNAL_MODULE_CHANNELS_ROWS,
+#endif    
 #if defined(PCBI6)    
     IF_INTERNAL_MODULE_ON(1), // Subtype
     IF_INTERNAL_MODULE_ON(1), // Servo Freq
@@ -756,10 +759,6 @@ void menuModelSetup(event_t event)
                       isRfProtocolAvailable);
           if (checkIncDec_Ret) { // modified?
             g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
-            g_model.moduleData[INTERNAL_MODULE].channelsStart = 0;
-            g_model.moduleData[INTERNAL_MODULE].channelsCount = 6;
-            g_model.moduleData[INTERNAL_MODULE].servoFreq = 50;
-            g_model.moduleData[INTERNAL_MODULE].subType = AFHDS2A_SUBTYPE_PWM_IBUS;
             if (g_model.moduleData[INTERNAL_MODULE].rfProtocol == RF_PROTO_OFF){
               g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_NONE;
             }
@@ -993,10 +992,8 @@ void menuModelSetup(event_t event)
         break;
 #endif
 
-#if defined(PCBTARANIS) || defined(PCBI6)
 #if defined(PCBTARANIS)
       case ITEM_MODEL_TRAINER_CHANNELS:
-#endif      
       case ITEM_MODEL_INTERNAL_MODULE_CHANNELS:
 #endif
 #if defined(PCBSKY9X)

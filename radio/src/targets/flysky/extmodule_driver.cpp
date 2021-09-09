@@ -107,12 +107,8 @@ void extmodulePxxStart() {
   TRACE("extmodulePxxStart");
 }
 
-void extmoduleCrossfireStart() {
-  TRACE("extmoduleCrossfireStart");
-}
-
 void extmoduleSendNextFrame() {
-  TRACE("extmoduleSendNextFrame");
+  //TRACE("extmoduleSendNextFrame");
 }
 void extmoduleTimerStart(uint32_t period, uint8_t state)
 {

@@ -89,7 +89,6 @@ extern "C" {
 #define strcpy_P strcpy
 #define strcat_P strcat
 
-
 #define BATTERY_WARN                  45 // 4.5V
 #define BATTERY_MIN                   43 // 4.3V
 #define BATTERY_MAX                   60 // 6.0V
@@ -210,8 +209,6 @@ void init_ppm( uint32_t module_index );
 void disable_ppm( uint32_t module_index );
 void init_pxx( uint32_t module_index );
 void disable_pxx( uint32_t module_index );
-void init_crossfire( uint32_t module_index );
-void disable_crossfire( uint32_t module_index );
 void init_serial( uint32_t module_index, uint32_t baudrate, uint32_t period);
 void disable_serial( uint32_t module_index);
 void init_module_timer( uint32_t module_index, uint32_t period, uint8_t state);
@@ -219,6 +216,8 @@ void disable_module_timer( uint32_t module_index);
 
 //jsut to allow compilation
 void setupPulsesSbus(uint8_t port);
+void extmoduleSendNextFrame();
+
 // Trainer driver
 #define SLAVE_MODE()                    (g_model.trainerMode == TRAINER_MODE_SLAVE)
 #if defined(PCBX9E)
