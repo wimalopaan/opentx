@@ -15,12 +15,10 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 ## Next tasks:
 
-* Internal module
-    - Improve mixer scheduling (currently low refresh rate)
-    - Can't restart internal module after turning it off.
 * External module support
     - PPM
     - Crossfire
+* Can't restart internal module after turning it off.
 * Add settings for ExpressLRS, since no LUA.
 * USB support (board.h usbplugged)
 * UART DMA fifo transfers.
@@ -31,6 +29,8 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 ## Completed tasks:
 
+* Latency down from 40.1 ms to 15.4 ms (Original FlySky firmware latency: 22.1 ms) Measured with [ExpressLRS RCLatencyTester](https://github.com/ExpressLRS/RClatencyTester)
+* Backported mixer scheduler
 * AFHDS2A - Remaining settings complete: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
 * AFHDS2A - Telemetry (RSSI/LQI, RX voltage, etc.)
 * AFHDS2A - Binding
