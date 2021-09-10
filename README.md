@@ -1,6 +1,6 @@
 # FlySky i6x port of OpenTX
 
-Continuing Jakub's (qba667) work on 2.3_M0 Branch
+This is a port of OpenTX for the venerable FlySky I6X. I'm already using it to fly. Never went back to the stock firmware. No releases or proper instructions yet, until it's more mature. But you can find in the RCGroups thread the latest build and some instructions and videos contributed by fellow early adopters. 
 
 ## Navigation:
 
@@ -29,7 +29,7 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 
 ## Completed tasks:
 
-* Latency down from 40.1 ms to 15.4 ms (Original FlySky firmware latency: 22.1 ms) Measured with [ExpressLRS RCLatencyTester](https://github.com/ExpressLRS/RClatencyTester)
+* Latency down from 40.1 ms to 15.4 ms (Stock firmware latency: 22.1 ms) Measured with [ExpressLRS RCLatencyTester](https://github.com/ExpressLRS/RClatencyTester)
 * Backported mixer scheduler
 * AFHDS2A - Remaining settings complete: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
 * AFHDS2A - Telemetry (RSSI/LQI, RX voltage, etc.)
@@ -59,3 +59,11 @@ Continuing Jakub's (qba667) work on 2.3_M0 Branch
 ## ST-Link pinout
 
 ![ST-Link pinout](https://raw.githubusercontent.com/marianomd/opentx/2.3_M0/doc/flysky/flysky-i6x%20st-link%20pinout%20small.png)
+
+## Acknowledgements
+
+A big thank you to these great coders previous efforts!!
+
+* This work is based on Jakub's (qba667) work and is forked from his repo.
+* All the RF code was taken from the great KotelloRC's erfly6: Er9X for i6 and i6x. You can find his project here: https://bitbucket.org/KotelloRC/erfly6/src/master/
+* ADC code taken from OpenGround: https://github.com/fishpepper/OpenGround
