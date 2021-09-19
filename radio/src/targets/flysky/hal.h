@@ -129,8 +129,6 @@
 
 // Internal Module
 /*--------------interrupt handlers-------------------------------------------*/ 
-// Audio timer from erfly6
-// void TIM14_IRQHandler(void); 
 
 // PPM
 void TIM15_IRQHandler(void);
@@ -534,17 +532,29 @@ extern void ISR_TIMER3_CAPT_vect(void);
   #define BACKLIGHT_COUNTER_REGISTER    BACKLIGHT_TIMER->CCR2
 
 // Audio
-#define AUDIO_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_DMA1)
-#define AUDIO_RCC_APB1Periph            (RCC_APB1Periph_TIM6)
-#define AUDIO_OUTPUT_GPIO               GPIOA
-#define AUDIO_OUTPUT_GPIO_PIN           GPIO_Pin_4  // PA.04
-#define AUDIO_DMA_Stream                DMA1_Stream5
-#define AUDIO_DMA_Stream_IRQn           DMA1_Stream5_IRQn
-#define AUDIO_TIM_IRQn                  TIM6_DAC_IRQn
-#define AUDIO_TIM_IRQHandler            TIM6_DAC_IRQHandler
-#define AUDIO_DMA_Stream_IRQHandler     DMA1_Stream5_IRQHandler
-#define AUDIO_TIMER                     TIM6
-#define AUDIO_DMA                       DMA1
+//#define AUDIO_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_DMA1)
+//#define AUDIO_RCC_APB1Periph            (RCC_APB1Periph_TIM6)
+//#define AUDIO_OUTPUT_GPIO               GPIOA
+//#define AUDIO_OUTPUT_GPIO_PIN           GPIO_Pin_8  // PA.08
+//#define AUDIO_DMA_Stream                DMA1_Stream5
+//#define AUDIO_DMA_Stream_IRQn           DMA1_Stream5_IRQn
+//#define AUDIO_TIM_IRQn                  TIM6_DAC_IRQn
+//#define AUDIO_TIM_IRQHandler            TIM6_DAC_IRQHandler
+//#define AUDIO_DMA_Stream_IRQHandler     DMA1_Stream5_IRQHandler
+//#define AUDIO_TIMER                     TIM6
+//#define AUDIO_DMA                       DMA1
+
+// Buzzer on TIMER 1
+#define BUZZER_GPIO_PORT GPIOA
+#define BUZZER_GPIO_PIN GPIO_Pin_8
+#define BUZZER_GPIO_PinSource GPIO_PinSource8
+#define BUZZER_SET_Pin GPIO_BSRR_BS_8
+#define BUZZER_RESET_Pin GPIO_BSRR_BR_8
+#define PWM_RCC_APB2Periph            RCC_APB2Periph_TIM1
+#define PWM_TIMER         TIM1
+#define PWM_TIMER_RCC     RCC_TIM1
+#define PWM_TIMER_CHANNEL TIM_OC1
+#define PWM_DMA_REQUEST   TIM_DIER_CC1DE
 
 // Xms Interrupt TIMER 14
 #define INTERRUPT_xMS_RCC_APB1Periph    RCC_APB1Periph_TIM14
@@ -565,7 +575,7 @@ extern void ISR_TIMER3_CAPT_vect(void);
 
 //all used RCC goes here
 #define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB)
-#define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph )
-#define RCC_APB2_LIST                   MIXER_SCHEDULER_TIMER_RCC_APB1Periph
+#define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph)
+#define RCC_APB2_LIST                   (MIXER_SCHEDULER_TIMER_RCC_APB1Periph | PWM_RCC_APB2Periph)
 
 #endif // _HAL_H_

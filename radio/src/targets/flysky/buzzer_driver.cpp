@@ -19,20 +19,39 @@
  */
 
 #include "opentx.h"
+#include "board.h"
 
-volatile uint8_t buzzerCount ;
+volatile uint8_t buzzerCount;
+uint16_t BUZZER_TONE_FREQ = 1000;
 
-
-void buzzerOn()
+void setVolume(uint8_t volume)
 {
-
+  switch (volume) {
+    case 0: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 32; break;
+    case 1: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 16; break;
+    case 2: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 8; break;
+    case 3: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 4; break;
+    case 4: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 2; break;
+  }
 }
 
-void buzzerOff()
+inline void buzzerOn()
 {
+  TRACE("buzzerOn beepVol %d", g_eeGeneral.beepVolume);
+//  TRACE("buzzerOn pitch %u", g_eeGeneral.speakerPitch);
+//  TRACE("buzzerOn vol %u", g_eeGeneral.speakerVolume);
 
+  setVolume(g_eeGeneral.beepVolume + 2);
+
+  PWM_TIMER->CR1 = TIM_CR1_CEN;
 }
 
+inline void buzzerOff()
+{
+  PWM_TIMER->CR1 &= ~TIM_CR1_CEN;
+  PWM_TIMER->CNT = 0;                     //
+  PWM_TIMER->SR = (U16)~TIM_FLAG_Update;  // solves random quiet buzz issue when timer stopped
+}
 
 void buzzerSound(uint8_t duration)
 {

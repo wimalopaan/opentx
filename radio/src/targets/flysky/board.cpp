@@ -98,20 +98,51 @@ extern "C"
     __asm("BKPT #0\n"); // Break into the debugger
   }
 }
+
 //audio
 void audioConsumeCurrentBuffer()
 {
 }
+
 void audioInit()
 {
+}
+
+void buzzerInit()
+{
+  //RCC_AHBPeriphClockCmd(SERIAL_RCC_AHB1Periph, ENABLE);
+  GPIO_InitTypeDef gpio_init;
+  gpio_init.GPIO_Pin = BUZZER_GPIO_PIN;
+  gpio_init.GPIO_Mode = GPIO_Mode_AF;
+  gpio_init.GPIO_OType = GPIO_OType_PP;
+  gpio_init.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_Init(BUZZER_GPIO_PORT, &gpio_init);
+
+  GPIO_PinAFConfig(BUZZER_GPIO_PORT, BUZZER_GPIO_PinSource, GPIO_AF_2);
 }
 
 void referenceSystemAudioFiles()
 {
 }
 
+// void setVolume(uint8_t volume)
+// {
+//   TRACE("setVolume %u", volume);
+//   // TRACE("setVolume g %u", g_eeGeneral.beepVolume);
+// }
+
+// void setScaledVolume(uint8_t volume)
+// {
+//   if (volume > VOLUME_LEVEL_MAX) {
+//     volume = VOLUME_LEVEL_MAX;
+//   }
+//   setVolume(volumeScale[volume]);
+// }
+
 void setSampleRate(uint32_t frequency)
 {
+  TRACE("setSampleRate %u", frequency);
 }
 
 void watchdogInit(unsigned int duration)
@@ -122,6 +153,38 @@ void watchdogInit(unsigned int duration)
   IWDG->RLR = duration; // 1.5 seconds nominal
   IWDG->KR = 0xAAAA;    // reload
   IWDG->KR = 0xCCCC;    // start
+}
+
+void initBuzzerTimer()
+{
+  // uint16_t freq = 1000;
+  // The period is calculated as (ARR + 1) * (PSC + 1) / TimerClockFreq.
+  // 1000 = (ARR + 1) * 490 / TimerClockFreq.
+   PWM_TIMER->PSC = 48; // 48MHz -> 1MHz
+   /* set counter mode */
+   PWM_TIMER->CR1 &= ~(TIM_CR1_DIR | TIM_CR1_CMS);
+   PWM_TIMER->CR1 |= TIM_CounterMode_Up;
+   /* Auto-Reload Register */
+   PWM_TIMER->ARR = 400; // count up to
+   /* Set Clock Division */
+   PWM_TIMER->CR1 &= ~ TIM_CR1_CKD;
+   PWM_TIMER->CR1 |= TIM_CKD_DIV1;
+   PWM_TIMER->CCR1 = 200; // ARR/2 = PWM duty 50%
+   /* Set repetition counter */
+   PWM_TIMER->RCR = 0;
+
+  // Timer output mode PWM
+  /* Select the Output Compare (OC) Mode 1 */
+  TIM1->CCMR1 |= (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); // = TIM_OCMODE_PWM1
+  /* Reset and set the Output N Polarity level to LOW */
+  // TIM1->CCER &= ~TIM_CCER_CC1P; 
+  TIM1->CCER |= TIM_CCER_CC1P; // = TIM_OCPOLARITY_LOW 
+  /* Enable the Capture compare channel */
+  TIM1->CCER |= TIM_CCER_CC1E; // enable oc
+  /* Enable the main output */
+  TIM1->BDTR |= TIM_BDTR_MOE;
+
+  // buzzerSetFreq(default?)
 }
 
 // Starts TIMER at 2MHz
@@ -159,6 +222,7 @@ void interrupt5ms()
   static uint32_t pre_scale; // Used to get 10 Hz counter
   if (++pre_scale >= 2)
   {
+    BUZZER_HEARTBEAT();
     pre_scale = 0;
     DEBUG_TIMER_START(debugTimerPer10ms);
     DEBUG_TIMER_SAMPLE(debugTimerPer10msPeriod);
@@ -273,6 +337,7 @@ void resetReason()
     TRACE("Low-Power reset flag");
   }
 }
+
 void boardInit()
 {
 #if !defined(SIMU)
@@ -292,9 +357,11 @@ void boardInit()
   lcdInit(); // delaysInit() must be called before
   //define this deiver
   //audioInit();
+  initBuzzerTimer();
   init2MhzTimer();
   init5msTimer();
   __enable_irq();
+  buzzerInit();
   backlightInit();
   backlightEnable(1);
   init_gpio();
