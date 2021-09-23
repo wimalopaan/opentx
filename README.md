@@ -1,6 +1,6 @@
 # FlySky i6x port of OpenTX
 
-This is a port of OpenTX for the venerable FlySky I6X. I'm already using it to fly. Never went back to the stock firmware. No releases or proper instructions yet, until it's more mature. But you can find in the RCGroups thread the latest build and some instructions and videos contributed by fellow early adopters. 
+This is a port of OpenTX for the venerable. You can find in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) the latest build and some instructions and videos contributed by fellow early adopters. 
 
 ## Navigation:
 
@@ -18,17 +18,21 @@ This is a port of OpenTX for the venerable FlySky I6X. I'm already using it to f
 * External module support
     - PPM
     - Crossfire
+    - pitch adjustment
+* Buzzer: battery, rssi default alarms do not work
+* Buzzer: various sound effects selectable from functions.
+* Buzzer: 
 * Can't restart internal module after turning it off.
 * Add settings for ExpressLRS, since no LUA.
 * USB support (board.h usbplugged)
 * UART DMA fifo transfers.
-* Buzzer
 * Bootloader if it fits. Mass storage to backup EEPROM and update firmware.
 * SDCARD support if it fits in flash.
 * Go over the radio menus and correct blank spaces, remove unused options.
 
 ## Completed tasks:
 
+* Buzzer support (basic beeps and volume adjustment)
 * Latency down from 40.1 ms to 15.4 ms (Stock firmware latency: 22.1 ms) Measured with [ExpressLRS RCLatencyTester](https://github.com/ExpressLRS/RClatencyTester)
 * Backported mixer scheduler
 * AFHDS2A - Remaining settings complete: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
@@ -60,10 +64,21 @@ This is a port of OpenTX for the venerable FlySky I6X. I'm already using it to f
 
 ![ST-Link pinout](https://raw.githubusercontent.com/marianomd/opentx/2.3_M0/doc/flysky/flysky-i6x%20st-link%20pinout%20small.png)
 
-## Acknowledgements
+## Linux instructions
+### Compile
+docker run --rm -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=YES" -v $PWD:/opentx vitass/opentx-fw-build
 
-A big thank you to these great coders previous efforts!!
+### Flash
+sudo st-flash write <file_to_flash>.bin 0x08000000
+sudo st-flash reset
 
-* This work is based on Jakub's (qba667) work and is forked from his repo.
+### Debug tty:
+sudo cat /dev/ttyUSB0 115200
+
+## Contributors
+
+* Janek (@ajjjjjjjj) ongoing collaboration.
 * All the RF code was taken from the great KotelloRC's erfly6: Er9X for i6 and i6x. You can find his project here: https://bitbucket.org/KotelloRC/erfly6/src/master/
 * ADC code taken from OpenGround: https://github.com/fishpepper/OpenGround
+* This work is based on Jakub's (qba667) work and is forked from his repo.
+* All the contributors of OpenTX. 
