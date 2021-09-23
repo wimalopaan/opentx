@@ -13,15 +13,14 @@ This is a port of OpenTX for the venerable. You can find in the [RCGroups thread
 | BIND   | Go RIGHT. Go to next PAGE. Hold for general menu. |
 | RIGHT POT | Scroll right or left |
 
-## Next tasks:
+## Next tasks/Known issues:
 
 * External module support
     - PPM
     - Crossfire
-    - pitch adjustment
 * Buzzer: battery, rssi default alarms do not work
 * Buzzer: various sound effects selectable from functions.
-* Buzzer: 
+* Buzzer: pitch adjustment
 * Can't restart internal module after turning it off.
 * Add settings for ExpressLRS, since no LUA.
 * USB support (board.h usbplugged)
