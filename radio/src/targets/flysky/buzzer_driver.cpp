@@ -22,7 +22,6 @@
 #include "board.h"
 
 volatile uint8_t buzzerCount;
-uint16_t BUZZER_TONE_FREQ = 1000;
 
 void setVolume(uint8_t volume)
 {
@@ -38,8 +37,6 @@ void setVolume(uint8_t volume)
 inline void buzzerOn()
 {
   TRACE("buzzerOn beepVol %d", g_eeGeneral.beepVolume);
-//  TRACE("buzzerOn pitch %u", g_eeGeneral.speakerPitch);
-//  TRACE("buzzerOn vol %u", g_eeGeneral.speakerVolume);
 
   setVolume(g_eeGeneral.beepVolume + 2);
 

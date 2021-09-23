@@ -110,7 +110,6 @@ void audioInit()
 
 void buzzerInit()
 {
-  //RCC_AHBPeriphClockCmd(SERIAL_RCC_AHB1Periph, ENABLE);
   GPIO_InitTypeDef gpio_init;
   gpio_init.GPIO_Pin = BUZZER_GPIO_PIN;
   gpio_init.GPIO_Mode = GPIO_Mode_AF;
@@ -125,20 +124,6 @@ void buzzerInit()
 void referenceSystemAudioFiles()
 {
 }
-
-// void setVolume(uint8_t volume)
-// {
-//   TRACE("setVolume %u", volume);
-//   // TRACE("setVolume g %u", g_eeGeneral.beepVolume);
-// }
-
-// void setScaledVolume(uint8_t volume)
-// {
-//   if (volume > VOLUME_LEVEL_MAX) {
-//     volume = VOLUME_LEVEL_MAX;
-//   }
-//   setVolume(volumeScale[volume]);
-// }
 
 void setSampleRate(uint32_t frequency)
 {
@@ -157,9 +142,6 @@ void watchdogInit(unsigned int duration)
 
 void initBuzzerTimer()
 {
-  // uint16_t freq = 1000;
-  // The period is calculated as (ARR + 1) * (PSC + 1) / TimerClockFreq.
-  // 1000 = (ARR + 1) * 490 / TimerClockFreq.
    PWM_TIMER->PSC = 48; // 48MHz -> 1MHz
    /* set counter mode */
    PWM_TIMER->CR1 &= ~(TIM_CR1_DIR | TIM_CR1_CMS);
@@ -183,8 +165,6 @@ void initBuzzerTimer()
   TIM1->CCER |= TIM_CCER_CC1E; // enable oc
   /* Enable the main output */
   TIM1->BDTR |= TIM_BDTR_MOE;
-
-  // buzzerSetFreq(default?)
 }
 
 // Starts TIMER at 2MHz
