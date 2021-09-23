@@ -158,6 +158,7 @@ void buzzerOn();
 void buzzerOff();
 void buzzerSound(uint8_t duration);
 void buzzerHeartbeat();
+#define BUZZER_HEARTBEAT buzzerHeartbeat
 
 // Flash Write driver
 #define FLASH_PAGESIZE 256
@@ -458,6 +459,7 @@ extern uint32_t telemetryErrors;
 #define SPORT_UPDATE_POWER_OFF()        EXTERNAL_MODULE_OFF()
 
 // Audio driver
+void initBuzzerTimer(void);
 void audioInit(void);
 void audioEnd(void);
 void dacStart(void);
