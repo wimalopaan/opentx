@@ -125,11 +125,6 @@ void referenceSystemAudioFiles()
 {
 }
 
-void setSampleRate(uint32_t frequency)
-{
-  TRACE("setSampleRate %u", frequency);
-}
-
 void watchdogInit(unsigned int duration)
 {
   IWDG->KR = 0x5555;    // Unlock registers
@@ -142,7 +137,7 @@ void watchdogInit(unsigned int duration)
 
 void initBuzzerTimer()
 {
-   PWM_TIMER->PSC = 48; // 48MHz -> 1MHz
+   PWM_TIMER->PSC = 48 - 1; // 48MHz -> 1MHz
    /* set counter mode */
    PWM_TIMER->CR1 &= ~(TIM_CR1_DIR | TIM_CR1_CMS);
    PWM_TIMER->CR1 |= TIM_CounterMode_Up;

@@ -290,7 +290,7 @@ void menuSpecialFunctions(event_t event, CustomFunctionData * functions, CustomF
             getMixSrcRange(MIXSRC_FIRST_TIMER, val_min, val_max);
             drawTimer(MODEL_SPECIAL_FUNC_3RD_COLUMN, y, val_displayed, attr|LEFT, attr);
           }
-#if defined(AUDIO)
+#if defined(AUDIO) || defined(BUZZER)
           else if (func == FUNC_PLAY_SOUND) {
             val_max = AU_SPECIAL_SOUND_LAST-AU_SPECIAL_SOUND_FIRST-1;
             lcdDrawTextAtIndex(MODEL_SPECIAL_FUNC_3RD_COLUMN, y, STR_FUNCSOUNDS, val_displayed, attr);

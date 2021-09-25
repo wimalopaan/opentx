@@ -548,8 +548,6 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define BUZZER_GPIO_PORT GPIOA
 #define BUZZER_GPIO_PIN GPIO_Pin_8
 #define BUZZER_GPIO_PinSource GPIO_PinSource8
-#define BUZZER_SET_Pin GPIO_BSRR_BS_8
-#define BUZZER_RESET_Pin GPIO_BSRR_BR_8
 #define PWM_RCC_APB2Periph            RCC_APB2Periph_TIM1
 #define PWM_TIMER         TIM1
 #define PWM_TIMER_RCC     RCC_TIM1

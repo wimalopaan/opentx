@@ -39,46 +39,54 @@ extern uint8_t hapticTick;
 #endif /* HAPTIC */
 
 
-#if defined(SIMU)
-inline void _beep(uint8_t b)
-{
-	g_beepCnt = b;
-}
-#else
-inline void _beep(uint8_t b)
-{
-  buzzerSound(b);
-}
-#endif
-void beep(uint8_t val);
+// #if defined(SIMU)
+// inline void _beep(uint8_t b)
+// {
+// 	g_beepCnt = b;
+// }
+// #else
+// inline void _beep(uint8_t b)
+// {
+//   buzzerSound(b);
+// }
+// #endif
+// void beep(uint8_t val);
+void buzzerEvent(unsigned int index);
 
-
-#define AUDIO_HELLO()          PUSH_SYSTEM_PROMPT(AUDIO_HELLO)
-#define AUDIO_BYE()
-#define AUDIO_TX_BATTERY_LOW() PUSH_SYSTEM_PROMPT(AU_TX_BATTERY_LOW)
-#define AUDIO_INACTIVITY()     PUSH_SYSTEM_PROMPT(AU_INACTIVITY)
 #define AUDIO_ERROR_MESSAGE(e) PUSH_SYSTEM_PROMPT((e))
 #define AUDIO_TIMER_MINUTE(t)  playDuration(t, 0, 0)
-  // TODO
-#define AUDIO_TIMER_30()       PUSH_SYSTEM_PROMPT(AU_TIMER_30)
-#define AUDIO_TIMER_20()       PUSH_SYSTEM_PROMPT(AU_TIMER_20)
 
-#define AUDIO_KEY_PRESS()        beep(0)
-#define AUDIO_KEY_ERROR()        beep(2)
-#define AUDIO_WARNING2()         beep(2)
-#define AUDIO_WARNING1()         beep(3)
-#define AUDIO_ERROR()            beep(4)
-#define AUDIO_MIX_WARNING(x)     beep(1)
-#define AUDIO_POT_MIDDLE(x)      beep(2)
-#define AUDIO_TIMER_COUNTDOWN(idx, val)  beep(2)
-#define AUDIO_TIMER_ELAPSED(idx) beep(3)
-#define AUDIO_VARIO_UP()         _beep(1)
-#define AUDIO_VARIO_DOWN()       _beep(1)
-#define AUDIO_TRIM_PRESS(f)      { if (!IS_KEY_FIRST(event)) warble = true; beep(1); }
-#define AUDIO_TRIM_MIDDLE()      beep(2)
-#define AUDIO_TRIM_MIN()         beep(2)
-#define AUDIO_TRIM_MAX()         beep(2)
-#define AUDIO_PLAY(p)            beep(3)
+#define AUDIO_KEY_PRESS()        audioKeyPress()
+#define AUDIO_KEY_ERROR()        audioKeyError()
+
+#define AUDIO_HELLO()            PUSH_SYSTEM_PROMPT(AUDIO_HELLO)
+#define AUDIO_BYE()              
+#define AUDIO_WARNING1()         buzzerEvent(AU_WARNING1)
+#define AUDIO_WARNING2()         buzzerEvent(AU_WARNING2)
+#define AUDIO_TX_BATTERY_LOW()   buzzerEvent(AU_TX_BATTERY_LOW)
+#if defined(PCBSKY9X)
+#define AUDIO_TX_MAH_HIGH()      buzzerEvent(AU_TX_MAH_HIGH)
+#define AUDIO_TX_TEMP_HIGH()     buzzerEvent(AU_TX_TEMP_HIGH)
+#endif
+#define AUDIO_ERROR()            buzzerEvent(AU_ERROR)
+#define AUDIO_TIMER_COUNTDOWN(idx, val) audioTimerCountdown(idx, val)
+#define AUDIO_TIMER_ELAPSED(idx) buzzerEvent(AU_TIMER1_ELAPSED+idx)
+#define AUDIO_INACTIVITY()       buzzerEvent(AU_INACTIVITY)
+#define AUDIO_MIX_WARNING(x)     buzzerEvent(AU_MIX_WARNING_1+x-1)
+#define AUDIO_POT_MIDDLE(x)      buzzerEvent(AU_STICK1_MIDDLE+x)
+#define AUDIO_TRIM_MIDDLE()      buzzerEvent(AU_TRIM_MIDDLE)
+#define AUDIO_TRIM_MIN()         buzzerEvent(AU_TRIM_MIN)
+#define AUDIO_TRIM_MAX()         buzzerEvent(AU_TRIM_MAX)
+#define AUDIO_TRIM_PRESS(val)    audioTrimPress(val)
+#define AUDIO_PLAY(p)            buzzerEvent(p)
+#define AUDIO_VARIO(fq, t, p, f) playTone(fq, t, p, f)
+#define AUDIO_RSSI_ORANGE()      buzzerEvent(AU_RSSI_ORANGE)
+#define AUDIO_RSSI_RED()         buzzerEvent(AU_RSSI_RED)
+#define AUDIO_RAS_RED()          buzzerEvent(AU_RAS_RED)
+#define AUDIO_TELEMETRY_LOST()   buzzerEvent(AU_TELEMETRY_LOST)
+#define AUDIO_TELEMETRY_BACK()   buzzerEvent(AU_TELEMETRY_BACK)
+#define AUDIO_TRAINER_LOST()     buzzerEvent(AU_TRAINER_LOST)
+#define AUDIO_TRAINER_BACK()     buzzerEvent(AU_TRAINER_BACK)
 
 #define IS_AUDIO_BUSY() (g_beepCnt || beepAgain || beepOn)
 
@@ -110,16 +118,6 @@ void beep(uint8_t val);
 #define IS_PLAY_TIME()                  (0)
 #define IS_PLAYING(id)                  isPlaying()
 #define PLAY_VALUE(v, id)        		playValue((v), (id))
-
-#define AUDIO_RSSI_ORANGE()      audioEvent(AU_RSSI_ORANGE)
-#define AUDIO_RSSI_RED()         audioEvent(AU_RSSI_RED)
-#define AUDIO_RAS_RED()          audioEvent(AU_RAS_RED)
-#define AUDIO_TELEMETRY_LOST()   audioEvent(AU_TELEMETRY_LOST)
-#define AUDIO_TELEMETRY_BACK()   audioEvent(AU_TELEMETRY_BACK)
-#define AUDIO_TRAINER_LOST()     audioEvent(AU_TRAINER_LOST)
-#define AUDIO_TRAINER_BACK()     audioEvent(AU_TRAINER_BACK)
-
-#define AUDIO_VARIO(fq, t, p, f) {}
 
 #define setScaledVolume(v)
 
