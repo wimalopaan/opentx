@@ -116,7 +116,11 @@ void checkEeprom()
 void checkBatteryAlarms()
 {
   // TRACE("checkBatteryAlarms()");
+#if defined(PCBI6)
+  if (IS_TXBATT_WARNING()) {
+#else
   if (IS_TXBATT_WARNING() && g_vbat100mV>50) {
+#endif
     AUDIO_TX_BATTERY_LOW();
     // TRACE("checkBatteryAlarms(): battery low");
   }
