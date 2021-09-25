@@ -38,19 +38,6 @@ extern bool warbleC;
 extern uint8_t hapticTick;
 #endif /* HAPTIC */
 
-
-// #if defined(SIMU)
-// inline void _beep(uint8_t b)
-// {
-// 	g_beepCnt = b;
-// }
-// #else
-// inline void _beep(uint8_t b)
-// {
-//   buzzerSound(b);
-// }
-// #endif
-// void beep(uint8_t val);
 void buzzerEvent(unsigned int index);
 
 #define AUDIO_ERROR_MESSAGE(e) PUSH_SYSTEM_PROMPT((e))

@@ -548,6 +548,7 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define BUZZER_GPIO_PORT GPIOA
 #define BUZZER_GPIO_PIN GPIO_Pin_8
 #define BUZZER_GPIO_PinSource GPIO_PinSource8
+#define BUZZER_RCC_APB2Periph RCC_AHBPeriph_GPIOA
 #define PWM_RCC_APB2Periph            RCC_APB2Periph_TIM1
 #define PWM_TIMER         TIM1
 #define PWM_TIMER_RCC     RCC_TIM1
@@ -572,7 +573,7 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define MIXER_SCHEDULER_TIMER_IRQHandler     TIM17_IRQHandler
 
 //all used RCC goes here
-#define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB)
+#define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB | BUZZER_RCC_APB2Periph)
 #define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph)
 #define RCC_APB2_LIST                   (MIXER_SCHEDULER_TIMER_RCC_APB1Periph | PWM_RCC_APB2Periph)
 
