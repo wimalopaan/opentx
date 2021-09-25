@@ -266,9 +266,11 @@ inline void buzzerOff()
 void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr) {
   TRACE("playTone freq %d, len %u, pause %u, flags %u, freqIncr %d", freq, len, pause, flags & 0x0f, freqIncr);
 
-  if (buzzerState.duration && !buzzerFifo.full()) {
-    buzzerFifo.push(BuzzerTone(freq, len, pause, flags & 0x0f, freqIncr));
-    return;
+  if (!(flags & PLAY_NOW)) {
+    if (buzzerState.duration && !buzzerFifo.full()) {
+      buzzerFifo.push(BuzzerTone(freq, len, pause, flags & 0x0f, freqIncr));
+      return;
+    }
   }
   
   buzzerState.freq = freq;
