@@ -154,10 +154,7 @@ uint32_t sdMounted(void);
 #define SD_CARD_PRESENT()               ((SD_GPIO_PRESENT_GPIO->IDR & SD_GPIO_PRESENT_GPIO_PIN) == 0)
 #endif
 //buzzer
-void buzzerOn();
-void buzzerOff();
-void buzzerSound(uint8_t duration);
-void buzzerHeartbeat();
+#include "buzzer_driver.h"
 #define BUZZER_HEARTBEAT buzzerHeartbeat
 
 // Flash Write driver
