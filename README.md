@@ -18,9 +18,6 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 * External module support
     - PPM
     - Crossfire
-* Buzzer: battery, rssi default alarms do not work
-* Buzzer: various sound effects selectable from functions.
-* Buzzer: pitch adjustment
 * Can't restart internal module after turning it off.
 * Add settings for ExpressLRS, since no LUA.
 * USB support (board.h usbplugged)
@@ -31,7 +28,9 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 
 ## Completed tasks:
 
-* Buzzer support (basic beeps and volume adjustment)
+* Buzzer: battery, rssi and telemetry alarms (Janek)
+* Buzzer: various sound effects selectable from functions. (Janek)
+* Buzzer support (By Janek)
 * Latency down from 40.1 ms to 15.4 ms (Stock firmware latency: 22.1 ms) Measured with [ExpressLRS RCLatencyTester](https://github.com/ExpressLRS/RClatencyTester)
 * Backported mixer scheduler
 * AFHDS2A - Remaining settings complete: Subtype: PWM/PPM-IBUS/SBUS, Servo frequency
