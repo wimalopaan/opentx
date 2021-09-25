@@ -232,17 +232,16 @@ void buzzerEvent(unsigned int index)
 void setVolume(uint8_t volume)
 {
   switch (volume) {
-    case 0: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 32; break;
-    case 1: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 16; break;
-    case 2: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 8; break;
-    case 3: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 4; break;
+    case 0: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 16; break;
+    case 1: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 8; break;
+    case 2: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 4; break;
+    case 3: PWM_TIMER->CCR1 = (PWM_TIMER->ARR / 2) - (PWM_TIMER->ARR / 4); break;
     case 4: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 2; break;
   }
 }
 
 void setSampleRate(uint32_t frequency)
 {
-  TRACE("setSampleRate %u", frequency);
   uint32_t timer = 1000000 / frequency - 1 ;
 
   PWM_TIMER->CR1 &= ~TIM_CR1_CEN ;
@@ -264,23 +263,24 @@ inline void buzzerOff()
 }
 
 void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr) {
-  TRACE("playTone freq %d, len %u, pause %u, flags %u, freqIncr %d", freq, len, pause, flags & 0x0f, freqIncr);
+  // TRACE("playTone freq %d, len %u, pause %u, flags %u, freqIncr %d", freq, len, pause, flags & 0x0f, freqIncr);
 
-  if (!(flags & PLAY_NOW)) {
-    if (buzzerState.duration && !buzzerFifo.full()) {
-      buzzerFifo.push(BuzzerTone(freq, len, pause, flags & 0x0f, freqIncr));
+  uint8_t repeat = flags & 0x0f;
+
+  if (!(flags & PLAY_NOW) && buzzerState.duration) {
+      if (!buzzerFifo.full())
+        buzzerFifo.push(BuzzerTone(freq, len, pause, repeat, freqIncr));
       return;
-    }
   }
   
   buzzerState.freq = freq;
   buzzerState.duration = len;
   buzzerState.pause = pause;
-  buzzerState.repeat = flags & 0x0f;
+  buzzerState.repeat = repeat;
   buzzerState.tone.freq = freq;
   buzzerState.tone.duration = len;
   buzzerState.tone.pause = pause;
-  buzzerState.tone.repeat = flags & 0x0f;
+  buzzerState.tone.repeat = repeat;
   buzzerState.tone.freqIncr = freqIncr;
 
   setSampleRate(buzzerState.freq);
@@ -292,12 +292,19 @@ void buzzerHeartbeat()
 {
   if (buzzerState.duration) {
 
-    if (buzzerState.duration >= 10)
+    if (buzzerState.duration > 10) {
       buzzerState.duration -= 10; // ms
-    else 
+
+      if (buzzerState.tone.freqIncr) {
+        uint32_t freqChange = BUZZER_BUFFER_DURATION * buzzerState.tone.freqIncr;
+        buzzerState.freq += limit<uint16_t>(BEEP_MIN_FREQ, freqChange, BEEP_MAX_FREQ);
+        setSampleRate(buzzerState.freq);
+        setVolume(g_eeGeneral.beepVolume + 2);
+      }
+    }
+    else {
       buzzerState.duration = 0;
 
-    if (buzzerState.duration == 0) {
       buzzerOff();
 
       if (buzzerState.pause) {
@@ -314,25 +321,6 @@ void buzzerHeartbeat()
         setVolume(g_eeGeneral.beepVolume + 2);
         buzzerOn();
       }
-    }
-    else if (buzzerState.tone.freqIncr) {
-      uint32_t freqChange = BUZZER_BUFFER_DURATION * buzzerState.tone.freqIncr;
-      if (freqChange > 0) {
-        buzzerState.freq += freqChange;
-        if (buzzerState.freq > BEEP_MAX_FREQ) {
-          buzzerState.freq = BEEP_MAX_FREQ;
-        }
-      }
-      else {
-        if (buzzerState.freq > BEEP_MIN_FREQ - freqChange) {
-          buzzerState.freq += freqChange;
-        }
-        else {
-          buzzerState.freq = BEEP_MIN_FREQ;
-        }
-      }
-      setSampleRate(buzzerState.freq);
-      setVolume(g_eeGeneral.beepVolume + 2);
     }
   } else if (!buzzerFifo.empty()) {
     nextTone = buzzerFifo.get();
