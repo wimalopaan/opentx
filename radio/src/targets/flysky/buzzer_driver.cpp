@@ -262,6 +262,18 @@ void setSampleRate(uint32_t frequency)
   PWM_TIMER->CR1 |= TIM_CR1_CEN ;
 }
 
+inline unsigned int getToneLength(uint16_t len)
+{
+  unsigned int result = len; // default
+  if (g_eeGeneral.beepLength < 0) {
+    result /= (1-g_eeGeneral.beepLength);
+  }
+  else if (g_eeGeneral.beepLength > 0) {
+    result *= (1+g_eeGeneral.beepLength);
+  }
+  return result;
+}
+
 inline void buzzerOn()
 {
   PWM_TIMER->CR1 = TIM_CR1_CEN;
@@ -284,6 +296,9 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
         buzzerFifo.push(BuzzerTone(freq, len, pause, repeat, freqIncr));
       return;
   }
+
+  freq += g_eeGeneral.speakerPitch * 15;
+  len = getToneLength(len);
   
   buzzerState.freq = freq;
   buzzerState.duration = len;

@@ -58,9 +58,9 @@ enum MenuRadioSetupItems {
   ITEM_SETUP_SPEAKER_VOLUME,
   ITEM_SETUP_BEEP_VOLUME,
   ITEM_SETUP_BEEP_LENGTH,
-  CASE_AUDIO(ITEM_SETUP_SPEAKER_PITCH)
-  ITEM_SETUP_WAV_VOLUME,
-  ITEM_SETUP_BACKGROUND_VOLUME,
+  ITEM_SETUP_SPEAKER_PITCH,
+  // ITEM_SETUP_WAV_VOLUME,
+  // ITEM_SETUP_BACKGROUND_VOLUME,
   CASE_VARIO(ITEM_SETUP_VARIO_LABEL)
   CASE_VARIO(ITEM_SETUP_VARIO_VOLUME)
   CASE_VARIO(ITEM_SETUP_VARIO_PITCH)
@@ -83,7 +83,7 @@ enum MenuRadioSetupItems {
   ITEM_SETUP_BACKLIGHT_LABEL,
   ITEM_SETUP_BACKLIGHT_MODE,
   ITEM_SETUP_BACKLIGHT_DELAY,
-  ITEM_SETUP_BRIGHTNESS,
+  // ITEM_SETUP_BRIGHTNESS,
   CASE_PWM_BACKLIGHT(ITEM_SETUP_BACKLIGHT_BRIGHTNESS_OFF)
   CASE_PWM_BACKLIGHT(ITEM_SETUP_BACKLIGHT_BRIGHTNESS_ON)
   ITEM_SETUP_FLASH_BEEP,
@@ -131,7 +131,7 @@ void menuRadioSetup(event_t event)
   }
 #endif
 
-  MENU(STR_MENURADIOSETUP, menuTabGeneral, MENU_RADIO_SETUP, HEADER_LINE+ITEM_SETUP_MAX, { HEADER_LINE_COLUMNS CASE_RTCLOCK(2) CASE_RTCLOCK(2) CASE_BATTGRAPH(1) LABEL(SOUND), CASE_AUDIO(0) CASE_BUZZER(0) 0, 0, 0, 0, 0, CASE_AUDIO(0) CASE_VARIO(LABEL(VARIO)) CASE_VARIO(0) CASE_VARIO(0) CASE_VARIO(0) CASE_VARIO(0) CASE_HAPTIC(LABEL(HAPTIC)) CASE_HAPTIC(0) CASE_HAPTIC(0) CASE_HAPTIC(0) 0, LABEL(ALARMS), 0, CASE_CAPACITY(0) CASE_PCBSKY9X(0) 0, 0, 0, 0, IF_ROTARY_ENCODERS(0) LABEL(BACKLIGHT), 0, 0, 0, CASE_PWM_BACKLIGHT(0) CASE_PWM_BACKLIGHT(0) 0, CASE_SPLASH_PARAM(0) CASE_GPS(0) 0, CASE_GPS(0) CASE_PXX(0) 0, 0, IF_FAI_CHOICE(0) 0, CASE_STM32(0) 0, COL_TX_MODE, 0, 1/*to force edit mode*/});
+  MENU(STR_MENURADIOSETUP, menuTabGeneral, MENU_RADIO_SETUP, HEADER_LINE+ITEM_SETUP_MAX, { HEADER_LINE_COLUMNS CASE_RTCLOCK(2) CASE_RTCLOCK(2) CASE_BATTGRAPH(1) LABEL(SOUND), CASE_AUDIO(0) CASE_BUZZER(0) 0, 0, 0, 0, /*0, CASE_AUDIO(0)*/ CASE_VARIO(LABEL(VARIO)) CASE_VARIO(0) CASE_VARIO(0) CASE_VARIO(0) CASE_VARIO(0) CASE_HAPTIC(LABEL(HAPTIC)) CASE_HAPTIC(0) CASE_HAPTIC(0) CASE_HAPTIC(0) 0, LABEL(ALARMS), 0, CASE_CAPACITY(0) CASE_PCBSKY9X(0) 0, 0, 0, 0, IF_ROTARY_ENCODERS(0) LABEL(BACKLIGHT), 0, 0, /*0,*/ CASE_PWM_BACKLIGHT(0) CASE_PWM_BACKLIGHT(0) 0, CASE_SPLASH_PARAM(0) CASE_GPS(0) 0, CASE_GPS(0) CASE_PXX(0) 0, 0, IF_FAI_CHOICE(0) 0, CASE_STM32(0) 0, COL_TX_MODE, 0, 1/*to force edit mode*/});
 
   if (event == EVT_ENTRY) {
     reusableBuffer.generalSettings.stickMode = g_eeGeneral.stickMode;
@@ -268,18 +268,17 @@ void menuRadioSetup(event_t event)
       case ITEM_SETUP_BEEP_VOLUME:
         SLIDER_5POS(y, g_eeGeneral.beepVolume, STR_BEEP_VOLUME, event, attr);
         break;
-      case ITEM_SETUP_WAV_VOLUME:
-        SLIDER_5POS(y, g_eeGeneral.wavVolume, STR_WAV_VOLUME, event, attr);
-        break;
-      case ITEM_SETUP_BACKGROUND_VOLUME:
-        SLIDER_5POS(y, g_eeGeneral.backgroundVolume, STR_BG_VOLUME, event, attr);
-        break;
+      // case ITEM_SETUP_WAV_VOLUME:
+      //   SLIDER_5POS(y, g_eeGeneral.wavVolume, STR_WAV_VOLUME, event, attr);
+      //   break;
+      // case ITEM_SETUP_BACKGROUND_VOLUME:
+      //   SLIDER_5POS(y, g_eeGeneral.backgroundVolume, STR_BG_VOLUME, event, attr);
+      //   break;
 
       case ITEM_SETUP_BEEP_LENGTH:
         SLIDER_5POS(y, g_eeGeneral.beepLength, STR_BEEP_LENGTH, event, attr);
         break;
 
-#if defined(AUDIO)
       case ITEM_SETUP_SPEAKER_PITCH:
         lcdDrawTextAlignedLeft( y, STR_SPKRPITCH);
         lcdDrawChar(RADIO_SETUP_2ND_COLUMN, y, '+', attr);
@@ -289,7 +288,6 @@ void menuRadioSetup(event_t event)
           CHECK_INCDEC_GENVAR(event, g_eeGeneral.speakerPitch, 0, 20);
         }
         break;
-#endif
 
 #if defined(VARIO)
       case ITEM_SETUP_VARIO_LABEL:
@@ -427,15 +425,15 @@ void menuRadioSetup(event_t event)
         if (attr) CHECK_INCDEC_GENVAR(event, g_eeGeneral.lightAutoOff, 0, 600/5);
         break;
 
-      case ITEM_SETUP_BRIGHTNESS:
-        lcdDrawTextAlignedLeft(y, STR_BRIGHTNESS);
-        lcdDrawNumber(RADIO_SETUP_2ND_COLUMN, y, 100-g_eeGeneral.backlightBright, attr|LEFT) ;
-        if (attr) {
-          uint8_t b = 100 - g_eeGeneral.backlightBright;
-          CHECK_INCDEC_GENVAR(event, b, 0, 100);
-          g_eeGeneral.backlightBright = 100 - b;
-        }
-        break;
+      // case ITEM_SETUP_BRIGHTNESS:
+      //   lcdDrawTextAlignedLeft(y, STR_BRIGHTNESS);
+      //   lcdDrawNumber(RADIO_SETUP_2ND_COLUMN, y, 100-g_eeGeneral.backlightBright, attr|LEFT) ;
+      //   if (attr) {
+      //     uint8_t b = 100 - g_eeGeneral.backlightBright;
+      //     CHECK_INCDEC_GENVAR(event, b, 0, 100);
+      //     g_eeGeneral.backlightBright = 100 - b;
+      //   }
+      //   break;
 
 #if defined(PWM_BACKLIGHT)
       case ITEM_SETUP_BACKLIGHT_BRIGHTNESS_OFF:
