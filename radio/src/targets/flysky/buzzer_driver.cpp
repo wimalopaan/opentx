@@ -139,13 +139,13 @@ void buzzerEvent(unsigned int index)
         playTone(BEEP_DEFAULT_FREQ + 1500, 80, 20, PLAY_NOW);
         break;
       case AU_MIX_WARNING_1:
-        playTone(BEEP_DEFAULT_FREQ + 1440, 48, 32);
+        playTone(BEEP_DEFAULT_FREQ + 1440, 48, 30);
         break;
       case AU_MIX_WARNING_2:
-        playTone(BEEP_DEFAULT_FREQ + 1560, 48, 32, PLAY_REPEAT(1));
+        playTone(BEEP_DEFAULT_FREQ + 1560, 48, 30, PLAY_REPEAT(1));
         break;
       case AU_MIX_WARNING_3:
-        playTone(BEEP_DEFAULT_FREQ + 1680, 48, 32, PLAY_REPEAT(2));
+        playTone(BEEP_DEFAULT_FREQ + 1680, 48, 30, PLAY_REPEAT(2));
         break;
       case AU_TIMER1_ELAPSED:
       case AU_TIMER2_ELAPSED:
@@ -170,8 +170,6 @@ void buzzerEvent(unsigned int index)
       case AU_SPECIAL_SOUND_BEEP3:
         playTone(BEEP_DEFAULT_FREQ, 200, 20);
         break;
-      case AU_TRAINER_LOST:
-      case AU_TELEMETRY_LOST:
       case AU_SPECIAL_SOUND_WARN1:
         playTone(BEEP_DEFAULT_FREQ + 600, 120, 40, PLAY_REPEAT(2));
         break;
@@ -196,8 +194,6 @@ void buzzerEvent(unsigned int index)
         playTone(1650, 120, 20, PLAY_REPEAT(1));
         playTone(2550, 120, 20, PLAY_REPEAT(1));
         break;
-      case AU_TRAINER_BACK:
-      case AU_TELEMETRY_BACK:
       case AU_SPECIAL_SOUND_CHIRP:
         playTone(BEEP_DEFAULT_FREQ + 1200, 40, 20, PLAY_REPEAT(2));
         playTone(BEEP_DEFAULT_FREQ + 1620, 40, 20, PLAY_REPEAT(3));
@@ -205,7 +201,7 @@ void buzzerEvent(unsigned int index)
       case AU_SPECIAL_SOUND_TADA:
         playTone(1650, 80, 40);
         playTone(2850, 80, 40);
-        playTone(3450, 64, 36, PLAY_REPEAT(2));
+        playTone(3450, 60, 36, PLAY_REPEAT(2));
         break;
       case AU_SPECIAL_SOUND_CRICKET:
         playTone(2550, 40, 80, PLAY_REPEAT(3));
@@ -216,16 +212,26 @@ void buzzerEvent(unsigned int index)
         playTone(450+200, 160, 40, PLAY_REPEAT(2), 2);
         break;
       case AU_SPECIAL_SOUND_ALARMC:
-        playTone(1650, 32, 68, PLAY_REPEAT(2));
-        playTone(2250, 64, 156, PLAY_REPEAT(1));
-        playTone(1650, 64, 76, PLAY_REPEAT(2));
-        playTone(2250, 32, 168, PLAY_REPEAT(1));
+        playTone(1650, 30, 70, PLAY_REPEAT(2));
+        playTone(2250, 60, 160, PLAY_REPEAT(1));
+        playTone(1650, 60, 80, PLAY_REPEAT(2));
+        playTone(2250, 30, 170, PLAY_REPEAT(1));
         break;
       case AU_SPECIAL_SOUND_RATATA:
         playTone(BEEP_DEFAULT_FREQ + 1500, 40, 80, PLAY_REPEAT(10));
         break;
       case AU_SPECIAL_SOUND_TICK:
         playTone(BEEP_DEFAULT_FREQ + 1500, 40, 400, PLAY_REPEAT(2));
+        break;
+      case AU_TRAINER_LOST:
+      case AU_TELEMETRY_LOST:
+        playTone(BEEP_DEFAULT_FREQ + 300, 50, 40, PLAY_REPEAT(1));
+        playTone(BEEP_DEFAULT_FREQ + 300, 300, 20, 0, -3);
+        break;
+      case AU_TRAINER_BACK:
+      case AU_TELEMETRY_BACK:
+        playTone(BEEP_DEFAULT_FREQ + 300, 50, 40, PLAY_REPEAT(1));
+        playTone(BEEP_DEFAULT_FREQ + 300, 300, 20, 0, 3);
         break;
       default:
         break;
