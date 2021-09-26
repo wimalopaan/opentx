@@ -360,12 +360,23 @@ void disable_afhds2a(uint32_t port);
 
 // External Module
 
-/*---------------------PPM_IN------------------------------------------------*/
+// /*---------------------PPM_IN------------------------------------------------*/
 #define PPM_IN_GPIO_PORT GPIOF
 #define PPM_IN_PIN_PIN_MASK GPIO_IDR_9
-/*---------------------PPM_OUT------------------------------------------------*/
+// /*---------------------PPM_OUT------------------------------------------------*/
 #define PPM_OUT_GPIO_PORT GPIOF
 #define PPM_OUT_PIN_MASK GPIO_IDR_10
+
+// #define EXTMODULE_RCC_AHBPeriph       RCC_AHBPeriph_GPIOF  // GPIOF
+// #define EXTMODULE_RCC_APB2Periph      RCC_APB2Periph_TIM15 // TIM15_CH2
+// #define EXTMODULE_TX_GPIO             GPIOF
+// #define EXTMODULE_TX_GPIO_PIN         GPIO_Pin_10 // PF.10
+// #define EXTMODULE_TX_GPIO_PinSource   GPIO_PinSource10
+// #define EXTMODULE_TX_GPIO_AF          GPIO_AF_0
+#define EXTMODULE_TIMER               TIM15
+#define EXTMODULE_TIMER_IRQn          TIM15_IRQn
+#define EXTMODULE_TIMER_IRQHandler    TIM15_IRQHandler
+#define EXTMODULE_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
 
 extern void ISR_TIMER0_COMP_vect(void);
 extern void ISR_TIMER2_OVF_vect(void);

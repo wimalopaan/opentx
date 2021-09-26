@@ -156,7 +156,7 @@ bool setupPulses(uint8_t port) {
   }
 #endif
   bool init_needed = false;
-  bool external_module_enabled = false;
+  bool send = false;
 
   uint8_t required_protocol = getRequiredProtocol(port);
 
@@ -260,7 +260,7 @@ bool setupPulses(uint8_t port) {
           len = createCrossfireChannelsFrame(crossfire, &channelOutputs[g_model.moduleData[port].channelsStart]);
         }
         // sportSendBuffer(crossfire, len); // Now it's done in extmodule_driver.cpp
-        external_module_enabled = true;
+        send = true;
       }
 
       break;
@@ -291,10 +291,10 @@ bool setupPulses(uint8_t port) {
       mixerSchedulerSetPeriod(port, PPM_PERIOD(port));
       break;
 
-    case PROTO_AFHDS2A_SPI:
+    case PROTO_AFHDS2A_SPI:      
+      mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
       // this is kept inside targets/flysky
-      //mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
-      //setupPulsesAfhds2aSpi(port);
+      // setupPulsesAfhds2aSpi(port);
       break;
 
     default:
@@ -320,7 +320,7 @@ bool setupPulses(uint8_t port) {
       case PROTO_CROSSFIRE:
         init_module_timer(port, CROSSFIRE_PERIOD, true);
         mixerSchedulerSetPeriod(EXTERNAL_MODULE, CROSSFIRE_PERIOD);
-        external_module_enabled = true;
+        send = true;
         break;
 #endif
 
@@ -352,7 +352,7 @@ bool setupPulses(uint8_t port) {
         break;
     }
   }
-  return external_module_enabled;
+  return send;
 }
 
 void setCustomFailsafe(uint8_t moduleIndex) {

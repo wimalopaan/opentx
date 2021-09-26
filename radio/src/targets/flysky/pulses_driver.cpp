@@ -45,6 +45,7 @@ void disable_afhds2a(uint32_t port) {
 }
 
 void init_ppm(uint32_t port) {
+  TRACE("Init PPM");
   if (port == EXTERNAL_MODULE) {
     extmodulePpmStart();
   }

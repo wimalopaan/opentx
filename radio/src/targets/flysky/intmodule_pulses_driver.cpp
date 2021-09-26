@@ -19,8 +19,8 @@
  */
 
 #include "iface_a7105.h"
-#include "opentx.h"
 #include "mixer_scheduler.h"
+#include "opentx.h"
 
 static bool initialized = false;
 
@@ -147,7 +147,10 @@ void EXTI2_3_IRQHandler(void) {
 void TIM16_IRQHandler(void) {
   WRITE_REG(TIM16->SR, ~(TIM_SR_UIF));  // Clear the update interrupt flag (UIF)
   SETBIT(RadioState, CALLER, TIM_CALL);
-  mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
-  setupPulses(INTERNAL_MODULE);
+  setupPulses(INTERNAL_MODULE);  
   ActionAFHDS2A();
+}
+
+void intmoduleSendNextFrame() {
+
 }

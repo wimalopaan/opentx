@@ -20,36 +20,53 @@
 
 #include "opentx.h"
 
-
 uint16_t GetPPMTimCapture(void) {
-  return TIM15->CCR1;
+  return EXTMODULE_TIMER->CCR1;
 }
 uint32_t GetPPMOutState(void) {
   return PPM_OUT_GPIO_PORT->IDR & PPM_OUT_PIN_MASK;
 }
 void SetPPMTimCompare(uint16_t val) {
-  TIM15->CCR2 = val;
+  EXTMODULE_TIMER->CCR2 = val;
 }
 uint16_t GetPPMTimCompare(void) {
-  return TIM15->CCR2;
+  return EXTMODULE_TIMER->CCR2;
 }
 uint32_t GetPPMTimCompareInterruptFlag(void) {
-  return TIM15->SR & TIM_SR_CC2IF;
+  return EXTMODULE_TIMER->SR & TIM_SR_CC2IF;
 }
 void ClearPPMTimCompareInterruptFlag(void) {
-  WRITE_REG(TIM15->SR, ~(TIM_SR_CC2IF));
+  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC2IF));
 }
 void EnablePPMTim(void) {
-  SET_BIT(TIM15->CR1, TIM_CR1_CEN);
+  SET_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
 void DisablePPMTim(void) {
-  CLEAR_BIT(TIM15->CR1, TIM_CR1_CEN);
+  CLEAR_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
 void EnablePPMOut(void) {
-  SET_BIT(TIM15->CCER, TIM_CCER_CC2E);
+  SET_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
 }
 void DisablePPMOut(void) {
-  CLEAR_BIT(TIM15->CCER, TIM_CCER_CC2E);
+  CLEAR_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
+}
+void sei(void) {
+  __enable_irq();
+}
+void cli(void) {
+  __disable_irq();
+}
+
+void SetStartPulsePol() {
+  if (((!GET_PPM_POLARITY(EXTERNAL_MODULE)) && (!(GetPPMOutState()))) || 
+      ((GET_PPM_POLARITY(EXTERNAL_MODULE)) && (GetPPMOutState()))) {
+    cli();
+    SetPPMTimCompare(GetPPMTimCompare() + 1);
+    while (!GetPPMTimCompareInterruptFlag()) {
+    }
+    ClearPPMTimCompareInterruptFlag();
+    sei();
+  }
 }
 
 void extmoduleStop() {
@@ -60,9 +77,8 @@ void extmoduleStop() {
 
 void extmodulePpmStart() {
   TRACE("extmodulePpmStart");
-  return;
-  /*------------PPM_TIMER_Init(TIM15 clock 3mHz)------------------------------*/
-  /**TIM15 GPIO Configuration
+  /*------------PPM_TIMER_Init(EXTMODULE_TIMER clock 3mHz)------------------------------*/
+  /**EXTMODULE_TIMER GPIO Configuration
   PF9   ------> TIM15_CH1
   PF10   ------> TIM15_CH2
   */
@@ -71,36 +87,34 @@ void extmodulePpmStart() {
   PPM_IN_GPIO_PORT->AFR[1] |= (0x0000000U << (1 * 4));  // Select alternate function 0
   PPM_IN_GPIO_PORT->PUPDR  |= GPIO_PUPDR_PUPDR9_0;      // PullUp
   //PF10
-  PPM_OUT_GPIO_PORT->MODER  |= GPIO_MODER_MODER10_1;    // Select alternate function mode
-  PPM_OUT_GPIO_PORT->AFR[1] |= (0x0000000U << (2 * 4)); // Select alternate function 0
+  PPM_OUT_GPIO_PORT->MODER |= GPIO_MODER_MODER10_1;      // Select alternate function mode
+  PPM_OUT_GPIO_PORT->AFR[1] |= (0x0000000U << (2 * 4));  // Select alternate function 0
 
-  /* TIM15 clock enable */
-  SET_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM15EN);  
+  /* EXTMODULE_TIMER clock enable */
+  SET_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM15EN);
   /* Delay after an RCC peripheral clock enabling */
   __IO uint32_t tmpreg;
   tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM15EN);
 
-  TIM15->PSC   = 15;                                    // Prescaler
-  TIM15->CCMR1 = (TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0); /*OCyREF toggles on compare match*/
-  TIM15->BDTR |= TIM_BDTR_MOE;
+  EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1; // 0.5uS from 30MHz
+  EXTMODULE_TIMER->ARR = 45000;
+  EXTMODULE_TIMER->CCMR1 = (TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0); /*OCyREF toggles on compare match*/
+  EXTMODULE_TIMER->BDTR |= TIM_BDTR_MOE;
 
-  TIM15->CCMR1 |= TIM_CCMR1_CC1S_0 | TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1;
-  TIM15->CCER |= TIM_CCER_CC1E | TIM_CCER_CC1P;
+  EXTMODULE_TIMER->CCMR1 |= TIM_CCMR1_CC1S_0 | TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1;
+  EXTMODULE_TIMER->CCER |= TIM_CCER_CC1E | TIM_CCER_CC1P;
 
-  WRITE_REG(TIM15->SR, ~(TIM_SR_CC1IF));    // Clear capture interrupt flag
-  TIM15->DIER |= TIM_DIER_CC1IE;            // Enable capture interrupt
-  WRITE_REG(TIM15->SR, ~(TIM_SR_CC2IF));    // Clear compare interrupt flag
-  TIM15->DIER = TIM_DIER_CC2IE;             // Enable compare interrupt
+  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC1IF));  // Clear capture interrupt flag
+  EXTMODULE_TIMER->DIER |= TIM_DIER_CC1IE;          // Enable capture interrupt
+  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC2IF));  // Clear compare interrupt flag
+  EXTMODULE_TIMER->DIER = TIM_DIER_CC2IE;           // Enable compare interrupt
 
-  NVIC_SetPriority(TIM15_IRQn, 2);
-  NVIC_EnableIRQ(TIM15_IRQn);
-  
+  NVIC_EnableIRQ(EXTMODULE_TIMER_IRQn);
+  NVIC_SetPriority(EXTMODULE_TIMER_IRQn, 2);
+
   (void)tmpreg;
-TRACE("EnablePPMTim...");
   EnablePPMTim();
-  TRACE("EnablePPMOut...");
   EnablePPMOut();
-  TRACE("Done.");
 }
 
 void extmodulePxxStart() {
@@ -108,10 +122,20 @@ void extmodulePxxStart() {
 }
 
 void extmoduleSendNextFrame() {
-  //TRACE("extmoduleSendNextFrame");
+  if (s_current_protocol[EXTERNAL_MODULE] == PROTO_PPM) {
+    static uint16_t *pulsePtr = modulePulsesData[EXTERNAL_MODULE].ppm.ptr;
+    SetPPMTimCompare(GetPPMTimCompare() + *pulsePtr);
+    pulsePtr += 1;
+
+    if (*pulsePtr == 0) {
+      pulsePtr = modulePulsesData[EXTERNAL_MODULE].ppm.ptr;
+      SetStartPulsePol();
+      setupPulses(EXTERNAL_MODULE);
+    }
+  } 
 }
-void extmoduleTimerStart(uint32_t period, uint8_t state)
-{
+
+void extmoduleTimerStart(uint32_t period, uint8_t state) {
   // if (state)
   //   EXTERNAL_MODULE_ON();
   // else if (!IS_TRAINER_EXTERNAL_MODULE())
@@ -141,15 +165,17 @@ void extmoduleTimerStart(uint32_t period, uint8_t state)
   // NVIC_SetPriority(EXTMODULE_TIMER_CC_IRQn, 7);
 }
 /*--------------handler for PPM Timer ----------------------------------------*/
-void TIM15_IRQHandler(void) {
-  // TODO decide to bring implementation of pulses.cpp from erfly6 or not
+//void TIM15_IRQHandler(void) {
+// TODO decide to bring implementation of pulses.cpp from erfly6 or not
+//}
 
-  // if (TIM15->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
-  //   WRITE_REG(TIM15->SR, ~(TIM_SR_CC2IF));
-  //   ISR_TIMER1_COMPA_vect();
-  // }
-  // if (TIM15->SR & TIM_SR_CC1IF) {  // Capture PPM-IN
-  //   WRITE_REG(TIM15->SR, ~(TIM_SR_CC1IF));
-  //   ISR_TIMER3_CAPT_vect();
-  // }
+extern "C" void EXTMODULE_TIMER_IRQHandler() {
+  if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
+    EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;    // Clears interrupt on ch2
+    extmoduleSendNextFrame();
+  }
+  if (EXTMODULE_TIMER->SR & TIM_SR_CC1IF) {  // Capture PPM-IN
+    EXTMODULE_TIMER->SR &= ~TIM_SR_CC1IF;    // Clears interrupt on ch1
+    //ISR_TIMER3_CAPT_vect();
+  }
 }
