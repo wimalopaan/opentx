@@ -58,6 +58,7 @@ void setupPulsesPPM(uint8_t port, PpmPulsesData<T> * ppmPulsesData)
   *ptr = rest;
   *(ptr + 1) = 0;
 #endif
+//TRACE("ppmPulsesData: %p",(void*)&ppmPulsesData); 
 }
 
 void setupPulsesPPMModule(uint8_t port)

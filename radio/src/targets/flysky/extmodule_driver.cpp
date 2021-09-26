@@ -58,7 +58,7 @@ void cli(void) {
 }
 
 void SetStartPulsePol() {
-  if (((!GET_PPM_POLARITY(EXTERNAL_MODULE)) && (!(GetPPMOutState()))) || 
+  if (((!GET_PPM_POLARITY(EXTERNAL_MODULE)) && (!(GetPPMOutState()))) ||
       ((GET_PPM_POLARITY(EXTERNAL_MODULE)) && (GetPPMOutState()))) {
     cli();
     SetPPMTimCompare(GetPPMTimCompare() + 1);
@@ -83,9 +83,9 @@ void extmodulePpmStart() {
   PF10   ------> TIM15_CH2
   */
   //PF9
-  PPM_IN_GPIO_PORT->MODER  |= GPIO_MODER_MODER9_1;      // Select alternate function mode
+  PPM_IN_GPIO_PORT->MODER |= GPIO_MODER_MODER9_1;       // Select alternate function mode
   PPM_IN_GPIO_PORT->AFR[1] |= (0x0000000U << (1 * 4));  // Select alternate function 0
-  PPM_IN_GPIO_PORT->PUPDR  |= GPIO_PUPDR_PUPDR9_0;      // PullUp
+  PPM_IN_GPIO_PORT->PUPDR |= GPIO_PUPDR_PUPDR9_0;       // PullUp
   //PF10
   PPM_OUT_GPIO_PORT->MODER |= GPIO_MODER_MODER10_1;      // Select alternate function mode
   PPM_OUT_GPIO_PORT->AFR[1] |= (0x0000000U << (2 * 4));  // Select alternate function 0
@@ -96,7 +96,7 @@ void extmodulePpmStart() {
   __IO uint32_t tmpreg;
   tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM15EN);
 
-  EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1; // 0.5uS from 30MHz
+  EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1;  // 0.5uS from 30MHz
   EXTMODULE_TIMER->ARR = 45000;
   EXTMODULE_TIMER->CCMR1 = (TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0); /*OCyREF toggles on compare match*/
   EXTMODULE_TIMER->BDTR |= TIM_BDTR_MOE;
@@ -123,16 +123,20 @@ void extmodulePxxStart() {
 
 void extmoduleSendNextFrame() {
   if (s_current_protocol[EXTERNAL_MODULE] == PROTO_PPM) {
+    //TRACE("modulePulsesData[EXTERNAL_MODULE].ppm: %p",(void*)&modulePulsesData[EXTERNAL_MODULE].ppm);
+    //DUMP((uint8_t*)(modulePulsesData[EXTERNAL_MODULE].ppm.pulses), 40);
     static uint16_t *pulsePtr = modulePulsesData[EXTERNAL_MODULE].ppm.ptr;
-    SetPPMTimCompare(GetPPMTimCompare() + *pulsePtr);
-    pulsePtr += 1;
 
-    if (*pulsePtr == 0) {
-      pulsePtr = modulePulsesData[EXTERNAL_MODULE].ppm.ptr;
+    if (*pulsePtr != 0) {
+      TRACE("ptr %d val %d", (uint8_t)(pulsePtr - modulePulsesData[EXTERNAL_MODULE].ppm.pulses), *pulsePtr);
+      SetPPMTimCompare(GetPPMTimCompare() + *pulsePtr);
+      pulsePtr += 1;
+    } else {
+      pulsePtr = modulePulsesData[EXTERNAL_MODULE].ppm.pulses;
       SetStartPulsePol();
       setupPulses(EXTERNAL_MODULE);
     }
-  } 
+  }
 }
 
 void extmoduleTimerStart(uint32_t period, uint8_t state) {
