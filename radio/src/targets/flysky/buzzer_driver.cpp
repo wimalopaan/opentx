@@ -70,7 +70,7 @@ void audioTimerCountdown(uint8_t timer, int value)
 
 void buzzerEvent(unsigned int index)
 {
-  TRACE("buzzerEvent %u", index);
+  // TRACE("buzzerEvent %u", index);
   if (index == AU_NONE)
     return;
 
@@ -225,13 +225,15 @@ void buzzerEvent(unsigned int index)
         break;
       case AU_TRAINER_LOST:
       case AU_TELEMETRY_LOST:
-        playTone(BEEP_DEFAULT_FREQ + 300, 50, 40, PLAY_REPEAT(1));
-        playTone(BEEP_DEFAULT_FREQ + 300, 300, 20, 0, -3);
+        playTone(BEEP_DEFAULT_FREQ + 200, 40, 20);
+        playTone(BEEP_DEFAULT_FREQ, 40, 20);
+        playTone(BEEP_DEFAULT_FREQ - 200, 40, 20);
         break;
       case AU_TRAINER_BACK:
       case AU_TELEMETRY_BACK:
-        playTone(BEEP_DEFAULT_FREQ + 300, 50, 40, PLAY_REPEAT(1));
-        playTone(BEEP_DEFAULT_FREQ + 300, 300, 20, 0, 3);
+        playTone(BEEP_DEFAULT_FREQ - 200, 40, 20);
+        playTone(BEEP_DEFAULT_FREQ, 40, 20);
+        playTone(BEEP_DEFAULT_FREQ + 200, 40, 20);
         break;
       default:
         break;
