@@ -199,9 +199,7 @@ const char STR_SCREEN[]  = TR_SCREEN;
 const char STR_SOUND_LABEL[]  = TR_SOUND_LABEL;
 const char STR_LENGTH[]  = TR_LENGTH;
 const char STR_BEEP_LENGTH[]  = TR_BEEP_LENGTH;
-#if defined(AUDIO)
 const char STR_SPKRPITCH[]  = TR_SPKRPITCH;
-#endif
 #if defined(HAPTIC)
 const char STR_HAPTIC_LABEL[]  = TR_HAPTIC_LABEL;
 const char STR_HAPTICSTRENGTH[]  = TR_HAPTICSTRENGTH;
@@ -390,8 +388,8 @@ const char STR_UNITSSYSTEM[]    = TR_UNITSSYSTEM;
 const char STR_VOICELANG[]  = TR_VOICELANG;
 const char STR_MODELIDUSED[]  = TR_MODELIDUSED;
 const char STR_BEEP_VOLUME[]  = INDENT TR_BEEP_VOLUME;
-const char STR_WAV_VOLUME[]  = INDENT TR_WAV_VOLUME;
-const char STR_BG_VOLUME[]  = INDENT TR_BG_VOLUME;
+// const char STR_WAV_VOLUME[]  = INDENT TR_WAV_VOLUME;
+// const char STR_BG_VOLUME[]  = INDENT TR_BG_VOLUME;
 const char STR_PERSISTENT_MAH[]  = TR_PERSISTENT_MAH;
 
 #if defined(NAVIGATION_MENUS)
