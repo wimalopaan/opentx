@@ -266,7 +266,10 @@ inline unsigned int getToneLength(uint16_t len)
 {
   unsigned int result = len; // default
   if (g_eeGeneral.beepLength < 0) {
-    result /= (1-g_eeGeneral.beepLength);
+    if (g_eeGeneral.beepLength == -1)
+        result /= 2; // let compiler replace with shift instead of soft div on M0
+    else
+        result = (result / 2) - (result / 4);
   }
   else if (g_eeGeneral.beepLength > 0) {
     result *= (1+g_eeGeneral.beepLength);
@@ -286,17 +289,15 @@ inline void buzzerOff()
   PWM_TIMER->SR = (U16)~TIM_FLAG_Update;  // solves random hiss issue when timer stopped
 }
 
-void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr) {
-  // TRACE("playTone freq %d, len %u, pause %u, flags %u, freqIncr %d", freq, len, pause, flags & 0x0f, freqIncr);
-
-  uint8_t repeat = flags & 0x0f;
-
+void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr)
+{
   if (!(flags & PLAY_NOW) && buzzerState.duration) {
       if (!buzzerFifo.full())
-        buzzerFifo.push(BuzzerTone(freq, len, pause, repeat, freqIncr));
+        buzzerFifo.push(BuzzerTone(freq, len, pause, flags, freqIncr));
       return;
   }
 
+  uint8_t repeat = flags & 0x0f;
   freq += g_eeGeneral.speakerPitch * 15;
   len = getToneLength(len);
   
