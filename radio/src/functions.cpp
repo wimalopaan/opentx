@@ -288,8 +288,8 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
 
 #if defined(SDCARD)
           case FUNC_PLAY_SOUND:
-          case FUNC_PLAY_TRACK:
-          case FUNC_PLAY_VALUE:
+          // case FUNC_PLAY_TRACK:
+          // case FUNC_PLAY_VALUE:
 #if defined(HAPTIC)
           case FUNC_HAPTIC:
 #endif
@@ -301,39 +301,39 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
                     AUDIO_PLAY(AU_SPECIAL_SOUND_FIRST + CFN_PARAM(cfn));
                   }
                 }
-                else if (CFN_FUNC(cfn) == FUNC_PLAY_VALUE) {
-                  PLAY_VALUE(CFN_PARAM(cfn), PLAY_INDEX);
-                }
-#if defined(HAPTIC)
-                else if (CFN_FUNC(cfn) == FUNC_HAPTIC) {
-                  haptic.event(AU_SPECIAL_SOUND_LAST+CFN_PARAM(cfn));
-                }
-#endif
-                else {
-                  playCustomFunctionFile(cfn, PLAY_INDEX);
-                }
+//                 else if (CFN_FUNC(cfn) == FUNC_PLAY_VALUE) {
+//                   PLAY_VALUE(CFN_PARAM(cfn), PLAY_INDEX);
+//                 }
+// #if defined(HAPTIC)
+//                 else if (CFN_FUNC(cfn) == FUNC_HAPTIC) {
+//                   haptic.event(AU_SPECIAL_SOUND_LAST+CFN_PARAM(cfn));
+//                 }
+// #endif
+//                 else {
+//                   playCustomFunctionFile(cfn, PLAY_INDEX);
+//                 }
               }
             }
             break;
           }
 
-          case FUNC_BACKGND_MUSIC:
-            if (!(newActiveFunctions & (1 << FUNCTION_BACKGND_MUSIC))) {
-              newActiveFunctions |= (1 << FUNCTION_BACKGND_MUSIC);
-              if (!IS_PLAYING(PLAY_INDEX)) {
-                playCustomFunctionFile(cfn, PLAY_INDEX);
-              }
-            }
-            break;
+          // case FUNC_BACKGND_MUSIC:
+          //   if (!(newActiveFunctions & (1 << FUNCTION_BACKGND_MUSIC))) {
+          //     // newActiveFunctions |= (1 << FUNCTION_BACKGND_MUSIC);
+          //     // if (!IS_PLAYING(PLAY_INDEX)) {
+          //     //   playCustomFunctionFile(cfn, PLAY_INDEX);
+          //     // }
+          //   }
+          //   break;
 
-          case FUNC_BACKGND_MUSIC_PAUSE:
-            newActiveFunctions |= (1 << FUNCTION_BACKGND_MUSIC_PAUSE);
-            break;
+          // case FUNC_BACKGND_MUSIC_PAUSE:
+          //   // newActiveFunctions |= (1 << FUNCTION_BACKGND_MUSIC_PAUSE);
+          //   break;
 
 #else
           case FUNC_PLAY_SOUND:
-          case FUNC_PLAY_TRACK:
-          case FUNC_PLAY_VALUE:
+          // case FUNC_PLAY_TRACK:
+          // case FUNC_PLAY_VALUE:
           {
             tmr10ms_t tmr10ms = get_tmr10ms();
             uint8_t repeatParam = CFN_PLAY_REPEAT(cfn);
@@ -343,15 +343,15 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
               if (CFN_FUNC(cfn) == FUNC_PLAY_SOUND) {
                 AUDIO_PLAY(AU_SPECIAL_SOUND_FIRST+param);
               }
-              else if (CFN_FUNC(cfn) == FUNC_PLAY_VALUE) {
-                PLAY_VALUE(param, PLAY_INDEX);
-              }
-              else {
-#if defined(GVARS)
-                if (CFN_FUNC(cfn) == FUNC_PLAY_TRACK && param > 250)
-                  param = GVAR_VALUE(param-251, getGVarFlightMode(mixerCurrentFlightMode, param-251));
-#endif
-              }
+//               else if (CFN_FUNC(cfn) == FUNC_PLAY_VALUE) {
+//                 PLAY_VALUE(param, PLAY_INDEX);
+//               }
+//               else {
+// #if defined(GVARS)
+//                 if (CFN_FUNC(cfn) == FUNC_PLAY_TRACK && param > 250)
+//                   param = GVAR_VALUE(param-251, getGVarFlightMode(mixerCurrentFlightMode, param-251));
+// #endif
+//               }
             }
             if (!active) {
               // PLAY_BOTH would change activeFnSwitches otherwise
@@ -368,14 +368,14 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
 #endif
 
 
-#if defined(SDCARD)
-          case FUNC_LOGS:
-            if (CFN_PARAM(cfn)) {
-              newActiveFunctions |= (1 << FUNCTION_LOGS);
-              logDelay = CFN_PARAM(cfn);
-            }
-            break;
-#endif
+//#if defined(SDCARD)
+          // case FUNC_LOGS:
+          //   if (CFN_PARAM(cfn)) {
+          //     newActiveFunctions |= (1 << FUNCTION_LOGS);
+          //     logDelay = CFN_PARAM(cfn);
+          //   }
+          //   break;
+//#endif
 
           case FUNC_BACKLIGHT:
             newActiveFunctions |= (1 << FUNCTION_BACKLIGHT);
