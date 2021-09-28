@@ -269,7 +269,7 @@ inline unsigned int getToneLength(uint16_t len)
     if (g_eeGeneral.beepLength == -1)
         result /= 2; // let compiler replace with shift instead of soft div on M0
     else
-        result = (result / 2) - (result / 4);
+        result = (result * 341) >> 10;
   }
   else if (g_eeGeneral.beepLength > 0) {
     result *= (1+g_eeGeneral.beepLength);
