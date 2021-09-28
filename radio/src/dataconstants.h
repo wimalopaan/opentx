@@ -76,7 +76,7 @@
   #define MAX_MIXERS                   32 
   #define MAX_EXPOS                    14
   #define MAX_LOGICAL_SWITCHES         12
-  #define MAX_SPECIAL_FUNCTIONS        12 // number of functions assigned to switches
+  #define MAX_SPECIAL_FUNCTIONS        11 // number of functions assigned to switches
   #define MAX_TRAINER_CHANNELS         8
   #define MAX_INPUTS                   16
   #define MAX_TELEMETRY_SENSORS        16
@@ -752,7 +752,7 @@ enum Functions {
   // FUNC_BACKGND_MUSIC_PAUSE,
   FUNC_VARIO,
   FUNC_HAPTIC,
-  FUNC_LOGS,
+  // FUNC_LOGS,
   FUNC_BACKLIGHT,
 #if defined(PCBTARANIS)
   FUNC_SCREENSHOT,
