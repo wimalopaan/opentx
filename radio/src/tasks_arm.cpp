@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  */
 
-#include "opentx.h"
 #include "mixer_scheduler.h"
+#include "opentx.h"
 
 RTOS_TASK_HANDLE menusTaskId;
 RTOS_DEFINE_STACK(menusStack, MENUS_STACK_SIZE);
@@ -84,10 +84,14 @@ bool isModuleSynchronous(uint8_t moduleIdx) {
 }
 
 void sendSynchronousPulses(uint8_t runMask) {
+  if ((runMask & (1 << INTERNAL_MODULE)) && isModuleSynchronous(INTERNAL_MODULE)) {
+    if (setupPulses(INTERNAL_MODULE))
+      intmoduleSendNextFrame();
+  }
   if ((runMask & (1 << EXTERNAL_MODULE)) && isModuleSynchronous(EXTERNAL_MODULE)) {
-    if(setupPulses(EXTERNAL_MODULE)){
+    if (setupPulses(EXTERNAL_MODULE)) {
       extmoduleSendNextFrame();
-    }    
+    }
   }
 }
 uint32_t nextMixerTime[NUM_MODULES];

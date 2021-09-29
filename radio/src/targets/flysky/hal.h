@@ -360,12 +360,23 @@ void disable_afhds2a(uint32_t port);
 
 // External Module
 
-/*---------------------PPM_IN------------------------------------------------*/
+// /*---------------------PPM_IN------------------------------------------------*/
 #define PPM_IN_GPIO_PORT GPIOF
 #define PPM_IN_PIN_PIN_MASK GPIO_IDR_9
-/*---------------------PPM_OUT------------------------------------------------*/
+// /*---------------------PPM_OUT------------------------------------------------*/
 #define PPM_OUT_GPIO_PORT GPIOF
 #define PPM_OUT_PIN_MASK GPIO_IDR_10
+
+#define EXTMODULE_RCC_AHBPeriph       RCC_AHBPeriph_GPIOF  // GPIOF
+#define EXTMODULE_RCC_APB2Periph      RCC_APB2Periph_TIM15 // TIM15_CH2
+#define EXTMODULE_TX_GPIO             GPIOF
+#define EXTMODULE_TX_GPIO_PIN         GPIO_Pin_10 // PF.10
+#define EXTMODULE_TX_GPIO_PinSource   GPIO_PinSource10
+#define EXTMODULE_TX_GPIO_AF          GPIO_AF_0
+#define EXTMODULE_TIMER               TIM15
+#define EXTMODULE_TIMER_IRQn          TIM15_IRQn
+#define EXTMODULE_TIMER_IRQHandler    TIM15_IRQHandler
+#define EXTMODULE_TIMER_FREQ          (PERI2_FREQUENCY * TIMER_MULT_APB2)
 
 extern void ISR_TIMER0_COMP_vect(void);
 extern void ISR_TIMER2_OVF_vect(void);
@@ -412,7 +423,6 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define BT_RCC_APB1Periph 0
 #define TELEMETRY_RCC_APB1Periph 0
 #define HAPTIC_RCC_APB2Periph 0
-#define EXTMODULE_RCC_APB2Periph 0
 #define BT_RCC_APB2Periph 0
 #define SD_GPIO_PRESENT_GPIO 0
 
@@ -573,8 +583,8 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define MIXER_SCHEDULER_TIMER_IRQHandler     TIM17_IRQHandler
 
 //all used RCC goes here
-#define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB | BUZZER_RCC_AHBPeriph)
+#define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB | BUZZER_RCC_AHBPeriph | EXTMODULE_RCC_AHBPeriph)
 #define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph)
-#define RCC_APB2_LIST                   (MIXER_SCHEDULER_TIMER_RCC_APB1Periph | PWM_RCC_APB2Periph)
+#define RCC_APB2_LIST                   (MIXER_SCHEDULER_TIMER_RCC_APB1Periph | PWM_RCC_APB2Periph | EXTMODULE_RCC_APB2Periph)
 
 #endif // _HAL_H_
