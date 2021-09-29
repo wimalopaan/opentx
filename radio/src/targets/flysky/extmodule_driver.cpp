@@ -123,9 +123,9 @@ void extmoduleSendNextFrame() {
       } else {
         //TRACE("ptr %d val %d", (uint8_t)(pulsePtr - modulePulsesData[EXTERNAL_MODULE].ppm.pulses), *pulsePtr);
         uint16_t pulse_len = *pulsePtr;
-        if ((uint8_t)(pulsePtr - modulePulsesData[EXTERNAL_MODULE].ppm.pulses) == 8) {
-          pulse_len -= GET_PPM_DELAY(EXTERNAL_MODULE) * 2 * 9;
-        }
+        //if ((uint8_t)(pulsePtr - modulePulsesData[EXTERNAL_MODULE].ppm.pulses) == 8) {
+          pulse_len -= GET_PPM_DELAY(EXTERNAL_MODULE) * 2;// * 9;
+        //}
         SetPPMTimCompare(GetPPMTimCompare() + pulse_len);
         pulsePtr += 1;
       }
