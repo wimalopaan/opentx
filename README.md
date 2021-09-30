@@ -15,7 +15,6 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 
 ## Next tasks/Known issues:
 
-* Can't restart internal module after turning it off or changing models.
 * Crossfire support
 * UART DMA fifo transfers
 * Add settings for ExpressLRS, since no LUA
@@ -25,6 +24,7 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 * PPM in (Trainer)
 
 ## Completed tasks:
+* Internal module can be restarted after turning it off or changing models.
 * External module (PPM) can be restarted after turning it off or changing models.
 * PPM out working.
 * Buzzer: Added beep pitch setting. (Janek)
