@@ -81,3 +81,7 @@ sudo cat /dev/ttyUSB0 115200
 * ADC code taken from OpenGround: https://github.com/fishpepper/OpenGround
 * This work is based on Jakub's (qba667) work and is forked from his repo.
 * All the contributors of OpenTX. 
+
+## Telegram group
+
+https://t.me/otx_flysky_i6x
