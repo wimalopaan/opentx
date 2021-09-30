@@ -215,7 +215,7 @@ void disable_module_timer( uint32_t module_index);
 //jsut to allow compilation
 void setupPulsesSbus(uint8_t port);
 void extmoduleSendNextFrame();
-void intmoduleSendNextFrame();
+//void intmoduleSendNextFrame();
 
 // Trainer driver
 #define SLAVE_MODE()                    (g_model.trainerMode == TRAINER_MODE_SLAVE)

@@ -33,15 +33,34 @@ void DisablePRTTim(void) {
 
 void intmoduleStop() {
   TRACE("intmoduleStop: Stopping internal RF");
+  DisablePRTTim();
   if (ahfds2aEnabled) {
-    DisablePRTTim();
     A7105_Sleep();
     ahfds2aEnabled = false;
   }
 }
 
 void intmoduleNoneStart() {
-  TRACE("intmoduleNoneStart: Init internal RF");
+  TRACE("intmoduleNoneStart: Init internal timer no pulses");
+    __IO uint32_t tmpreg;
+  SET_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM16EN);
+
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_TIM16EN);
+  CLEAR_BIT(TIM16->CR1, TIM_CR1_ARPE);   // Disable ARR Preload
+  CLEAR_BIT(TIM16->SMCR, TIM_SMCR_MSM);  // Disable Master Slave Mode
+  WRITE_REG(TIM16->PSC, 2);              // Prescaler
+  WRITE_REG(TIM16->ARR, 61759);          // Preload
+
+  /* TIM6 interrupt Init */
+  SET_BIT(TIM16->DIER, TIM_DIER_UIE);  // Enable update interrupt (UIE)
+  NVIC_SetPriority(TIM16_IRQn, 2);
+  NVIC_EnableIRQ(TIM16_IRQn);
+
+  (void)tmpreg;
+  ahfds2aEnabled = false;
+
+  EnablePRTTim();
 }
 
 void intmoduleAfhds2aStart() {
@@ -145,7 +164,9 @@ void EXTI2_3_IRQHandler(void) {
 /*------------handler for Radio_Protocol_Timer 3860 uS------------------------*/
 void TIM16_IRQHandler(void) {
   WRITE_REG(TIM16->SR, ~(TIM_SR_UIF));  // Clear the update interrupt flag (UIF)
-  SETBIT(RadioState, CALLER, TIM_CALL);
   setupPulses(INTERNAL_MODULE);
-  ActionAFHDS2A();
+  if (ahfds2aEnabled) {
+    SETBIT(RadioState, CALLER, TIM_CALL);
+    ActionAFHDS2A();
+  }
 }
