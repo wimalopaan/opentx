@@ -48,4 +48,4 @@ sudo cat /dev/ttyUSB0 115200
 
 ## Telegram group
 
-https://t.me/otx_flysky_i6x
+t.me /otx_flysky_i6x
