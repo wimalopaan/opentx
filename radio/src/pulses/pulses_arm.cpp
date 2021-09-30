@@ -148,13 +148,13 @@ void setupPulsesPXX(uint8_t port) {
 bool setupPulses(uint8_t port) {
   // TRACE("setupPulses");
   // TRACE("moduleFlag %d", moduleFlag[INTERNAL_MODULE]);
-  // TRACE("setupPulses module type %d",g_model.moduleData[INTERNAL_MODULE].type);
-#if defined(PCBI6)
-  // For backwards compatibility with old config that included other types.
-  if (g_model.moduleData[INTERNAL_MODULE].type >= MODULE_TYPE_COUNT) {
-    g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
-  }
-#endif
+  //TRACE("sP %d %d",port, g_model.moduleData[port].type);
+// #if defined(PCBI6)
+//   // For backwards compatibility with old config that included other types.
+//   if (g_model.moduleData[INTERNAL_MODULE].type >= MODULE_TYPE_COUNT) {
+//     g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
+//   }
+// #endif
   bool init_needed = false;
   bool send = false;
 
@@ -163,6 +163,7 @@ bool setupPulses(uint8_t port) {
   heartbeat |= (HEART_TIMER_PULSES << port);
 
   if (s_current_protocol[port] != required_protocol) {
+    TRACE("protocol change %d -> %d", s_current_protocol[port], required_protocol);
     init_needed = true;
     switch (s_current_protocol[port]) {  // stop existing protocol hardware
 #if defined(PXX)

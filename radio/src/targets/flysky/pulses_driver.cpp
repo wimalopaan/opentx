@@ -31,48 +31,55 @@ void extmodulePxxStart(void);
 void extmoduleTimerStart(uint32_t period, uint8_t state);
 
 void init_afhds2a(uint32_t port) {
-  TRACE("init_afhds2a");
   if (port == INTERNAL_MODULE) {
+    TRACE("init_afhds2a");
     intmoduleAfhds2aStart();
   }
 }
 
 void disable_afhds2a(uint32_t port) {
-  TRACE("disable_afhds2a");
-  if (port == INTERNAL_MODULE){
+  if (port == INTERNAL_MODULE) {
+    TRACE("disable_afhds2a");
     intmoduleStop();
   }
 }
 
 void init_ppm(uint32_t port) {
-  TRACE("Init PPM");
   if (port == EXTERNAL_MODULE) {
+    TRACE("Init PPM");
     extmodulePpmStart();
   }
 }
 
 void disable_ppm(uint32_t port) {
   if (port == EXTERNAL_MODULE) {
+    TRACE("Disable PPM");
     extmoduleStop();
   }
 }
 
 void init_no_pulses(uint32_t port) {
-  if (port == INTERNAL_MODULE){
+  TRACE("Init no pulses");
+  if (port == INTERNAL_MODULE) {    
     intmoduleNoneStart();
-  }    
+  }else{
+    extmoduleTimerStart(18, false);
+  }
 }
 
 void disable_no_pulses(uint32_t port) {
-  if (port == INTERNAL_MODULE)
+  if (port == INTERNAL_MODULE) {
+    TRACE("Disable no pulses internal");
     intmoduleStop();
-  else
+  } else {
+    TRACE("Disable no pulses external");
     extmoduleStop();
+  }
 }
 
 void init_sbusOut(uint32_t module_index) {}
-void disable_sbusOut(uint32_t module_index){}
-void setupPulsesSbus(uint8_t port){}
+void disable_sbusOut(uint32_t module_index) {}
+void setupPulsesSbus(uint8_t port) {}
 
 void init_serial(uint32_t port, uint32_t baudrate, uint32_t period_half_us) {
 }
@@ -80,16 +87,16 @@ void init_serial(uint32_t port, uint32_t baudrate, uint32_t period_half_us) {
 void disable_serial(uint32_t port) {
 }
 
-void init_module_timer(uint32_t port, uint32_t period, uint8_t state)
-{
+void init_module_timer(uint32_t port, uint32_t period, uint8_t state) {
   if (port == EXTERNAL_MODULE) {
+    TRACE("init_module_timer period %d", period);
     extmoduleTimerStart(period, state);
   }
 }
 
-void disable_module_timer(uint32_t port)
-{
+void disable_module_timer(uint32_t port) {
   if (port == EXTERNAL_MODULE) {
+    TRACE("disable_module_timer period");
     extmoduleStop();
   }
 }

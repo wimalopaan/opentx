@@ -77,7 +77,7 @@ bool isForcePowerOffRequested() {
 bool isModuleSynchronous(uint8_t moduleIdx) {
   switch (g_model.moduleData[moduleIdx].type) {
     case MODULE_TYPE_CROSSFIRE:
-    case MODULE_TYPE_NONE:
+    //case MODULE_TYPE_NONE:
       return true;
   }
   return false;
@@ -85,11 +85,16 @@ bool isModuleSynchronous(uint8_t moduleIdx) {
 
 void sendSynchronousPulses(uint8_t runMask) {
   if ((runMask & (1 << INTERNAL_MODULE)) && isModuleSynchronous(INTERNAL_MODULE)) {
-    if (setupPulses(INTERNAL_MODULE))
+    TRACE("SYNC setupPulses internal module");
+    if (setupPulses(INTERNAL_MODULE)) {
+      TRACE("SYNC intmoduleSendNextFrame internal module");
       intmoduleSendNextFrame();
+    }
   }
   if ((runMask & (1 << EXTERNAL_MODULE)) && isModuleSynchronous(EXTERNAL_MODULE)) {
+    TRACE("SYNC setupPulses external module");
     if (setupPulses(EXTERNAL_MODULE)) {
+      TRACE("SYNC intmoduleSendNextFrame external module");
       extmoduleSendNextFrame();
     }
   }

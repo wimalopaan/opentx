@@ -22,8 +22,7 @@
 #include "mixer_scheduler.h"
 #include "opentx.h"
 
-static bool initialized = false;
-
+static bool ahfds2aEnabled = false;
 /*----------------------PRT Timer----------------------------------------------*/
 void EnablePRTTim(void) {
   SET_BIT(TIM16->CR1, TIM_CR1_CEN);
@@ -34,10 +33,10 @@ void DisablePRTTim(void) {
 
 void intmoduleStop() {
   TRACE("intmoduleStop: Stopping internal RF");
-  if (initialized) {
+  if (ahfds2aEnabled) {
     DisablePRTTim();
     A7105_Sleep();
-    initialized = false;
+    ahfds2aEnabled = false;
   }
 }
 
@@ -129,7 +128,7 @@ void intmoduleAfhds2aStart() {
   NVIC_EnableIRQ(TIM16_IRQn);
 
   (void)tmpreg;
-  initialized = true;
+  ahfds2aEnabled = true;
   initAFHDS2A();
   EnablePRTTim();
 }
@@ -147,10 +146,6 @@ void EXTI2_3_IRQHandler(void) {
 void TIM16_IRQHandler(void) {
   WRITE_REG(TIM16->SR, ~(TIM_SR_UIF));  // Clear the update interrupt flag (UIF)
   SETBIT(RadioState, CALLER, TIM_CALL);
-  setupPulses(INTERNAL_MODULE);  
+  setupPulses(INTERNAL_MODULE);
   ActionAFHDS2A();
-}
-
-void intmoduleSendNextFrame() {
-
 }

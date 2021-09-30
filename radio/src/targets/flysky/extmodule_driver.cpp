@@ -20,24 +20,6 @@
 
 #include "opentx.h"
 
-uint16_t GetPPMTimCapture(void) {
-  return EXTMODULE_TIMER->CCR1;
-}
-uint32_t GetPPMOutState(void) {
-  return PPM_OUT_GPIO_PORT->IDR & PPM_OUT_PIN_MASK;
-}
-void SetPPMTimCompare(uint16_t val) {
-  EXTMODULE_TIMER->CCR2 = val;
-}
-uint16_t GetPPMTimCompare(void) {
-  return EXTMODULE_TIMER->CCR2;
-}
-uint32_t GetPPMTimCompareInterruptFlag(void) {
-  return EXTMODULE_TIMER->SR & TIM_SR_CC2IF;
-}
-void ClearPPMTimCompareInterruptFlag(void) {
-  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC2IF));
-}
 void EnablePPMTim(void) {
   SET_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
@@ -50,21 +32,45 @@ void EnablePPMOut(void) {
 void DisablePPMOut(void) {
   CLEAR_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
 }
-void sei(void) {
-  __enable_irq();
-}
-void cli(void) {
-  __disable_irq();
-}
+static bool nopulses = true;
 
 void extmoduleStop() {
   TRACE("extmoduleStop");
   DisablePPMOut();
   DisablePPMTim();
+  NVIC_DisableIRQ(EXTMODULE_TIMER_IRQn);
+}
+
+void extmoduleTimerStart(uint32_t period, uint8_t state) {
+  TRACE("extmoduleTimerStart");
+  nopulses = true;
+  GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
+
+  GPIO_InitTypeDef GPIO_InitStructure;
+  GPIO_InitStructure.GPIO_Pin = EXTMODULE_TX_GPIO_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_Init(EXTMODULE_TX_GPIO, &GPIO_InitStructure);
+  GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);  // Set high
+
+  EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
+  EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1;  // 0.5uS (2Mhz)
+  EXTMODULE_TIMER->ARR = (2000 * period);
+  EXTMODULE_TIMER->CCR2 = (2000 * period) - 1000;
+  EXTMODULE_TIMER->EGR = 1;  // Restart
+  EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;
+  EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;  // Enable this interrupt
+  EXTMODULE_TIMER->CR1 |= TIM_CR1_CEN;
+
+  NVIC_EnableIRQ(EXTMODULE_TIMER_IRQn);
+  NVIC_SetPriority(EXTMODULE_TIMER_IRQn, 7);
 }
 
 void extmodulePpmStart() {
   TRACE("extmodulePpmStart");
+  nopulses = false;
   /**EXTMODULE_TIMER GPIO Configuration
   PF9   ------> TIM15_CH1
   PF10   ------> TIM15_CH2
@@ -89,10 +95,13 @@ void extmodulePpmStart() {
 
   EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
   EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1;  // 0.5uS
-  EXTMODULE_TIMER->CCMR1 |= TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0;
+  EXTMODULE_TIMER->ARR = 65535;
+  EXTMODULE_TIMER->CCR2 = 600;
+  EXTMODULE_TIMER->CCMR1 = TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0;
   EXTMODULE_TIMER->BDTR |= TIM_BDTR_MOE;
   EXTMODULE_TIMER->CCMR1 |= TIM_CCMR1_CC1S_0 | TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1;
-
+  EXTMODULE_TIMER->EGR = 1;  // Restart
+  
   WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC1IF));  // Clear capture interrupt flag (PPMIN)
   EXTMODULE_TIMER->DIER |= TIM_DIER_CC1IE;          // Enable capture interrupt     (PPMIN)
 
@@ -110,8 +119,9 @@ void extmodulePxxStart() {
   TRACE("extmodulePxxStart");
 }
 
-void extmoduleSendNextFrame() {
+inline void extmoduleSendNextFrame() {
   static bool delay = true;
+  static uint16_t delay_halfus = GET_PPM_DELAY(EXTERNAL_MODULE) * 2;
   if (s_current_protocol[EXTERNAL_MODULE] == PROTO_PPM) {
     //TRACE("modulePulsesData[EXTERNAL_MODULE].ppm: %p",(void*)&modulePulsesData[EXTERNAL_MODULE].ppm);
     //DUMP((uint8_t*)(modulePulsesData[EXTERNAL_MODULE].ppm.pulses), 40);
@@ -119,14 +129,10 @@ void extmoduleSendNextFrame() {
 
     if (*pulsePtr != 0) {
       if (delay) {
-        SetPPMTimCompare(GetPPMTimCompare() + GET_PPM_DELAY(EXTERNAL_MODULE) * 2);
+        EXTMODULE_TIMER->CCR2 = EXTMODULE_TIMER->CCR2 + delay_halfus;
       } else {
         //TRACE("ptr %d val %d", (uint8_t)(pulsePtr - modulePulsesData[EXTERNAL_MODULE].ppm.pulses), *pulsePtr);
-        uint16_t pulse_len = *pulsePtr;
-        //if ((uint8_t)(pulsePtr - modulePulsesData[EXTERNAL_MODULE].ppm.pulses) == 8) {
-          pulse_len -= GET_PPM_DELAY(EXTERNAL_MODULE) * 2;// * 9;
-        //}
-        SetPPMTimCompare(GetPPMTimCompare() + pulse_len);
+        EXTMODULE_TIMER->CCR2 = EXTMODULE_TIMER->CCR2 + *pulsePtr - delay_halfus;
         pulsePtr += 1;
       }
     } else {
@@ -134,50 +140,22 @@ void extmoduleSendNextFrame() {
       // polarity 1 +
       // polarity 0 -
       EXTMODULE_TIMER->CCER = TIM_CCER_CC2E | (GET_PPM_POLARITY(EXTERNAL_MODULE) ? 0 : TIM_CCER_CC2P);
-      SetPPMTimCompare(GetPPMTimCompare() + GET_PPM_DELAY(EXTERNAL_MODULE) * 2);
+      EXTMODULE_TIMER->CCR2 = EXTMODULE_TIMER->CCR2 + delay_halfus;
+      delay_halfus = GET_PPM_DELAY(EXTERNAL_MODULE) * 2;
       setupPulses(EXTERNAL_MODULE);
     }
     delay = !delay;
+  } else {
+    EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;
   }
 }
-
-void extmoduleTimerStart(uint32_t period, uint8_t state) {
-  // if (state)
-  //   EXTERNAL_MODULE_ON();
-  // else if (!IS_TRAINER_EXTERNAL_MODULE())
-  //   EXTERNAL_MODULE_OFF();
-
-  // GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
-
-  // GPIO_InitTypeDef GPIO_InitStructure;
-  // GPIO_InitStructure.GPIO_Pin = EXTMODULE_TX_GPIO_PIN;
-  // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-  // GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  // GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  // GPIO_Init(EXTMODULE_TX_GPIO, &GPIO_InitStructure);
-  // GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN); // Set high
-
-  // EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
-  // EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1; // 0.5uS from 30MHz
-  // EXTMODULE_TIMER->ARR = (2000 * period);
-  // EXTMODULE_TIMER->CCR2 = (2000 * period) - 1000;
-  // EXTMODULE_TIMER->EGR = 1; // Restart
-  // EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;
-  // EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE; // Enable this interrupt
-  // EXTMODULE_TIMER->CR1 |= TIM_CR1_CEN;
-
-  // NVIC_EnableIRQ(EXTMODULE_TIMER_CC_IRQn);
-  // NVIC_SetPriority(EXTMODULE_TIMER_CC_IRQn, 7);
-}
-/*--------------handler for PPM Timer ----------------------------------------*/
-//void TIM15_IRQHandler(void) {
-// TODO decide to bring implementation of pulses.cpp from erfly6 or not
-//}
 
 extern "C" void EXTMODULE_TIMER_IRQHandler() {
   if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;    // Clears interrupt on ch2
+    if (nopulses) {
+      setupPulses(EXTERNAL_MODULE);
+    }
     extmoduleSendNextFrame();
   }
   if (EXTMODULE_TIMER->SR & TIM_SR_CC1IF) {  // Capture PPM-IN
