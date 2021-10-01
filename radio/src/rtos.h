@@ -167,8 +167,8 @@ template<int SIZE>
 #ifdef __cplusplus
   }
 #endif
-
-  #define RTOS_MS_PER_TICK              (1000 / CFG_SYSTICK_FREQ)  // RTOS timer tick length in ms (currently 1 for STM32, 2 for others)
+                                        // 500 to match STM32 default = 1
+  #define RTOS_MS_PER_TICK              (500 / CFG_SYSTICK_FREQ)  // RTOS timer tick length in ms (currently 1 for STM32, 2 for others)
 
   typedef OS_TID RTOS_TASK_HANDLE;
   typedef OS_MutexID RTOS_MUTEX_HANDLE;
