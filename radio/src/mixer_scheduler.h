@@ -45,6 +45,9 @@ void mixerSchedulerResetTimer();
 // Set the scheduling period for a given module
 void mixerSchedulerSetPeriod(uint8_t moduleIdx, uint16_t periodUs);
 
+// Clear the flag before waiting
+void mixerSchedulerClearTrigger();
+
 // Wait for the scheduler timer to trigger
 // returns true if timeout, false otherwise
 bool mixerSchedulerWaitForTrigger(uint8_t timeoutMs);
@@ -68,6 +71,7 @@ void mixerSchedulerISRTrigger();
 #define mixerSchedulerStop()
 #define mixerSchedulerResetTimer()
 #define mixerSchedulerSetPeriod(m,p)
+#define mixerSchedulerClearTrigger()
 
 static inline bool mixerSchedulerWaitForTrigger(uint8_t timeout)
 {

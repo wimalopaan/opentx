@@ -77,7 +77,7 @@ bool isForcePowerOffRequested() {
 bool isModuleSynchronous(uint8_t moduleIdx) {
   switch (g_model.moduleData[moduleIdx].type) {
     case MODULE_TYPE_CROSSFIRE:
-    //case MODULE_TYPE_NONE:
+      //case MODULE_TYPE_NONE:
       return true;
   }
   return false;
@@ -103,6 +103,7 @@ uint32_t nextMixerTime[NUM_MODULES];
 
 TASK_FUNCTION(mixerTask) {
   s_pulses_paused = true;
+  static uint32_t t = 0;
 
   mixerSchedulerInit();
   mixerSchedulerStart();
@@ -111,11 +112,11 @@ TASK_FUNCTION(mixerTask) {
 #if defined(SBUS)
     processSbusInput();
 #endif
-
     // run mixer at least every 30ms
     bool timeout = mixerSchedulerWaitForTrigger(30);
 
-    // re-enable trigger
+    //re-enable trigger
+    mixerSchedulerClearTrigger();
     mixerSchedulerEnableTrigger();
 #if defined(SIMU)
     if (pwrCheck() == e_power_off)

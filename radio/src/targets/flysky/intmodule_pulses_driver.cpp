@@ -52,7 +52,7 @@ void intmoduleNoneStart() {
   WRITE_REG(TIM16->PSC, 2);              // Prescaler
   WRITE_REG(TIM16->ARR, 61759);          // Preload
 
-  /* TIM6 interrupt Init */
+  /* TIM16 interrupt Init */
   SET_BIT(TIM16->DIER, TIM_DIER_UIE);  // Enable update interrupt (UIE)
   NVIC_SetPriority(TIM16_IRQn, 2);
   NVIC_EnableIRQ(TIM16_IRQn);
@@ -141,7 +141,7 @@ void intmoduleAfhds2aStart() {
   WRITE_REG(TIM16->PSC, 2);              // Prescaler
   WRITE_REG(TIM16->ARR, 61759);          // Preload
 
-  /* TIM6 interrupt Init */
+  /* TIM16 interrupt Init */
   SET_BIT(TIM16->DIER, TIM_DIER_UIE);  // Enable update interrupt (UIE)
   NVIC_SetPriority(TIM16_IRQn, 2);
   NVIC_EnableIRQ(TIM16_IRQn);

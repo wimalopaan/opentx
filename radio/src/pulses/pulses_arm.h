@@ -58,7 +58,7 @@ PACK(struct Dsm2TimerPulsesData {
 #endif
 
 #define PPM_PERIOD_HALF_US(module)   ((g_model.moduleData[module].ppm.frameLength * 5 + 225) * 200) /*half us*/
-#define PPM_PERIOD(module)           (PPM_PERIOD_HALF_US(module) / 2000) /*ms*/
+#define PPM_PERIOD(module)           (PPM_PERIOD_HALF_US(module) / 2) /*us*/
 #define DSM2_BAUDRATE                125000
 #define DSM2_PERIOD                  22 /*ms*/
 #define SBUS_BAUDRATE                100000

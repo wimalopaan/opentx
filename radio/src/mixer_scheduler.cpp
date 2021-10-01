@@ -37,10 +37,13 @@ static MixerSchedule mixerSchedules[NUM_MODULES];
 
 uint16_t getMixerSchedulerPeriod()
 {
+  if (mixerSchedules[INTERNAL_MODULE].period) {
+    return mixerSchedules[INTERNAL_MODULE].period;
+  }
   if (mixerSchedules[EXTERNAL_MODULE].period) {
     return mixerSchedules[EXTERNAL_MODULE].period;
   }
-
+  
   return MIXER_SCHEDULER_DEFAULT_PERIOD_US;
 }
 
@@ -62,9 +65,13 @@ void mixerSchedulerSetPeriod(uint8_t moduleIdx, uint16_t periodUs)
   mixerSchedules[moduleIdx].period = periodUs;
 }
 
-bool mixerSchedulerWaitForTrigger(uint8_t timeoutMs)
+void mixerSchedulerClearTrigger()
 {
   RTOS_CLEAR_FLAG(mixerFlag);
+}
+
+bool mixerSchedulerWaitForTrigger(uint8_t timeoutMs)
+{
   return RTOS_WAIT_FLAG(mixerFlag, timeoutMs);
 }
 

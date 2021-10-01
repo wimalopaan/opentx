@@ -117,7 +117,8 @@ void eepromPageRead(uint8_t *buffer, size_t address, size_t size)
   // uint8_t end_page = (address + size -1) / 64;
   // TRACE("eepromPageRead addr %d size %d [from %d to %d]", address, size, start_page, end_page);
   i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, wb, 2, buffer, size);
-  delay_ms(1);
+  //delay_ms(1);
+  RTOS_WAIT_MS(1);
   //DUMP(buffer, size);
 }
 
@@ -132,7 +133,8 @@ void eepromPageWrite(uint8_t *buffer, uint16_t address, uint8_t size)
   memcpy(temp + 2, buffer, size);
   //DUMP(temp, size + 2);
   i2c_transfer7(I2C2, I2C_ADDRESS_EEPROM, temp, size + 2, NULL, 0);
-  delay_ms(5);
+  //delay_ms(5);
+  RTOS_WAIT_MS(5);
 
 #if defined(EEPROM_VERIFY_WRITES)
   eepromPageRead(temp, address, size);

@@ -149,12 +149,12 @@ bool setupPulses(uint8_t port) {
   // TRACE("setupPulses");
   // TRACE("moduleFlag %d", moduleFlag[INTERNAL_MODULE]);
   //TRACE("sP %d %d",port, g_model.moduleData[port].type);
-// #if defined(PCBI6)
-//   // For backwards compatibility with old config that included other types.
-//   if (g_model.moduleData[INTERNAL_MODULE].type >= MODULE_TYPE_COUNT) {
-//     g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
-//   }
-// #endif
+  // #if defined(PCBI6)
+  //   // For backwards compatibility with old config that included other types.
+  //   if (g_model.moduleData[INTERNAL_MODULE].type >= MODULE_TYPE_COUNT) {
+  //     g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
+  //   }
+  // #endif
   bool init_needed = false;
   bool send = false;
 
@@ -292,8 +292,7 @@ bool setupPulses(uint8_t port) {
       mixerSchedulerSetPeriod(port, PPM_PERIOD(port));
       break;
 
-    case PROTO_AFHDS2A_SPI:      
-      mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
+    case PROTO_AFHDS2A_SPI:
       // this is kept inside targets/flysky
       // setupPulsesAfhds2aSpi(port);
       break;
@@ -350,6 +349,7 @@ bool setupPulses(uint8_t port) {
         break;
       default:
         init_no_pulses(port);
+        mixerSchedulerSetPeriod(port, 0);
         break;
     }
   }
