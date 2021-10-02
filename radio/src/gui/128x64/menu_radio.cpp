@@ -28,10 +28,7 @@ void menuRadioSpecialFunctions(event_t event)
     menuHorizontalPosition = 0;
   }
 #endif
-  TRACE("menuModelSpecialFunctions 1");
   MENU(STR_MENUSPECIALFUNCS, menuTabGeneral, MENU_RADIO_SPECIAL_FUNCTIONS, HEADER_LINE+MAX_SPECIAL_FUNCTIONS, { HEADER_LINE_COLUMNS NAVIGATION_LINE_BY_LINE|4/*repeated*/ });
-  TRACE("menuModelSpecialFunctions 2");
-  DUMP((uint8_t*)g_eeGeneral.customFn, sizeof(g_eeGeneral.customFn));
   menuSpecialFunctions(event, g_eeGeneral.customFn, &globalFunctionsContext);
 
 #if defined(PCBX7)

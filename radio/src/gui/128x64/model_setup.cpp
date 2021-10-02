@@ -747,7 +747,7 @@ void menuModelSetup(event_t event)
           MODEL_SETUP_2ND_COLUMN, 
           y, 
           STR_I6X_PROTOCOLS, 
-          1+g_model.moduleData[0].rfProtocol, 
+          1+g_model.moduleData[INTERNAL_MODULE].rfProtocol, 
           attr);
         if (attr) {
           g_model.moduleData[INTERNAL_MODULE].rfProtocol = 

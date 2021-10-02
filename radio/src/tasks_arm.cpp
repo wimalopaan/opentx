@@ -92,9 +92,7 @@ void sendSynchronousPulses(uint8_t runMask) {
   //   }
   // }
   if ((runMask & (1 << EXTERNAL_MODULE)) && isModuleSynchronous(EXTERNAL_MODULE)) {
-    TRACE("SYNC setupPulses external module");
     if (setupPulses(EXTERNAL_MODULE)) {
-      TRACE("SYNC intmoduleSendNextFrame external module");
       extmoduleSendNextFrame();
     }
   }
@@ -103,7 +101,6 @@ uint32_t nextMixerTime[NUM_MODULES];
 
 TASK_FUNCTION(mixerTask) {
   s_pulses_paused = true;
-  static uint32_t t = 0;
 
   mixerSchedulerInit();
   mixerSchedulerStart();

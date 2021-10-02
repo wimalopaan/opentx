@@ -101,7 +101,7 @@ void extmodulePpmStart() {
   EXTMODULE_TIMER->BDTR |= TIM_BDTR_MOE;
   EXTMODULE_TIMER->CCMR1 |= TIM_CCMR1_CC1S_0 | TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1;
   EXTMODULE_TIMER->EGR = 1;  // Restart
-  
+
   WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC1IF));  // Clear capture interrupt flag (PPMIN)
   EXTMODULE_TIMER->DIER |= TIM_DIER_CC1IE;          // Enable capture interrupt     (PPMIN)
 
@@ -145,6 +145,10 @@ inline void extmoduleSendNextFrame() {
       setupPulses(EXTERNAL_MODULE);
     }
     delay = !delay;
+// #if defined(CROSSFIRE)
+//   } else if (s_current_protocol[EXTERNAL_MODULE] == PROTO_CROSSFIRE) {
+//       sportSendBuffer(extmodulePulsesData.crossfire.pulses, extmodulePulsesData.crossfire.length);
+// #endif
   } else {
     EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;
   }
