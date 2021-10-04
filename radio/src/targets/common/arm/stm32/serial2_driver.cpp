@@ -83,7 +83,6 @@ void uart3Setup(unsigned int baudrate, bool dma)
     NVIC_SetPriority(SERIAL_USART_IRQn, 7);
     NVIC_EnableIRQ(SERIAL_USART_IRQn);
   }
-//#endif
 }
 
 void serial2Init(unsigned int mode, unsigned int protocol)

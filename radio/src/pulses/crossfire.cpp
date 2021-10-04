@@ -20,44 +20,41 @@
 
 #include "opentx.h"
 
-#define CROSSFIRE_CH_CENTER         0x3E0
-#define CROSSFIRE_CH_BITS           11
+#define CROSSFIRE_CH_CENTER 0x3E0
+#define CROSSFIRE_CH_BITS 11
 
 #if defined(PPM_CENTER_ADJUSTABLE)
-  #define CROSSFIRE_CENTER_CH_OFFSET(ch)            ((2 * limitAddress(ch)->ppmCenter) + 1)  // + 1 is for rouding
+#define CROSSFIRE_CENTER_CH_OFFSET(ch) ((2 * limitAddress(ch)->ppmCenter) + 1)  // + 1 is for rouding
 #else
-  #define CROSSFIRE_CENTER_CH_OFFSET(ch)            (0)
+#define CROSSFIRE_CENTER_CH_OFFSET(ch) (0)
 #endif
 
-
-uint8_t createCrossfireModelIDFrame(uint8_t * frame)
-{
-  uint8_t * buf = frame;
-  *buf++ = UART_SYNC;                                 /* device address */
-  *buf++ = 8;                                         /* frame length */
-  *buf++ = COMMAND_ID;                                /* cmd type */
-  *buf++ = MODULE_ADDRESS;                            /* Destination Address */
-  *buf++ = RADIO_ADDRESS;                             /* Origin Address */
-  *buf++ = SUBCOMMAND_CRSF;                           /* sub command */
-  *buf++ = COMMAND_MODEL_SELECT_ID;                   /* command of set model/receiver id */
-  *buf++ = g_model.header.modelId[EXTERNAL_MODULE];   /* model ID */
+uint8_t createCrossfireModelIDFrame(uint8_t* frame) {
+  uint8_t* buf = frame;
+  *buf++ = UART_SYNC;                               /* device address */
+  *buf++ = 8;                                       /* frame length */
+  *buf++ = COMMAND_ID;                              /* cmd type */
+  *buf++ = MODULE_ADDRESS;                          /* Destination Address */
+  *buf++ = RADIO_ADDRESS;                           /* Origin Address */
+  *buf++ = SUBCOMMAND_CRSF;                         /* sub command */
+  *buf++ = COMMAND_MODEL_SELECT_ID;                 /* command of set model/receiver id */
+  *buf++ = g_model.header.modelId[EXTERNAL_MODULE]; /* model ID */
   *buf++ = crc8_BA(frame + 2, 6);
   *buf++ = crc8(frame + 2, 7);
   return buf - frame;
 }
 
 // Range for pulses (channels output) is [-1024:+1024]
-uint8_t createCrossfireChannelsFrame(uint8_t * frame, int16_t * pulses)
-{
-  uint8_t * buf = frame;
+uint8_t createCrossfireChannelsFrame(uint8_t* frame, int16_t* pulses) {
+  uint8_t* buf = frame;
   *buf++ = MODULE_ADDRESS;
-  *buf++ = 24; // 1(ID) + 22 + 1(CRC)
-  uint8_t * crc_start = buf;
+  *buf++ = 24;  // 1(ID) + 22 + 1(CRC)
+  uint8_t* crc_start = buf;
   *buf++ = CHANNELS_ID;
   uint32_t bits = 0;
   uint8_t bitsavailable = 0;
-  for (int i=0; i<CROSSFIRE_CHANNELS_COUNT; i++) {
-    uint32_t val = limit(0, CROSSFIRE_CH_CENTER + (((pulses[i]) * 4) / 5), 2*CROSSFIRE_CH_CENTER);
+  for (int i = 0; i < CROSSFIRE_CHANNELS_COUNT; i++) {
+    uint32_t val = limit(0, CROSSFIRE_CH_CENTER + (((pulses[i]) * 4) / 5), 2 * CROSSFIRE_CH_CENTER);
     bits |= val << bitsavailable;
     bitsavailable += CROSSFIRE_CH_BITS;
     while (bitsavailable >= 8) {
@@ -68,4 +65,25 @@ uint8_t createCrossfireChannelsFrame(uint8_t * frame, int16_t * pulses)
   }
   *buf++ = crc8(crc_start, 23);
   return buf - frame;
+}
+
+void setupPulsesCrossfire() {
+  uint8_t* pulses = modulePulsesData[EXTERNAL_MODULE].crossfire.pulses;
+  // #if defined(LUA)
+  //   if (outputTelemetryBuffer.destination == TELEMETRY_ENDPOINT_SPORT) {
+  //     memcpy(pulses, outputTelemetryBuffer.data, outputTelemetryBufferSize);
+  //     modulePulsesData[EXTERNAL_MODULE].crossfire.length = outputTelemetryBufferSize;
+  //     outputTelemetryBuffer.reset();
+  //   } else
+  // #endif
+  {
+    // if (moduleState[EXTERNAL_MODULE].counter == CRSF_FRAME_MODELID) {
+    //   modulePulsesData[EXTERNAL_MODULE].crossfire.length = createCrossfireModelIDFrame(pulses);
+    //   moduleState[EXTERNAL_MODULE].counter = CRSF_FRAME_MODELID_SENT;
+    // } else {
+    modulePulsesData[EXTERNAL_MODULE].crossfire.length = createCrossfireChannelsFrame(
+        pulses,
+        &channelOutputs[g_model.moduleData[EXTERNAL_MODULE].channelsStart]);
+    // }
+  }
 }

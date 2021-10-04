@@ -84,6 +84,12 @@ enum CrossfireSensorIndexes {
   UNKNOWN_INDEX,
 };
 
+enum CrossfireFrames{
+  CRSF_FRAME_CHANNEL,
+  CRSF_FRAME_MODELID,
+  CRSF_FRAME_MODELID_SENT
+};
+
 void processCrossfireTelemetryData(uint8_t data);
 void crossfireSetDefault(int index, uint8_t id, uint8_t subId);
 bool isCrossfireOutputBufferAvailable();

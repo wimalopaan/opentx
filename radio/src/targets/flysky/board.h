@@ -445,7 +445,8 @@ void debugPutc(const char c);
 // Telemetry driver
 void telemetryPortInit(uint32_t baudrate, uint8_t mode);
 void telemetryPortSetDirectionOutput(void);
-void sportSendBuffer(uint8_t * buffer, uint32_t count);
+//void sportSendBuffer(uint8_t * buffer, uint32_t count);
+void sportSendBuffer(const uint8_t* buffer, unsigned long count);
 uint8_t telemetryGetByte(uint8_t * byte);
 extern uint32_t telemetryErrors;
 
@@ -482,7 +483,7 @@ void hapticOff(void);
 
 // Second serial port driver
 #if defined(SERIAL_GPIO)
-#define DEBUG_BAUDRATE                  115200
+#define DEBUG_BAUDRATE                  921600
 #define SERIAL2
 extern uint8_t serial2Mode;
 void serial2Init(unsigned int mode, unsigned int protocol);
@@ -531,9 +532,8 @@ extern uint8_t currentTrainerMode;
 void checkTrainerSettings(void);
 
 #if defined(__cplusplus)
-#include "fifo.h"
-#include "dmastream.h"
-#include "dmafifo.h"
+//#include "fifo.h"
+//#include "dmafifo.h"
 
 #if defined(CROSSFIRE)
 #define TELEMETRY_FIFO_SIZE             128
@@ -541,8 +541,8 @@ void checkTrainerSettings(void);
 #define TELEMETRY_FIFO_SIZE             64
 #endif
 
-extern Fifo<uint8_t, TELEMETRY_FIFO_SIZE> telemetryFifo;
-extern DMAFifo<32> serial2RxFifo;
+//extern Fifo<uint8_t, TELEMETRY_FIFO_SIZE> telemetryFifo;
+//extern DMAFifo<32> serial2RxFifo;
 #endif
 
 

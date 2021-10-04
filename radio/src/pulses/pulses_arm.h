@@ -21,55 +21,57 @@
 #ifndef _PULSES_ARM_H_
 #define _PULSES_ARM_H_
 
-#include "pulses/pxx2.h"
 #include "pulses/pxx1.h"
+#include "pulses/pxx2.h"
 
 #if NUM_MODULES == 2
-  #define MODULES_INIT(...)            __VA_ARGS__, __VA_ARGS__
+#define MODULES_INIT(...) __VA_ARGS__, __VA_ARGS__
 #else
-  #define MODULES_INIT(...)            __VA_ARGS__
+#define MODULES_INIT(...) __VA_ARGS__
 #endif
 
 extern uint8_t s_current_protocol[NUM_MODULES];
 extern uint8_t s_pulses_paused;
 extern uint16_t failsafeCounter[NUM_MODULES];
 
-template<class T> struct PpmPulsesData {
+template <class T>
+struct PpmPulsesData {
   T pulses[20];
-  T * ptr;
+  T* ptr;
 };
 
 #if defined(PPM_PIN_SERIAL)
 PACK(struct Dsm2SerialPulsesData {
-  uint8_t  pulses[64];
-  uint8_t * ptr;
-  uint8_t  serialByte ;
-  uint8_t  serialBitCount;
+  uint8_t pulses[64];
+  uint8_t* ptr;
+  uint8_t serialByte;
+  uint8_t serialBitCount;
   uint16_t _alignment;
 });
 #else
 #define MAX_PULSES_TRANSITIONS 300
 PACK(struct Dsm2TimerPulsesData {
   pulse_duration_t pulses[MAX_PULSES_TRANSITIONS];
-  pulse_duration_t * ptr;
+  pulse_duration_t* ptr;
   uint16_t rest;
   uint8_t index;
 });
 #endif
 
-#define PPM_PERIOD_HALF_US(module)   ((g_model.moduleData[module].ppm.frameLength * 5 + 225) * 200) /*half us*/
-#define PPM_PERIOD(module)           (PPM_PERIOD_HALF_US(module) / 2) /*us*/
-#define DSM2_BAUDRATE                125000
-#define DSM2_PERIOD                  22 /*ms*/
-#define SBUS_BAUDRATE                100000
-#define SBUS_PERIOD_HALF_US          ((g_model.moduleData[EXTERNAL_MODULE].sbus.refreshRate * 5 + 225) * 200) /*half us*/
-#define SBUS_PERIOD                  (SBUS_PERIOD_HALF_US / 2000) /*ms*/
-#define MULTIMODULE_BAUDRATE         100000
-#define MULTIMODULE_PERIOD           7 /*ms*/
+#define PPM_PERIOD_HALF_US(module) ((g_model.moduleData[module].ppm.frameLength * 5 + 225) * 200) /*half us*/
+#define PPM_PERIOD(module) (PPM_PERIOD_HALF_US(module) / 2)                                       /*us*/
+#define DSM2_BAUDRATE 125000
+#define DSM2_PERIOD 22 /*ms*/
+#define SBUS_BAUDRATE 100000
+#define SBUS_PERIOD_HALF_US ((g_model.moduleData[EXTERNAL_MODULE].sbus.refreshRate * 5 + 225) * 200) /*half us*/
+#define SBUS_PERIOD (SBUS_PERIOD_HALF_US / 2000)                                                     /*ms*/
+#define MULTIMODULE_BAUDRATE 100000
+#define MULTIMODULE_PERIOD 7 /*ms*/
 
-#define CROSSFIRE_FRAME_MAXLEN         64
+#define CROSSFIRE_FRAME_MAXLEN 64
 PACK(struct CrossfirePulsesData {
   uint8_t pulses[CROSSFIRE_FRAME_MAXLEN];
+  uint8_t length;
 });
 
 union ModulePulsesData {
@@ -118,6 +120,7 @@ extern TrainerPulsesData trainerPulsesData;
 extern const uint16_t CRCTable[];
 
 bool setupPulses(uint8_t port);
+void setupPulsesCrossfire();
 void setupPulsesDSM2(uint8_t port);
 void setupPulsesMultimodule(uint8_t port);
 void setupPulsesSbus(uint8_t port);
@@ -133,8 +136,7 @@ void sendByteSbus(uint8_t byte);
 void Hubsan_Init();
 #endif
 
-inline void startPulses()
-{
+inline void startPulses() {
   s_pulses_paused = false;
 
 #if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
@@ -155,9 +157,8 @@ inline void resumePulses() { s_pulses_paused = false; }
 
 #define SEND_FAILSAFE_NOW(idx) failsafeCounter[idx] = 1
 
-inline void SEND_FAILSAFE_1S()
-{
-  for (int i=0; i<NUM_MODULES; i++) {
+inline void SEND_FAILSAFE_1S() {
+  for (int i = 0; i < NUM_MODULES; i++) {
     failsafeCounter[i] = 100;
   }
 }
@@ -167,12 +168,19 @@ inline void SEND_FAILSAFE_1S()
 void setCustomFailsafe(uint8_t moduleIndex);
 
 #if defined(PCBXLITE) && !defined(MODULE_R9M_FULLSIZE)
-#define LEN_R9M_REGION                 "\006"
-#define TR_R9M_REGION                  "FCC\0  ""EU\0   ""868MHz""915MHz"
-#define LEN_R9M_FCC_POWER_VALUES       "\010"
-#define LEN_R9M_LBT_POWER_VALUES       "\015"
-#define TR_R9M_FCC_POWER_VALUES        "(100 mW)"
-#define TR_R9M_LBT_POWER_VALUES        "25 mW 8ch\0   ""25 mW 16ch\0  ""100mW no tele"
+#define LEN_R9M_REGION "\006"
+#define TR_R9M_REGION \
+    "FCC\0  "         \
+    "EU\0   "         \
+    "868MHz"          \
+    "915MHz"
+#define LEN_R9M_FCC_POWER_VALUES "\010"
+#define LEN_R9M_LBT_POWER_VALUES "\015"
+#define TR_R9M_FCC_POWER_VALUES "(100 mW)"
+#define TR_R9M_LBT_POWER_VALUES \
+    "25 mW 8ch\0   "            \
+    "25 mW 16ch\0  "            \
+    "100mW no tele"
 
 enum R9MFCCPowerValues {
   R9M_FCC_POWER_100 = 0,
@@ -186,17 +194,29 @@ enum R9MLBTPowerValues {
   R9M_LBT_POWER_MAX = R9M_LBT_POWER_100
 };
 
-#define BIND_TELEM_ALLOWED(idx)      (!(IS_TELEMETRY_INTERNAL_MODULE() && moduleIdx == EXTERNAL_MODULE) && (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power < R9M_LBT_POWER_100))
-#define BIND_CH9TO16_ALLOWED(idx)    (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power != R9M_LBT_POWER_25)
+#define BIND_TELEM_ALLOWED(idx) (!(IS_TELEMETRY_INTERNAL_MODULE() && moduleIdx == EXTERNAL_MODULE) && (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power < R9M_LBT_POWER_100))
+#define BIND_CH9TO16_ALLOWED(idx) (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power != R9M_LBT_POWER_25)
 
 #else
 
-#define LEN_R9M_REGION                 "\006"
-#define TR_R9M_REGION                  "FCC\0  ""EU\0   ""868MHz""915MHz"
-#define LEN_R9M_FCC_POWER_VALUES       "\013"
-#define LEN_R9M_LBT_POWER_VALUES       "\013"
-#define TR_R9M_FCC_POWER_VALUES        "10 mW\0     " "100 mW\0    " "500 mW\0    " "Auto <= 1 W"
-#define TR_R9M_LBT_POWER_VALUES        "25 mW 8ch\0 " "25 mW 16ch\0" "200 mW 16ch" "500 mW 16ch"
+#define LEN_R9M_REGION "\006"
+#define TR_R9M_REGION \
+    "FCC\0  "         \
+    "EU\0   "         \
+    "868MHz"          \
+    "915MHz"
+#define LEN_R9M_FCC_POWER_VALUES "\013"
+#define LEN_R9M_LBT_POWER_VALUES "\013"
+#define TR_R9M_FCC_POWER_VALUES \
+    "10 mW\0     "              \
+    "100 mW\0    "              \
+    "500 mW\0    "              \
+    "Auto <= 1 W"
+#define TR_R9M_LBT_POWER_VALUES \
+    "25 mW 8ch\0 "              \
+    "25 mW 16ch\0"              \
+    "200 mW 16ch"               \
+    "500 mW 16ch"
 
 enum R9MFCCPowerValues {
   R9M_FCC_POWER_10 = 0,
@@ -214,7 +234,7 @@ enum R9MLBTPowerValues {
   R9M_LBT_POWER_MAX = R9M_LBT_POWER_500
 };
 
-#define BIND_TELEM_ALLOWED(idx)      (!(IS_TELEMETRY_INTERNAL_MODULE() && moduleIdx == EXTERNAL_MODULE) && (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power < R9M_LBT_POWER_200))
-#define BIND_CH9TO16_ALLOWED(idx)    (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power != R9M_LBT_POWER_25)
+#define BIND_TELEM_ALLOWED(idx) (!(IS_TELEMETRY_INTERNAL_MODULE() && moduleIdx == EXTERNAL_MODULE) && (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power < R9M_LBT_POWER_200))
+#define BIND_CH9TO16_ALLOWED(idx) (!isModuleR9M_LBT(idx) || g_model.moduleData[idx].pxx.power != R9M_LBT_POWER_25)
 #endif
-#endif // _PULSES_ARM_H_
+#endif  // _PULSES_ARM_H_
