@@ -242,25 +242,11 @@ bool setupPulses(uint8_t port) {
     case PROTO_CROSSFIRE:
       if (telemetryProtocol == PROTOCOL_PULSES_CROSSFIRE && !init_needed) {
         ModuleSyncStatus& status = getModuleSyncStatus(EXTERNAL_MODULE);
-        if (status.isValid())
-          mixerSchedulerSetPeriod(EXTERNAL_MODULE, status.getAdjustedRefreshRate());
-        else
+        // if (status.isValid())
+        //   mixerSchedulerSetPeriod(EXTERNAL_MODULE, status.getAdjustedRefreshRate());
+        // else
           mixerSchedulerSetPeriod(EXTERNAL_MODULE, CROSSFIRE_PERIOD);
-
-        uint8_t* crossfire = modulePulsesData[port].crossfire.pulses;
-        uint8_t len;
-#if defined(LUA)
-        if (outputTelemetryBufferTrigger != 0x00 && outputTelemetryBufferSize > 0) {
-          memcpy(crossfire, outputTelemetryBuffer, outputTelemetryBufferSize);
-          len = outputTelemetryBufferSize;
-          outputTelemetryBufferTrigger = 0x00;
-          outputTelemetryBufferSize = 0;
-        } else
-#endif
-        {
-          len = createCrossfireChannelsFrame(crossfire, &channelOutputs[g_model.moduleData[port].channelsStart]);
-        }
-        // sportSendBuffer(crossfire, len); // Now it's done in extmodule_driver.cpp
+        setupPulsesCrossfire();
         send = true;
       }
 

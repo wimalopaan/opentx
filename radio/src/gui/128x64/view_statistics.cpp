@@ -138,9 +138,10 @@ void menuStatisticsDebug(event_t event)
     case EVT_KEY_FIRST(KEY_UP):
 #if defined(PCBX7)
     case EVT_KEY_BREAK(KEY_PAGE):
+#endif
       chainMenu(menuStatisticsDebug2);
       return;
-#endif
+
 
     case EVT_KEY_FIRST(KEY_DOWN):
 #if defined(PCBX7)

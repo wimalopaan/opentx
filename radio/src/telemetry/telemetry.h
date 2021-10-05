@@ -109,7 +109,7 @@ extern uint8_t telemetryState;
 #define TELEMETRY_RX_PACKET_SIZE       19  // 9 bytes (full packet), worst case 18 bytes with byte-stuffing (+1)
 #endif
 
-#if SPORT_MAX_BAUDRATE < 400000
+//#if SPORT_MAX_BAUDRATE < 400000
 const uint32_t CROSSFIRE_BAUDRATES[] = {
   400000,
   115200,
@@ -118,11 +118,12 @@ const uint8_t CROSSFIRE_PERIODS[] = {
   4,
   16,
 };
-#define CROSSFIRE_BAUDRATE             	CROSSFIRE_BAUDRATES[g_eeGeneral.telemetryBaudrate]
-#define CROSSFIRE_PERIOD         		CROSSFIRE_PERIODS[g_eeGeneral.telemetryBaudrate]
+#if SPORT_MAX_BAUDRATE < 400000 || defined(DEBUG)
+#define CROSSFIRE_BAUDRATE    CROSSFIRE_BAUDRATES[g_eeGeneral.telemetryBaudrate]
+#define CROSSFIRE_PERIOD      (CROSSFIRE_PERIODS[g_eeGeneral.telemetryBaudrate] * 1000)
 #else
-#define CROSSFIRE_BAUDRATE             400000
-#define CROSSFIRE_PERIOD         4 // 4ms
+#define CROSSFIRE_BAUDRATE       400000
+#define CROSSFIRE_PERIOD         4000 /* us; 250 Hz */
 #endif
 
 extern uint8_t telemetryRxBuffer[TELEMETRY_RX_PACKET_SIZE];

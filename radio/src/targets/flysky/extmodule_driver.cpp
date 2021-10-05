@@ -20,6 +20,8 @@
 
 #include "opentx.h"
 
+void extmoduleSendNextFrame();
+
 void EnablePPMTim(void) {
   SET_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
@@ -32,7 +34,6 @@ void EnablePPMOut(void) {
 void DisablePPMOut(void) {
   CLEAR_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
 }
-static bool nopulses = true;
 
 void extmoduleStop() {
   TRACE("extmoduleStop");
@@ -42,8 +43,7 @@ void extmoduleStop() {
 }
 
 void extmoduleTimerStart(uint32_t period, uint8_t state) {
-  TRACE("extmoduleTimerStart");
-  nopulses = true;
+  TRACE("extmoduleTimerStart period: %dus", period);
   GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
 
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -70,7 +70,6 @@ void extmoduleTimerStart(uint32_t period, uint8_t state) {
 
 void extmodulePpmStart() {
   TRACE("extmodulePpmStart");
-  nopulses = false;
   /**EXTMODULE_TIMER GPIO Configuration
   PF9   ------> TIM15_CH1
   PF10   ------> TIM15_CH2
@@ -145,10 +144,15 @@ inline void extmoduleSendNextFrame() {
       setupPulses(EXTERNAL_MODULE);
     }
     delay = !delay;
-// #if defined(CROSSFIRE)
-//   } else if (s_current_protocol[EXTERNAL_MODULE] == PROTO_CROSSFIRE) {
-//       sportSendBuffer(extmodulePulsesData.crossfire.pulses, extmodulePulsesData.crossfire.length);
-// #endif
+#if defined(CROSSFIRE)
+  } else if (s_current_protocol[EXTERNAL_MODULE] == PROTO_CROSSFIRE) {
+    if (modulePulsesData[EXTERNAL_MODULE].crossfire.length > 0) {
+      sportSendBuffer(
+          modulePulsesData[EXTERNAL_MODULE].crossfire.pulses,
+          modulePulsesData[EXTERNAL_MODULE].crossfire.length);
+    }
+
+#endif
   } else {
     EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;
   }
@@ -157,7 +161,7 @@ inline void extmoduleSendNextFrame() {
 extern "C" void EXTMODULE_TIMER_IRQHandler() {
   if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;    // Clears interrupt on ch2
-    if (nopulses) {
+    if (s_current_protocol[EXTERNAL_MODULE] != PROTO_PPM) {  //== PROTO_NONE
       setupPulses(EXTERNAL_MODULE);
     }
     extmoduleSendNextFrame();

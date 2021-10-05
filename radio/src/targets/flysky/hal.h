@@ -411,17 +411,15 @@ extern void ISR_TIMER3_CAPT_vect(void);
   #define TRAINER_TIMER_FREQ            (PERI1_FREQUENCY * TIMER_MULT_APB1)
 #endif
 
- #define SD_RCC_AHB1Periph 0
- #define HAPTIC_RCC_AHB1Periph 0
- #define EXTMODULE_RCC_AHB1Periph 0
- #define  TELEMETRY_RCC_AHB1Periph 0
- #define SPORT_UPDATE_RCC_AHB1Periph 0
+#define SD_RCC_AHB1Periph 0
+#define HAPTIC_RCC_AHB1Periph 0
+#define EXTMODULE_RCC_AHB1Periph 0
+#define SPORT_UPDATE_RCC_AHB1Periph 0
 #define BT_RCC_AHB1Periph 0
 #define TRAINER_RCC_AHB1Periph 0
 #define HAPTIC_RCC_APB1Periph 0
 #define SD_RCC_APB1Periph 0
 #define BT_RCC_APB1Periph 0
-#define TELEMETRY_RCC_APB1Periph 0
 #define HAPTIC_RCC_APB2Periph 0
 #define BT_RCC_APB2Periph 0
 #define SD_GPIO_PRESENT_GPIO 0
@@ -449,21 +447,8 @@ extern void ISR_TIMER3_CAPT_vect(void);
 // Serial Port
 
 #define TRAINER_BATTERY_COMPARTMENT
-// #define SERIAL_RCC_AHB1Periph         (RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_DMA1)
-// #define SERIAL_RCC_APB1Periph         RCC_APB1Periph_USART3
-// #define SERIAL_GPIO                   GPIOB
-// #define SERIAL_GPIO_PIN_TX            GPIO_Pin_10 // PB.10
-// #define SERIAL_GPIO_PIN_RX            GPIO_Pin_11 // PB.11
-// #define SERIAL_GPIO_PinSource_TX      GPIO_PinSource10
-// #define SERIAL_GPIO_PinSource_RX      GPIO_PinSource11
-// #define SERIAL_GPIO_AF                GPIO_AF_USART3
-// #define SERIAL_USART                  USART3
-// #define SERIAL_USART_IRQHandler       USART3_IRQHandler
-// #define SERIAL_USART_IRQn             USART3_IRQn
-// #define SERIAL_DMA_Stream_RX          DMA1_Stream1
-// #define SERIAL_DMA_Channel_RX         DMA_Channel_4
 
-// serial interno
+// serial2
 #define SERIAL_RCC_AHB1Periph         (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_DMA1)
 #define SERIAL_RCC_APB2Periph         RCC_APB2Periph_USART1
 #define SERIAL_GPIO                   GPIOA
@@ -475,38 +460,42 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define SERIAL_USART                  USART1
 #define SERIAL_USART_IRQHandler       USART1_IRQHandler
 #define SERIAL_USART_IRQn             USART1_IRQn
-#define SERIAL_DMA_Stream_RX          DMA1_Stream1
-#define SERIAL_DMA_Channel_RX         DMA_Channel_4
+#define SERIAL_DMA_Stream_RX          
+#define SERIAL_DMA_Channel_RX         DMA1_Channel3
 
-/*
+#define SPORT_MAX_BAUDRATE            400000
+
 // Telemetry
-#define TELEMETRY_RCC_AHB1Periph        (RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_DMA1)
+#define TELEMETRY_RCC_AHB1Periph        (RCC_AHBPeriph_GPIOD | RCC_AHBPeriph_DMA1)
 #define TELEMETRY_RCC_APB1Periph        RCC_APB1Periph_USART2
-#define TELEMETRY_DIR_GPIO              GPIOD
-#define TELEMETRY_DIR_GPIO_PIN          GPIO_Pin_4  // PD.04
-#if defined(PCBXLITE)
-#define TELEMETRY_DIR_OUTPUT()          TELEMETRY_DIR_GPIO->BSRRH = TELEMETRY_DIR_GPIO_PIN
-#define TELEMETRY_DIR_INPUT()           TELEMETRY_DIR_GPIO->BSRRL = TELEMETRY_DIR_GPIO_PIN
-#else
-#define TELEMETRY_DIR_OUTPUT()          TELEMETRY_DIR_GPIO->BSRRL = TELEMETRY_DIR_GPIO_PIN
-#define TELEMETRY_DIR_INPUT()           TELEMETRY_DIR_GPIO->BSRRH = TELEMETRY_DIR_GPIO_PIN
-#endif
 #define TELEMETRY_GPIO                  GPIOD
 #define TELEMETRY_TX_GPIO_PIN           GPIO_Pin_5  // PD.05
-#define TELEMETRY_RX_GPIO_PIN           GPIO_Pin_6  // PD.06
+#define TELEMETRY_RX_GPIO_PIN           
 #define TELEMETRY_GPIO_PinSource_TX     GPIO_PinSource5
-#define TELEMETRY_GPIO_PinSource_RX     GPIO_PinSource6
-#define TELEMETRY_GPIO_AF               GPIO_AF_USART2
+#define TELEMETRY_GPIO_PinSource_RX     
+#define TELEMETRY_GPIO_AF               GPIO_AF_0
 #define TELEMETRY_USART                 USART2
-#define TELEMETRY_DMA_Stream_TX         DMA1_Stream6
-#define TELEMETRY_DMA_Channel_TX        DMA_Channel_4
-#define TELEMETRY_DMA_TX_Stream_IRQ     DMA1_Stream6_IRQn
-#define TELEMETRY_DMA_TX_IRQHandler     DMA1_Stream6_IRQHandler
-#define TELEMETRY_DMA_TX_FLAG_TC        DMA_IT_TCIF6
+#define TELEMETRY_DMA_Channel_TX        DMA1_Channel4
+#define TELEMETRY_DMA_TX_IRQn           DMA1_Channel4_5_IRQn
+#define TELEMETRY_DMA_TX_IRQHandler     DMA1_Channel4_5_IRQHandler
+#define TELEMETRY_DMA_TX_FLAG_TC        DMA1_IT_TC4
 #define TELEMETRY_USART_IRQHandler      USART2_IRQHandler
 #define TELEMETRY_USART_IRQn            USART2_IRQn
-*/
+#define TELEMETRY_DIR_OUTPUT()          
+#define TELEMETRY_DIR_INPUT()           
+/*
+F072 IRQs
+#define DMA1_Channel1_IRQHandler          DMA1_Ch1_IRQHandler
+#define DMA1_Channel2_3_IRQHandler        DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler
+#define DMA1_Channel4_5_IRQHandler        DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler
+#define DMA1_Channel4_5_6_7_IRQHandler    DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler
 
+#define DMA1_Ch1_IRQn                     DMA1_Channel1_IRQn
+#define DMA1_Ch2_3_DMA2_Ch1_2_IRQn        DMA1_Channel2_3_IRQn           
+#define DMA1_Channel4_5_IRQn              DMA1_Channel4_5_6_7_IRQn
+#define DMA1_Ch4_7_DMA2_Ch3_5_IRQn        DMA1_Channel4_5_6_7_IRQn 
+
+*/
 // PCBREV
 
   #define PCBREV_RCC_AHB1Periph         RCC_AHBPeriph_GPIOA
@@ -528,11 +517,13 @@ extern void ISR_TIMER3_CAPT_vect(void);
   #define HEARTBEAT_USART_IRQn          USART6_IRQn
   #define HEARTBEAT_DMA_Stream          DMA2_Stream1
   #define HEARTBEAT_DMA_Channel         DMA_Channel_5
+
 //only basic!!!
   #define BACKLIGHT_RCC_AHB1Periph      RCC_AHBPeriph_GPIOF
   #define BACKLIGHT_GPIO                GPIOF
   #define BACKLIGHT_GPIO_PIN            GPIO_Pin_3
-//tbd
+
+// Backlight cannot be dimmed in this board
   #define BACKLIGHT_TIMER_FREQ          (PERI1_FREQUENCY * TIMER_MULT_APB1)
   #define BACKLIGHT_TIMER               TIM5
   #define BACKLIGHT_GPIO_PinSource      GPIO_PinSource13
