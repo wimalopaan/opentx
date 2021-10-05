@@ -45,7 +45,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = TELEMETRY_DMA_TX_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPriority = 3; //Very high
+  NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
@@ -68,10 +68,6 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 
   //GPIO_PinAFConfig(TELEMETRY_GPIO, TELEMETRY_GPIO_PinSource_RX, TELEMETRY_GPIO_AF);
   GPIO_PinAFConfig(TELEMETRY_GPIO, TELEMETRY_GPIO_PinSource_TX, TELEMETRY_GPIO_AF);
-
-  //GPIO_SetBits(TELEMETRY_GPIO, TELEMETRY_TX_GPIO_PIN);
-
-  //GPIO_ResetBits(TELEMETRY_GPIO, TELEMETRY_TX_GPIO_PIN);  // For inverted signal set IO to low (Cleanflight)
 
   USART_InitStructure.USART_BaudRate = baudrate;
   if (mode & TELEMETRY_SERIAL_8E2) {
@@ -118,7 +114,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 
   USART_Cmd(TELEMETRY_USART, ENABLE);
   USART_ITConfig(TELEMETRY_USART, USART_IT_RXNE, ENABLE);
-  NVIC_SetPriority(TELEMETRY_USART_IRQn, 7);
+  NVIC_SetPriority(TELEMETRY_USART_IRQn, 6);
   NVIC_EnableIRQ(TELEMETRY_USART_IRQn);
 }
 
@@ -129,7 +125,7 @@ void telemetryPortSetDirectionOutput() {
 
 void telemetryPortSetDirectionInput() {
   TELEMETRY_USART->CR1 &= ~USART_CR1_TE;  // disable trasmit
-  TELEMETRY_USART->CR1 |= USART_CR1_RE;  // enable receive
+  TELEMETRY_USART->CR1 |= USART_CR1_RE;   // enable receive
 }
 
 void sportSendBuffer(const uint8_t* buffer, unsigned long count) {

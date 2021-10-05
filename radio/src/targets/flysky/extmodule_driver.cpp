@@ -43,7 +43,7 @@ void extmoduleStop() {
 }
 
 void extmoduleTimerStart(uint32_t period, uint8_t state) {
-  TRACE("extmoduleTimerStart");
+  TRACE("extmoduleTimerStart period: %dus", period);
   GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
 
   GPIO_InitTypeDef GPIO_InitStructure;
