@@ -25,7 +25,7 @@
 #define BUZZER_QUEUE_LENGTH (8) // must be power of 2
 
 #define BEEP_MIN_FREQ           (250)
-#define BEEP_MAX_FREQ           (12000)
+#define BEEP_MAX_FREQ           (14000)
 #define BEEP_DEFAULT_FREQ       (2250)
 #define BEEP_KEY_UP_FREQ        (BEEP_DEFAULT_FREQ+150)
 #define BEEP_KEY_DOWN_FREQ      (BEEP_DEFAULT_FREQ-150)
@@ -35,23 +35,24 @@ struct BuzzerTone {
   uint16_t freq;
   uint16_t duration;
   uint16_t pause;
-  uint8_t  repeat;
+  uint8_t  flags;
   int8_t   freqIncr;
   BuzzerTone() {};
-  BuzzerTone(uint16_t freq, uint16_t duration, uint16_t pause, uint8_t repeat, int8_t freqIncr):
+  BuzzerTone(uint16_t freq, uint16_t duration, uint16_t pause, uint8_t flags, int8_t freqIncr):
     freq(freq),
     duration(duration),
     pause(pause),
-    repeat(repeat),
+    flags(flags),
     freqIncr(freqIncr)
   {};
 };
 
 struct BuzzerState {
   uint16_t freq;
-  uint16_t duration;
+  uint16_t duration; // current decremented duration
   uint16_t pause; // current pause, set to 0 after use, reset in repeat handler
   uint8_t repeat; // current decremented repeat
+  uint8_t padding; // unused
   BuzzerTone tone;
   BuzzerState() {};
   BuzzerState(uint16_t freq, uint16_t duration, uint16_t pause, uint8_t repeat, BuzzerTone tone):
@@ -120,7 +121,7 @@ void audioKeyPress();
 void audioKeyError();
 void audioTrimPress(int value);
 void audioTimerCountdown(uint8_t timer, int value);
-void playTone(uint16_t freq, uint16_t len, uint16_t pause = 0, uint8_t repeat = 0, int8_t freqIncr = 0);
+void playTone(uint16_t freq, uint16_t len, uint16_t pause = 0, uint8_t flags = 0, int8_t freqIncr = 0);
 void buzzerHeartbeat();
 
 #endif // _BUZZER_DRIVER_H_

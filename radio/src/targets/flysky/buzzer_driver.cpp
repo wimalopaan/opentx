@@ -209,7 +209,7 @@ void buzzerEvent(unsigned int index)
         playTone(2550, 40, 80, PLAY_REPEAT(3));
         break;
       case AU_SPECIAL_SOUND_SIREN:
-        playTone(450+200, 160, 40, PLAY_REPEAT(2), 2);
+        playTone(450, 160, 40, PLAY_REPEAT(2), 2);
         break;
       case AU_SPECIAL_SOUND_ALARMC:
         playTone(1650, 30, 70, PLAY_REPEAT(2));
@@ -247,7 +247,7 @@ void setVolume(uint8_t volume)
     case 0: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 16; break;
     case 1: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 8; break;
     case 2: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 4; break;
-    case 3: PWM_TIMER->CCR1 = (PWM_TIMER->ARR / 2) - (PWM_TIMER->ARR / 4); break;
+    case 3: PWM_TIMER->CCR1 = (PWM_TIMER->ARR / 4) + (PWM_TIMER->ARR / 8); break;
     case 4: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 2; break;
   }
 }
@@ -308,7 +308,7 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
   buzzerState.tone.freq = freq;
   buzzerState.tone.duration = len;
   buzzerState.tone.pause = pause;
-  buzzerState.tone.repeat = repeat;
+  buzzerState.tone.flags = repeat;
   buzzerState.tone.freqIncr = freqIncr;
 
   setSampleRate(buzzerState.freq);
@@ -352,6 +352,6 @@ void buzzerHeartbeat()
     }
   } else if (!buzzerFifo.empty()) {
     nextTone = buzzerFifo.get();
-    playTone(nextTone->freq, nextTone->duration, nextTone->pause, nextTone->repeat, nextTone->freqIncr);
+    playTone(nextTone->freq, nextTone->duration, nextTone->pause, nextTone->flags, nextTone->freqIncr);
   }
 }
