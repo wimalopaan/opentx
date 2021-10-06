@@ -494,6 +494,12 @@ if(NOT MSVC)
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 
+    add_custom_command(
+      TARGET firmware POST_BUILD
+      COMMAND arm-none-eabi-size firmware.elf
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+
     find_program(GAWK gawk HINTS "c:/cygwin/bin/" "c:/msys/bin/" DOC "gawk for firmware size report.")  # OS X might only have "awk"
     if (BASH AND GAWK)
       add_custom_target(firmware-size
