@@ -518,7 +518,7 @@ void audioTask(void * pdata)
   RTOS_WAIT_MS(1000); // 1s
 #endif
 
-  if (!unexpectedShutdown) {
+  if (!globalData.unexpectedShutdown) {
     AUDIO_HELLO();
   }
 

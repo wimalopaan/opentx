@@ -22,9 +22,6 @@
 
 #define TEXT_FILE_MAXSIZE     2048
 
-char s_text_file[TEXT_FILENAME_MAXLEN];
-char s_text_screen[LCD_LINES-1][LCD_COLS+1];
-
 void readTextFile(int & lines_count)
 {
 #if defined(SDCARD)
@@ -37,9 +34,9 @@ void readTextFile(int & lines_count)
   char escape_chars[4] = {0};
   int current_line = 0;
 
-  memset(s_text_screen, 0, sizeof(s_text_screen));
+  memclear(reusableBuffer.viewText.lines, sizeof(reusableBuffer.viewText.lines));
 
-  result = f_open(&file, s_text_file, FA_OPEN_EXISTING | FA_READ);
+  result = f_open(&file, reusableBuffer.viewText.filename, FA_OPEN_EXISTING | FA_READ);
   if (result == FR_OK) {
     for (int i=0; i<TEXT_FILE_MAXSIZE && f_read(&file, &c, 1, &sz)==FR_OK && sz==1 && (lines_count==0 || current_line-menuVerticalOffset<LCD_LINES-1); i++) {
       if (c == '\n') {
@@ -81,7 +78,7 @@ void readTextFile(int & lines_count)
           c = 0x1D; //tab
         }
         escape = 0;
-        s_text_screen[current_line-menuVerticalOffset][line_length++] = c;
+        reusableBuffer.viewText.lines[current_line-menuVerticalOffset][line_length++] = c;
       }
     }
     if (c != '\n') {
@@ -109,8 +106,8 @@ void readModelNotes()
 #if defined(SDCARD)
   LED_ERROR_BEGIN();
 
-  strcpy(s_text_file, MODELS_PATH "/");
-  char *buf = strcat_modelname(&s_text_file[sizeof(MODELS_PATH)], g_eeGeneral.currModel);
+  strcpy(reusableBuffer.viewText.filename, MODELS_PATH "/");
+  char *buf = strcat_modelname(&reusableBuffer.viewText.filename[sizeof(MODELS_PATH)], g_eeGeneral.currModel);
   strcpy(buf, TEXT_EXT);
 
   clearKeyEvents();
@@ -130,13 +127,12 @@ void readModelNotes()
 
 void menuTextView(event_t event)
 {
-  static int lines_count;
-
+#if defined(SDCARD)
   switch (event) {
     case EVT_ENTRY:
       menuVerticalOffset = 0;
-      lines_count = 0;
-      readTextFile(lines_count);
+      reusableBuffer.viewText.linesCount = 0;
+      sdReadTextFile(reusableBuffer.viewText.filename, reusableBuffer.viewText.lines, reusableBuffer.viewText.linesCount);
       break;
 
     case EVT_KEY_PREVIOUS_LINE:
@@ -144,15 +140,15 @@ void menuTextView(event_t event)
         break;
       else
         menuVerticalOffset--;
-      readTextFile(lines_count);
+      sdReadTextFile(reusableBuffer.viewText.filename, reusableBuffer.viewText.lines, reusableBuffer.viewText.linesCount);
       break;
 
     case EVT_KEY_NEXT_LINE:
-      if (menuVerticalOffset+LCD_LINES-1 >= lines_count)
+      if (menuVerticalOffset+LCD_LINES-1 >= reusableBuffer.viewText.linesCount)
         break;
       else
         ++menuVerticalOffset;
-      readTextFile(lines_count);
+      sdReadTextFile(reusableBuffer.viewText.filename, reusableBuffer.viewText.lines, reusableBuffer.viewText.linesCount);
       break;
 
     case EVT_KEY_BREAK(KEY_EXIT):
@@ -161,10 +157,10 @@ void menuTextView(event_t event)
   }
 
   for (int i=0; i<LCD_LINES-1; i++) {
-    lcdDrawText(0, i*FH+FH+1, s_text_screen[i], FIXEDWIDTH);
+    lcdDrawText(0, i*FH+FH+1, reusableBuffer.viewText.lines[i], FIXEDWIDTH);
   }
 
-  char * title = s_text_file;
+  char * title = reusableBuffer.viewText.filename;
 #if defined(SIMU)
   if (!strncmp(title, "./", 2)) title += 2;
 #else
@@ -173,15 +169,16 @@ void menuTextView(event_t event)
   lcdDrawText(LCD_W/2-strlen(title)*FW/2, 0, title);
   lcdInvertLine(0);
 
-  if (lines_count > LCD_LINES-1) {
-    drawVerticalScrollbar(LCD_W-1, FH, LCD_H-FH, menuVerticalOffset, lines_count, LCD_LINES-1);
+  if (reusableBuffer.viewText.linesCount > LCD_LINES-1) {
+    drawVerticalScrollbar(LCD_W-1, FH, LCD_H-FH, menuVerticalOffset, reusableBuffer.viewText.linesCount, LCD_LINES-1);
   }
+  #endif
 }
 
 void pushMenuTextView(const char *filename)
 {
   if (strlen(filename) < TEXT_FILENAME_MAXLEN) {
-    strcpy(s_text_file, filename);
+    strcpy(reusableBuffer.viewText.filename, filename);
     pushMenu(menuTextView);
   }
 }
