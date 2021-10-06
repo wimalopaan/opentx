@@ -19,7 +19,9 @@
  */
 
 #include "opentx.h"
+#if defined(SDCARD)
 #include "diskio.h"
+#endif
 #include <ctype.h>
 #include <malloc.h>
 #include <new>
@@ -94,17 +96,24 @@ int cliBeep(const char ** argv)
   int freq = BEEP_DEFAULT_FREQ;
   int duration = 100;
   if (toInt(argv, 1, &freq) >= 0 && toInt(argv, 2, &duration) >= 0) {
+#if defined(AUDIO)
     audioQueue.playTone(freq, duration, 20, PLAY_NOW);
+#elif defined(BUZZER)
+    playTone(freq, duration, 20, PLAY_NOW);
+#endif
+
   }
   return 0;
 }
-
+#if defined(AUDIO)
 int cliPlay(const char ** argv)
 {
   audioQueue.playFile(argv[1], PLAY_NOW);
   return 0;
 }
+#endif
 
+#if defined(SDCARD)
 int cliLs(const char ** argv)
 {
   FILINFO fno;
@@ -304,6 +313,7 @@ int cliTestSD(const char ** argv)
 
   return 0;
 }
+#endif
 
 int cliTestNew()
 {
@@ -699,10 +709,14 @@ int cliTrace(const char ** argv)
 
 int cliStackInfo(const char ** argv)
 {
+  #if !defined(PCBI6)
   serialPrint("[MAIN] %d available / %d", stackAvailable(), stackSize() * 4);  // stackSize() returns size in 32bit chunks
+  #endif
   serialPrint("[MENUS] %d available / %d", menusStack.available(), menusStack.size());
   serialPrint("[MIXER] %d available / %d", mixerStack.available(), mixerStack.size());
+  #if defined(AUDIO)
   serialPrint("[AUDIO] %d available / %d", audioStack.available(), audioStack.size());
+  #endif
   serialPrint("[CLI] %d available / %d", cliStack.available(), cliStack.size());
   return 0;
 }
@@ -778,7 +792,9 @@ const MemArea memAreas[] = {
   { "GPIOD", GPIOD, sizeof(GPIO_TypeDef) },
   { "GPIOE", GPIOE, sizeof(GPIO_TypeDef) },
   { "GPIOF", GPIOF, sizeof(GPIO_TypeDef) },
+  #if !defined(PCBI6)
   { "GPIOG", GPIOG, sizeof(GPIO_TypeDef) },
+  #endif
   { "USART1", USART1, sizeof(USART_TypeDef) },
   { "USART2", USART2, sizeof(USART_TypeDef) },
   { "USART3", USART3, sizeof(USART_TypeDef) },
@@ -853,9 +869,11 @@ void printTaskSwitchLog()
     else if (mixerTaskId == n) {
       serialPrint("%d: mixer", n);
     }
+#if defined(AUDIO)    
     else if (audioTaskId == n) {
       serialPrint("%d: audio", n);
     }
+#endif    
   }
   serialCrlf();
 
@@ -918,6 +936,7 @@ void printDebugTimers()
 #include "OsMutex.h"
 extern RTOS_MUTEX_HANDLE audioMutex;
 
+#if defined(AUDIO)
 void printAudioVars()
 {
   for(int n = 0; n < AUDIO_BUFFER_COUNT; n++) {
@@ -941,7 +960,7 @@ void printAudioVars()
 
   serialPrint("audioMutex[%u] = %u", (uint32_t)audioMutex, (uint32_t)MutexTbl[audioMutex].mutexFlag);
 }
-
+#endif
 
 int cliDisplay(const char ** argv)
 {
@@ -1016,9 +1035,11 @@ int cliDisplay(const char ** argv)
         case 2:
           tim = TIM2;
           break;
+#if !defined(PCBI6)
         case 13:
           tim = TIM13;
           break;
+#endif
         default:
           return 0;
       }
@@ -1042,10 +1063,12 @@ int cliDisplay(const char ** argv)
       serialPrint(" CCR4   0x%x", tim->CCR4);
     }
   }
+#if !defined(PCBI6)  
   else if (!strcmp(argv[1], "dma")) {
     serialPrint("DMA1_Stream7");
     serialPrint(" CR    0x%x", DMA1_Stream7->CR);
   }
+#endif
 #if defined(DEBUG_INTERRUPTS)
   else if (!strcmp(argv[1], "int")) {
     printInterrupts();
@@ -1061,9 +1084,11 @@ int cliDisplay(const char ** argv)
     printDebugTimers();
   }
 #endif
+#if defined(AUDIO)
   else if (!strcmp(argv[1], "audio")) {
     printAudioVars();
   }
+#endif
 #if defined(DISK_CACHE)
   else if (!strcmp(argv[1], "dc")) {
     DiskCacheStats stats = diskCache.getStats();
@@ -1190,11 +1215,15 @@ int cliBlueTooth(const char ** argv)
 
 const CliCommand cliCommands[] = {
   { "beep", cliBeep, "[<frequency>] [<duration>]" },
+  #if defined(SDCARD)
   { "ls", cliLs, "<directory>" },
   { "read", cliRead, "<filename>" },
   { "readsd", cliReadSD, "<start sector> <sectors count> <read buffer size (sectors)>" },
   { "testsd", cliTestSD, "" },
+  #endif
+  #if defined(AUDIO)
   { "play", cliPlay, "<filename>" },
+  #endif
   { "print", cliDisplay, "<address> [<size>] | <what>" },
   { "p", cliDisplay, "<address> [<size>] | <what>" },
   { "reboot", cliReboot, "[wdt]" },
