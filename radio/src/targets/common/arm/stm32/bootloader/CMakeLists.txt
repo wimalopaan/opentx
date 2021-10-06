@@ -58,6 +58,43 @@ else()
     )
 endif()
 
+if (PCB STREQUAL I6X)
+set(BOOTLOADER_SRC
+  ${BOOTLOADER_SRC}
+  ../../../../../gui/${GUI_DIR}/lcd.cpp
+  ../../../../../gui/${GUI_DIR}/fonts.cpp
+  ../../../../../keys.cpp
+  ../../../../../strhelpers.cpp
+  ../../../../../stamp.cpp
+  ../../../../../${STM32USB_DIR}/STM32_USB_OTG_Driver/src/usb_core.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_OTG_Driver/src/usb_dcd.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_OTG_Driver/src/usb_dcd_int.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Core/src/usbd_core.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Core/src/usbd_ioreq.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Core/src/usbd_req.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Class/msc/src/usbd_msc_data.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Class/msc/src/usbd_msc_scsi.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Class/msc/src/usbd_msc_bot.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Class/msc/src/usbd_msc_core.c
+  ../../../../../${FATFS_DIR}/ff.c
+  ../../../../../${FATFS_DIR}/option/ccsbcs.c
+  ../../../../../targets/${TARGET_DIR}/${LCD_DRIVER}
+  ../../../../../targets/${TARGET_DIR}/backlight_driver.cpp
+  ../../../../../targets/${TARGET_DIR}/keys_driver.cpp
+  ../../../../../targets/${TARGET_DIR}/diskio.cpp
+  ../../../../../targets/${TARGET_DIR}/pwr_driver.cpp
+  ../../../../../targets/${TARGET_DIR}/bootloader/boot_menu.cpp
+  ../usbd_usr.cpp
+  ../usbd_storage_msd.cpp
+  ../delays.cpp
+  ../usbd_desc.c
+  ../usb_bsp.c
+  ../usb_driver.cpp
+  ../flash_driver.cpp
+  init.c
+  boot.cpp
+  )
+else()
 set(BOOTLOADER_SRC
   ${BOOTLOADER_SRC}
   ../../../../../gui/${GUI_DIR}/lcd.cpp
@@ -94,6 +131,14 @@ set(BOOTLOADER_SRC
   boot.cpp
   bin_files.cpp
   )
+endif()
+
+if(PCB STREQUAL I6X)
+    set(BOOTLOADER_SRC
+    ${BOOTLOADER_SRC}
+    ../../../../../targets/${TARGET_DIR}/i2c_common_v2.cpp
+    )
+endif()
 
 if(NOT (PCB STREQUAL X10 OR PCB STREQUAL X12S))
   set(BOOTLOADER_SRC

@@ -114,10 +114,12 @@ void delay_ms(uint32_t ms);
 #ifdef __cplusplus
 }
 #endif
+
+#if !defined(BOOT)
 #define usbPlugged() (false)
 #define usbStarted() (false)
 #define getSelectedUsbMode() (USB_UNSELECTED_MODE)
-
+#endif
 
 
 // CPU Unique ID
@@ -154,8 +156,10 @@ uint32_t sdMounted(void);
 #define SD_CARD_PRESENT()               ((SD_GPIO_PRESENT_GPIO->IDR & SD_GPIO_PRESENT_GPIO_PIN) == 0)
 #endif
 //buzzer
+#if !defined(BOOT)
 #include "buzzer_driver.h"
 #define BUZZER_HEARTBEAT buzzerHeartbeat
+#endif
 
 // Flash Write driver
 #define FLASH_PAGESIZE 256
@@ -184,22 +188,6 @@ uint32_t isBootloaderStart(const uint8_t * buffer);
 #else
   #define IS_UART_MODULE(port)          false
 #endif
-
-enum AFHDS2A_Subtype
-{
-  AFHDS2A_SUBTYPE_FIRST,
-	AFHDS2A_SUBTYPE_PWM_IBUS = AFHDS2A_SUBTYPE_FIRST,
-	AFHDS2A_SUBTYPE_PPM_IBUS,
-	AFHDS2A_SUBTYPE_PWM_SBUS,
-	AFHDS2A_SUBTYPE_PPM_SBUS,
-  AFHDS2A_SUBTYPE_LAST = AFHDS2A_SUBTYPE_PPM_SBUS
-};
-const char STR_SUBTYPE_AFHDS2A[] =
-    "\010"
-    "PWM,IBUS"
-    "PPM,IBUS"
-    "PWM,SBUS"
-    "PPM,SBUS";
 
 void init_no_pulses(uint32_t port);
 void disable_no_pulses(uint32_t port);

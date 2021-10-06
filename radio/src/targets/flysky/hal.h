@@ -428,8 +428,8 @@ extern void ISR_TIMER3_CAPT_vect(void);
 #define USB_RCC_AHBPeriph_GPIO         RCC_AHBPeriph_GPIOA
 #define USB_GPIO                        GPIOA
 #define USB_GPIO_PIN_VBUS               GPIO_Pin_9  // PA.09
-#define USB_GPIO_PIN_DP GPIO_Pin_12
-#define USB_GPIO_PIN_DM GPIO_Pin_11
+#define USB_GPIO_PIN_DP                 GPIO_Pin_12
+#define USB_GPIO_PIN_DM                 GPIO_Pin_11
 #define USB_GPIO_PinSource_DM           GPIO_PinSource11
 #define USB_GPIO_PinSource_DP           GPIO_PinSource12
 #define USB_GPIO_AF                     ((uint8_t)0xA)         // taken from F2, works?

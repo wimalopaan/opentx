@@ -22,6 +22,11 @@
 #define _boot_h_
 
 #include "stamp.h"
+#include <stdint.h> 
+
+#ifndef NULL
+#define NULL    0
+#endif
 
 #define BOOTLOADER_TITLE               " OTX Bootloader - " VERSION
 #define DISPLAY_CHAR_WIDTH             (LCD_COLS+4)

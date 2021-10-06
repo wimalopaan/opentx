@@ -310,16 +310,11 @@ void lcdDrawSizedText(coord_t x, coord_t y, const char * s, uint8_t len, LcdFlag
   const uint8_t orig_len = len;
   uint32_t fontsize = FONTSIZE(flags);
 
-  uint8_t width = 0;
 #if !defined(BOOT)
+  uint8_t width = 0;
   if (flags & RIGHT) {
     width = getTextWidth(s, len, flags);
     x -= width;
-  }
-#else
-if (flags & CENTERED) {
-    width = getTextWidth(s, len, flags);
-    x -= width / 2;
   }
 #endif
 
