@@ -29,10 +29,9 @@ Clipboard clipboard;
 
 uint8_t unexpectedShutdown = 0;
 
-/* AVR: mixer duration in 1/16ms */
-/* ARM: mixer duration in 0.5us */
-uint16_t maxMixerDuration;
+GlobalData globalData;
 
+uint16_t maxMixerDuration; // step = 0.01ms
 uint8_t heartbeat;
 
 #if defined(OVERRIDE_CHANNEL_FUNCTION)
@@ -1768,7 +1767,7 @@ void opentxInit(OPENTX_INIT_ARGS) {
   //  * radios without CPU controlled power can only use Reset status register (if available)
   if (UNEXPECTED_SHUTDOWN()) {
     TRACE("Unexpected Shutdown detected");
-    unexpectedShutdown = 1;
+    globalData.unexpectedShutdown = 1;
   }
 
 #if defined(SDCARD) && !defined(PCBMEGA2560)
@@ -1785,7 +1784,7 @@ void opentxInit(OPENTX_INIT_ARGS) {
 #endif
 
 #if defined(PCBHORUS)
-  if (!unexpectedShutdown) {
+  if (!globalData.unexpectedShutdown) {
     // g_model.topbarData is still zero here (because it was not yet read from SDCARD),
     // but we only remember the pointer to in in constructor.
     // The storageReadAll() needs topbar object, so it must be created here
@@ -1809,7 +1808,7 @@ void opentxInit(OPENTX_INIT_ARGS) {
   // handling of storage for radios that have no EEPROM
 #if !defined(EEPROM)
 #if defined(RAMBACKUP)
-  if (unexpectedShutdown) {
+  if (globalData.unexpectedShutdown) {
     // SDCARD not available, try to restore last model from RAM
     TRACE("rambackupRestore");
     rambackupRestore();
@@ -1866,7 +1865,7 @@ void opentxInit(OPENTX_INIT_ARGS) {
     backlightOn();
   }
 
-  if (!unexpectedShutdown) {
+  if (!globalData.unexpectedShutdown) {
     opentxStart();
   }
   TRACE("start done");

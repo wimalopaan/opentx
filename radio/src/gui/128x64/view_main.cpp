@@ -564,7 +564,7 @@ void menuMainView(event_t event)
 #if defined(LOG_TELEMETRY) || defined(WATCHDOG_DISABLED)
   lcdDrawChar(REBOOT_X, 0*FH, '!', INVERS);
 #else
-  if (unexpectedShutdown) {
+  if (globalData.unexpectedShutdown) {
     lcdDrawChar(REBOOT_X, 0*FH, '!', INVERS);
   }
 #endif

@@ -38,7 +38,7 @@
 #define KSTATE_KILLED 99
 
 event_t s_evt;
-struct t_inactivity inactivity = {0};
+struct InactivityData inactivity = {0};
 Key keys[NUM_KEYS];
 
 event_t getEvent(bool trim) {
