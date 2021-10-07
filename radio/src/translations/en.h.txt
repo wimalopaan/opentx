@@ -1087,10 +1087,9 @@
 #define TR_ABOUTUS                     TR(" ABOUT ", "ABOUT")
 
 #if defined(PCBI6)
-#define TR_ABOUT_OPENTX_1              TR("OpenTX\001is\001open\001source,\001non", "")
-#define TR_ABOUT_OPENTX_2              TR("commercial,\001no\001warranties.", "")
-#define TR_ABOUT_OPENTX_3              TR("It\001was\001developed\001for\001free.", "")
-#define TR_ABOUT_OPENTX_4              TR("www.open-tx.org", "")
+#define TR_ABOUT_OPENTX_1              TR("OpenI6X", "")
+#define TR_ABOUT_OPENTX_2              TR("is\001based\001on\001OpenTX", "")
+
 #else
 #define TR_ABOUT_OPENTX_1              TR("OpenTX\001is\001open\001source,\001non", "OpenTX is open source, non-")
 #define TR_ABOUT_OPENTX_2              TR("commercial,\001no\001warranties.", "commercial and comes with no")

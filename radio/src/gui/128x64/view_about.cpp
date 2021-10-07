@@ -71,10 +71,8 @@ void menuAboutView(event_t event) {
   lcdDrawSolidFilledRect(0, 0, LCD_W, 16, 0);
   lcdDrawText(ABOUT_X, 0, STR_ABOUTUS, DBLSIZE|INVERS);
 
-  lcdDrawText(ABOUT_X, 22, STR_ABOUT_OPENTX_1, SMLSIZE);
-  lcdDrawText(ABOUT_X, 30, STR_ABOUT_OPENTX_2, SMLSIZE);
-  lcdDrawText(ABOUT_X, 38, STR_ABOUT_OPENTX_3, SMLSIZE);
-  lcdDrawText(ABOUT_X + 20, 50, STR_ABOUT_OPENTX_4, SMLSIZE);
+  lcdDrawText(ABOUT_X + 44, 30, STR_ABOUT_OPENTX_1, SMLSIZE);
+  lcdDrawText(ABOUT_X + 20, 42, STR_ABOUT_OPENTX_2, SMLSIZE);
 }
 #else
 void menuAboutView(event_t event)
