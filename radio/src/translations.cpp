@@ -709,6 +709,7 @@ const char STR_BLCOLOR[]   = TR_BLCOLOR;
   const char STR_ABOUT_OPENTX_2[]  = TR_ABOUT_OPENTX_2;
   const char STR_ABOUT_OPENTX_3[]  = TR_ABOUT_OPENTX_3;
   const char STR_ABOUT_OPENTX_4[]  = TR_ABOUT_OPENTX_4;
+#if !defined(PCBI6)
   const char STR_ABOUT_OPENTX_5[]  = TR_ABOUT_OPENTX_5;
 
   const char STR_ABOUT_BERTRAND_1[]  = TR_ABOUT_BERTRAND_1;
@@ -747,3 +748,4 @@ const char STR_BLCOLOR[]   = TR_BLCOLOR;
   const char STR_ABOUT_PARENTS_2[]  = TR_ABOUT_PARENTS_2;
   const char STR_ABOUT_PARENTS_3[]  = TR_ABOUT_PARENTS_3;
   const char STR_ABOUT_PARENTS_4[]  = TR_ABOUT_PARENTS_4;
+#endif

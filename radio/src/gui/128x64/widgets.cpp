@@ -261,7 +261,7 @@ void drawSleepBitmap()
 #if !defined(PCBI6)
   lcdDraw1bitBitmap((LCD_W-SLEEP_BITMAP_WIDTH)/2, (LCD_H-SLEEP_BITMAP_HEIGHT)/2, SLEEP_BITMAP, 0);
 #else
-  lcdDrawText(LCD_W/2 - 12, LCD_H/2 - 4, "Z Z Z", CENTERED);
+  lcdDrawText(LCD_W/2 - 12, LCD_H/2 - 4, "z z z", CENTERED);
 #endif
   lcdRefresh();
 }
