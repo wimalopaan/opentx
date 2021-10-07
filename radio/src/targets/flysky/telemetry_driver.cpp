@@ -22,6 +22,8 @@
 
 Fifo<uint8_t, TELEMETRY_FIFO_SIZE> telemetryFifo;
 uint32_t telemetryErrors = 0;
+static USART_InitTypeDef USART_InitStructure;
+void uartSetDirection(bool tx);
 
 void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   TRACE("telemetryPortInit %d", baudrate);
@@ -49,7 +51,6 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
-  USART_InitTypeDef USART_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
 
   /*
@@ -66,7 +67,6 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_Init(TELEMETRY_GPIO, &GPIO_InitStructure);
 
-  //GPIO_PinAFConfig(TELEMETRY_GPIO, TELEMETRY_GPIO_PinSource_RX, TELEMETRY_GPIO_AF);
   GPIO_PinAFConfig(TELEMETRY_GPIO, TELEMETRY_GPIO_PinSource_TX, TELEMETRY_GPIO_AF);
 
   USART_InitStructure.USART_BaudRate = baudrate;
@@ -116,17 +116,46 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   USART_ITConfig(TELEMETRY_USART, USART_IT_RXNE, ENABLE);
   NVIC_SetPriority(TELEMETRY_USART_IRQn, 6);
   NVIC_EnableIRQ(TELEMETRY_USART_IRQn);
+
+  // // Debug pin setup
+  // RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+  // GPIO_InitTypeDef gpio_init;
+  // gpio_init.GPIO_Mode = GPIO_Mode_OUT;
+  // gpio_init.GPIO_OType = GPIO_OType_PP;
+  // gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+  // gpio_init.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  // gpio_init.GPIO_Pin = GPIO_Pin_15;
+  // GPIO_Init(GPIOA, &gpio_init);
 }
 
 void telemetryPortSetDirectionOutput() {
   TELEMETRY_USART->CR1 &= ~USART_CR1_RE;  // disable receive
   TELEMETRY_USART->CR1 |= USART_CR1_TE;   // enable transmit
+  //uartSetDirection(true);
 }
 
 void telemetryPortSetDirectionInput() {
   TELEMETRY_USART->CR1 &= ~USART_CR1_TE;  // disable trasmit
   TELEMETRY_USART->CR1 |= USART_CR1_RE;   // enable receive
+  //uartSetDirection(false);
 }
+
+// With disable/enable, it seems it's not needed
+// void uartSetDirection(bool tx) {
+//   USART_Cmd(TELEMETRY_USART, DISABLE);
+//   uint32_t inversionPins = 0;
+
+//   if (tx) {
+//     inversionPins |= USART_InvPin_Tx;
+//     USART_InitStructure.USART_Mode = USART_Mode_Tx;
+//   } else {
+//     inversionPins |= USART_InvPin_Rx;
+//     USART_InitStructure.USART_Mode = USART_Mode_Rx;
+//   }
+
+//   USART_Init(TELEMETRY_USART, &USART_InitStructure);
+//   USART_Cmd(TELEMETRY_USART, ENABLE);
+// }
 
 void sportSendBuffer(const uint8_t* buffer, unsigned long count) {
   telemetryPortSetDirectionOutput();
@@ -134,9 +163,14 @@ void sportSendBuffer(const uint8_t* buffer, unsigned long count) {
   DMA_InitTypeDef DMA_InitStructure;
   DMA_StructInit(&DMA_InitStructure);
   DMA_DeInit(TELEMETRY_DMA_Channel_TX);
-
+  /*
+#define DMA_Priority_VeryHigh              DMA_CCR_PL
+#define DMA_Priority_High                  DMA_CCR_PL_1
+#define DMA_Priority_Medium                DMA_CCR_PL_0
+#define DMA_Priority_Low                   ((uint32_t)0x00000000)
+*/
   DMA_InitStructure.DMA_PeripheralBaseAddr = CONVERT_PTR_UINT(&TELEMETRY_USART->TDR);
-  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;  //DMA_Priority_VeryHigh;
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
@@ -182,23 +216,36 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
       status = TELEMETRY_USART->ISR;
     }
   }
-
-  while (status & (USART_FLAG_RXNE | USART_FLAG_ERRORS)) {
+  while (status & (USART_FLAG_RXNE /* | USART_FLAG_ERRORS*/)) {
     uint8_t data = TELEMETRY_USART->RDR;
     if (status & USART_FLAG_ERRORS) {
-      telemetryErrors++;
-    } else {
-      telemetryFifo.push(data);
-#if defined(LUA)
-      if (telemetryProtocol == PROTOCOL_FRSKY_SPORT) {
-        static uint8_t prevdata;
-        if (prevdata == 0x7E && outputTelemetryBufferSize > 0 && data == outputTelemetryBufferTrigger) {
-          sportSendBuffer(outputTelemetryBuffer, outputTelemetryBufferSize);
-        }
-        prevdata = data;
+      //TRACE("%d E", status & USART_FLAG_ERRORS);
+      if (status & USART_FLAG_ORE) {
+        USART_ClearITPendingBit(TELEMETRY_USART, USART_IT_ORE);
       }
-#endif
+      if (status & USART_FLAG_NE) {
+        USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_NE);
+      }
+      if (status & USART_FLAG_FE) {
+        USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_FE);
+      }
+      if (status & USART_FLAG_PE) {
+        USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_PE);
+      }
     }
+    //TRACE("O");
+    telemetryFifo.push(data);
+
+#if defined(LUA)
+    if (telemetryProtocol == PROTOCOL_FRSKY_SPORT) {
+      static uint8_t prevdata;
+      if (prevdata == 0x7E && outputTelemetryBufferSize > 0 && data == outputTelemetryBufferTrigger) {
+        sportSendBuffer(outputTelemetryBuffer, outputTelemetryBufferSize);
+      }
+      prevdata = data;
+    }
+#endif
+
     status = TELEMETRY_USART->ISR;
   }
 }

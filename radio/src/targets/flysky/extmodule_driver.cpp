@@ -161,7 +161,8 @@ inline void extmoduleSendNextFrame() {
 extern "C" void EXTMODULE_TIMER_IRQHandler() {
   if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;    // Clears interrupt on ch2
-    if (s_current_protocol[EXTERNAL_MODULE] != PROTO_PPM) {  //== PROTO_NONE
+    //if (s_current_protocol[EXTERNAL_MODULE] == PROTO_NONE) { // used when enabling mixer scheduler (also uncomment sendSynchronousPulses in MixerTask) Latest otx has both setupPulses enabled. (?)
+    if (s_current_protocol[EXTERNAL_MODULE] != PROTO_PPM) {
       setupPulses(EXTERNAL_MODULE);
     }
     extmoduleSendNextFrame();

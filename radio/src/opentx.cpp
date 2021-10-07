@@ -1879,12 +1879,10 @@ void opentxInit(OPENTX_INIT_ARGS) {
   lcdSetContrast();
 #endif
   backlightOn();
-  TRACE("bklt done");
+  
 #if defined(PCBSKY9X) && !defined(SIMU)
   init_trainer_capture();
 #endif
-
-  TRACE("start pulses");
   startPulses();
 
   wdt_enable(WDTO_500MS);
