@@ -26,6 +26,8 @@
 #endif
 #if defined(PCBXLITE)
 #define BOOTLOADER_KEYS 0x0f
+#elif defined(PCBI6)
+#define BOOTLOADER_KEYS 0x2100
 #else
 #define BOOTLOADER_KEYS 0x42
 #endif
