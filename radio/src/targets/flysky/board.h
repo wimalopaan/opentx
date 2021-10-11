@@ -74,7 +74,7 @@ extern "C" {
 #endif
 
 #define FLASHSIZE                       0x20000  // 128 kb
-#define BOOTLOADER_SIZE                 0x0
+#define BOOTLOADER_SIZE                 0x4000   //  16 kb
 #define FIRMWARE_ADDRESS                0x08000000
 
 #define LUA_MEM_MAX                     (0)    // max allowed memory usage for complete Lua  (in bytes), 0 means unlimited
@@ -471,7 +471,7 @@ void hapticOff(void);
 
 // Second serial port driver
 #if defined(SERIAL_GPIO)
-#define DEBUG_BAUDRATE                  921600
+#define DEBUG_BAUDRATE                  115200
 #define SERIAL2
 extern uint8_t serial2Mode;
 void serial2Init(unsigned int mode, unsigned int protocol);
