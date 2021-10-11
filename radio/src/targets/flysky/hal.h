@@ -574,7 +574,7 @@ F072 IRQs
 #define MIXER_SCHEDULER_TIMER_IRQHandler     TIM17_IRQHandler
 
 //all used RCC goes here
-#define RCC_AHB1_LIST                   (LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB | BUZZER_RCC_AHBPeriph | EXTMODULE_RCC_AHBPeriph)
+#define RCC_AHB1_LIST                   (BACKLIGHT_RCC_AHB1Periph | LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | RCC_AHBPeriph_GPIOB | BUZZER_RCC_AHBPeriph | EXTMODULE_RCC_AHBPeriph)
 #define RCC_APB1_LIST                   (INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph | I2C_RCC_APB1Periph)
 #define RCC_APB2_LIST                   (MIXER_SCHEDULER_TIMER_RCC_APB1Periph | PWM_RCC_APB2Periph | EXTMODULE_RCC_APB2Periph)
 

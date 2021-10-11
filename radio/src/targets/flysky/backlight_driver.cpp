@@ -24,11 +24,10 @@
 
 void backlightInit()
 {
-    RCC_AHBPeriphClockCmd(BACKLIGHT_RCC_AHB1Periph, ENABLE);
     GPIO_InitTypeDef gpio_init;
     gpio_init.GPIO_Mode  = GPIO_Mode_OUT;
     gpio_init.GPIO_OType = GPIO_OType_PP;
-    gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+    gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
     gpio_init.GPIO_PuPd  = GPIO_PuPd_NOPULL;
     gpio_init.GPIO_Pin   = BACKLIGHT_GPIO_PIN;
     GPIO_Init(BACKLIGHT_GPIO, &gpio_init);
