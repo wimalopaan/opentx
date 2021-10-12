@@ -222,12 +222,8 @@ extern "C" void INTERRUPT_xMS_IRQHandler()
 
 void init_gpio()
 {
-  RCC_AHBPeriphClockCmd(I2C_RCC_AHB1Periph, ENABLE);
-  RCC_APB1PeriphClockCmd(I2C_RCC_APB1Periph, ENABLE);
-
   GPIO_InitTypeDef gpio_init;
   gpio_init.GPIO_Pin = I2C_SCL_GPIO_PIN | I2C_SDA_GPIO_PIN;
-  //gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
   gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
   gpio_init.GPIO_Mode = GPIO_Mode_AF;
   gpio_init.GPIO_OType = GPIO_OType_OD;
@@ -321,7 +317,7 @@ void boardInit()
   RCC_APB2PeriphClockCmd(RCC_APB2_LIST, ENABLE);
 #if defined(DEBUG) && defined(SERIAL_GPIO)
   serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
-  TRACE("---------------------- FlySky board started :) -------------------------");
+  TRACE("\nFlySky board started :)");
 #endif
   // Reset reason
   resetReason();
@@ -330,8 +326,6 @@ void boardInit()
   adcInit();
   delaysInit();
   lcdInit(); // delaysInit() must be called before
-  //define this deiver
-  //audioInit();
   initBuzzerTimer();
   init2MhzTimer();
   init5msTimer();
