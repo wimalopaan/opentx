@@ -775,7 +775,9 @@ enum TimerModes {
 enum CountDownModes {
   COUNTDOWN_SILENT,
   COUNTDOWN_BEEPS,
+#if defined(VOICE)
   COUNTDOWN_VOICE,
+#endif
 #if defined(HAPTIC)
   COUNTDOWN_HAPTIC,
 #endif
