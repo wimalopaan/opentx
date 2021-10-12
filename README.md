@@ -2,6 +2,18 @@
 
 This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You can find the latest build and some instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX)  
 
+## Features implemented
+
+* AFHDS2A protocol
+* PPM out
+* CRSF working with ExpressLRS at 115 and 400k bauds and with Crossfire modules at 115k bauds.
+* Telemetry
+* Buzzer audio alarms and indications.
+
+## Users Telegram group
+
+https://t.me/otx_flysky_i6x
+
 ## Navigation:
 
 | Key | Function |
@@ -15,13 +27,14 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 
 ## Next tasks/Known issues:
 
-* Crossfire support
-* UART DMA fifo transfers
-* Add settings for ExpressLRS, since no LUA
-* USB support (board.h usbplugged)
-* Bootloader if it fits. Mass storage to backup EEPROM and update firmware.
+* Add settings menu for ExpressLRS, since no LUA is supported.
+* Reboots with Crossfire modules at 400k bauds.
+* Enable mixer sync for CRSF.
+* USB joystick mode.
+* Bootloader. USB mass storage to backup EEPROM and update firmware.
 * SDCARD support if it fits in flash.
 * PPM in (Trainer)
+* HELI support.
 
 ## ST-Link pinout
 
@@ -45,7 +58,3 @@ sudo cat /dev/ttyUSB0 115200
 * ADC code taken from OpenGround: https://github.com/fishpepper/OpenGround
 * This work is based on Jakub's (qba667) work and is forked from his repo.
 * All the contributors of OpenTX. 
-
-## Telegram group
-
-t.me /otx_flysky_i6x
