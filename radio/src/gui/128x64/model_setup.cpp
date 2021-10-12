@@ -177,7 +177,8 @@ enum MenuModelSetupItems {
   #define CURSOR_ON_CELL                 (true)
   #define MODEL_SETUP_MAX_LINES          (HEADER_LINE+ITEM_MODEL_SETUP_MAX)
   #define POT_WARN_ITEMS()               ((g_model.potsWarnMode) ? (uint8_t)(NUM_POTS+NUM_SLIDERS) : (uint8_t)0)
-  #define TIMER_ROWS                     2, 0, 0, 0, 0
+  #define TIMER_ROWS(x)                  2, 0, 0, 0, g_model.timers[x].countdownBeep != COUNTDOWN_SILENT ? (uint8_t)1 : (uint8_t)0
+  #define TIMERS_ROWS                    TIMER_ROWS(0), TIMER_ROWS(1), TIMER_ROWS(2)
 #if defined(PCBSKY9X) && !defined(REVA)
   #define EXTRA_MODULE_ROWS              LABEL(ExtraModule), 1, 2,
 #else
@@ -208,6 +209,26 @@ enum MenuModelSetupItems {
   #define TRAINER_ROWS
 #endif
 
+void editTimerCountdown(int timerIdx, coord_t y, LcdFlags attr, event_t event)
+{
+  TimerData & timer = g_model.timers[timerIdx];
+  lcdDrawTextAlignedLeft(y, STR_BEEPCOUNTDOWN);
+  lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_VBEEPCOUNTDOWN, timer.countdownBeep, (menuHorizontalPosition == 0 ? attr : 0));
+  if (timer.countdownBeep != COUNTDOWN_SILENT) {
+    lcdDrawNumber(MODEL_SETUP_2ND_COLUMN + 6 * FW, y, TIMER_COUNTDOWN_START(timerIdx), (menuHorizontalPosition == 1 ? attr : 0) | LEFT);
+    lcdDrawChar(lcdLastRightPos, y, 's');
+  }
+  if (attr && s_editMode > 0) {
+    switch (menuHorizontalPosition) {
+      case 0:
+        CHECK_INCDEC_MODELVAR(event, timer.countdownBeep, COUNTDOWN_SILENT, COUNTDOWN_COUNT - 1);
+        break;
+      case 1:
+        timer.countdownStart = -checkIncDecModel(event, -timer.countdownStart, -1, +2);
+        break;
+    }
+  }
+}
 
 void onBindMenu(const char * result)
 {
@@ -293,11 +314,23 @@ void menuModelSetup(event_t event)
 //  1 Show two inputs in the same row
 //  ... 
   MENU_TAB({ 
-    HEADER_LINE_COLUMNS 0, 
-    TIMER_ROWS, TIMER_ROWS, TIMER_ROWS, 0, 1, 0, 0, 0, 0, 0, 
-    LABEL(PreflightCheck), 0, 0, 
+    HEADER_LINE_COLUMNS 
+    0, 
+    TIMERS_ROWS,
+    0, // Extended limits
+    1, // Extended trims
+    0, // Show trims
+    0, // Trims step
+    0, // Throttle reverse
+    0, // Throttle trace source
+    0, // Throttle trim
+    // 0, // Throttle trim switch
+    LABEL(PreflightCheck), 
+    0, 
+    0, 
     NUM_SWITCHES-1, 
-    NUM_STICKS+NUM_POTS+NUM_SLIDERS+NUM_ROTARY_ENCODERS-1, 0,
+    NUM_STICKS+NUM_POTS+NUM_SLIDERS+NUM_ROTARY_ENCODERS-1, 
+    0,
     LABEL(InternalModule),
     INTERNAL_MODULE_MODE_ROWS,
 #if !defined(PCBI6)      
@@ -355,7 +388,7 @@ void menuModelSetup(event_t event)
       }
     }
 
-    LcdFlags blink = ((editMode>0) ? BLINK|INVERS : INVERS);
+    LcdFlags blink = ((editMode > 0) ? BLINK|INVERS : INVERS);
     LcdFlags attr = (sub == k ? blink : 0);
     //TRACE("k: %d max: %d", k, ITEM_MODEL_SETUP_MAX);
     switch (k) {
@@ -372,7 +405,7 @@ void menuModelSetup(event_t event)
         drawStringWithIndex(0*FW, y, STR_TIMER, timerIdx+1);
         drawTimerMode(MODEL_SETUP_2ND_COLUMN, y, timer->mode, menuHorizontalPosition==0 ? attr : 0);
         drawTimer(MODEL_SETUP_2ND_COLUMN+5*FW-2+5*FWNUM+1, y, timer->start, RIGHT | (menuHorizontalPosition==1 ? attr : 0), menuHorizontalPosition==2 ? attr : 0);
-        if (attr && (editMode>0 || p1valdiff)) {
+        if (attr && (editMode > 0 || p1valdiff)) {
           div_t qr = div(timer->start, 60);
           switch (menuHorizontalPosition) {
             case 0:
@@ -383,7 +416,7 @@ void menuModelSetup(event_t event)
               if (timerMode < 0) timerMode += TMRMODE_COUNT-1;
               timer->mode = timerMode;
 #if defined(AUTOSWITCH)
-              if (s_editMode>0) {
+              if (s_editMode > 0) {
                 int8_t val = timer->mode - (TMRMODE_COUNT-1);
                 int8_t switchVal = checkIncDecMovedSwitch(val);
                 if (val != switchVal) {
@@ -431,8 +464,7 @@ void menuModelSetup(event_t event)
       case ITEM_MODEL_TIMER2_COUNTDOWN_BEEP:
       case ITEM_MODEL_TIMER3_COUNTDOWN_BEEP:
       {
-        TimerData * timer = &g_model.timers[k>=ITEM_MODEL_TIMER3 ? 2 : (k>=ITEM_MODEL_TIMER2 ? 1 : 0)];
-        timer->countdownBeep = editChoice(MODEL_SETUP_2ND_COLUMN, y, STR_BEEPCOUNTDOWN, STR_VBEEPCOUNTDOWN, timer->countdownBeep, COUNTDOWN_SILENT, COUNTDOWN_COUNT-1, attr, event);
+        editTimerCountdown(k>=ITEM_MODEL_TIMER3 ? 2 : (k>=ITEM_MODEL_TIMER2 ? 1 : 0), y, attr, event);
         break;
       }
 
