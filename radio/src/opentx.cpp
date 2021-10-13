@@ -1772,7 +1772,7 @@ void opentxInit(OPENTX_INIT_ARGS) {
 
 #if defined(SDCARD) && !defined(PCBMEGA2560)
   // SDCARD related stuff, only done if not unexpectedShutdown
-  if (!unexpectedShutbacklight enabledown) {
+  if (!globalData.unexpectedShutdown) {
     sdInit();
     logsInit();
   }
