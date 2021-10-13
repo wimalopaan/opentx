@@ -20,9 +20,11 @@
 
 #include "opentx.h"
 
+#if !defined(PCBI6)
 const unsigned char about_bmp[]  = {
 #include "about.lbm"
 };
+#endif
 
 enum AboutScreens {
   ABOUT_OPENTX,
@@ -50,6 +52,29 @@ enum AboutScreens {
 #define EVT_KEY_NEXT_VIEW              EVT_KEY_FIRST(KEY_DOWN)
 #endif
 
+#if defined(PCBI6)
+void menuAboutView(event_t event) {
+  switch(event)
+  {
+    case EVT_ENTRY:
+    case EVT_KEY_NEXT_VIEW:
+    case EVT_KEY_PREVIOUS_VIEW:
+      if (IS_KEY_LONG(EVT_KEY_PREVIOUS_VIEW)) {
+        killEvents(event);
+      }
+      break;
+    case EVT_KEY_FIRST(KEY_EXIT):
+      chainMenu(menuMainView);
+      break;
+  }
+
+  lcdDrawSolidFilledRect(0, 0, LCD_W, 16, 0);
+  lcdDrawText(ABOUT_X, 0, STR_ABOUTUS, DBLSIZE|INVERS);
+
+  lcdDrawText(ABOUT_X + 44, 30, STR_ABOUT_OPENTX_1, SMLSIZE);
+  lcdDrawText(ABOUT_X + 20, 42, STR_ABOUT_OPENTX_2, SMLSIZE);
+}
+#else
 void menuAboutView(event_t event)
 {
   static uint8_t screenIndex;
@@ -159,3 +184,4 @@ void menuAboutView(event_t event)
     }
   }
 }
+#endif

@@ -33,14 +33,16 @@
 #endif
 #define APP_START_ADDRESS (uint32_t)(FIRMWARE_ADDRESS + BOOTLOADER_SIZE)
 
-#if defined(EEPROM)
+#if defined(PCBI6)
+#define MAIN_MENU_LEN 1
+#elif defined(EEPROM)
 #define MAIN_MENU_LEN 3
 #else
 #define MAIN_MENU_LEN 2
 #endif
 
 typedef void (*voidFunction)(void);
-#if defined(PCBI6)
+#if defined(STM32F0)
 #define jumpTo(addr)                                 \
   {                                                  \
     __disable_irq();                                 \
@@ -288,15 +290,15 @@ int main() {
       Tenms = 0;
 
       if (state != ST_USB) {
-        if (usbPlugged()) {
-          state = ST_USB;
-          if (!unlocked) {
-            unlocked = 1;
-            unlockFlash();
-          }
-          usbStart();
-          usbPluggedIn();
-        }
+        // if (usbPlugged()) {
+        //   state = ST_USB;
+        //   if (!unlocked) {
+        //     unlocked = 1;
+        //     unlockFlash();
+        //   }
+        //   usbStart(); // Currently freezes on PCBI6
+        //   usbPluggedIn();
+        // }
       }
 
       if (state == ST_USB) {
@@ -314,10 +316,9 @@ int main() {
 
       lcdRefreshWait();
       event_t event = getEvent();
-#if defined(SDCARD)
       if (state == ST_START) {
         bootloaderDrawScreen(state, vpos);
-
+#if defined(SDCARD)
         if (event == EVT_KEY_FIRST(KEY_DOWN)) {
           vpos = (vpos + 1) % MAIN_MENU_LEN;
           continue;
@@ -344,7 +345,15 @@ int main() {
           // next loop
           continue;
         }
-      } else if (state == ST_DIR_CHECK) {
+#else
+        if (event == EVT_KEY_BREAK(KEY_ENTER)) {
+          state = ST_REBOOT;
+          continue;
+        }
+#endif // SDCARD
+      } 
+#if defined(SDCARD)
+      else if (state == ST_DIR_CHECK) {
         fr = openBinDir(memoryType);
 
         if (fr == FR_OK) {
@@ -481,7 +490,7 @@ int main() {
 
         bootloaderDrawScreen(state, 100);
       }
-#endif
+#endif // SDCARD
       if (event == EVT_KEY_LONG(KEY_EXIT)) {
         // Start the main application
 

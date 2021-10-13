@@ -122,20 +122,6 @@ void buzzerEvent(unsigned int index)
       case AU_STICK4_MIDDLE:
       case AU_POT1_MIDDLE:
       case AU_POT2_MIDDLE:
-#if defined(PCBX9E)
-      case AU_POT3_MIDDLE:
-      case AU_POT4_MIDDLE:
-#endif
-#if defined(PCBTARANIS) || defined(PCBHORUS)
-      case AU_SLIDER1_MIDDLE:
-      case AU_SLIDER2_MIDDLE:
-#if defined(PCBX9E)
-      case AU_SLIDER3_MIDDLE:
-      case AU_SLIDER4_MIDDLE:
-#endif
-#else
-      case AU_POT3_MIDDLE:
-#endif
         playTone(BEEP_DEFAULT_FREQ + 1500, 80, 20, PLAY_NOW);
         break;
       case AU_MIX_WARNING_1:
