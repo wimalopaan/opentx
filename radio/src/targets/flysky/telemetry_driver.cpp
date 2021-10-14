@@ -47,7 +47,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = TELEMETRY_DMA_TX_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelPriority = 2; // High - In F4 NVIC_IRQChannelPreemptionPriority = 1; (0 is highest, 15 is lowest)
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
@@ -85,30 +85,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 
   // Half duplex
   USART_HalfDuplexCmd(TELEMETRY_USART, ENABLE);
-  /*
-   ===============================================================================
-                           Half-duplex mode function
-   ===============================================================================
 
-    This subsection provides a set of functions allowing to manage the USART
-    Half-duplex communication.
-
-    The USART can be configured to follow a single-wire half-duplex protocol where
-    the TX and RX lines are internally connected.
-
-    USART Half duplex communication is possible through the following procedure:
-       1. Program the Baud rate, Word length, Stop bits, Parity, Mode transmitter
-          or Mode receiver and hardware flow control values using the USART_Init()
-          function.
-       2. Configures the USART address using the USART_SetAddress() function.
-       3. Enable the USART using the USART_Cmd() function.
-       4. Enable the half duplex mode using USART_HalfDuplexCmd() function.
-
-  @note The RX pin is no longer used
-  @note In Half-duplex mode the following bits must be kept cleared:
-          - LINEN and CLKEN bits in the USART_CR2 register.
-          - SCEN and IREN bits in the USART_CR3 register.
-    */
   // Level inversion
   USART_InvPinCmd(TELEMETRY_USART, USART_InvPin_Tx | USART_InvPin_Rx, ENABLE);
 
@@ -170,7 +147,7 @@ void sportSendBuffer(const uint8_t* buffer, unsigned long count) {
 #define DMA_Priority_Low                   ((uint32_t)0x00000000)
 */
   DMA_InitStructure.DMA_PeripheralBaseAddr = CONVERT_PTR_UINT(&TELEMETRY_USART->TDR);
-  DMA_InitStructure.DMA_Priority = DMA_Priority_High;  //DMA_Priority_VeryHigh;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;  
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;

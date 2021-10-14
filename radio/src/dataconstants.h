@@ -79,7 +79,7 @@
   #define MAX_SPECIAL_FUNCTIONS        11 // number of functions assigned to switches
   #define MAX_TRAINER_CHANNELS         8
   #define MAX_INPUTS                   16
-  #define MAX_TELEMETRY_SENSORS        24
+  #define MAX_TELEMETRY_SENSORS        32
   #define MAX_SCRIPTS				   0
 #else
   #define MAX_MODELS                   16
@@ -293,7 +293,9 @@ enum TelemetryUnit {
   UNIT_DEGREE,
   UNIT_RADIANS,
   UNIT_MILLILITERS,
-  UNIT_FLOZ,
+  UNIT_FLOZ,  
+  UNIT_HERTZ,
+  UNIT_DBM,
   UNIT_HOURS,
   UNIT_MINUTES,
   UNIT_SECONDS,
@@ -312,7 +314,7 @@ enum TelemetryUnit {
   UNIT_DATETIME_HOUR_MIN,
   UNIT_DATETIME_SEC
 };
-#define UNIT_MAX UNIT_FLOZ
+#define UNIT_MAX UNIT_DBM
 #define UNIT_DIST UNIT_METERS
 #define UNIT_TEMPERATURE UNIT_CELSIUS
 #define UNIT_SPEED UNIT_KMH

@@ -352,15 +352,17 @@ PACK(struct TelemetrySensor {
     NOBACKUP(uint8_t formula);
   };
   char label[TELEM_LABEL_LEN];  // user defined label
+  uint8_t subId;
   uint8_t type : 1;             // 0=custom / 1=calculated
-  uint8_t unit : 5;             // user can choose what unit to display each value in
+  uint8_t spare1:1;
+  uint8_t unit : 6;             // user can choose what unit to display each value in
   uint8_t prec : 2;
   uint8_t autoOffset : 1;
   uint8_t filter : 1;
   uint8_t logs : 1;
   uint8_t persistent : 1;
   uint8_t onlyPositive : 1;
-  uint8_t subId : 3;
+  uint8_t spare2:1;
   union {
     NOBACKUP(PACK(struct {
       uint16_t ratio;
@@ -920,7 +922,7 @@ static inline void check_struct() {
 #endif /* board specific ifdefs*/
 
   CHKSIZE(LogicalSwitchData, 9);
-  CHKSIZE(TelemetrySensor, 13);
+  CHKSIZE(TelemetrySensor, 14);
 
 #if defined(PCBI6)
   CHKSIZE(ModuleData, 40);

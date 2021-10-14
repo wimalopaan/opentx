@@ -35,6 +35,8 @@
 #define BATTERY_ID                     0x08
 #define LINK_ID                        0x14
 #define CHANNELS_ID                    0x16
+#define LINK_RX_ID                     0x1C
+#define LINK_TX_ID                     0x1D
 #define ATTITUDE_ID                    0x1E
 #define FLIGHT_MODE_ID                 0x21
 #define PING_DEVICES_ID                0x28
@@ -66,6 +68,11 @@ enum CrossfireSensorIndexes {
   TX_RSSI_INDEX,
   TX_QUALITY_INDEX,
   TX_SNR_INDEX,
+  RX_RSSI_PERC_INDEX,
+  RX_RF_POWER_INDEX,
+  TX_RSSI_PERC_INDEX,
+  TX_RF_POWER_INDEX,
+  TX_FPS_INDEX,
   BATT_VOLTAGE_INDEX,
   BATT_CURRENT_INDEX,
   BATT_CAPACITY_INDEX,

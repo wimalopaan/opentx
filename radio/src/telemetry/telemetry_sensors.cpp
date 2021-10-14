@@ -572,6 +572,7 @@ UnitConversionRule;
 const UnitConversionRule unitConversionTable[] = {
     /* unitFrom     unitTo                    multiplier   divisor */
     {UNIT_METERS, UNIT_FEET, 105, 32},
+    {UNIT_FEET, UNIT_METERS, 32, 105},
     {UNIT_METERS_PER_SECOND, UNIT_FEET_PER_SECOND, 105, 32},
 
     {UNIT_KTS, UNIT_KMH, 1852, 1000},                // 1 knot = 1.85200 kilometers per hour
@@ -585,6 +586,10 @@ const UnitConversionRule unitConversionTable[] = {
     {UNIT_KMH, UNIT_FEET_PER_SECOND, 911, 1000},  // 1 km/h = 0.911344415 feet per second
 
     {UNIT_MILLILITERS, UNIT_FLOZ, 100, 2957},
+
+    {UNIT_RADIANS, UNIT_DEGREE, 10000, 175},  // 1 rad = 57.29578 deg
+    {UNIT_DEGREE, UNIT_RADIANS, 175, 10000},  // 1 deg = ‪0,0174533‬ rad
+
     {0, 0, 0, 0}  // termination
 };
 

@@ -21,40 +21,53 @@
 #include "opentx.h"
 
 const CrossfireSensor crossfireSensors[] = {
-  {LINK_ID,        0, ZSTR_RX_RSSI1,    UNIT_DB,            0},
-  {LINK_ID,        1, ZSTR_RX_RSSI2,    UNIT_DB,            0},
-  {LINK_ID,        2, ZSTR_RX_QUALITY,  UNIT_PERCENT,       0},
-  {LINK_ID,        3, ZSTR_RX_SNR,      UNIT_DB,            0},
-  {LINK_ID,        4, ZSTR_ANTENNA,     UNIT_RAW,           0},
-  {LINK_ID,        5, ZSTR_RF_MODE,     UNIT_RAW,           0},
-  {LINK_ID,        6, ZSTR_TX_POWER,    UNIT_MILLIWATTS,    0},
-  {LINK_ID,        7, ZSTR_TX_RSSI,     UNIT_DB,            0},
-  {LINK_ID,        8, ZSTR_TX_QUALITY,  UNIT_PERCENT,       0},
-  {LINK_ID,        9, ZSTR_TX_SNR,      UNIT_DB,            0},
-  {BATTERY_ID,     0, ZSTR_BATT,        UNIT_VOLTS,         1},
-  {BATTERY_ID,     1, ZSTR_CURR,        UNIT_AMPS,          1},
-  {BATTERY_ID,     2, ZSTR_CAPACITY,    UNIT_MAH,           0},
-  {GPS_ID,         0, ZSTR_GPS,         UNIT_GPS_LATITUDE,  0},
-  {GPS_ID,         0, ZSTR_GPS,         UNIT_GPS_LONGITUDE, 0},
-  {GPS_ID,         2, ZSTR_GSPD,        UNIT_KMH,           1},
-  {GPS_ID,         3, ZSTR_HDG,         UNIT_DEGREE,        3},
-  {GPS_ID,         4, ZSTR_ALT,         UNIT_METERS,        0},
-  {GPS_ID,         5, ZSTR_SATELLITES,  UNIT_RAW,           0},
-  {ATTITUDE_ID,    0, ZSTR_PITCH,       UNIT_RADIANS,       3},
-  {ATTITUDE_ID,    1, ZSTR_ROLL,        UNIT_RADIANS,       3},
-  {ATTITUDE_ID,    2, ZSTR_YAW,         UNIT_RADIANS,       3},
-  {FLIGHT_MODE_ID, 0, ZSTR_FLIGHT_MODE, UNIT_TEXT,          0},
-  {0,              0, "UNKNOWN",        UNIT_RAW,           0},
+  {LINK_ID,        0, ZSTR_RX_RSSI1,      UNIT_DB,                0},
+  {LINK_ID,        1, ZSTR_RX_RSSI2,      UNIT_DB,                0},
+  {LINK_ID,        2, ZSTR_RX_QUALITY,    UNIT_PERCENT,           0},
+  {LINK_ID,        3, ZSTR_RX_SNR,        UNIT_DB,                0},
+  {LINK_ID,        4, ZSTR_ANTENNA,       UNIT_RAW,               0},
+  {LINK_ID,        5, ZSTR_RF_MODE,       UNIT_RAW,               0},
+  {LINK_ID,        6, ZSTR_TX_POWER,      UNIT_MILLIWATTS,        0},
+  {LINK_ID,        7, ZSTR_TX_RSSI,       UNIT_DB,                0},
+  {LINK_ID,        8, ZSTR_TX_QUALITY,    UNIT_PERCENT,           0},
+  {LINK_ID,        9, ZSTR_TX_SNR,        UNIT_DB,                0},
+  {LINK_RX_ID,     0, ZSTR_RX_RSSI_PERC,  UNIT_PERCENT,           0},
+  {LINK_RX_ID,     1, ZSTR_RX_RF_POWER,   UNIT_DBM,               0},
+  {LINK_TX_ID,     0, ZSTR_TX_RSSI_PERC,  UNIT_PERCENT,           0},
+  {LINK_TX_ID,     1, ZSTR_TX_RF_POWER,   UNIT_DBM,               0},
+  {LINK_TX_ID,     2, ZSTR_TX_FPS,        UNIT_HERTZ,             0},
+  {BATTERY_ID,     0, ZSTR_BATT,          UNIT_VOLTS,             1},
+  {BATTERY_ID,     1, ZSTR_CURR,          UNIT_AMPS,              1},
+  {BATTERY_ID,     2, ZSTR_CAPACITY,      UNIT_MAH,               0},
+  {BATTERY_ID,     3, ZSTR_BATT_PERCENT,  UNIT_PERCENT,           0},
+  {GPS_ID,         0, ZSTR_GPS,           UNIT_GPS_LATITUDE,      0},
+  {GPS_ID,         0, ZSTR_GPS,           UNIT_GPS_LONGITUDE,     0},
+  {GPS_ID,         2, ZSTR_GSPD,          UNIT_KMH,               1},
+  {GPS_ID,         3, ZSTR_HDG,           UNIT_DEGREE,            3},
+  {GPS_ID,         4, ZSTR_ALT,           UNIT_METERS,            0},
+  {GPS_ID,         5, ZSTR_SATELLITES,    UNIT_RAW,               0},
+  {ATTITUDE_ID,    0, ZSTR_PITCH,         UNIT_RADIANS,           3},
+  {ATTITUDE_ID,    1, ZSTR_ROLL,          UNIT_RADIANS,           3},
+  {ATTITUDE_ID,    2, ZSTR_YAW,           UNIT_RADIANS,           3},
+  {FLIGHT_MODE_ID, 0, ZSTR_FLIGHT_MODE,   UNIT_TEXT,              0},
+  {CF_VARIO_ID,    0, ZSTR_VSPD,          UNIT_METERS_PER_SECOND, 2},
+  {0,              0, "UNKNOWN",          UNIT_RAW,               0},
 };
 
 const CrossfireSensor & getCrossfireSensor(uint8_t id, uint8_t subId)
 {
   if (id == LINK_ID)
     return crossfireSensors[RX_RSSI1_INDEX+subId];
+  else if (id == LINK_RX_ID)
+    return crossfireSensors[RX_RSSI_PERC_INDEX+subId];
+  else if (id == LINK_TX_ID)
+    return crossfireSensors[TX_RSSI_PERC_INDEX+subId];
   else if (id == BATTERY_ID)
     return crossfireSensors[BATT_VOLTAGE_INDEX+subId];
   else if (id == GPS_ID)
     return crossfireSensors[GPS_LATITUDE_INDEX+subId];
+  else if (id == CF_VARIO_ID)
+    return crossfireSensors[VERTICAL_SPEED_INDEX];
   else if (id == ATTITUDE_ID)
     return crossfireSensors[ATTITUDE_PITCH_INDEX+subId];
   else if (id == FLIGHT_MODE_ID)
@@ -103,6 +116,11 @@ void processCrossfireTelemetryFrame()
   uint8_t id = telemetryRxBuffer[2];
   int32_t value;
   switch(id) {
+    case CF_VARIO_ID:
+      if (getCrossfireTelemetryValue<2>(3, value))
+        processCrossfireTelemetryValue(VERTICAL_SPEED_INDEX, value);
+      break;
+
     case GPS_ID:
       if (getCrossfireTelemetryValue<4>(3, value))
         processCrossfireTelemetryValue(GPS_LATITUDE_INDEX, value/10);
@@ -122,7 +140,7 @@ void processCrossfireTelemetryFrame()
       for (unsigned int i=0; i<=TX_SNR_INDEX; i++) {
         if (getCrossfireTelemetryValue<1>(3+i, value)) {
           if (i == TX_POWER_INDEX) {
-            static const int32_t power_values[] = { 0, 10, 25, 100, 500, 1000, 2000, 250 };
+            static const int32_t power_values[] = { 0, 10, 25, 100, 500, 1000, 2000, 250, 50};
             value = ((unsigned)value < DIM(power_values) ? power_values[value] : 0);
           }
           processCrossfireTelemetryValue(i, value);
@@ -138,6 +156,22 @@ void processCrossfireTelemetryFrame()
           }
         }
       }
+      break;
+
+    case LINK_RX_ID:
+      if (getCrossfireTelemetryValue<1>(4, value))
+        processCrossfireTelemetryValue(RX_RSSI_PERC_INDEX, value);
+      if (getCrossfireTelemetryValue<1>(7, value))
+        processCrossfireTelemetryValue(TX_RF_POWER_INDEX, value);
+      break;
+
+    case LINK_TX_ID:
+      if (getCrossfireTelemetryValue<1>(4, value))
+        processCrossfireTelemetryValue(TX_RSSI_PERC_INDEX, value);
+      if (getCrossfireTelemetryValue<1>(7, value))
+        processCrossfireTelemetryValue(RX_RF_POWER_INDEX, value);
+      if (getCrossfireTelemetryValue<1>(8, value))
+        processCrossfireTelemetryValue(TX_FPS_INDEX, value * 10);
       break;
 
     case BATTERY_ID:
@@ -259,3 +293,68 @@ void crossfireSetDefault(int index, uint8_t id, uint8_t subId)
 
   storageDirty(EE_MODEL);
 }
+
+// /*luadoc
+// @function crossfireTelemetryPop()
+
+// Pops a received Crossfire Telemetry packet from the queue.
+
+// @retval nil queue does not contain any (or enough) bytes to form a whole packet
+
+// @retval multiple returns 2 values:
+//  * command (number)
+//  * packet (table) data bytes
+
+// @status current Introduced in 2.2.0
+// */
+// static int crossfireTelemetryPop(lua_State * L)
+// {
+//   if (!luaInputTelemetryFifo) {
+//     luaInputTelemetryFifo = new Fifo<uint8_t, LUA_TELEMETRY_INPUT_FIFO_SIZE>();
+//     if (!luaInputTelemetryFifo) {
+//       return 0;
+//     }
+//   }
+
+//   uint8_t length = 0, data = 0;
+//   if (luaInputTelemetryFifo->probe(length) && luaInputTelemetryFifo->size() >= uint32_t(length)) {
+//     // length value includes the length field
+//     luaInputTelemetryFifo->pop(length);
+//     luaInputTelemetryFifo->pop(data); // command
+//     lua_pushnumber(L, data);
+//     lua_newtable(L);
+//     for (uint8_t i=1; i<length-1; i++) {
+//       luaInputTelemetryFifo->pop(data);
+//       lua_pushinteger(L, i);
+//       lua_pushinteger(L, data);
+//       lua_settable(L, -3);
+//     }
+//     return 2;
+//   }
+
+//   return 0;
+// }
+
+// /*
+// This function allows for sending telemetry data toward the TBS Crossfire link.
+// @param command command
+// @param data array of data bytes
+// @retval boolean data queued in output buffer or not.
+// */
+// static bool crossfireTelemetryPush(uint8_t command, uint8_t *data, uint8_t length)
+// {
+//   if (isCrossfireOutputBufferAvailable()) {
+//     telemetryOutputPushByte(MODULE_ADDRESS);
+//     telemetryOutputPushByte(2 + length); // 1(COMMAND) + data length + 1(CRC)
+//     telemetryOutputPushByte(command); // COMMAND
+//     for (int i=0; i<length; i++) {
+//       telemetryOutputPushByte(data[i]);
+//     }
+//     telemetryOutputPushByte(crc8(outputTelemetryBuffer+2, 1 + length));
+//     telemetryOutputSetTrigger(command);
+//     return true;
+//   }
+//   else {
+//     return false;
+//   }
+// }
