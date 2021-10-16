@@ -165,6 +165,7 @@ static const MenuHandlerFunc menuTabModel[]  = {
 void menuStatisticsView(event_t event);
 void menuStatisticsDebug(event_t event);
 void menuStatisticsDebug2(event_t event);
+#if !defined(PCBI6)
 void menuAboutView(event_t event);
-
+#endif
 #endif // _MENUS_H_

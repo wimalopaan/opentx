@@ -281,9 +281,11 @@ void onMainViewMenu(const char *result)
     timerReset(2);
   }
 #endif
+#if !defined(PCBI6)
   else if (result == STR_VIEW_NOTES) {
     pushModelNotes();
   }
+#endif
   else if (result == STR_RESET_SUBMENU) {
     POPUP_MENU_ADD_ITEM(STR_RESET_FLIGHT);
     POPUP_MENU_ADD_ITEM(STR_RESET_TIMER1);
@@ -304,9 +306,11 @@ void onMainViewMenu(const char *result)
   else if (result == STR_STATISTICS) {
     chainMenu(menuStatisticsView);
   }
+#if !defined(PCBI6)
   else if (result == STR_ABOUT_US) {
     chainMenu(menuAboutView);
   }
+#endif
 }
 #endif
 
@@ -357,7 +361,9 @@ void menuMainView(event_t event)
       POPUP_MENU_ADD_ITEM(STR_RESET_SUBMENU);
 
       POPUP_MENU_ADD_ITEM(STR_STATISTICS);
+#if !defined(PCBI6)
       POPUP_MENU_ADD_ITEM(STR_ABOUT_US);
+#endif
       POPUP_MENU_START(onMainViewMenu);
       break;
 #endif
