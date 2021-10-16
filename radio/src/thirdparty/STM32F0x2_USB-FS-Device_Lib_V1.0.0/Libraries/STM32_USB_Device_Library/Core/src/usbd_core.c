@@ -84,7 +84,7 @@ void USBD_Init(USB_CORE_HANDLE *pdev,
   pdev->dev.usr_device = pDevice;    
   
   /* Update the serial number string descriptor with the data from the unique ID*/
-  Get_SerialNum();
+//  Get_SerialNum(); //
   
   /* set USB DEVICE core params */
   DCD_Init(pdev);
