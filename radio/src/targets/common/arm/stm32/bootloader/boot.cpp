@@ -18,12 +18,12 @@
  * GNU General Public License for more details.
  */
 #include "boot.h"
-
 #include "opentx.h"
 
 #if defined(SDCARD)
 #include "bin_files.h"
 #endif
+
 #if defined(PCBXLITE)
 #define BOOTLOADER_KEYS 0x0f
 #elif defined(PCBI6)
@@ -292,10 +292,14 @@ int main() {
       if (state != ST_USB) {
         if (usbPlugged()) {
           state = ST_USB;
-           if (!unlocked) {
-             unlocked = 1;
-             unlockFlash();
-           }
+            if (!unlocked) {
+              unlocked = 1;
+              unlockFlash();
+#if defined(PCBI6) && defined(EEPROM)
+              i2cInit();
+              eepromInit();
+#endif
+            }
           usbStart();
           usbPluggedIn();
         }

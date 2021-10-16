@@ -80,7 +80,7 @@ extern "C" {
 }
 #endif
 
-#define FLASHSIZE                       0x20000  // 128 kb
+#define FLASHSIZE                       0x1c000  // 112 kb
 #define BOOTLOADER_SIZE                 0x4000   //  16 kb
 #define FIRMWARE_ADDRESS                0x08000000
 
@@ -426,6 +426,7 @@ void backlightEnable(uint8_t level);
 #define EEPROM_BLOCK_SIZE     (64)
 //#define EEPROM_VERIFY_WRITES
 
+void i2cInit(void);
 void eepromInit();
 void eepromReadBlock(uint8_t * buffer, size_t address, size_t size);
 void eepromWriteBlock(uint8_t * buffer, size_t address, size_t size);

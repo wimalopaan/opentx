@@ -34,7 +34,7 @@ void bootloaderDrawScreen(BootloaderState st, int opt, const char* str) {
     lcdDrawText(FW, 5 * FH + FH / 2, STR_OR_PLUGIN_USB_CABLE);
 
     // Remove "opentx-" from string
-    const char* vers = getOtherVersion(nullptr);
+    const char* vers = getOtherVersion();
     if (strstr(vers, "opentx-"))
       vers += 7;
 

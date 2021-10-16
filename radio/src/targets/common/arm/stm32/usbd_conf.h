@@ -45,7 +45,7 @@
 #if defined(STM32F2) && !defined(BOOT)
 #define MSC_MEDIA_PACKET             512
 #elif defined(STM32F0)
-#define MSC_MEDIA_PACKET             512 // Broken when 128
+#define MSC_MEDIA_PACKET             512
 #else
 #define MSC_MEDIA_PACKET             4096
 #endif
