@@ -99,6 +99,11 @@ extern "C"
   }
 }
 
+#if defined(STM32F0)
+volatile uint32_t __attribute__((section(".ram_vector,\"aw\",%nobits @"))) ram_vector[VECTOR_TABLE_SIZE];
+extern volatile uint32_t g_pfnVectors[VECTOR_TABLE_SIZE];
+#endif
+
 //audio
 void audioConsumeCurrentBuffer()
 {
@@ -311,6 +316,15 @@ void resetReason()
 
 void boardInit()
 {
+#if defined(STM32F0)
+  // Move vect table to beggining of RAM
+  RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+  for (uint32_t i = 0; i < VECTOR_TABLE_SIZE; i++) {
+    ram_vector[i] = g_pfnVectors[i];
+  }
+  SYSCFG->CFGR1 = (SYSCFG->CFGR1 & ~SYSCFG_CFGR1_MEM_MODE) | (SYSCFG_CFGR1_MEM_MODE__SRAM * SYSCFG_CFGR1_MEM_MODE_0);  // remap 0x0000000 to RAM
+#endif
+
 #if !defined(SIMU)
   RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);

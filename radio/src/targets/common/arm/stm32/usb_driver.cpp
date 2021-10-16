@@ -68,18 +68,33 @@ int usbPlugged()
   return debounced_state;
 }
 
+#if defined(STM32F0)
+USB_CORE_HANDLE USB_Device_dev;
+#else
 USB_OTG_CORE_HANDLE USB_OTG_dev;
+#endif
 
+#if defined(STM32F0)
+extern "C" void USB_IRQHandler()
+{
+  USB_Istr();
+}
+#else
 extern "C" void OTG_FS_IRQHandler()
 {
   DEBUG_INTERRUPT(INT_OTG_FS);
   USBD_OTG_ISR_Handler(&USB_OTG_dev);
 }
+#endif
 
 void usbInit()
 {
   // Initialize hardware
+#if defined(STM32F0)
+  USB_BSP_Init(&USB_Device_dev);
+#else
   USB_OTG_BSP_Init(&USB_OTG_dev);
+#endif
   usbDriverStarted = false;
 }
 
@@ -89,22 +104,34 @@ void usbStart()
 #if !defined(BOOT)
     case USB_JOYSTICK_MODE:
       // initialize USB as HID device
+#if defined(STM32F0)
+      USBD_Init(&USB_Device_dev, &USR_desc, &USBD_HID_cb, &USR_cb);
+#else
       USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_HID_cb, &USR_cb);
+#endif
       break;
 #endif
 #if defined(USB_SERIAL)
     case USB_SERIAL_MODE:
       // initialize USB as CDC device (virtual serial port)
+#if defined(STM32F0)
+      USBD_Init(&USB_Device_dev, &USR_desc, &USBD_CDC_cb, &USR_cb);
+#else
       USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_CDC_cb, &USR_cb);
+#endif
       break;
 #endif
 // Flysky I6X doesn't have enough RAM for mass storage mode
 // Enable only in bootloader
-#if !defined(PCBI6)||defined(BOOT) 
+#if !defined(PCBI6) || defined(BOOT) 
     default:
     case USB_MASS_STORAGE_MODE:
       // initialize USB as MSC device
+#if defined(STM32F0)
+      USBD_Init(&USB_Device_dev, &USR_desc, &USBD_MSC_cb, &USR_cb);
+#else
       USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_MSC_cb, &USR_cb);
+#endif
       break;
 #endif
   }
@@ -114,7 +141,11 @@ void usbStart()
 void usbStop()
 {
   usbDriverStarted = false;
+#if defined(STM32F0)
+  USBD_DeInit(&USB_Device_dev);
+#else
   USBD_DeInit(&USB_OTG_dev);
+#endif
 }
 
 bool usbStarted()
@@ -134,8 +165,12 @@ void usbJoystickUpdate()
 {
   static uint8_t HID_Buffer[HID_IN_PACKET];
 
-  // test to se if TX buffer is free
+  // test to see if TX buffer is free
+#if defined(STM32F0)
+  if (USBD_HID_SendReport(&USB_Device_dev, 0, 0) == USBD_OK) {
+#else
   if (USBD_HID_SendReport(&USB_OTG_dev, 0, 0) == USBD_OK) {
+#endif
     //buttons
     HID_Buffer[0] = 0;
     HID_Buffer[1] = 0;
@@ -163,7 +198,11 @@ void usbJoystickUpdate()
       HID_Buffer[i*2 +4] = static_cast<uint8_t>((value >> 8) & 0x07);
 
     }
+#if defined(STM32F0)
+    USBD_HID_SendReport(&USB_Device_dev, HID_Buffer, HID_IN_PACKET);
+#else
     USBD_HID_SendReport(&USB_OTG_dev, HID_Buffer, HID_IN_PACKET);
+#endif
   }
 }
 #endif

@@ -19,27 +19,29 @@ void bootloaderDrawFilename(const char* str, uint8_t line, bool selected) {
 
 void bootloaderDrawScreen(BootloaderState st, int opt, const char* str) {
   lcdClear();
-  lcdDrawText(0, 0, BOOTLOADER_TITLE, INVERS);
+  lcdDrawText(0, 0, BOOTLOADER_TITLE);
+  lcdInvertLine(0);
 
   if (st == ST_START) {
 #if defined(SDCARD)
-    lcdDrawTextAlignedLeft(2 * FH, "\010Write Firmware");
-    lcdDrawTextAlignedLeft(3 * FH, "\010Restore EEPROM");
+    lcdDrawText(FW, 2*FH, "Write Firmware", opt == 0 ? INVERS : 0);
+    lcdDrawText(FW, 3*FH, "Restore EEPROM", opt == 0 ? INVERS : 0);
+    lcdDrawText(FW, 4*FH, "Exit");
+#else
+    lcdDrawText(FW, 4*FH, "Exit", opt == 0 ? INVERS : 0); // only Exit option on PCBI6
 #endif
-    lcdDrawTextAlignedLeft(4 * FH, "Exit");
 
-    lcdDrawTextAlignedLeft(6 * FH, "\001FW:");
+    lcdDrawText(FW, 5 * FH + FH / 2, STR_OR_PLUGIN_USB_CABLE);
 
-    // Remove opentx- from string
-    const char* other_ver = getOtherVersion(nullptr);
-    if (strstr(other_ver, "opentx-"))
-      other_ver = other_ver + 7;
-    lcdDrawText(20, 6 * FH, other_ver);
+    // Remove "opentx-" from string
+    const char* vers = getOtherVersion(nullptr);
+    if (strstr(vers, "opentx-"))
+      vers += 7;
 
-    lcdInvertLine(2 + 2 + opt); // only Exit on I6X
-    lcdDrawTextAlignedLeft(7 * FH, STR_OR_PLUGIN_USB_CABLE);
+    lcdDrawText(FW, 7 * FH, vers);
+    lcdInvertLine(7);
   } else if (st == ST_USB) {
-    lcdDrawTextAlignedLeft(4 * FH, STR_USB_CONNECTED);
+    lcdDrawText(0, 4 * FH, STR_USB_CONNECTED);
   } else if (st == ST_DIR_CHECK) {
 #if defined(SDCARD)
     if (opt == FR_NO_PATH) {
@@ -49,8 +51,8 @@ void bootloaderDrawScreen(BootloaderState st, int opt, const char* str) {
       bootloaderDrawMsg(INDENT_WIDTH, "Directory is empty!", 1, false);
     }
 #endif
-  } else if (st == ST_FLASH_CHECK) {
 #if defined(SDCARD)
+  } else if (st == ST_FLASH_CHECK) {
     if (opt == FC_ERROR) {
       if (memoryType == MEM_FLASH)
         bootloaderDrawMsg(0, STR_INVALID_FIRMWARE, 2, false);

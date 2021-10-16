@@ -25,6 +25,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usb_core.h"
+#if defined(STM32F0)
+#include "usb_dcd.h"
+#endif
 #include "usbd_def.h"
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -46,7 +49,15 @@
 #define USB_ENDPOINT_DESCRIPTOR_TYPE            0x05
 #define USB_SIZ_DEVICE_DESC                     18
 #define USB_SIZ_STRING_LANGID                   4
+#if defined(STM32F0)
+#define USB_SIZ_STRING_SERIAL                   26
 
+#define         Device1_Identifier          (0x1FFFF7AC)
+#define         Device2_Identifier          (0x1FFFF7B0)
+#define         Device3_Identifier          (0x1FFFF7B4)
+
+void Get_SerialNum(void);
+#endif
 /**
   * @}
   */ 

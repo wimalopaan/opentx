@@ -27,6 +27,88 @@
 
 extern uint32_t SystemCoreClock;
 
+#if defined(STM32F0)
+#if defined USB_CLOCK_SOURCE_CRS
+static void CRS_Config(void);
+#endif
+
+void USB_BSP_Init(USB_CORE_HANDLE *pdev) {
+
+  RCC_AHBPeriphClockCmd(USB_RCC_AHBPeriph_GPIO, ENABLE);
+
+#if defined USB_CLOCK_SOURCE_CRS
+  RCC_USBCLKConfig(RCC_USBCLK_HSI48);
+
+  CRS_Config();  
+#else 
+  RCC_HSEConfig(RCC_HSE_ON);
+  
+  /* Wait till HSE is ready */
+  while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET) {}
+  
+  /* Enable PLL */
+  RCC_PLLCmd(ENABLE);
+  
+  /* Wait till PLL is ready */
+  while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) {}
+  
+  /* Configure USBCLK from PLL clock */
+  RCC_USBCLKConfig(RCC_USBCLK_PLLCLK); 
+#endif /*USB_CLOCK_SOURCE_CRS */ 
+
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USB, ENABLE);
+}
+
+void USB_BSP_Deinit(USB_CORE_HANDLE *pdev) {
+  //nothing to do
+}
+
+void USB_BSP_EnableInterrupt(USB_CORE_HANDLE *pdev) {
+  NVIC_SetPriority(USB_IRQn, 11);
+  NVIC_EnableIRQ(USB_IRQn);
+}
+
+void USB_BSP_DisableInterrupt(USB_CORE_HANDLE *pdev) {
+  NVIC_DisableIRQ(USB_IRQn);
+}
+
+void USB_BSP_DevConnect(USB_CORE_HANDLE *pdev) {
+
+}
+
+void USB_BSP_uDelay(const uint32_t usec) {
+  delay_us(usec);
+}
+
+void USB_BSP_mDelay(const uint32_t msec) {
+  delay_ms(msec);
+}
+
+#if defined USB_CLOCK_SOURCE_CRS
+/**
+  * @brief  Configure CRS peripheral to automatically trim the HSI 
+  *         oscillator according to USB SOF
+  * @param  None
+  * @retval None
+  */
+static void CRS_Config(void)
+{
+  /*Enable CRS Clock*/
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_CRS, ENABLE);
+  
+  /* Select USB SOF as synchronization source */
+  CRS_SynchronizationSourceConfig(CRS_SYNCSource_USB);
+  
+  /*Enables the automatic hardware adjustment of TRIM bits: AUTOTRIMEN:*/
+  CRS_AutomaticCalibrationCmd(ENABLE);
+  
+  /*Enables the oscillator clock for frequency error counter CEN*/
+  CRS_FrequencyErrorCounterCmd(ENABLE);
+}
+#endif
+
+#else
+
 /**
 * @brief  USB_OTG_BSP_Init
 *         Initilizes BSP configurations
@@ -36,18 +118,11 @@ extern uint32_t SystemCoreClock;
 
 void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev) {
   GPIO_InitTypeDef GPIO_InitStructure;
-#if defined(STM32F0)
-  RCC_AHBPeriphClockCmd(USB_RCC_AHBPeriph_GPIO, ENABLE);
-#else
   RCC_AHB1PeriphClockCmd(USB_RCC_AHB1Periph_GPIO, ENABLE);
-#endif
+
   /* Configure DM and DP Pins */
   GPIO_InitStructure.GPIO_Pin = USB_GPIO_PIN_DM | USB_GPIO_PIN_DP;
-#if defined(STM32F0)
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-#else
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
-#endif
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
@@ -65,11 +140,7 @@ void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev) {
   GPIO_Init(USB_GPIO, &GPIO_InitStructure);
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-  #if defined(STM32F0)
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_OTG_FS, ENABLE);
-  #else
   RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE);
-  #endif
 }
 
 void USB_OTG_BSP_Deinit(USB_OTG_CORE_HANDLE *pdev) {
@@ -116,5 +187,6 @@ void USB_OTG_BSP_uDelay(const uint32_t usec) {
 void USB_OTG_BSP_mDelay(const uint32_t msec) {
   delay_ms(msec);
 }
+#endif
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

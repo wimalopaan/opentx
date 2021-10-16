@@ -30,6 +30,38 @@
   #include "STM32F2xx_StdPeriph_Lib_V1.1.0/Libraries/CMSIS/Device/ST/STM32F2xx/Include/stm32f2xx.h"
 #endif
 
+#if defined(STM32F0)
+/* Select the CRS using HSI48 internal clock as USB clock source.
+    If this define is commented, PLL will be used as USB clock source.
+    User need to ensure that the PLL output clock to USB is 48MHz  for proper 
+    USB functioning */
+#define INTERNAL_PULLUP
+
+#define USB_CLOCK_SOURCE_CRS
+
+// #define USB_DEVICE_LOW_PWR_MGMT_SUPPORT
+
+/* Endpoints used by the device */
+#define EP_NUM    (3) /* EP0 + EP1 for MSC IN + EP2 for MSC OUT */
+
+/* Buffer table base address */
+#define BTABLE_ADDRESS    (0x00)
+
+/* EP0, RX/TX buffers base address */
+#define ENDP0_RX_ADDRESS    (0x18)
+#define ENDP0_TX_ADDRESS    (0x58)
+
+/* EP1, TX buffer base address */
+#define MSC_IN_TX_ADDRESS     (0x98)
+    
+/* EP2, Rx buffer base address */
+#define MSC_OUT_RX_ADDRESS    (0xD8)
+
+#define __ALIGN_BEGIN
+#define __ALIGN_END   
+
+#else
+
 /* USB Core and PHY interface configuration.
    Tip: To avoid modifying these defines each time you need to change the USB
         configuration, you can declare the needed define in your toolchain
@@ -150,6 +182,8 @@
   #define __ALIGN_BEGIN
   #define __ALIGN_END   
 #endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
+
+#endif // STM32F0
 
 /* __packed keyword used to decrease the data type alignment to 1-byte */
 #if !defined(__packed)

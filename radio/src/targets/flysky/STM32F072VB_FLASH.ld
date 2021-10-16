@@ -41,7 +41,7 @@ _Min_Stack_Size = 1024; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 128K
+FLASH (rx)      : ORIGIN = 0x8004000, LENGTH = 128K
 RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 16K
 }
 
@@ -60,6 +60,7 @@ SECTIONS
   .text :
   {
     . = ALIGN(4);
+    KEEP(*(.fwversiondata))
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
@@ -109,6 +110,11 @@ SECTIONS
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >FLASH
+
+  .ram_vector :
+  {
+    *(.ram_vector)
+  } >RAM
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);

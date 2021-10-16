@@ -36,6 +36,7 @@ elseif(CPU_TYPE STREQUAL STM32F0)
 #    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_misc.c
     ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_gpio.c
 #    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_dbgmcu.c
+    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_crs.c
     ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_rcc.c
 #    ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_spi.c
     ../../../../../${STM32LIB_DIR}/STM32F0xx_StdPeriph_Driver/src/stm32f0xx_i2c.c
@@ -58,7 +59,7 @@ else()
     )
 endif()
 
-if (PCB STREQUAL I6X)
+if (CPU_TYPE STREQUAL STM32F0)
 set(BOOTLOADER_SRC
   ${BOOTLOADER_SRC}
   ../../../../../gui/${GUI_DIR}/lcd.cpp
@@ -66,9 +67,9 @@ set(BOOTLOADER_SRC
   ../../../../../keys.cpp
   ../../../../../strhelpers.cpp
   ../../../../../stamp.cpp
-  ../../../../../${STM32USB_DIR}/STM32_USB_OTG_Driver/src/usb_core.c
-  ../../../../../${STM32USB_DIR}/STM32_USB_OTG_Driver/src/usb_dcd.c
-  ../../../../../${STM32USB_DIR}/STM32_USB_OTG_Driver/src/usb_dcd_int.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Driver/src/usb_core.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Driver/src/usb_dcd.c
+  ../../../../../${STM32USB_DIR}/STM32_USB_Device_Driver/src/usb_dcd_int.c
   ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Core/src/usbd_core.c
   ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Core/src/usbd_ioreq.c
   ../../../../../${STM32USB_DIR}/STM32_USB_Device_Library/Core/src/usbd_req.c
@@ -87,6 +88,7 @@ set(BOOTLOADER_SRC
   ../usbd_usr.cpp
   ../usbd_storage_msd.cpp
   ../delays.cpp
+  ../usbd_pwr.c
   ../usbd_desc.c
   ../usb_bsp.c
   ../usb_driver.cpp

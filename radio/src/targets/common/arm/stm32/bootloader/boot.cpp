@@ -290,15 +290,15 @@ int main() {
       Tenms = 0;
 
       if (state != ST_USB) {
-        // if (usbPlugged()) {
-        //   state = ST_USB;
-        //   if (!unlocked) {
-        //     unlocked = 1;
-        //     unlockFlash();
-        //   }
-        //   usbStart(); // Currently freezes on PCBI6
-        //   usbPluggedIn();
-        // }
+        if (usbPlugged()) {
+          state = ST_USB;
+           if (!unlocked) {
+             unlocked = 1;
+             unlockFlash();
+           }
+          usbStart();
+          usbPluggedIn();
+        }
       }
 
       if (state == ST_USB) {
