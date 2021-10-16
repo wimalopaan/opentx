@@ -70,11 +70,7 @@ const unsigned char STORAGE_Inquirydata[] = { //36
   '1', '.', '0' ,'0',                      /* Version      : 4 Bytes */
 };
 
-#if defined(PCBI6xxx)
-#define RESERVED_SECTORS (1 /*Boot*/ + 2 /*Fat table */ + 1 /*Root dir*/)
-#else
 #define RESERVED_SECTORS (1 /*Boot*/ + 2 /*Fat table */ + 1 /*Root dir*/ + 8 /* one cluster for firmware.txt */)
-#endif // PCBI6
 
 int32_t fat12Write(const uint8_t * buffer, uint16_t sector, uint16_t count);
 int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count );
@@ -276,7 +272,7 @@ int8_t STORAGE_GetMaxLun (void)
 }
 
 /* Firmware.txt */
-#if !defined(PCBI6xxx)
+#if !defined(PCBI6)
 const char firmware_txt[] =
 #if defined(BOOT)
   "OpenTX Bootloader"
@@ -414,7 +410,7 @@ const FATDirEntry_t g_DIRroot[] =
         0x0000,
         0x00000000
     },
-#if !defined(PCBI6xxx)
+#if !defined(PCBI6)
     {
       { 'F', 'I', 'R', 'M', 'W', 'A', 'R', 'E'},
       { 'T', 'X', 'T'},
@@ -533,7 +529,7 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
     else if (sector == 3) {
       memcpy(buffer, g_DIRroot, sizeof(g_DIRroot) ) ;
     }
-#if !defined(PCBI6xxx)
+#if !defined(PCBI6)
     else if (sector == 4) {
       memcpy(buffer, firmware_txt, sizeof(firmware_txt));
       memcpy(buffer + sizeof(firmware_txt), getOtherVersion(), strlen(getOtherVersion()));
