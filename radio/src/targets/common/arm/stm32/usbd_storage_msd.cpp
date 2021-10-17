@@ -54,7 +54,9 @@ const unsigned char STORAGE_Inquirydata[] = { //36
   USB_MANUFACTURER,                        /* Manufacturer : 8 bytes */
   USB_PRODUCT,                             /* Product      : 16 Bytes */
   'R', 'a', 'd', 'i', 'o', ' ', ' ', ' ',
-  '1', '.', '0', '0',                      /* Version      : 4 Bytes */
+  '1', '.', '0', '0'                      /* Version      : 4 Bytes */
+#if !defined(PCBI6)
+  ,
   /* LUN 1 */
   0x00,		
   0x80,		
@@ -68,6 +70,7 @@ const unsigned char STORAGE_Inquirydata[] = { //36
   USB_PRODUCT,                             /* Product      : 16 Bytes */
   'R', 'a', 'd', 'i', 'o', ' ', ' ', ' ',
   '1', '.', '0' ,'0',                      /* Version      : 4 Bytes */
+#endif
 };
 
 #define RESERVED_SECTORS (1 /*Boot*/ + 2 /*Fat table */ + 1 /*Root dir*/ + 8 /* one cluster for firmware.txt */)
