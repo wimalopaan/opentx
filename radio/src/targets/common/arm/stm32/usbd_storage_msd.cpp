@@ -504,8 +504,7 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
       for (; i < BLOCK_SIZE - 2; i++) {
         *(buffer + i) = 0x00;
       }
-      *(buffer + i++) = 0x55; // 2 end bytes
-      *(buffer + i) = 0xaa;
+      *(uint16_t *)(buffer + i) = 0x55aa; // 2 end bytes
     }
     else if (sector == 1 || sector == 2) {
       // FAT table. Generate on the fly to save the 1024 byte flash space
