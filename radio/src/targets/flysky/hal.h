@@ -427,7 +427,7 @@ extern void ISR_TIMER3_CAPT_vect(void);
 // USB
 #define USB_RCC_AHBPeriph_GPIO          RCC_AHBPeriph_GPIOA
 #define USB_GPIO                        GPIOA
-#define USB_GPIO_PIN_VBUS               GPIO_Pin_9  // PA.09
+#define USB_GPIO_PIN_VBUS               GPIO_Pin_15  // PA.15
 
 // Flash (taken from f2)
 #define FLASH_CR_SER               ((uint32_t)0x00000002)
