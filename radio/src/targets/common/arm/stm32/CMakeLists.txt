@@ -27,7 +27,7 @@ if(NOT CPU_TYPE STREQUAL STM32F0)
     STM32_USB_Device_Library/Core/src/usbd_ioreq.c
     STM32_USB_Device_Library/Core/src/usbd_req.c
     )
-else() # STM32F0xx
+else() # STM32F0
   set(STM32USB_DIR ${THIRDPARTY_DIR}/STM32F0x2_USB-FS-Device_Lib_V1.0.0/Libraries)
   add_definitions(-DSTM32 -DVARIO)
   include_directories(${RADIO_SRC_DIRECTORY}/targets/common/arm/stm32)
@@ -37,7 +37,6 @@ else() # STM32F0xx
   include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Class/hid/inc)
   include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Class/cdc/inc)
   include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Core/inc/)
-  include_directories(${STM32USB_DIR}/STM32_USB_Device_Driver/inc)
 
   set(STM32USB_SRC
     STM32_USB_Device_Driver/src/usb_core.c
@@ -71,14 +70,17 @@ set(FIRMWARE_TARGET_SRC
   ../common/arm/stm32/flash_driver.cpp
   ../common/arm/stm32/usbd_storage_msd.cpp
   )
-else()
-#set(FIRMWARE_TARGET_SRC
-#  ${FIRMWARE_TARGET_SRC}
-#  ../common/arm/stm32/usb_bsp.c
-#  ../common/arm/stm32/usbd_desc.c
-#  ../common/arm/stm32/usbd_usr.cpp
-#  ../common/arm/stm32/usb_driver.cpp
-#  )
+else() # STM32F0
+set(FIRMWARE_TARGET_SRC
+ ${FIRMWARE_TARGET_SRC}
+ ../common/arm/stm32/usb_bsp.c
+ ../common/arm/stm32/usbd_pwr.c
+ ../common/arm/stm32/usbd_desc.c
+ ../common/arm/stm32/usbd_usr.cpp
+ ../common/arm/stm32/usb_driver.cpp
+ ../common/arm/stm32/flash_driver.cpp
+ ../common/arm/stm32/usbd_storage_msd.cpp
+ )
 endif()
 
 if(DEBUG OR CLI OR USB_SERIAL)
@@ -120,14 +122,14 @@ foreach(FILE ${STM32LIB_SRC})
     ${STM32LIB_DIR}/${FILE}
     )
 endforeach()
-if(NOT CPU_TYPE STREQUAL STM32F0)
+
 foreach(FILE ${STM32USB_SRC})
   set(FIRMWARE_SRC
     ${FIRMWARE_SRC}
     ${STM32USB_DIR}/${FILE}
     )
 endforeach()
-
+if(NOT CPU_TYPE STREQUAL STM32F0)
 set(SRC
   ${SRC}
   io/bootloader_flash.cpp

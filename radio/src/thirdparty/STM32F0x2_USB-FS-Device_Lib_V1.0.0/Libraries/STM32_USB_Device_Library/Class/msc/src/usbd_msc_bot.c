@@ -36,7 +36,9 @@ uint16_t             MSC_BOT_DataLen;
 uint8_t              MSC_BOT_State;
 uint8_t              MSC_BOT_Status;
 
+#if defined(BOOT)
 uint8_t              MSC_BOT_Data[MSC_MEDIA_PACKET] ;
+#endif
 
 MSC_BOT_CBW_TypeDef  MSC_BOT_cbw ;
 

@@ -55,7 +55,7 @@ const unsigned char STORAGE_Inquirydata[] = { //36
   USB_PRODUCT,                             /* Product      : 16 Bytes */
   'R', 'a', 'd', 'i', 'o', ' ', ' ', ' ',
   '1', '.', '0', '0'                      /* Version      : 4 Bytes */
-#if !defined(PCBI6)
+#if defined(SDCARD)
   ,
   /* LUN 1 */
   0x00,		
@@ -275,7 +275,6 @@ int8_t STORAGE_GetMaxLun (void)
 }
 
 /* Firmware.txt */
-#if !defined(PCBI6)
 const char firmware_txt[] =
 #if defined(BOOT)
   "OpenTX Bootloader"
@@ -291,14 +290,15 @@ const char firmware_txt[] =
   "opentx-" FLAVOUR "-" VERSION " (" GIT_STR ")\r\n"
   "DATE       " DATE "\r\n"
   "TIME       " TIME "\r\n"
+#if defined(SDCARD)
   "req SD ver " REQUIRED_SDCARD_VERSION "\r\n"
+#endif
 #if !defined(BOOT)
 "BOOTVER    "
 #else
 "FWVERSION  "
 #endif
   ;
-#endif // PCBI6
 
 //------------------------------------------------------------------------------
 /**
@@ -414,7 +414,6 @@ const FATDirEntry_t g_DIRroot[] =
         0x0000,
         0x00000000
     },
-#if !defined(PCBI6)
     {
       { 'F', 'I', 'R', 'M', 'W', 'A', 'R', 'E'},
       { 'T', 'X', 'T'},
@@ -428,9 +427,8 @@ const FATDirEntry_t g_DIRroot[] =
       0xA302,
       0x3D55,
       0x0002,
-      sizeof(firmware_txt) + 16//strlen(getOtherVersion())
+      sizeof(firmware_txt) + 16 //strlen(getOtherVersion())
     },
-#endif
     {
       { 'F', 'I', 'R', 'M', 'W', 'A', 'R', 'E'},
       { 'B', 'I', 'N'},
@@ -507,7 +505,7 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
       for (; i < BLOCK_SIZE - 2; i++) {
         *(buffer + i) = 0x00;
       }
-      *(uint16_t *)(buffer + i) = 0x55aa; // 2 end bytes
+      *(uint16_t *)(buffer + i) = 0xaa55; // 2 end bytes
     }
     else if (sector == 1 || sector == 2) {
       // FAT table. Generate on the fly to save the 1024 byte flash space
@@ -539,12 +537,10 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
     else if (sector == 3) {
       memcpy(buffer, g_DIRroot, sizeof(g_DIRroot) ) ;
     }
-#if !defined(PCBI6)
     else if (sector == 4) {
       memcpy(buffer, firmware_txt, sizeof(firmware_txt));
-      memcpy(buffer + sizeof(firmware_txt), getOtherVersion(), strlen(getOtherVersion()));
+      memcpy(buffer + sizeof(firmware_txt) - 1, getOtherVersion(), strlen(getOtherVersion()));
     }
-#endif
     else if (sector < RESERVED_SECTORS) {
       // allocated to firmware.txt
     }

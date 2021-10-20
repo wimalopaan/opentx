@@ -99,7 +99,7 @@ extern "C"
   }
 }
 
-#if defined(STM32F0)
+#if defined(STM32F0) && defined(BOOT)
 volatile uint32_t __attribute__((section(".ram_vector,\"aw\",%nobits @"))) ram_vector[VECTOR_TABLE_SIZE];
 extern volatile uint32_t g_pfnVectors[VECTOR_TABLE_SIZE];
 #endif
@@ -276,7 +276,7 @@ void resetReason()
 
 void boardInit()
 {
-#if defined(STM32F0)
+#if defined(STM32F0) && defined(BOOT)
   // Move vect table to beggining of RAM
   RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
   for (uint32_t i = 0; i < VECTOR_TABLE_SIZE; i++) {
@@ -309,6 +309,7 @@ void boardInit()
   backlightEnable(1);
   i2cInit();
   eepromInit();
+  usbInit();
   //storageEraseAll(false);
    ////usbInit();
   // TRACE("i2c test");

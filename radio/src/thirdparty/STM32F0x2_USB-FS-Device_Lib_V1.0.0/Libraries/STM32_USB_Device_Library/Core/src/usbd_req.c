@@ -491,7 +491,7 @@ static void USBD_SetConfig(USB_CORE_HANDLE  *pdev,
 static void USBD_GetConfig(USB_CORE_HANDLE  *pdev, 
                            USB_SETUP_REQ *req)
 {
-  uint32_t  USBD_default_cfg  = 0;
+  const uint32_t  USBD_default_cfg  = 0; // modified by OpenTX
  
   if (req->wLength != 1) 
   {                   
@@ -504,8 +504,8 @@ static void USBD_GetConfig(USB_CORE_HANDLE  *pdev,
     case USB_ADDRESSED:                     
       
       USBD_CtlSendData (pdev, 
-                        (uint8_t *)&USBD_default_cfg,
-                        1);
+                        (const uint8_t *)&USBD_default_cfg,
+                        1);	// modified by OpenTX
       break;
       
     case USB_CONFIGURED:                   

@@ -157,8 +157,7 @@ const USBD_Class_cb_TypeDef  USBD_HID_cb =
   USBD_HID_DataIn, /*DataIn*/
   NULL, /*DataOut*/
   NULL, /*SOF */    
-  USBD_HID_GetCfgDesc, 
-};
+  USBD_HID_GetCfgDesc,
 #else
 {
   USBD_HID_Init,
@@ -175,8 +174,8 @@ const USBD_Class_cb_TypeDef  USBD_HID_cb =
 #ifdef USB_OTG_HS_CORE  
   USBD_HID_GetCfgDesc, /* use same config as per FS */
 #endif  
-};
 #endif
+};
 
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
@@ -470,9 +469,11 @@ static uint8_t  USBD_HID_DataIn (void  *pdev,
                               uint8_t epnum)
 {
   ReportSent = 1;
+#if !defined(STM32F0)
   /* Ensure that the FIFO is empty before a new transfer, this condition could 
   be caused by  a new transfer before the end of the previous transfer */
   DCD_EP_Flush(pdev, HID_IN_EP);
+#endif
   return USBD_OK;
 }
 

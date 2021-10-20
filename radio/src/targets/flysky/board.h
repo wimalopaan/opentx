@@ -56,13 +56,6 @@ extern "C" {
 #pragma clang diagnostic pop
 #endif
 
-#if defined(STM32F0)
-#define VECTOR_TABLE_SIZE (48)                    // 31 positive vectors, 0 vector, 7 negative vectors and 9 extra
-#define SYSCFG_CFGR1_MEM_MODE__MAIN_FLASH      0  // x0: Main Flash memory mapped at 0x0000 0000
-#define SYSCFG_CFGR1_MEM_MODE__SYSTEM_FLASH    1  // 01: System Flash memory mapped at 0x0000 0000
-#define SYSCFG_CFGR1_MEM_MODE__SRAM            3  // 11: Embedded SRAM mapped at 0x0000 0000
-#endif
-
 #include "usb_driver.h"
 #if !defined(SIMU)
   #include "usbd_cdc_core.h"
@@ -78,6 +71,13 @@ extern "C" {
 
 #if defined(__cplusplus) && !defined(SIMU)
 }
+#endif
+
+#if defined(STM32F0) && defined(BOOT)
+#define VECTOR_TABLE_SIZE (48)                    // 31 positive vectors, 0 vector, 7 negative vectors and 9 extra
+#define SYSCFG_CFGR1_MEM_MODE__MAIN_FLASH      0  // x0: Main Flash memory mapped at 0x0000 0000
+#define SYSCFG_CFGR1_MEM_MODE__SYSTEM_FLASH    1  // 01: System Flash memory mapped at 0x0000 0000
+#define SYSCFG_CFGR1_MEM_MODE__SRAM            3  // 11: Embedded SRAM mapped at 0x0000 0000
 #endif
 
 #define FLASHSIZE                       0x20000  // 128 kb
@@ -122,11 +122,11 @@ void delay_ms(uint32_t ms);
 }
 #endif
 
-#if !defined(BOOT)
-#define usbPlugged() (false)
-#define usbStarted() (false)
-#define getSelectedUsbMode() (USB_UNSELECTED_MODE)
-#endif
+// #if !defined(BOOT)
+// #define usbPlugged() (false)
+// #define usbStarted() (false)
+// #define getSelectedUsbMode() (USB_UNSELECTED_MODE)
+// #endif
 
 
 // CPU Unique ID
@@ -162,6 +162,7 @@ void sdPoll10ms(void);
 uint32_t sdMounted(void);
 #define SD_CARD_PRESENT()               ((SD_GPIO_PRESENT_GPIO->IDR & SD_GPIO_PRESENT_GPIO_PIN) == 0)
 #endif
+
 //buzzer
 #if !defined(BOOT)
 #include "buzzer_driver.h"

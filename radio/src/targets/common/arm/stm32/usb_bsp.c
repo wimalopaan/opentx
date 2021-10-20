@@ -187,6 +187,6 @@ void USB_OTG_BSP_uDelay(const uint32_t usec) {
 void USB_OTG_BSP_mDelay(const uint32_t msec) {
   delay_ms(msec);
 }
-#endif
+#endif // STM32F0
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

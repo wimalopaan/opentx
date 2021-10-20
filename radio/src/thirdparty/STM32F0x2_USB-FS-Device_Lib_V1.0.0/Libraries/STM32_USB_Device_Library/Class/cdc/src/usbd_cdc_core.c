@@ -87,10 +87,10 @@ uint8_t  usbd_cdc_SOF         (void *pdev);
    CDC specific management functions
  *********************************************/
 static void Handle_USBAsynchXfer  (void *pdev);
-static const uint8_t  *USBD_cdc_GetCfgDesc (uint8_t speed, uint16_t *length);
+static const uint8_t  *USBD_cdc_GetCfgDesc (uint8_t speed, uint16_t *length);	// modified by OpenTX
 
-extern CDC_IF_Prop_TypeDef  APP_FOPS;
-extern uint8_t USBD_DeviceDesc   [USB_SIZ_DEVICE_DESC];
+extern const CDC_IF_Prop_TypeDef  APP_FOPS;	// modified by OpenTX
+extern const uint8_t USBD_DeviceDesc   [USB_SIZ_DEVICE_DESC]; // modified by OpenTX
 
 uint8_t usbd_cdc_OtherCfgDesc  [USB_CDC_CONFIG_DESC_SIZ] ;
 
@@ -517,7 +517,7 @@ uint8_t  usbd_cdc_SOF (void *pdev)
 {      
   static uint8_t FrameCount = 0;  // modified by OpenTX
   
-  if (FrameCount++ >= CDC_IN_FRAME_INTERVAL)
+  if (FrameCount++ >= CDC_IN_FRAME_INTERVAL) // modified by OpenTX
   {
     /* Reset the frame counter */
     FrameCount = 0;

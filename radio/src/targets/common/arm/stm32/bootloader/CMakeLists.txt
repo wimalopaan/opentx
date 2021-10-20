@@ -87,6 +87,7 @@ set(BOOTLOADER_SRC
   ../../../../../targets/${TARGET_DIR}/bootloader/boot_menu.cpp
   ../usbd_usr.cpp
   ../usbd_storage_msd.cpp
+  # ../usbd_hid_joystick.c
   ../delays.cpp
   ../usbd_pwr.c
   ../usbd_desc.c
