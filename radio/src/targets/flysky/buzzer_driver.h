@@ -31,6 +31,8 @@
 #define BEEP_KEY_DOWN_FREQ      (BEEP_DEFAULT_FREQ-150)
 
 
+#if defined(__cplusplus)
+
 struct BuzzerTone {
   uint16_t freq;
   uint16_t duration;
@@ -113,6 +115,7 @@ class BuzzerToneFifo
     }
 };
 
+void playTone(uint16_t freq, uint16_t len, uint16_t pause = 0, uint8_t flags = 0, int8_t freqIncr = 0);
 void buzzerEvent(unsigned int index);
 void buzzerOn();
 void buzzerOff();
@@ -121,7 +124,8 @@ void audioKeyPress();
 void audioKeyError();
 void audioTrimPress(int value);
 void audioTimerCountdown(uint8_t timer, int value);
-void playTone(uint16_t freq, uint16_t len, uint16_t pause = 0, uint8_t flags = 0, int8_t freqIncr = 0);
 void buzzerHeartbeat();
+
+#endif // __cplusplus
 
 #endif // _BUZZER_DRIVER_H_

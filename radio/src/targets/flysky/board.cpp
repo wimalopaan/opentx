@@ -99,6 +99,11 @@ extern "C"
   }
 }
 
+#if defined(STM32F0) && defined(BOOT)
+volatile uint32_t __attribute__((section(".ram_vector,\"aw\",%nobits @"))) ram_vector[VECTOR_TABLE_SIZE];
+extern volatile uint32_t g_pfnVectors[VECTOR_TABLE_SIZE];
+#endif
+
 //audio
 void audioConsumeCurrentBuffer()
 {
@@ -220,46 +225,6 @@ extern "C" void INTERRUPT_xMS_IRQHandler()
 #define PWR_PRESS_DURATION_MAX 500 // 5s
 #endif
 
-void init_gpio()
-{
-  GPIO_InitTypeDef gpio_init;
-  gpio_init.GPIO_Pin = I2C_SCL_GPIO_PIN | I2C_SDA_GPIO_PIN;
-  gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
-  gpio_init.GPIO_Mode = GPIO_Mode_AF;
-  gpio_init.GPIO_OType = GPIO_OType_OD;
-  gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
-  GPIO_Init(I2C_GPIO, &gpio_init);
-
-  GPIO_PinAFConfig(I2C_GPIO, I2C_SCL_GPIO_PinSource, I2C_GPIO_AF);
-  GPIO_PinAFConfig(I2C_GPIO, I2C_SDA_GPIO_PinSource, I2C_GPIO_AF);
-
-  __IO uint32_t tmpreg;
-  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
-  /* Delay after an RCC peripheral clock enabling */
-  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
-
-  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOBEN);
-  /* Delay after an RCC peripheral clock enabling */
-  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOBEN);
-
-  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOCEN);
-  /* Delay after an RCC peripheral clock enabling */
-  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOCEN);
-
-  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIODEN);
-  /* Delay after an RCC peripheral clock enabling */
-  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIODEN);
-
-  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOEEN);
-  /* Delay after an RCC peripheral clock enabling */
-  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOEEN);
-
-  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOFEN);
-  /* Delay after an RCC peripheral clock enabling */
-  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOFEN);
- 
-}
-
 void resetReason()
 {
   TRACE("Reset reason:");
@@ -311,6 +276,15 @@ void resetReason()
 
 void boardInit()
 {
+#if defined(STM32F0) && defined(BOOT)
+  // Move vect table to beggining of RAM
+  RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+  for (uint32_t i = 0; i < VECTOR_TABLE_SIZE; i++) {
+    ram_vector[i] = g_pfnVectors[i];
+  }
+  SYSCFG->CFGR1 = (SYSCFG->CFGR1 & ~SYSCFG_CFGR1_MEM_MODE) | (SYSCFG_CFGR1_MEM_MODE__SRAM * SYSCFG_CFGR1_MEM_MODE_0);  // remap 0x0000000 to RAM
+#endif
+
 #if !defined(SIMU)
   RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);
@@ -333,8 +307,9 @@ void boardInit()
   buzzerInit();
   backlightInit();
   backlightEnable(1);
-  init_gpio();
+  i2cInit();
   eepromInit();
+  usbInit();
   //storageEraseAll(false);
    ////usbInit();
   // TRACE("i2c test");

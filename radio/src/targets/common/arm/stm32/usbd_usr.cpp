@@ -36,8 +36,10 @@ const USBD_Usr_cb_TypeDef USR_cb =
   USBD_USR_DeviceSuspended,
   USBD_USR_DeviceResumed,
 
+#if !defined(STM32F0)
   USBD_USR_DeviceConnected,
   USBD_USR_DeviceDisconnected,
+#endif
 };
 }
 

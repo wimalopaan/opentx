@@ -57,7 +57,7 @@
 #define USBD_VID                            0x0483
 
 #define USBD_LANGID_STRING                  0x409
-#define USBD_MANUFACTURER_STRING            "FrSky"
+#define USBD_MANUFACTURER_STRING            "OpenTX"
 #define USBD_SERIALNUMBER_FS_STRING         "00000000001B"
 
 
@@ -134,9 +134,11 @@ uint8_t *  USBD_USR_DeviceDescriptor( uint8_t speed , uint16_t *length)
     case USB_JOYSTICK_MODE:
       pid = USBD_HID_PID;
       break;
+#if !defined(PCBI6)
     case USB_SERIAL_MODE:
       pid = USBD_CDC_PID;
       break;
+#endif
     case USB_MASS_STORAGE_MODE:
       pid = USBD_MSC_PID;
       break;
@@ -152,7 +154,11 @@ uint8_t *  USBD_USR_DeviceDescriptor( uint8_t speed , uint16_t *length)
       0x00,                       /*bDeviceClass*/
       0x00,                       /*bDeviceSubClass*/
       0x00,                       /*bDeviceProtocol*/
+#if defined(STM32F0)
+      USB_MAX_EP0_SIZE,       /*bMaxPacketSize*/
+#else
       USB_OTG_MAX_EP0_SIZE,       /*bMaxPacketSize*/
+#endif
       LOBYTE(USBD_VID),           /*idVendor*/
       HIBYTE(USBD_VID),           /*idVendor*/
       LOBYTE(pid),               /*idVendor*/
@@ -198,9 +204,11 @@ uint8_t *  USBD_USR_ProductStrDescriptor( uint8_t speed , uint16_t *length)
     case USB_JOYSTICK_MODE:
       USBD_GetString ((uint8_t*)USBD_HID_PRODUCT_FS_STRING, USBD_StrDesc, length);
       break;
+#if !defined(PCBI6)
     case USB_SERIAL_MODE:
       USBD_GetString ((uint8_t*)USBD_CDC_PRODUCT_FS_STRING, USBD_StrDesc, length);
       break;
+#endif
     case USB_MASS_STORAGE_MODE:
       USBD_GetString ((uint8_t*)USBD_MSC_PRODUCT_FS_STRING, USBD_StrDesc, length);
       break;
@@ -248,9 +256,11 @@ uint8_t *  USBD_USR_ConfigStrDescriptor( uint8_t speed , uint16_t *length)
     case USB_JOYSTICK_MODE:
       USBD_GetString ((uint8_t*)USBD_HID_CONFIGURATION_FS_STRING, USBD_StrDesc, length);
       break;
+#if !defined(PCBI6)
     case USB_SERIAL_MODE:
       USBD_GetString ((uint8_t*)USBD_CDC_CONFIGURATION_FS_STRING, USBD_StrDesc, length);
       break;
+#endif
     case USB_MASS_STORAGE_MODE:
       USBD_GetString ((uint8_t*)USBD_MSC_CONFIGURATION_FS_STRING, USBD_StrDesc, length);
       break;
@@ -272,14 +282,78 @@ uint8_t *  USBD_USR_InterfaceStrDescriptor( uint8_t speed , uint16_t *length)
     case USB_JOYSTICK_MODE:
       USBD_GetString ((uint8_t*)USBD_HID_INTERFACE_FS_STRING, USBD_StrDesc, length);
       break;
+#if !defined(PCBI6)
     case USB_SERIAL_MODE:
       USBD_GetString ((uint8_t*)USBD_CDC_INTERFACE_FS_STRING, USBD_StrDesc, length);
       break;
+#endif
     case USB_MASS_STORAGE_MODE:
       USBD_GetString ((uint8_t*)USBD_MSC_INTERFACE_FS_STRING, USBD_StrDesc, length);
       break;
   }
   return USBD_StrDesc;
 }
+
+
+#if defined(STM32F0)
+
+static void IntToUnicode (uint32_t value , uint8_t *pbuf , uint8_t len);
+
+uint8_t USBD_StringSerial[USB_SIZ_STRING_SERIAL] =
+{
+  USB_SIZ_STRING_SERIAL,       /* bLength */
+  USB_STRING_DESCRIPTOR_TYPE,  /* bDescriptorType */
+};
+
+/**
+  * @brief  Create the serial number string descriptor 
+  * @param  None 
+  * @retval None
+  */
+void Get_SerialNum(void)
+{
+  uint32_t Device_Serial0, Device_Serial1, Device_Serial2;
+  
+  Device_Serial0 = *(uint32_t*)Device1_Identifier;
+  Device_Serial1 = *(uint32_t*)Device2_Identifier;
+  Device_Serial2 = *(uint32_t*)Device3_Identifier;
+  
+  Device_Serial0 += Device_Serial2;
+  
+  if (Device_Serial0 != 0)
+  {
+    IntToUnicode (Device_Serial0, &USBD_StringSerial[2] ,8);
+    IntToUnicode (Device_Serial1, &USBD_StringSerial[18] ,4);
+  }
+}
+
+/**
+  * @brief  Convert Hex 32Bits value into char 
+  * @param  value: value to convert
+  * @param  pbuf: pointer to the buffer 
+  * @param  len: buffer length
+  * @retval None
+  */
+static void IntToUnicode (uint32_t value , uint8_t *pbuf , uint8_t len)
+{
+  uint8_t idx = 0;
+  
+  for( idx = 0 ; idx < len ; idx ++)
+  {
+    if( ((value >> 28)) < 0xA )
+    {
+      pbuf[ 2* idx] = (value >> 28) + '0';
+    }
+    else
+    {
+      pbuf[2* idx] = (value >> 28) + 'A' - 10; 
+    }
+    
+    value = value << 4;
+    
+    pbuf[ 2* idx + 1] = 0;
+  }
+}
+#endif
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

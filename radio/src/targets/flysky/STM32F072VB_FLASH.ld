@@ -60,6 +60,7 @@ SECTIONS
   .text :
   {
     . = ALIGN(4);
+    KEEP(*(.fwversiondata))
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
@@ -109,6 +110,11 @@ SECTIONS
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >FLASH
+
+  .ram_vector :
+  {
+    *(.ram_vector)
+  } >RAM
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);

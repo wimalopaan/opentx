@@ -36,6 +36,7 @@ extern "C" {
 #endif
 
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h"
+#include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_crs.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_rcc.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_gpio.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_tim.h"
@@ -55,7 +56,6 @@ extern "C" {
 #pragma clang diagnostic pop
 #endif
 
-
 #include "usb_driver.h"
 #if !defined(SIMU)
   #include "usbd_cdc_core.h"
@@ -71,6 +71,13 @@ extern "C" {
 
 #if defined(__cplusplus) && !defined(SIMU)
 }
+#endif
+
+#if defined(STM32F0) && defined(BOOT)
+#define VECTOR_TABLE_SIZE (48)                    // 31 positive vectors, 0 vector, 7 negative vectors and 9 extra
+#define SYSCFG_CFGR1_MEM_MODE__MAIN_FLASH      0  // x0: Main Flash memory mapped at 0x0000 0000
+#define SYSCFG_CFGR1_MEM_MODE__SYSTEM_FLASH    1  // 01: System Flash memory mapped at 0x0000 0000
+#define SYSCFG_CFGR1_MEM_MODE__SRAM            3  // 11: Embedded SRAM mapped at 0x0000 0000
 #endif
 
 #define FLASHSIZE                       0x20000  // 128 kb
@@ -115,11 +122,11 @@ void delay_ms(uint32_t ms);
 }
 #endif
 
-#if !defined(BOOT)
-#define usbPlugged() (false)
-#define usbStarted() (false)
-#define getSelectedUsbMode() (USB_UNSELECTED_MODE)
-#endif
+// #if !defined(BOOT)
+// #define usbPlugged() (false)
+// #define usbStarted() (false)
+// #define getSelectedUsbMode() (USB_UNSELECTED_MODE)
+// #endif
 
 
 // CPU Unique ID
@@ -155,6 +162,7 @@ void sdPoll10ms(void);
 uint32_t sdMounted(void);
 #define SD_CARD_PRESENT()               ((SD_GPIO_PRESENT_GPIO->IDR & SD_GPIO_PRESENT_GPIO_PIN) == 0)
 #endif
+
 //buzzer
 #if !defined(BOOT)
 #include "buzzer_driver.h"
@@ -419,6 +427,7 @@ void backlightEnable(uint8_t level);
 #define EEPROM_BLOCK_SIZE     (64)
 //#define EEPROM_VERIFY_WRITES
 
+void i2cInit(void);
 void eepromInit();
 void eepromReadBlock(uint8_t * buffer, size_t address, size_t size);
 void eepromWriteBlock(uint8_t * buffer, size_t address, size_t size);

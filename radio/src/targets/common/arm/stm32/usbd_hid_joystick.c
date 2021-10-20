@@ -147,6 +147,18 @@ __ALIGN_BEGIN static const uint8_t HID_JOYSTICK_ReportDesc[] __ALIGN_END =
   */ 
 
 const USBD_Class_cb_TypeDef  USBD_HID_cb = 
+#if defined (STM32F0)
+{
+  USBD_HID_Init,
+  USBD_HID_DeInit,
+  USBD_HID_Setup,
+  NULL, /*EP0_TxSent*/  
+  NULL, /*EP0_RxReady*/ /* STATUS STAGE IN */
+  USBD_HID_DataIn, /*DataIn*/
+  NULL, /*DataOut*/
+  NULL, /*SOF */    
+  USBD_HID_GetCfgDesc,
+#else
 {
   USBD_HID_Init,
   USBD_HID_DeInit,
@@ -162,6 +174,7 @@ const USBD_Class_cb_TypeDef  USBD_HID_cb =
 #ifdef USB_OTG_HS_CORE  
   USBD_HID_GetCfgDesc, /* use same config as per FS */
 #endif  
+#endif
 };
 
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
@@ -267,13 +280,21 @@ static uint8_t  USBD_HID_Init (void  *pdev,
   DCD_EP_Open(pdev,
               HID_IN_EP,
               HID_IN_PACKET,
+#if defined(STM32F0)
+              USB_EP_INT);
+#else
               USB_OTG_EP_INT);
+#endif
   
   /* Open EP OUT */
   DCD_EP_Open(pdev,
               HID_OUT_EP,
               HID_OUT_PACKET,
+#if defined(STM32F0)
+              USB_EP_INT);
+#else
               USB_OTG_EP_INT);
+#endif
 
   ReportSent = 1;
   return USBD_OK;
@@ -391,6 +412,21 @@ static uint8_t  USBD_HID_Setup (void  *pdev,
   * @param  buff: pointer to report, if this parameter is NULL then function just test if new buffer can be sent
   * @retval status
   */
+#if defined(STM32F0)
+uint8_t USBD_HID_SendReport(USB_CORE_HANDLE  *pdev, uint8_t * report, uint16_t len)
+{
+  if (pdev->dev.device_status == USB_CONFIGURED) {
+    if (ReportSent) {
+      if (report) {
+        ReportSent = 0;
+        DCD_EP_Tx (pdev, HID_IN_EP, report, len);
+      }
+      return USBD_OK;
+    }
+  }
+  return USBD_FAIL;
+}
+#else
 uint8_t USBD_HID_SendReport(USB_OTG_CORE_HANDLE  *pdev, uint8_t * report, uint16_t len)
 {
   if (pdev->dev.device_status == USB_OTG_CONFIGURED) {
@@ -404,6 +440,7 @@ uint8_t USBD_HID_SendReport(USB_OTG_CORE_HANDLE  *pdev, uint8_t * report, uint16
   }
   return USBD_FAIL;
 }
+#endif
 
 /**
   * @brief  USBD_HID_GetCfgDesc 
@@ -432,9 +469,11 @@ static uint8_t  USBD_HID_DataIn (void  *pdev,
                               uint8_t epnum)
 {
   ReportSent = 1;
+#if !defined(STM32F0)
   /* Ensure that the FIFO is empty before a new transfer, this condition could 
   be caused by  a new transfer before the end of the previous transfer */
   DCD_EP_Flush(pdev, HID_IN_EP);
+#endif
   return USBD_OK;
 }
 

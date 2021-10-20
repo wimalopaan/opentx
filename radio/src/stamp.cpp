@@ -54,26 +54,22 @@ __SECTION_USED(".bootversiondata") const char boot_version[] =     "opentx-" FLA
  * Tries to find opentx version in the first 1024 byte of either firmware/bootloader (the one not running) or the buffer
  * @param buffer If non-null find the firmware version in the buffer instead
  */
-const char* getOtherVersion(char* buffer)
+const char* getOtherVersion(const char* buffer)
 {
+  if (buffer == nullptr) {
 #if defined(BOOT)
-  const char* startother = (char*)(FIRMWARE_ADDRESS+BOOTLOADER_SIZE);
+    buffer = (const char *)(FIRMWARE_ADDRESS + BOOTLOADER_SIZE);
 #else
-  const char* startother = (char*)(FIRMWARE_ADDRESS);
+    buffer = (const char *)FIRMWARE_ADDRESS;
 #endif
-  if (buffer != nullptr)
-    startother=buffer;
+  }
 
-  const char* other_str = nullptr;
-  for (int i=0; i< 1024;i++) {
-    if (memcmp(startother+i, "opentx-", 7)==0) {
-      other_str = startother + i;
-      break;
+  for (int i = 0; i < 1024; i++) {
+    if (memcmp(buffer + i, "opentx-", 7) == 0) {
+      return buffer + i;
     }
   }
-  if (other_str != nullptr)
-    return other_str;
-  else
-    return "no version found";
+
+  return "no version found";
 }
 #endif

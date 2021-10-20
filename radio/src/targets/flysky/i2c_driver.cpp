@@ -86,6 +86,45 @@
 
 #include "i2c_common_v2.h"
 
+void i2cInit()
+{
+  GPIO_InitTypeDef gpio_init;
+  gpio_init.GPIO_Pin = I2C_SCL_GPIO_PIN | I2C_SDA_GPIO_PIN;
+  gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+  gpio_init.GPIO_Mode = GPIO_Mode_AF;
+  gpio_init.GPIO_OType = GPIO_OType_OD;
+  gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_Init(I2C_GPIO, &gpio_init);
+
+  GPIO_PinAFConfig(I2C_GPIO, I2C_SCL_GPIO_PinSource, I2C_GPIO_AF);
+  GPIO_PinAFConfig(I2C_GPIO, I2C_SDA_GPIO_PinSource, I2C_GPIO_AF);
+
+  __IO uint32_t tmpreg;
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOAEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOBEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOBEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOCEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOCEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIODEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIODEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOEEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOEEN);
+
+  SET_BIT(RCC->AHBENR, RCC_AHBENR_GPIOFEN);
+  /* Delay after an RCC peripheral clock enabling */
+  tmpreg = READ_BIT(RCC->AHBENR, RCC_AHBENR_GPIOFEN);
+}
+
 void eepromInit() {
   uint32_t i2c;
 
