@@ -26,7 +26,7 @@
 #define PRINTF_BUFFER_SIZE    128
 
 void serialPutc(char c) {
-#if !defined(BOOT) && defined(USB_SERIAL)
+#if !defined(BOOT) && defined(USB_SERIAL) && !defined(PCBI6)
   if (getSelectedUsbMode() == USB_SERIAL_MODE)
     usbSerialPutc(c);
 #endif
