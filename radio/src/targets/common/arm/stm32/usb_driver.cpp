@@ -121,8 +121,7 @@ void usbStart()
 #endif
       break;
 #endif
-// Flysky I6X doesn't have enough RAM for mass storage mode
-// Enable only in bootloader
+#if !defined(PCBI6)
     default:
     case USB_MASS_STORAGE_MODE:
       // initialize USB as MSC device
@@ -132,6 +131,7 @@ void usbStart()
       USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_MSC_cb, &USR_cb);
 #endif
       break;
+#endif
   }
   usbDriverStarted = true;
 }

@@ -23,7 +23,7 @@
 
 volatile BuzzerState buzzerState;
 BuzzerToneFifo buzzerFifo = BuzzerToneFifo();
-const BuzzerTone * nextTone = 0;
+uint8_t nextIdx = 0;
 
 void audioKeyPress()
 {
@@ -281,6 +281,13 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
       if (!buzzerFifo.full())
         buzzerFifo.push(BuzzerTone(freq, len, pause, flags, freqIncr));
       return;
+  } else if (buzzerState.duration) { // push back to queue
+    buzzerFifo.push(BuzzerTone(
+      buzzerState.tone.freq, 
+      buzzerState.tone.duration, 
+      buzzerState.tone.pause, 
+      buzzerState.repeat, 
+      buzzerState.tone.freqIncr));
   }
 
   uint8_t repeat = flags & 0x0f;
@@ -337,7 +344,13 @@ void buzzerHeartbeat()
       }
     }
   } else if (!buzzerFifo.empty()) {
-    nextTone = buzzerFifo.get();
-    playTone(nextTone->freq, nextTone->duration, nextTone->pause, nextTone->flags, nextTone->freqIncr);
+    nextIdx = buzzerFifo.get();
+    playTone(
+      buzzerFifo.tones[nextIdx].freq, 
+      buzzerFifo.tones[nextIdx].duration, 
+      buzzerFifo.tones[nextIdx].pause, 
+      buzzerFifo.tones[nextIdx].flags, 
+      buzzerFifo.tones[nextIdx].freqIncr
+      );
   }
 }
