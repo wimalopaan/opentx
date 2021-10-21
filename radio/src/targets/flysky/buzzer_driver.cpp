@@ -282,12 +282,14 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
         buzzerFifo.push(BuzzerTone(freq, len, pause, flags, freqIncr));
       return;
   } else if (buzzerState.duration > 40 || buzzerState.repeat > 0) { // push back to queue
-    buzzerFifo.push(BuzzerTone(
-      buzzerState.tone.freq, 
-      buzzerState.tone.duration, 
-      buzzerState.tone.pause, 
-      buzzerState.repeat, 
-      buzzerState.tone.freqIncr));
+      if (!buzzerFifo.full()) {
+        buzzerFifo.push(BuzzerTone(
+          buzzerState.tone.freq,
+          buzzerState.tone.duration,
+          buzzerState.tone.pause,
+          buzzerState.repeat,
+          buzzerState.tone.freqIncr));
+      }
   }
 
   uint8_t repeat = flags & 0x0f;
