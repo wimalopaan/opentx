@@ -27,13 +27,16 @@ uint8_t mainRequestFlags = 0;
 #if defined(STM32)
 void onUSBConnectMenu(const char *result)
 {
+#if !defined(PCBI6)
   if (result == STR_USB_MASS_STORAGE) {
     setSelectedUsbMode(USB_MASS_STORAGE_MODE);
   }
-  else if (result == STR_USB_JOYSTICK) {
+  else 
+#endif  
+  if (result == STR_USB_JOYSTICK) {
     setSelectedUsbMode(USB_JOYSTICK_MODE);
   }
-#if !defined(STM32F0)
+#if !defined(PCBI6)
   else if (result == STR_USB_SERIAL) {
     setSelectedUsbMode(USB_SERIAL_MODE);
   }
@@ -46,15 +49,19 @@ void handleUsbConnection()
 #if defined(STM32) && !defined(SIMU)// && !defined(STM32F0)
   if (!usbStarted() && usbPlugged() && !(getSelectedUsbMode() == USB_UNSELECTED_MODE)) {
     usbStart();
+#if !defined(PCBI6)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
       opentxClose(false);
       usbPluggedIn();
     }
+#endif
   }
   if (!usbStarted() && usbPlugged() && getSelectedUsbMode() == USB_UNSELECTED_MODE) {
     if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && (popupMenuNoItems == 0)) {
       POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
+#if !defined(PCBI6)
       POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
+#endif
 #if defined(DEBUG)
       POPUP_MENU_ADD_ITEM(STR_USB_SERIAL);
 #endif
@@ -66,9 +73,11 @@ void handleUsbConnection()
   }
   if (usbStarted() && !usbPlugged()) {
     usbStop();
+#if !defined(STM32F0)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
       opentxResume();
     }
+#endif
 #if !defined(BOOT)
     setSelectedUsbMode(USB_UNSELECTED_MODE);
 #endif

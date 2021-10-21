@@ -22,7 +22,7 @@
 #define _BUZZER_DRIVER_H_
 
 #define BUZZER_BUFFER_DURATION  (10)
-#define BUZZER_QUEUE_LENGTH (8) // must be power of 2
+#define BUZZER_QUEUE_LENGTH (4) // must be power of 2
 
 #define BEEP_MIN_FREQ           (250)
 #define BEEP_MAX_FREQ           (14000)
@@ -54,7 +54,7 @@ struct BuzzerState {
   uint16_t duration; // current decremented duration
   uint16_t pause; // current pause, set to 0 after use, reset in repeat handler
   uint8_t repeat; // current decremented repeat
-  uint8_t padding; // unused
+  uint8_t spare; // unused
   BuzzerTone tone;
   BuzzerState() {};
   BuzzerState(uint16_t freq, uint16_t duration, uint16_t pause, uint8_t repeat, BuzzerTone tone):
@@ -71,7 +71,6 @@ class BuzzerToneFifo
   private:
     volatile uint8_t ridx;
     volatile uint8_t widx;
-    BuzzerTone tones[BUZZER_QUEUE_LENGTH];
 
     uint8_t nextIdx(uint8_t idx) const
     {
@@ -79,6 +78,8 @@ class BuzzerToneFifo
     }
 
   public:
+    BuzzerTone tones[BUZZER_QUEUE_LENGTH];
+
     BuzzerToneFifo() : ridx(0), widx(0), tones() {};
 
     bool empty() const
@@ -96,12 +97,12 @@ class BuzzerToneFifo
       widx = ridx;                      // clean the queue
     }
 
-    const BuzzerTone * get()
+    const uint8_t get()
     {
       if (!empty()) {
-        const BuzzerTone * tone = &tones[ridx];
+        const uint8_t currentRIdx = ridx;
         ridx = nextIdx(ridx);
-        return tone;
+        return currentRIdx;
       }
       return 0;
     }
