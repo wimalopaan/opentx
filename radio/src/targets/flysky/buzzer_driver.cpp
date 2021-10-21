@@ -278,7 +278,8 @@ inline void buzzerOff()
 void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr)
 {
   if (!(flags & PLAY_NOW) && buzzerState.duration) {
-      if (!buzzerFifo.full())
+      // skip PLAY_BACKGROUND if other tone is playing
+      if (!(flags & PLAY_BACKGROUND) && !buzzerFifo.full())
         buzzerFifo.push(BuzzerTone(freq, len, pause, flags, freqIncr));
       return;
   } else if ((flags & PLAY_NOW) && (buzzerState.repeat > 0)) { // push back to queue
