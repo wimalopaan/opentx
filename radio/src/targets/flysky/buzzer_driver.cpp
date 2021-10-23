@@ -23,7 +23,6 @@
 
 volatile BuzzerState buzzerState;
 BuzzerToneFifo buzzerFifo = BuzzerToneFifo();
-uint8_t nextIdx = 0;
 
 void audioKeyPress()
 {
@@ -347,7 +346,7 @@ void buzzerHeartbeat()
       }
     }
   } else if (!buzzerFifo.empty()) {
-    nextIdx = buzzerFifo.get();
+    uint8_t nextIdx = buzzerFifo.get();
     playTone(
       buzzerFifo.tones[nextIdx].freq, 
       buzzerFifo.tones[nextIdx].duration, 
