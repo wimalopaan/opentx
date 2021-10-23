@@ -34,6 +34,14 @@ enum usbMode {
 #endif
 };
 
+#if defined(PCBI6)
+enum usbEnable {
+  USB_AUTO_ENABLE,
+  USB_ON_ENABLE,
+  USB_MAX_ENABLE=USB_ON_ENABLE
+};
+#endif
+
 int usbPlugged();
 void usbInit();
 void usbStart();

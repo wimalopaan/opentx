@@ -53,6 +53,10 @@ int usbPlugged()
   static uint8_t debounced_state = 0;
   static uint8_t last_state = 0;
 
+  if(g_eeGeneral.USBEnable == USB_ON_ENABLE) {
+    return 1;
+  }
+
   if (GPIO_ReadInputDataBit(USB_GPIO, USB_GPIO_PIN_VBUS)) {
     if (last_state) {
       debounced_state = 1;
