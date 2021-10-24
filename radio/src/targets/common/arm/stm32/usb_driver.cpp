@@ -200,6 +200,20 @@ void usbJoystickUpdate()
       HID_Buffer[i*2 +4] = static_cast<uint8_t>((value >> 8) & 0x07);
 
     }
+
+#if defined(PCBI6)
+    HID_Buffer[13] = HID_Buffer[9]; // ch[3] remap to ch[5]
+    HID_Buffer[14] = HID_Buffer[10];
+
+    HID_Buffer[15] = HID_Buffer[7]; // ch[2] remap to ch[6]
+    HID_Buffer[16] = HID_Buffer[8];
+
+    HID_Buffer[7] = 0;
+    HID_Buffer[8] = 0;
+    HID_Buffer[9] = 0;
+    HID_Buffer[10] = 0;
+#endif
+
 #if defined(STM32F0)
     USBD_HID_SendReport(&USB_Device_dev, HID_Buffer, HID_IN_PACKET);
 #else
