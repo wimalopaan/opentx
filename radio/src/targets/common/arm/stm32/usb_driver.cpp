@@ -207,6 +207,7 @@ void usbJoystickUpdate()
     HID_Buffer[7] = 0;
     HID_Buffer[8] = 0;
     HID_Buffer[9] = 0;
+    HID_Buffer[10] = 0;
 #endif
 
 #if defined(STM32F0)
