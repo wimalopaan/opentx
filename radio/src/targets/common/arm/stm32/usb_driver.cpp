@@ -178,6 +178,7 @@ void usbJoystickUpdate()
     HID_Buffer[1] = 0;
     HID_Buffer[2] = 0;
     for (int i = 0; i < 8; ++i) {
+      if ( i+8 >= MAX_OUTPUT_CHANNELS) break;
       if ( channelOutputs[i+8] > 0 ) {
         HID_Buffer[0] |= (1 << i);
       }
@@ -196,22 +197,23 @@ void usbJoystickUpdate()
       int16_t value = channelOutputs[i] + 1024;
       if ( value > 2047 ) value = 2047;
       else if ( value < 0 ) value = 0;
+#if defined(PCBI6)
+      HID_Buffer[i*2 +2] = static_cast<uint8_t>(value & 0xFF);
+      HID_Buffer[i*2 +3] = static_cast<uint8_t>((value >> 8) & 0x07);
+#else
       HID_Buffer[i*2 +3] = static_cast<uint8_t>(value & 0xFF);
       HID_Buffer[i*2 +4] = static_cast<uint8_t>((value >> 8) & 0x07);
+#endif
 
     }
 
 #if defined(PCBI6)
-    HID_Buffer[13] = HID_Buffer[9]; // ch[3] remap to ch[5]
-    HID_Buffer[14] = HID_Buffer[10];
-
-    HID_Buffer[15] = HID_Buffer[7]; // ch[2] remap to ch[6]
-    HID_Buffer[16] = HID_Buffer[8];
-
-    HID_Buffer[7] = 0;
+    // HID_Buffer index 8 & 9 causes mess. Looks like clock issue but cannot confirm.
+    // i reduced buttons to 16 so it will affect only one analog and remapped it [3] -> [5]
+    HID_Buffer[12] = HID_Buffer[8]; // ch[3] remap to ch[5]
+    HID_Buffer[13] = HID_Buffer[9];
     HID_Buffer[8] = 0;
     HID_Buffer[9] = 0;
-    HID_Buffer[10] = 0;
 #endif
 
 #if defined(STM32F0)
