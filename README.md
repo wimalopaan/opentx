@@ -9,6 +9,7 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 * CRSF working with ExpressLRS at 115 and 400k bauds and with Crossfire modules at 115k bauds.
 * Telemetry
 * Buzzer audio alarms and indications.
+* USB joystick mode.
 
 ## Users Telegram group
 
@@ -30,8 +31,7 @@ https://t.me/otx_flysky_i6x
 * Add settings menu for ExpressLRS, since no LUA is supported.
 * Reboots with Crossfire modules at 400k bauds.
 * Enable mixer sync for CRSF.
-* USB joystick mode.
-* Bootloader. USB mass storage to backup EEPROM and update firmware.
+* USB mass storage to backup EEPROM and update firmware.
 * SDCARD support if it fits in flash.
 * PPM in (Trainer)
 * HELI support.
