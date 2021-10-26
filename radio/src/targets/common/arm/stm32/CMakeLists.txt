@@ -78,8 +78,8 @@ set(FIRMWARE_TARGET_SRC
  ../common/arm/stm32/usbd_desc.c
  ../common/arm/stm32/usbd_usr.cpp
  ../common/arm/stm32/usb_driver.cpp
-#  ../common/arm/stm32/flash_driver.cpp
-#  ../common/arm/stm32/usbd_storage_msd.cpp
+ ../common/arm/stm32/flash_driver.cpp
+ ../common/arm/stm32/usbd_storage_msd.cpp
  )
 endif()
 
@@ -96,10 +96,10 @@ if(DEBUG OR CLI OR USB_SERIAL)
 endif()
 set(STM32USB_SRC
   ${STM32USB_SRC}
-  # STM32_USB_Device_Library/Class/msc/src/usbd_msc_data.c
-  # STM32_USB_Device_Library/Class/msc/src/usbd_msc_scsi.c
-  # STM32_USB_Device_Library/Class/msc/src/usbd_msc_bot.c
-  # STM32_USB_Device_Library/Class/msc/src/usbd_msc_core.c
+  STM32_USB_Device_Library/Class/msc/src/usbd_msc_data.c
+  STM32_USB_Device_Library/Class/msc/src/usbd_msc_scsi.c
+  STM32_USB_Device_Library/Class/msc/src/usbd_msc_bot.c
+  STM32_USB_Device_Library/Class/msc/src/usbd_msc_core.c
   )
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
