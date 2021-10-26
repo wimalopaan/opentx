@@ -125,7 +125,7 @@ void usbStart()
 #endif
       break;
 #endif
-#if !defined(PCBI6)
+#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
     default:
     case USB_MASS_STORAGE_MODE:
       // initialize USB as MSC device

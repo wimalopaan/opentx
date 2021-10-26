@@ -27,7 +27,7 @@ uint8_t mainRequestFlags = 0;
 #if defined(STM32)
 void onUSBConnectMenu(const char *result)
 {
-#if !defined(PCBI6)
+#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
   if (result == STR_USB_MASS_STORAGE) {
     setSelectedUsbMode(USB_MASS_STORAGE_MODE);
   }
@@ -49,7 +49,7 @@ void handleUsbConnection()
 #if defined(STM32) && !defined(SIMU)// && !defined(STM32F0)
   if (!usbStarted() && usbPlugged() && !(getSelectedUsbMode() == USB_UNSELECTED_MODE)) {
     usbStart();
-#if !defined(PCBI6)
+#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
       opentxClose(false);
       usbPluggedIn();
@@ -59,7 +59,7 @@ void handleUsbConnection()
   if (!usbStarted() && usbPlugged() && getSelectedUsbMode() == USB_UNSELECTED_MODE) {
     if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && (popupMenuNoItems == 0)) {
       POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
-#if !defined(PCBI6)
+#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
       POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
 #endif
 #if defined(DEBUG)
@@ -73,7 +73,7 @@ void handleUsbConnection()
   }
   if (usbStarted() && !usbPlugged()) {
     usbStop();
-#if !defined(STM32F0)
+#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
       opentxResume();
     }
