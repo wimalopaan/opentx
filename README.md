@@ -10,7 +10,7 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 * Telemetry
 * Buzzer audio alarms and indications (Janek)
 * USB joystick mode (Janek)
-* USB mass storage to backup EEPROM and update firmware (Janek)
+* USB mass storage to backup/restore EEPROM and backup firmware (Janek)
 
 ## Users Telegram group
 
