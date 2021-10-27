@@ -567,7 +567,12 @@ void flightReset(uint8_t check=true);
 PACK(struct GlobalData {
   uint8_t unexpectedShutdown:1;
   uint8_t sdcardPresent:1;
+#if defined(PCBI6)
+  uint8_t usbDetect:1;
+  uint8_t spare:5;
+#else
   uint8_t spare:6;
+#endif
 });
 
 extern GlobalData globalData;

@@ -50,7 +50,7 @@ set(SDCARD NO)
 set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
-add_definitions(-DPCBI6 -DBUZZER) 
+add_definitions(-DPCBI6 -DBUZZER -DPCBI6_USB_MSD) 
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
   model_mix_edit.cpp

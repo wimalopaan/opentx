@@ -53,7 +53,7 @@ int usbPlugged()
   static uint8_t debounced_state = 0;
   static uint8_t last_state = 0;
 
-  if(g_eeGeneral.USBEnable == USB_ON_ENABLE) {
+  if(globalData.usbDetect == USB_DETECT_ON) {
     return 1;
   }
 
