@@ -535,7 +535,7 @@ void menuRadioSetup(event_t event)
         break;
 #if defined(PCBI6)
       case ITEM_SETUP_USB_ENABLE:
-        g_eeGeneral.USBEnable = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_USBENABLE, STR_USBENABLEMODES, g_eeGeneral.USBEnable, USB_AUTO_ENABLE, USB_MAX_ENABLE, attr, event);
+        globalData.usbDetect = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_USBDETECT, STR_USBDETECTMODES, globalData.usbDetect, USB_DETECT_AUTO, USB_MAX_DETECT, attr, event);
         break;
 #endif
 #if defined(STM32)
