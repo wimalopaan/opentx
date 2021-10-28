@@ -295,9 +295,12 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
     }
   }
 
+  if (!(flags & PLAY_BACKGROUND)) { // should not affect vario
+    freq += g_eeGeneral.speakerPitch * 15;
+    len = getToneLength(len);
+  }
+
   uint8_t repeat = flags & 0x0f;
-  freq += g_eeGeneral.speakerPitch * 15;
-  len = getToneLength(len);
   
   buzzerState.freq = freq;
   buzzerState.duration = len;
