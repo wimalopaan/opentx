@@ -101,5 +101,8 @@ void processCrossfireTelemetryData(uint8_t data);
 void crossfireSetDefault(int index, uint8_t id, uint8_t subId);
 bool isCrossfireOutputBufferAvailable();
 uint8_t createCrossfireModelIDFrame(uint8_t * frame);
+#if !defined(LUA)
+bool crossfireTelemetryPush(uint8_t command, uint8_t *data, uint8_t length);
+#endif
 
 #endif // _CROSSFIRE_H_

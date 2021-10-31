@@ -251,10 +251,10 @@ void telemetryInit(uint8_t protocol)
 #if defined(CROSSFIRE)
   case PROTOCOL_PULSES_CROSSFIRE:
 	  telemetryPortInit(CROSSFIRE_BAUDRATE, TELEMETRY_SERIAL_DEFAULT);
-	  #if defined(LUA)
+
 	  outputTelemetryBufferSize = 0;
 	  outputTelemetryBufferTrigger = 0;
-	  #endif
+
 	  telemetryPortSetDirectionOutput();
 	  break;
 #endif

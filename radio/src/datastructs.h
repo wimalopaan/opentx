@@ -448,6 +448,14 @@ PACK(struct ModuleData {
       uint8_t spare2 : 1;
       int8_t refreshRate;  // definition as framelength for ppm (* 5 + 225 = time in 1/10 ms)
     } sbus);
+    NOBACKUP(struct {
+      uint8_t pkt_rate : 2;  
+      uint8_t tlm_interval : 3; 
+      uint8_t rf_type : 2;
+      uint8_t spare1 : 1;
+      uint8_t max_power : 4;
+      uint8_t rf_frequency : 4;
+    } elrs);
   };
 
   // Helper functions to set both of the rfProto protocol at the same time

@@ -136,10 +136,18 @@ set(SRC
   )
 endif()
 
+if(LUA STREQUAL NO)
 set(SRC
   ${SRC}
-  telemetry/crossfire.cpp
+  telemetry/expresslrs.cpp
   )
+endif()
+
+set(SRC
+  ${SRC}
+  telemetry/crossfire.cpp  
+  )
+
 set(PULSES_SRC
   ${PULSES_SRC}
   crossfire.cpp

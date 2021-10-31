@@ -18,6 +18,7 @@
  * GNU General Public License for more details.
  */
 
+#include <stdio.h>
 #include "opentx.h"
 
 uint8_t g_moduleIdx;
@@ -71,43 +72,48 @@ enum MenuModelSetupItems {
   ITEM_MODEL_BEEP_CENTER,
   ITEM_MODEL_USE_GLOBAL_FUNCTIONS,
 #if defined(PCBTARANIS) || defined(PCBI6)
-  ITEM_MODEL_INTERNAL_MODULE_LABEL,         // 29
-  ITEM_MODEL_INTERNAL_MODULE_MODE,          // 30
+  ITEM_MODEL_INTERNAL_MODULE_LABEL,
+  ITEM_MODEL_INTERNAL_MODULE_MODE,
   #if defined(PCBI6)
   ITEM_MODEL_INTERNAL_MODULE_SUBTYPE,
   ITEM_MODEL_INTERNAL_MODULE_SERVOFREQ,
   #else
-  ITEM_MODEL_INTERNAL_MODULE_CHANNELS,      // 31
+  ITEM_MODEL_INTERNAL_MODULE_CHANNELS,
   #endif
-  ITEM_MODEL_INTERNAL_MODULE_BIND,          // 32
-  ITEM_MODEL_INTERNAL_MODULE_FAILSAFE,      // 33
+  ITEM_MODEL_INTERNAL_MODULE_BIND,
+  ITEM_MODEL_INTERNAL_MODULE_FAILSAFE,
 #if defined(PCBXLITE)
   ITEM_MODEL_INTERNAL_MODULE_ANTENNA,
 #endif
 #endif
-  ITEM_MODEL_EXTERNAL_MODULE_LABEL,         // 34
-  ITEM_MODEL_EXTERNAL_MODULE_MODE,          // 35
+  ITEM_MODEL_EXTERNAL_MODULE_LABEL,
+  ITEM_MODEL_EXTERNAL_MODULE_MODE,
+#if defined(CROSSFIRE)&& !defined(LUA)
+  ITEM_MODEL_EXTERNAL_MODULE_RATE,
+  ITEM_MODEL_EXTERNAL_MODULE_TLM_RATIO,
+  ITEM_MODEL_EXTERNAL_MODULE_FREQUENCY,
+#endif
 #if defined(MULTIMODULE)
   ITEM_MODEL_EXTERNAL_MODULE_SUBTYPE,
   ITEM_MODEL_EXTERNAL_MODULE_STATUS,
   ITEM_MODEL_EXTERNAL_MODULE_SYNCSTATUS,
 #endif
-  ITEM_MODEL_EXTERNAL_MODULE_CHANNELS,      // 36
-  ITEM_MODEL_EXTERNAL_MODULE_BIND,          // 37
+  ITEM_MODEL_EXTERNAL_MODULE_CHANNELS,
+  ITEM_MODEL_EXTERNAL_MODULE_BIND,
 #if defined(PCBSKY9X) && defined(REVX)
   ITEM_MODEL_EXTERNAL_MODULE_OUTPUT_TYPE,
 #endif
-  ITEM_MODEL_EXTERNAL_MODULE_OPTIONS,       // 38
+  ITEM_MODEL_EXTERNAL_MODULE_OPTIONS,
 #if defined(MULTIMODULE)
   ITEM_MODEL_EXTERNAL_MODULE_AUTOBIND,
 #endif
-  ITEM_MODEL_EXTERNAL_MODULE_POWER,         // 39
+  ITEM_MODEL_EXTERNAL_MODULE_POWER,
 #if defined(PCBSKY9X) && !defined(REVA)
   ITEM_MODEL_EXTRA_MODULE_LABEL,
   ITEM_MODEL_EXTRA_MODULE_CHANNELS,
   ITEM_MODEL_EXTRA_MODULE_BIND,
 #endif
-  ITEM_MODEL_EXTERNAL_MODULE_FAILSAFE,      // 40
+  ITEM_MODEL_EXTERNAL_MODULE_FAILSAFE,
 #if defined(PCBX7)
   ITEM_MODEL_TRAINER_LABEL,
   ITEM_MODEL_TRAINER_MODE,
@@ -168,11 +174,11 @@ enum MenuModelSetupItems {
 #endif
   #define PORT_CHANNELS_ROWS(x)          (x==EXTERNAL_MODULE ? EXTERNAL_MODULE_CHANNELS_ROWS : 0)
 
-#if defined(PCBI6)
-  #define EXTERNAL_MODULE_MODE_ROWS      (0)
-#else
-  #define EXTERNAL_MODULE_MODE_ROWS      (isModulePXX(EXTERNAL_MODULE) || isModuleDSM2(EXTERNAL_MODULE) || isModuleMultimodule(EXTERNAL_MODULE)) ? (uint8_t)1 : (uint8_t)0
-#endif
+  #define EXTERNAL_MODULE_MODE_ROWS      (isModulePXX(EXTERNAL_MODULE) || isModuleDSM2(EXTERNAL_MODULE) || isModuleMultimodule(EXTERNAL_MODULE) || isModuleCrossfire(EXTERNAL_MODULE)) ? (uint8_t)1 : (uint8_t)0
+    
+  #define EXTERNAL_MODULE_RATE_ROWS                (isModuleELRS(EXTERNAL_MODULE) ? (uint8_t)0:HIDDEN_ROW)
+  #define EXTERNAL_MODULE_TLM_RATIO_ROWS           (isModuleELRS(EXTERNAL_MODULE) ? (uint8_t)0:HIDDEN_ROW)
+  #define EXTERNAL_MODULE_FREQUENCY_ROWS           (isModuleELRS(EXTERNAL_MODULE) ? TITLE_ROW:HIDDEN_ROW)
 
   #define CURSOR_ON_CELL                 (true)
   #define MODEL_SETUP_MAX_LINES          (HEADER_LINE+ITEM_MODEL_SETUP_MAX)
@@ -344,6 +350,9 @@ void menuModelSetup(event_t event)
     IF_INTERNAL_MODULE_ON(FAILSAFE_ROWS(INTERNAL_MODULE)),
     LABEL(ExternalModule),
     EXTERNAL_MODULE_MODE_ROWS,
+    EXTERNAL_MODULE_RATE_ROWS,
+    EXTERNAL_MODULE_TLM_RATIO_ROWS,
+    EXTERNAL_MODULE_FREQUENCY_ROWS,
     MULTIMODULE_SUBTYPE_ROWS(EXTERNAL_MODULE)
     MULTIMODULE_STATUS_ROWS
     EXTERNAL_MODULE_CHANNELS_ROWS,
@@ -844,7 +853,9 @@ void menuModelSetup(event_t event)
           lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN+5*FW, y, STR_DSM_PROTOCOLS, g_model.moduleData[EXTERNAL_MODULE].rfProtocol, menuHorizontalPosition==1 ? attr : 0);
         else if (isModuleR9M(EXTERNAL_MODULE)){
           lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN+5*FW, y, STR_R9M_REGION, g_model.moduleData[EXTERNAL_MODULE].subType, (menuHorizontalPosition==1 ? attr : 0));
-        }          
+        }else if(isModuleCrossfire(EXTERNAL_MODULE))          {
+          lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN+5*FW, y, STR_SUBTYPE_CRSF, g_model.moduleData[EXTERNAL_MODULE].subType, (menuHorizontalPosition==1 ? attr : 0));
+        }
 #if defined(MULTIMODULE)
         else if (isModuleMultimodule(EXTERNAL_MODULE)) {
           int multi_rfProto = g_model.moduleData[EXTERNAL_MODULE].getMultiProtocol(false);
@@ -889,6 +900,17 @@ void menuModelSetup(event_t event)
                   SET_WARNING_INFO(w, strlen(w), 0);
                 }
                 g_model.moduleData[EXTERNAL_MODULE].subType = newR9MType;
+              } else if(isModuleCrossfire(EXTERNAL_MODULE)){
+                CHECK_INCDEC_MODELVAR(event, g_model.moduleData[EXTERNAL_MODULE].subType, CRSF_SUBTYPE_FIRST, CRSF_SUBTYPE_LAST);
+               if (checkIncDec_Ret) {
+                 if(g_model.moduleData[EXTERNAL_MODULE].subType==CRSF_SUBTYPE_ELRS){
+                    g_model.moduleData[EXTERNAL_MODULE].elrs.rf_type = ELRS_RF_NONE;
+                    g_model.moduleData[EXTERNAL_MODULE].elrs.tlm_interval = 0;
+                    g_model.moduleData[EXTERNAL_MODULE].elrs.pkt_rate = 0;
+                    g_model.moduleData[EXTERNAL_MODULE].elrs.max_power = 0;
+                    g_model.moduleData[EXTERNAL_MODULE].elrs.rf_frequency = 0;
+                 }                  
+               }
               }
 
 #if defined(MULTIMODULE)
@@ -921,7 +943,55 @@ void menuModelSetup(event_t event)
           }
         }
         break;
-
+#if defined(CROSSFIRE) && !defined(LUA)        
+      case ITEM_MODEL_EXTERNAL_MODULE_RATE: 
+        lcdDrawTextAlignedLeft(y, INDENT "Pkt. Rate");
+        char status[7];
+        if(g_model.moduleData[EXTERNAL_MODULE].elrs.rf_type==ELRS_RF_NONE){
+          sprintf(status, "..."); 
+        }else{
+          sprintf(status, "%d:%d", UartBadPkts, UartGoodPkts); 
+        }
+        
+        lcdDrawText(MODEL_SETUP_2ND_COLUMN+7*FW, y, status);
+               
+        if(g_model.moduleData[EXTERNAL_MODULE].elrs.rf_type==ELRS_RF_NONE){
+          lcdDrawText(MODEL_SETUP_2ND_COLUMN, y, "Wait");
+        }else if(g_model.moduleData[EXTERNAL_MODULE].elrs.rf_type==ELRS_RF_SX127x){
+          lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_SX127x_RATES, g_model.moduleData[EXTERNAL_MODULE].elrs.pkt_rate, attr);
+        }else{
+          lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_SX128x_RATES, g_model.moduleData[EXTERNAL_MODULE].elrs.pkt_rate, attr);
+        }
+        if (attr && (editMode>0 || p1valdiff)) {
+          if(g_model.moduleData[EXTERNAL_MODULE].elrs.rf_type==ELRS_RF_SX127x){
+            CHECK_INCDEC_MODELVAR(event, g_model.moduleData[EXTERNAL_MODULE].elrs.pkt_rate, 0, ELRS_MAX_RATE_SX127);
+          }else{
+            CHECK_INCDEC_MODELVAR(event, g_model.moduleData[EXTERNAL_MODULE].elrs.pkt_rate, 0, ELRS_MAX_RATE_SX128);
+          }
+          if (checkIncDec_Ret) { // modified?
+            elrsSendRequest(ELRS_AIR_RATE, g_model.moduleData[EXTERNAL_MODULE].elrs.pkt_rate);
+          }
+        }
+      break;
+      case ITEM_MODEL_EXTERNAL_MODULE_TLM_RATIO: 
+        lcdDrawTextAlignedLeft(y, INDENT "TLM Ratio");
+        lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_TLM_INTERVALS, g_model.moduleData[EXTERNAL_MODULE].elrs.tlm_interval, attr);
+        if (attr && (editMode>0 || p1valdiff)) {
+          CHECK_INCDEC_MODELVAR(event, g_model.moduleData[EXTERNAL_MODULE].elrs.tlm_interval, 0, ELRS_MAX_TLM_INTERVAL);
+          if (checkIncDec_Ret) { // modified?
+            elrsSendRequest(ELRS_TLM_INTERVAL, g_model.moduleData[EXTERNAL_MODULE].elrs.tlm_interval);
+          }
+        }
+      break;
+      case ITEM_MODEL_EXTERNAL_MODULE_FREQUENCY:
+        lcdDrawTextAlignedLeft(y, INDENT "RF Freq");
+        if(g_model.moduleData[EXTERNAL_MODULE].elrs.rf_type==ELRS_RF_NONE){
+          lcdDrawText(MODEL_SETUP_2ND_COLUMN, y, "...");
+        }else{
+          lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_RF_FREQUENCIES, g_model.moduleData[EXTERNAL_MODULE].elrs.rf_frequency, attr);
+        }        
+      break;
+#endif      
 #if defined(MULTIMODULE)
       case ITEM_MODEL_EXTERNAL_MODULE_SUBTYPE:
       {
@@ -1368,7 +1438,16 @@ void menuModelSetup(event_t event)
           g_model.moduleData[EXTERNAL_MODULE].multi.lowPowerMode = editCheckBox(g_model.moduleData[EXTERNAL_MODULE].multi.lowPowerMode, MODEL_SETUP_2ND_COLUMN, y, STR_MULTI_LOWPOWER, attr, event);
         }
 #endif
-
+        else if (isModuleCrossfire(moduleIdx) && g_model.moduleData[EXTERNAL_MODULE].subType==CRSF_SUBTYPE_ELRS) {
+          lcdDrawTextAlignedLeft(y, INDENT "Power");
+          lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_MAX_POWERS, g_model.moduleData[EXTERNAL_MODULE].elrs.max_power, attr);
+          if (attr && (editMode>0 || p1valdiff)) {
+            CHECK_INCDEC_MODELVAR(event, g_model.moduleData[EXTERNAL_MODULE].elrs.max_power, 0, ELRS_MAX_MAX_POWER);
+              if (checkIncDec_Ret) { // modified?
+                elrsSendRequest(ELRS_MAX_POWER, g_model.moduleData[EXTERNAL_MODULE].elrs.max_power);
+            }
+          }
+        }
       }
       break;
 

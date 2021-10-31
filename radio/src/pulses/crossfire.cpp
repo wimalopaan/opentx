@@ -69,14 +69,13 @@ uint8_t createCrossfireChannelsFrame(uint8_t* frame, int16_t* pulses) {
 
 void setupPulsesCrossfire() {
   uint8_t* pulses = modulePulsesData[EXTERNAL_MODULE].crossfire.pulses;
-  // #if defined(LUA)
-  //   if (outputTelemetryBuffer.destination == TELEMETRY_ENDPOINT_SPORT) {
-  //     memcpy(pulses, outputTelemetryBuffer.data, outputTelemetryBufferSize);
-  //     modulePulsesData[EXTERNAL_MODULE].crossfire.length = outputTelemetryBufferSize;
-  //     outputTelemetryBuffer.reset();
-  //   } else
-  // #endif
-  {
+
+    if (outputTelemetryBufferSize > 0) {
+      memcpy(pulses, outputTelemetryBuffer, outputTelemetryBufferSize);
+      modulePulsesData[EXTERNAL_MODULE].crossfire.length = outputTelemetryBufferSize;
+      outputTelemetryBufferSize = 0;
+      outputTelemetryBufferTrigger = 0;
+    } else {
     // if (moduleState[EXTERNAL_MODULE].counter == CRSF_FRAME_MODELID) {
     //   modulePulsesData[EXTERNAL_MODULE].crossfire.length = createCrossfireModelIDFrame(pulses);
     //   moduleState[EXTERNAL_MODULE].counter = CRSF_FRAME_MODELID_SENT;
