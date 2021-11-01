@@ -12,7 +12,8 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 * USB (To enable on standard cable: General Settings > USB Detect set to "Once") (Janek)
   * Joystick mode (Janek)
   * Mass Storage to backup/restore eeprom and backup firmware (Janek)
-
+* ExpressLRS V1.x configuration in model setup.
+ 
 ## Users Telegram group
 
 https://t.me/otx_flysky_i6x
@@ -30,10 +31,8 @@ https://t.me/otx_flysky_i6x
 
 ## Next tasks/Known issues:
 
-* Add settings menu for ExpressLRS, since no LUA is supported.
 * Reboots with Crossfire modules at 400k bauds.
 * Enable mixer sync for CRSF.
-* SDCARD support if it fits in flash.
 * PPM in (Trainer)
 * HELI support.
 
