@@ -93,6 +93,7 @@ enum ElrsRfTypes {
 
 extern uint16_t UartGoodPkts;
 extern uint16_t UartBadPkts;
+extern char commitSha[];
 
 void elrsProcessResponse(uint8_t len, uint8_t* data);
 void elrsSendRequest(uint8_t request, uint8_t value);

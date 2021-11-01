@@ -89,6 +89,7 @@ enum MenuModelSetupItems {
   ITEM_MODEL_EXTERNAL_MODULE_LABEL,
   ITEM_MODEL_EXTERNAL_MODULE_MODE,
 #if defined(CROSSFIRE)&& !defined(LUA)
+  ITEM_MODEL_EXTERNAL_MODULE_INFO,
   ITEM_MODEL_EXTERNAL_MODULE_RATE,
   ITEM_MODEL_EXTERNAL_MODULE_TLM_RATIO,
   ITEM_MODEL_EXTERNAL_MODULE_FREQUENCY,
@@ -179,6 +180,7 @@ enum MenuModelSetupItems {
   #define EXTERNAL_MODULE_RATE_ROWS                (isModuleELRS(EXTERNAL_MODULE) ? (uint8_t)0:HIDDEN_ROW)
   #define EXTERNAL_MODULE_TLM_RATIO_ROWS           (isModuleELRS(EXTERNAL_MODULE) ? (uint8_t)0:HIDDEN_ROW)
   #define EXTERNAL_MODULE_FREQUENCY_ROWS           (isModuleELRS(EXTERNAL_MODULE) ? TITLE_ROW:HIDDEN_ROW)
+  #define EXTERNAL_MODULE_INFO_ROWS                (isModuleELRS(EXTERNAL_MODULE) ? TITLE_ROW:HIDDEN_ROW)
 
   #define CURSOR_ON_CELL                 (true)
   #define MODEL_SETUP_MAX_LINES          (HEADER_LINE+ITEM_MODEL_SETUP_MAX)
@@ -350,6 +352,7 @@ void menuModelSetup(event_t event)
     IF_INTERNAL_MODULE_ON(FAILSAFE_ROWS(INTERNAL_MODULE)),
     LABEL(ExternalModule),
     EXTERNAL_MODULE_MODE_ROWS,
+    EXTERNAL_MODULE_INFO_ROWS,
     EXTERNAL_MODULE_RATE_ROWS,
     EXTERNAL_MODULE_TLM_RATIO_ROWS,
     EXTERNAL_MODULE_FREQUENCY_ROWS,
@@ -943,7 +946,12 @@ void menuModelSetup(event_t event)
           }
         }
         break;
-#if defined(CROSSFIRE) && !defined(LUA)        
+#if defined(CROSSFIRE) && !defined(LUA) 
+      case ITEM_MODEL_EXTERNAL_MODULE_INFO:
+        elrsPing(false);
+        lcdDrawTextAlignedLeft(y, INDENT "Info");
+        lcdDrawText(MODEL_SETUP_2ND_COLUMN, y, commitSha);
+        break;
       case ITEM_MODEL_EXTERNAL_MODULE_RATE: 
         lcdDrawTextAlignedLeft(y, INDENT "Pkt. Rate");
         char status[7];

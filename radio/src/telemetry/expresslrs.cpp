@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "opentx.h"
 
 uint16_t UartGoodPkts;
@@ -8,6 +10,8 @@ uint8_t SX128x_RATES_VALUES[] = {0x05, 0x03, 0x01, 0x00};
 uint8_t TLM_INTERVAL_VALUES[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 uint8_t MAX_POWER_VALUES[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
 uint8_t RF_FREQUENCY_VALUES[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+
+char commitSha[] = "??????";
 
 static uint8_t reqWaitMs = 100;
 static tmr10ms_t lastReqTime = 0;
@@ -22,7 +26,6 @@ int findIndex(uint8_t* array, uint8_t max_idx, uint8_t value) {
 }
 
 void elrsProcessResponse(uint8_t len, uint8_t* data) {
-  DUMP(telemetryRxBuffer, telemetryRxBufferCount);
   if (data[0] == 0xEA && data[1] == 0xEE) {
     // Type 0xff - "sendLuaParams"
     if (data[2] == 0xFF) {
@@ -42,9 +45,9 @@ void elrsProcessResponse(uint8_t len, uint8_t* data) {
       }
     }
     // Type 0xfe - "luaCommitPacket"
-    if (data[2] == 0xFE) {
-      // not yet implemented
-      // commitSha = shaLUT[data[4]+1] .. shaLUT[data[5]+1] .. shaLUT[data[6]+1] .. shaLUT[data[7]+1] .. shaLUT[data[8]+1] .. shaLUT[data[9]+1]
+    if (data[2] == 0xFE && len == 9) {
+      //DUMP(telemetryRxBuffer, telemetryRxBufferCount);
+      sprintf(commitSha, "v%d.%d.%d", data[4], data[6], data[8]);
     }
   }
 }
