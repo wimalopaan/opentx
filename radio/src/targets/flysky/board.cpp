@@ -225,55 +225,6 @@ extern "C" void INTERRUPT_xMS_IRQHandler()
 #define PWR_PRESS_DURATION_MAX 500 // 5s
 #endif
 
-void resetReason()
-{
-  TRACE("Reset reason:");
-  if (RCC->CSR & RCC_CSR_LSION)
-  {
-    TRACE("Internal Low Speed oscillator enable");
-  }
-  if (RCC->CSR & RCC_CSR_LSIRDY)
-  {
-    TRACE("Internal Low Speed oscillator Ready");
-  }
-  if (RCC->CSR & RCC_CSR_V18PWRRSTF)
-  {
-    TRACE("V1.8 power domain reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_RMVF)
-  {
-    TRACE("Remove reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_OBLRSTF)
-  {
-    TRACE("OBL reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_PINRSTF)
-  {
-    TRACE("PIN reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_PORRSTF)
-  {
-    TRACE("POR/PDR reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_SFTRSTF)
-  {
-    TRACE("Software Reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_IWDGRSTF)
-  {
-    TRACE("Independent Watchdog reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_WWDGRSTF)
-  {
-    TRACE("Window watchdog reset flag");
-  }
-  if (RCC->CSR & RCC_CSR_LPWRRSTF)
-  {
-    TRACE("Low-Power reset flag");
-  }
-}
-
 void boardInit()
 {
 #if defined(STM32F0) && defined(BOOT)
@@ -293,8 +244,6 @@ void boardInit()
   serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
   TRACE("\nFlySky board started :)");
 #endif
-  // Reset reason
-  resetReason();
   //pwrInit();
   keysInit();
   adcInit();

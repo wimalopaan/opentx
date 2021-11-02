@@ -30,6 +30,7 @@
 #endif
 
 #if defined(CROSSFIRE)
+  #include "expresslrs.h"
   #include "crossfire.h"
 #endif
 #if defined(MULTIMODULE)
