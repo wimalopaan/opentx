@@ -99,7 +99,7 @@
 #define TR_COUNTRYCODES                TR("US""JP""EU", "USA\0  ""Japon\0""Europe")
 
 #define LEN_USBMODES                   TR("\006", "\010")
-#define TR_USBMODES                    TR("Popup\0""Joyst\0""SDCard""Série\0", "Demander""Joystick""Stockage""Série\0  ")
+#define TR_USBMODES                    TR("Popup\0""Joyst\0""Storag""Série\0", "Demander""Joystick""Stockage""Série\0  ")
 
 #define LEN_TARANIS_PROTOCOLS  "\004"
 #if defined(PCBI6)
