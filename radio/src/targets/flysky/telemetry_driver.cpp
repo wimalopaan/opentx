@@ -193,7 +193,7 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
       status = TELEMETRY_USART->ISR;
     }
   }
-  while (status & (USART_FLAG_RXNE /* | USART_FLAG_ERRORS*/)) {
+  while (status & (USART_FLAG_RXNE | USART_FLAG_ERRORS)) {
     uint8_t data = TELEMETRY_USART->RDR;
     if (status & USART_FLAG_ERRORS) {
       //TRACE("%d E", status & USART_FLAG_ERRORS);
