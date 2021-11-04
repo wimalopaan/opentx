@@ -203,9 +203,9 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
       if (status & USART_FLAG_NE) {
         USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_NE);
       }
-      if (status & USART_FLAG_FE) {
-        USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_FE);
-      }
+      // if (status & USART_FLAG_FE) {
+      //   USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_FE);
+      // }
       if (status & USART_FLAG_PE) {
         USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_PE);
       }
