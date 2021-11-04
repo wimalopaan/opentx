@@ -181,7 +181,7 @@ extern "C" void TELEMETRY_DMA_TX_IRQHandler(void) {
   }
 }
 
-#define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE)
+#define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_PE) // | USART_FLAG_FE, USART_FLAG_NE
 extern "C" void TELEMETRY_USART_IRQHandler(void) {
   DEBUG_INTERRUPT(INT_TELEM_USART);
   uint32_t status = TELEMETRY_USART->ISR;
@@ -193,25 +193,25 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
       status = TELEMETRY_USART->ISR;
     }
   }
-  while (status & (USART_FLAG_RXNE /* | USART_FLAG_ERRORS*/)) {
+  while (status & (USART_FLAG_RXNE | USART_FLAG_ERRORS)) {
     uint8_t data = TELEMETRY_USART->RDR;
     if (status & USART_FLAG_ERRORS) {
       //TRACE("%d E", status & USART_FLAG_ERRORS);
       if (status & USART_FLAG_ORE) {
         USART_ClearITPendingBit(TELEMETRY_USART, USART_IT_ORE);
       }
-      if (status & USART_FLAG_NE) {
-        USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_NE);
-      }
-      if (status & USART_FLAG_FE) {
-        USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_FE);
-      }
+//      if (status & USART_FLAG_NE) {
+//        USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_NE);
+//      }
+//       if (status & USART_FLAG_FE) {
+//         USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_FE);
+//       }
       if (status & USART_FLAG_PE) {
         USART_ClearITPendingBit(TELEMETRY_USART, USART_FLAG_PE);
       }
-    }
-    //TRACE("O");
-    telemetryFifo.push(data);
+    } else {
+      //TRACE("O");
+      telemetryFifo.push(data);
 
 #if defined(LUA)
     if (telemetryProtocol == PROTOCOL_FRSKY_SPORT) {
@@ -222,7 +222,7 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
       prevdata = data;
     }
 #endif
-
+    }
     status = TELEMETRY_USART->ISR;
   }
 }
