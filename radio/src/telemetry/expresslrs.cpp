@@ -7,9 +7,9 @@ uint16_t UartBadPkts;
 
 uint8_t SX127x_RATES_VALUES[] = {0x06, 0x05, 0x04, 0x02};
 uint8_t SX128x_RATES_VALUES[] = {0x05, 0x03, 0x01, 0x00};
-uint8_t TLM_INTERVAL_VALUES[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
-uint8_t MAX_POWER_VALUES[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
-uint8_t RF_FREQUENCY_VALUES[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+// uint8_t TLM_INTERVAL_VALUES[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+// uint8_t MAX_POWER_VALUES[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+// uint8_t RF_FREQUENCY_VALUES[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
 
 char commitSha[] = "??????";
 
@@ -30,9 +30,9 @@ void elrsProcessResponse(uint8_t len, uint8_t* data) {
     // Type 0xff - "sendLuaParams"
     if (data[2] == 0xFF) {
       if (len == 12) {
-        g_model.moduleData[EXTERNAL_MODULE].elrs.tlm_interval = findIndex(TLM_INTERVAL_VALUES, ELRS_MAX_TLM_INTERVAL, data[5]);
-        g_model.moduleData[EXTERNAL_MODULE].elrs.max_power = findIndex(MAX_POWER_VALUES, ELRS_MAX_MAX_POWER, data[6]);
-        g_model.moduleData[EXTERNAL_MODULE].elrs.rf_frequency = findIndex(RF_FREQUENCY_VALUES, ELRS_MAX_RF_FREQ, data[7]);
+        g_model.moduleData[EXTERNAL_MODULE].elrs.tlm_interval = data[5]; //findIndex(TLM_INTERVAL_VALUES, ELRS_MAX_TLM_INTERVAL, data[5]);
+        g_model.moduleData[EXTERNAL_MODULE].elrs.max_power = data[6]; //findIndex(MAX_POWER_VALUES, ELRS_MAX_MAX_POWER, data[6]);
+        g_model.moduleData[EXTERNAL_MODULE].elrs.rf_frequency = data[7] - 1; //findIndex(RF_FREQUENCY_VALUES, ELRS_MAX_RF_FREQ, data[7]);
         if (data[7] == 6) {
           g_model.moduleData[EXTERNAL_MODULE].elrs.rf_type = ELRS_RF_SX128x;
           g_model.moduleData[EXTERNAL_MODULE].elrs.pkt_rate = findIndex(SX128x_RATES_VALUES, ELRS_MAX_RATE_SX128, data[4]);
@@ -70,10 +70,10 @@ void elrsSendRequest(uint8_t request, uint8_t value) {
       }
       break;
     case ELRS_TLM_INTERVAL:
-      data[3] = TLM_INTERVAL_VALUES[value];
-      break;
+      // data[3] = value; //TLM_INTERVAL_VALUES[value];
+      // break;
     case ELRS_MAX_POWER:
-      data[3] = MAX_POWER_VALUES[value];
+      data[3] = value; //MAX_POWER_VALUES[value];
       break;
       /* not yet implemented
     case ELRS_BIND:      

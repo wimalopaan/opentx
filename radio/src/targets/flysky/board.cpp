@@ -105,14 +105,6 @@ extern volatile uint32_t g_pfnVectors[VECTOR_TABLE_SIZE];
 #endif
 
 //audio
-void audioConsumeCurrentBuffer()
-{
-}
-
-void audioInit()
-{
-}
-
 void buzzerInit()
 {
   GPIO_InitTypeDef gpio_init;
@@ -160,9 +152,7 @@ void initBuzzerTimer()
   TIM1->CCMR1 |= (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); // = TIM_OCMODE_PWM1
   /* Reset and set the Output N Polarity level to LOW */
   // TIM1->CCER &= ~TIM_CCER_CC1P; 
-  TIM1->CCER |= TIM_CCER_CC1P; // = TIM_OCPOLARITY_LOW 
-  /* Enable the Capture compare channel */
-  TIM1->CCER |= TIM_CCER_CC1E; // enable oc
+  TIM1->CCER |= TIM_CCER_CC1P | TIM_CCER_CC1E; // = TIM_OCPOLARITY_LOW + enable Capture compare channel
   /* Enable the main output */
   TIM1->BDTR |= TIM_BDTR_MOE;
 }
@@ -243,6 +233,7 @@ void boardInit()
 #if defined(DEBUG) && defined(SERIAL_GPIO)
   serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
   TRACE("\nFlySky board started :)");
+  TRACE("RCC->CSR = %08x", RCC->CSR);
 #endif
   //pwrInit();
   keysInit();
@@ -260,13 +251,8 @@ void boardInit()
   eepromInit();
   usbInit();
   //storageEraseAll(false);
-   ////usbInit();
   // TRACE("i2c test");
   // i2c_test();
-
-  // while (1)
-  // {
-  // }
 
 #if defined(DEBUG)
   DBGMCU_APB1PeriphConfig(DBGMCU_IWDG_STOP | DBGMCU_TIM1_STOP | DBGMCU_TIM2_STOP | DBGMCU_TIM3_STOP | DBGMCU_TIM6_STOP | DBGMCU_TIM14_STOP, ENABLE);
