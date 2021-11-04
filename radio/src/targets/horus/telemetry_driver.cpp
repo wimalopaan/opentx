@@ -61,6 +61,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode)
   GPIO_Init(TELEMETRY_DIR_GPIO, &GPIO_InitStructure);
   GPIO_ResetBits(TELEMETRY_DIR_GPIO, TELEMETRY_DIR_GPIO_PIN);
 
+  USART_DeInit(TELEMETRY_USART);
   USART_InitStructure.USART_BaudRate = baudrate;
   if (mode & TELEMETRY_SERIAL_8E2) {
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
@@ -174,6 +175,9 @@ extern "C" void TELEMETRY_DMA_TX_IRQHandler(void)
   DEBUG_INTERRUPT(INT_TELEM_DMA);
   if (DMA_GetITStatus(TELEMETRY_DMA_Stream_TX, TELEMETRY_DMA_TX_FLAG_TC)) {
     DMA_ClearITPendingBit(TELEMETRY_DMA_Stream_TX, TELEMETRY_DMA_TX_FLAG_TC);
+
+    // clear TC flag before enabling interrupt
+    TELEMETRY_USART->SR &= ~USART_SR_TC;
     TELEMETRY_USART->CR1 |= USART_CR1_TCIE;
     if (telemetryProtocol == PROTOCOL_FRSKY_SPORT) {
       outputTelemetryBufferSize = 0;
