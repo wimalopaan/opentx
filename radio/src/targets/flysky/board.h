@@ -522,9 +522,6 @@ void lcdSetRefVolt(unsigned char val);
 void lcdSetContrast(void);
 void lcdRefresh();
 
-
-#define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE)
-
 extern uint8_t currentTrainerMode;
 void checkTrainerSettings(void);
 
