@@ -6,13 +6,13 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 
 * AFHDS2A protocol
 * PPM out
-* CRSF working with ExpressLRS at 115 and 400k bauds and with Crossfire modules at 115k bauds
+* CRSF working with ExpressLRS and Crossfire modules at 115k and 400k bauds
 * Telemetry
 * Buzzer audio alarms and indications (Janek)
 * USB (To enable on standard cable: General Settings > USB Detect set to "Once") (Janek)
   * Joystick mode (Janek)
-  * Mass Storage to backup/restore eeprom and backup firmware (Janek)
-* ExpressLRS V1.x configuration in model setup.
+  * Mass Storage to backup/restore eeprom (Janek)
+* ExpressLRS V1.x configuration in model setup
  
 ## Users Telegram group
 
@@ -31,10 +31,10 @@ https://t.me/otx_flysky_i6x
 
 ## Next tasks/Known issues:
 
-* Reboots with Crossfire modules at 400k bauds.
-* Enable mixer sync for CRSF.
+* Enable mixer sync for CRSF
+* Solve POT editing values outside limits
 * PPM in (Trainer)
-* HELI support.
+* HELI support
 
 ## ST-Link pinout
 
