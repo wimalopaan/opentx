@@ -502,8 +502,7 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
     memset(buffer, 0x00, BLOCK_SIZE);
     if (sector == 0) {
       memcpy(buffer, g_FATboot, sizeof(g_FATboot) ) ;
-      // generate last 450 bytes to save flash space
-      memset((buffer + sizeof(g_FATboot)), 0x00, BLOCK_SIZE - sizeof(g_FATboot) - 2);
+      // skip last 450 - 2 bytes to save flash, it's already zeroed, set only last 2 bytes
       *(uint16_t *)(buffer + BLOCK_SIZE - 2) = 0xaa55; // 2 end bytes
     }
     else if (sector == 1 || sector == 2) {
