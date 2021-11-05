@@ -293,10 +293,12 @@ const char firmware_txt[] =
 #if defined(SDCARD)
   "req SD ver " REQUIRED_SDCARD_VERSION "\r\n"
 #endif
+#if !defined(PCBI6)
 #if !defined(BOOT)
 "BOOTVER    "
 #else
 "FWVERSION  "
+#endif
 #endif
   ;
 
@@ -427,7 +429,7 @@ const FATDirEntry_t g_DIRroot[] =
       0xA302,
       0x3D55,
       0x0002,
-      sizeof(firmware_txt) + 16 //strlen(getOtherVersion())
+      sizeof(firmware_txt) - 1 //+ 16 //strlen(getOtherVersion())
     },
     {
       { 'F', 'I', 'R', 'M', 'W', 'A', 'R', 'E'},
@@ -501,11 +503,8 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
     if (sector == 0) {
       memcpy(buffer, g_FATboot, sizeof(g_FATboot) ) ;
       // generate last 450 bytes to save flash space
-      int i = BLOCK_SIZE - sizeof(g_FATboot);
-      for (; i < BLOCK_SIZE - 2; i++) {
-        *(buffer + i) = 0x00;
-      }
-      *(uint16_t *)(buffer + i) = 0xaa55; // 2 end bytes
+      memset((buffer + sizeof(g_FATboot)), 0x00, BLOCK_SIZE - sizeof(g_FATboot) - 2);
+      *(uint16_t *)(buffer + BLOCK_SIZE - 2) = 0xaa55; // 2 end bytes
     }
     else if (sector == 1 || sector == 2) {
       // FAT table. Generate on the fly to save the 1024 byte flash space
@@ -539,7 +538,9 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
     }
     else if (sector == 4) {
       memcpy(buffer, firmware_txt, sizeof(firmware_txt));
+#if !defined(PCBI6)
       memcpy(buffer + sizeof(firmware_txt) - 1, getOtherVersion(), strlen(getOtherVersion()));
+#endif
     }
     else if (sector < RESERVED_SECTORS) {
       // allocated to firmware.txt
