@@ -319,7 +319,7 @@ ModuleSyncStatus::ModuleSyncStatus()
   memset(this, 0, sizeof(ModuleSyncStatus));
 }
 
-void ModuleSyncStatus::update(uint16_t newRefreshRate, uint16_t newInputLag)
+void ModuleSyncStatus::update(uint16_t newRefreshRate, int16_t newInputLag)
 {
   if (!newRefreshRate)
     return;

@@ -79,7 +79,26 @@ void sendSynchronousPulses(uint8_t runMask) {
     }
   }
 }
-uint32_t nextMixerTime[NUM_MODULES];
+
+constexpr uint8_t MIXER_FREQUENT_ACTIONS_PERIOD = 5 /*ms*/;
+constexpr uint8_t MIXER_MAX_PERIOD = MAX_REFRESH_RATE / 1000 /*ms*/;
+
+void execMixerFrequentActions()
+{
+#if defined(SBUS)
+    processSbusInput();
+#endif
+
+#if defined(BLUETOOTH)
+      bluetoothWakeup();
+#endif
+
+  if (!s_pulses_paused) {
+    DEBUG_TIMER_START(debugTimerTelemetryWakeup);
+    telemetryWakeup();
+    DEBUG_TIMER_STOP(debugTimerTelemetryWakeup);
+  }
+}
 
 TASK_FUNCTION(mixerTask) {
   s_pulses_paused = true;
@@ -88,18 +107,32 @@ TASK_FUNCTION(mixerTask) {
   mixerSchedulerStart();
 
   while (true) {
-#if defined(SBUS)
-    processSbusInput();
-#endif
-    // run mixer at least every 30ms
-    bool timeout = mixerSchedulerWaitForTrigger(30);
+    int timeout = 0;
+    for (; timeout < MIXER_MAX_PERIOD; timeout += MIXER_FREQUENT_ACTIONS_PERIOD) {
 
-    //re-enable trigger
+      // run periodicals before waiting for the trigger
+      // to keep the delay short
+      execMixerFrequentActions();
+
+      // mixer flag triggered?
+      if (!mixerSchedulerWaitForTrigger(MIXER_FREQUENT_ACTIONS_PERIOD)) {
+        break;
+      }
+    }
+
+#if defined(DEBUG_MIXER_SCHEDULER)
+    GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);
+    GPIO_ResetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);
+#endif
+
+    // re-enable trigger
     mixerSchedulerClearTrigger();
     mixerSchedulerEnableTrigger();
+
 #if defined(SIMU)
-    if (pwrCheck() == e_power_off)
+    if (pwrCheck() == e_power_off) {
       TASK_RETURN();
+    }
 #else
     if (isForcePowerOffRequested()) {
       pwrOff();
@@ -114,7 +147,7 @@ TASK_FUNCTION(mixerTask) {
 
       doMixerCalculations();
       
-      //sendSynchronousPulses(1 << EXTERNAL_MODULE);
+      sendSynchronousPulses(1 << EXTERNAL_MODULE);
 
       doMixerPeriodicUpdates();
 
@@ -127,16 +160,6 @@ TASK_FUNCTION(mixerTask) {
       if (getSelectedUsbMode() == USB_JOYSTICK_MODE) {
         usbJoystickUpdate();
       }
-#endif
-
-#if defined(TELEMETRY_FRSKY)
-      DEBUG_TIMER_START(debugTimerTelemetryWakeup);
-      telemetryWakeup();
-      DEBUG_TIMER_STOP(debugTimerTelemetryWakeup);
-#endif
-
-#if defined(BLUETOOTH)
-      bluetoothWakeup();
 #endif
 
       if (heartbeat == HEART_WDT_CHECK) {

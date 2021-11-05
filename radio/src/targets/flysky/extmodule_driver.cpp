@@ -159,13 +159,14 @@ inline void extmoduleSendNextFrame() {
 }
 
 extern "C" void EXTMODULE_TIMER_IRQHandler() {
-  if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
-    EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;    // Clears interrupt on ch2
-    //if (s_current_protocol[EXTERNAL_MODULE] == PROTO_NONE) { // used when enabling mixer scheduler (also uncomment sendSynchronousPulses in MixerTask) Latest otx has both setupPulses enabled. (?)
-    if (s_current_protocol[EXTERNAL_MODULE] != PROTO_PPM) {
+  if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {                   // Compare PPM-OUT
+    EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;                     // Clears interrupt on ch2
+    if (s_current_protocol[EXTERNAL_MODULE] == PROTO_NONE) {
       setupPulses(EXTERNAL_MODULE);
     }
-    extmoduleSendNextFrame();
+    if (s_current_protocol[EXTERNAL_MODULE] != PROTO_CROSSFIRE) {
+      extmoduleSendNextFrame();
+    }
   }
   if (EXTMODULE_TIMER->SR & TIM_SR_CC1IF) {  // Capture PPM-IN
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC1IF;    // Clears interrupt on ch1
