@@ -242,9 +242,9 @@ bool setupPulses(uint8_t port) {
     case PROTO_CROSSFIRE:
       if (telemetryProtocol == PROTOCOL_PULSES_CROSSFIRE && !init_needed) {
         ModuleSyncStatus& status = getModuleSyncStatus(EXTERNAL_MODULE);
-        // if (status.isValid())
-        //   mixerSchedulerSetPeriod(EXTERNAL_MODULE, status.getAdjustedRefreshRate());
-        // else
+        if (status.isValid())
+          mixerSchedulerSetPeriod(EXTERNAL_MODULE, status.getAdjustedRefreshRate());
+        else
           mixerSchedulerSetPeriod(EXTERNAL_MODULE, CROSSFIRE_PERIOD);
         setupPulsesCrossfire();
         send = true;

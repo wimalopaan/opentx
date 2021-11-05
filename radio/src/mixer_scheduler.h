@@ -25,8 +25,8 @@
 
 #define MIXER_SCHEDULER_DEFAULT_PERIOD_US 4000u // 4ms
 
-#define MIN_REFRESH_RATE      1750 /* us */ // 571 Hz
-#define MAX_REFRESH_RATE     25000 /* us */ // 40 Hz
+#define MIN_REFRESH_RATE      1750 /* us */
+#define MAX_REFRESH_RATE     50000 /* us */
 
 #if !defined(SIMU)
 
