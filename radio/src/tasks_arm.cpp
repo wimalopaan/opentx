@@ -107,7 +107,7 @@ TASK_FUNCTION(mixerTask) {
   mixerSchedulerStart();
 
   while (true) {
-    int timeout = 0;
+  int timeout = 0;
     for (; timeout < MIXER_MAX_PERIOD; timeout += MIXER_FREQUENT_ACTIONS_PERIOD) {
 
       // run periodicals before waiting for the trigger
@@ -124,7 +124,7 @@ TASK_FUNCTION(mixerTask) {
     GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);
     GPIO_ResetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);
 #endif
-
+   
     // re-enable trigger
     mixerSchedulerClearTrigger();
     mixerSchedulerEnableTrigger();

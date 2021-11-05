@@ -55,10 +55,10 @@ void mixerSchedulerInit()
 
 void mixerSchedulerSetPeriod(uint8_t moduleIdx, uint16_t periodUs)
 {
-  if ((periodUs > 0) && (periodUs < MIN_REFRESH_RATE)) {
+  if (periodUs > 0 && periodUs < MIN_REFRESH_RATE) {
     periodUs = MIN_REFRESH_RATE;
   }
-  else if ((periodUs > 0) && (periodUs > MAX_REFRESH_RATE)) {
+  else if (periodUs > 0 && periodUs > MAX_REFRESH_RATE) {
     periodUs = MAX_REFRESH_RATE;
   }
 
