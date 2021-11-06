@@ -22,16 +22,16 @@
 
 void extmoduleSendNextFrame();
 
-void EnablePPMTim(void) {
+inline void EnablePPMTim(void) {
   SET_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
-void DisablePPMTim(void) {
+inline void DisablePPMTim(void) {
   CLEAR_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
-void EnablePPMOut(void) {
+inline void EnablePPMOut(void) {
   SET_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
 }
-void DisablePPMOut(void) {
+inline void DisablePPMOut(void) {
   CLEAR_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
 }
 
