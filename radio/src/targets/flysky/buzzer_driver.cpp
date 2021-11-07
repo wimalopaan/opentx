@@ -276,23 +276,27 @@ inline void buzzerOff()
 
 void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr)
 {
-  if (!(flags & PLAY_NOW) && buzzerState.duration) {
-    // skip PLAY_BACKGROUND if other tone is playing
-    if (!(flags & PLAY_BACKGROUND) && !buzzerFifo.full())
-      buzzerFifo.push(BuzzerTone(freq, len, pause, flags, freqIncr));
-    return;
-  } else if ((flags & PLAY_NOW) && (buzzerState.repeat > 0)) { // push back to queue
-    if (!buzzerFifo.full()) {
-      if (buzzerState.duration - len < buzzerState.tone.duration / 2) {
-        buzzerState.repeat--;
+  if (!buzzerState.tone.flags & PLAY_BACKGROUND) { // always replace PLAY_BACKGROUND
+    if (!(flags & PLAY_NOW) && buzzerState.duration) {
+      // skip PLAY_BACKGROUND if other tone is playing
+      if (!(flags & PLAY_BACKGROUND) && !buzzerFifo.full())
+        buzzerFifo.push(BuzzerTone(freq, len, pause, flags, freqIncr));
+      return;
+    } else if ((flags & PLAY_NOW) && (buzzerState.repeat > 0)) { // push back to queue
+      if (!buzzerFifo.full()) {
+        if (buzzerState.duration - len < buzzerState.tone.duration / 2) {
+          buzzerState.repeat--;
+        }
+        buzzerFifo.push(BuzzerTone(
+          buzzerState.tone.freq,
+          buzzerState.tone.duration,
+          buzzerState.tone.pause,
+          buzzerState.repeat,
+          buzzerState.tone.freqIncr));
       }
-      buzzerFifo.push(BuzzerTone(
-        buzzerState.tone.freq,
-        buzzerState.tone.duration,
-        buzzerState.tone.pause,
-        buzzerState.repeat,
-        buzzerState.tone.freqIncr));
     }
+  } else if ((flags & PLAY_BACKGROUND) && !(flags & PLAY_NOW) && buzzerState.duration) {
+    return;
   }
 
   if (!(flags & PLAY_BACKGROUND)) { // should not affect vario
@@ -300,20 +304,22 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
     len = getToneLength(len);
   }
 
-  uint8_t repeat = flags & 0x0f;
-  
   buzzerState.freq = freq;
   buzzerState.duration = len;
   buzzerState.pause = pause;
-  buzzerState.repeat = repeat;
+  buzzerState.repeat = flags & 0x0f;
   buzzerState.tone.freq = freq;
   buzzerState.tone.duration = len;
   buzzerState.tone.pause = pause;
-  buzzerState.tone.flags = repeat;
+  buzzerState.tone.flags = flags;
   buzzerState.tone.freqIncr = freqIncr;
 
   setSampleRate(buzzerState.freq);
-  setVolume(g_eeGeneral.beepVolume + 2);
+  if (flags & PLAY_BACKGROUND) {
+    setVolume(g_eeGeneral.varioVolume + 2);
+  } else {
+    setVolume(g_eeGeneral.beepVolume + 2);
+  }
   buzzerOn();
 }
 
@@ -347,7 +353,11 @@ void buzzerHeartbeat()
         buzzerState.pause = buzzerState.tone.pause;
 
         setSampleRate(buzzerState.freq);
-        setVolume(g_eeGeneral.beepVolume + 2);
+        if (buzzerState.tone.flags & PLAY_BACKGROUND) {
+          setVolume(g_eeGeneral.varioVolume + 2);
+        } else {
+          setVolume(g_eeGeneral.beepVolume + 2);
+        }
         buzzerOn();
       }
     }
