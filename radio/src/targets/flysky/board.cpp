@@ -235,7 +235,7 @@ void boardInit()
   TRACE("\nFlySky board started :)");
   TRACE("RCC->CSR = %08x", RCC->CSR);
 #endif
-  //pwrInit();
+  pwrInit();
   keysInit();
   adcInit();
   delaysInit();
