@@ -226,8 +226,9 @@ void buzzerEvent(unsigned int index)
   }
 }
 
-void setVolume(uint8_t volume)
+void setVolume(int8_t volume)
 {
+  volume += 2;
   switch (volume) {
     case 0: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 16; break;
     case 1: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 8; break;
@@ -291,7 +292,7 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
         buzzerState.tone.freq,
         buzzerState.tone.duration,
         buzzerState.tone.pause,
-        buzzerState.repeat, // & (buzzerState.tone.flags & PLAY_BACKGROUND | PLAY_NOW)
+        buzzerState.repeat,
         buzzerState.tone.freqIncr));
     }
   }
@@ -313,9 +314,9 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
 
   setSampleRate(freq);
   if (flags & PLAY_BACKGROUND) {
-    setVolume(g_eeGeneral.varioVolume + 2);
+    setVolume(g_eeGeneral.varioVolume);
   } else {
-    setVolume(g_eeGeneral.beepVolume + 2);
+    setVolume(g_eeGeneral.beepVolume);
   }
   buzzerOn();
 }
@@ -331,7 +332,7 @@ void buzzerHeartbeat()
         uint32_t freqChange = BUZZER_BUFFER_DURATION * buzzerState.tone.freqIncr;
         buzzerState.freq += limit<uint16_t>(BEEP_MIN_FREQ, freqChange, BEEP_MAX_FREQ);
         setSampleRate(buzzerState.freq);
-        setVolume(g_eeGeneral.beepVolume + 2);
+        setVolume(g_eeGeneral.beepVolume);
       }
     }
     else {
@@ -350,7 +351,7 @@ void buzzerHeartbeat()
         buzzerState.pause = buzzerState.tone.pause;
 
         setSampleRate(buzzerState.freq);
-        setVolume(g_eeGeneral.beepVolume + 2);
+        setVolume(g_eeGeneral.beepVolume);
         buzzerOn();
       }
     }
