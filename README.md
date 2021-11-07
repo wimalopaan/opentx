@@ -8,7 +8,7 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 * PPM out
 * CRSF working with ExpressLRS and Crossfire modules at 115k and 400k bauds, CRSFshot enabled
 * Telemetry
-* Buzzer audio alarms and indications (Janek)
+* Audio tones, alarms and vario custom implementation (Janek)
 * USB (To enable on standard cable: General Settings > USB Detect set to "Once") (Janek)
   * Joystick mode (Janek)
   * Mass Storage to backup/restore eeprom (Janek)
