@@ -22,16 +22,16 @@
 
 void extmoduleSendNextFrame();
 
-void EnablePPMTim(void) {
+inline void EnablePPMTim(void) {
   SET_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
-void DisablePPMTim(void) {
+inline void DisablePPMTim(void) {
   CLEAR_BIT(EXTMODULE_TIMER->CR1, TIM_CR1_CEN);
 }
-void EnablePPMOut(void) {
+inline void EnablePPMOut(void) {
   SET_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
 }
-void DisablePPMOut(void) {
+inline void DisablePPMOut(void) {
   CLEAR_BIT(EXTMODULE_TIMER->CCER, TIM_CCER_CC2E);
 }
 
@@ -40,10 +40,18 @@ void extmoduleStop() {
   DisablePPMOut();
   DisablePPMTim();
   NVIC_DisableIRQ(EXTMODULE_TIMER_IRQn);
+
+  EXTERNAL_MODULE_OFF();
 }
 
 void extmoduleTimerStart(uint32_t period, uint8_t state) {
   TRACE("extmoduleTimerStart period: %dus", period);
+
+  if (state)
+    EXTERNAL_MODULE_ON();
+  else
+    EXTERNAL_MODULE_OFF();
+
   GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
 
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -81,6 +89,8 @@ void extmodulePpmStart() {
   // //PF10
   // PPM_OUT_GPIO_PORT->MODER |= GPIO_MODER_MODER10_1;      // Select alternate function mode
   // PPM_OUT_GPIO_PORT->AFR[1] |= (0x0000000U << (2 * 4));  // Select alternate function 0
+
+  EXTERNAL_MODULE_ON();
 
   GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, EXTMODULE_TX_GPIO_AF);
 

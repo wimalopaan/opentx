@@ -24,7 +24,7 @@
 
 extern int8_t s_editMode;
 
-uint32_t GetChipID(void) {
+inline uint32_t GetChipID(void) {
   return (uint32_t)(READ_REG(*((uint32_t *)UID_BASE))) ^
          (uint32_t)(READ_REG(*((uint32_t *)(UID_BASE + 4U)))) ^
          (uint32_t)(READ_REG(*((uint32_t *)(UID_BASE + 8U))));

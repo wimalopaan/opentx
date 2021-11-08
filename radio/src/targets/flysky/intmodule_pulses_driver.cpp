@@ -24,10 +24,10 @@
 
 static bool ahfds2aEnabled = false;
 /*----------------------PRT Timer----------------------------------------------*/
-void EnablePRTTim(void) {
+inline void EnablePRTTim(void) {
   SET_BIT(TIM16->CR1, TIM_CR1_CEN);
 }
-void DisablePRTTim(void) {
+inline void DisablePRTTim(void) {
   CLEAR_BIT(TIM16->CR1, TIM_CR1_CEN);
 }
 

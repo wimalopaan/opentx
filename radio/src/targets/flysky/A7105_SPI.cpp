@@ -89,13 +89,13 @@ void SPI_RADIO_ReceiveBlock(uint8_t *BufferPtr, uint16_t Size) {
   }
 }
 /*---------------------------------------------------------------------------*/
-void a7105_csn_on(void) {RF_SCN_GPIO_PORT->BSRR = RF_SCN_SET_PIN;}
-void a7105_csn_off(void) {RF_SCN_GPIO_PORT->BSRR = RF_SCN_RESET_PIN;}
-void RF0_SetVal(void) {RF_RF0_GPIO_PORT->BSRR = RF_RF0_SET_PIN;}
-void RF0_ClrVal(void) {RF_RF0_GPIO_PORT->BSRR = RF_RF0_RESET_PIN;}
-void RF1_SetVal(void) {RF_RF1_GPIO_PORT->BSRR = RF_RF1_SET_PIN;}
-void RF1_ClrVal(void) {RF_RF1_GPIO_PORT->BSRR = RF_RF1_RESET_PIN;}
-void TX_RX_PutVal(uint32_t Val) {
+inline void a7105_csn_on(void) {RF_SCN_GPIO_PORT->BSRR = RF_SCN_SET_PIN;}
+inline void a7105_csn_off(void) {RF_SCN_GPIO_PORT->BSRR = RF_SCN_RESET_PIN;}
+inline void RF0_SetVal(void) {RF_RF0_GPIO_PORT->BSRR = RF_RF0_SET_PIN;}
+inline void RF0_ClrVal(void) {RF_RF0_GPIO_PORT->BSRR = RF_RF0_RESET_PIN;}
+inline void RF1_SetVal(void) {RF_RF1_GPIO_PORT->BSRR = RF_RF1_SET_PIN;}
+inline void RF1_ClrVal(void) {RF_RF1_GPIO_PORT->BSRR = RF_RF1_RESET_PIN;}
+inline void TX_RX_PutVal(uint32_t Val) {
   uint8_t tmp = 0;
   tmp  = (Val << 1) & 0x02;
   tmp |= (Val >> 1) & 0x01;

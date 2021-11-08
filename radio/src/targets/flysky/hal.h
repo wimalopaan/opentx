@@ -367,6 +367,8 @@ void disable_afhds2a(uint32_t port);
 #define PPM_OUT_GPIO_PORT GPIOF
 #define PPM_OUT_PIN_MASK GPIO_IDR_10
 
+#define EXTMODULE_PWR_GPIO            GPIOC
+#define EXTMODULE_PWR_GPIO_PIN        GPIO_Pin_9  // PC.09
 #define EXTMODULE_RCC_AHBPeriph       RCC_AHBPeriph_GPIOF  // GPIOF
 #define EXTMODULE_RCC_APB2Periph      RCC_APB2Periph_TIM15 // TIM15_CH2
 #define EXTMODULE_TX_GPIO             GPIOF
