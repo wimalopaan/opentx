@@ -66,18 +66,6 @@ static void AFHDS2A_calc_channels() {
   }
 }
 
-// telemetry sensors ID
-enum {
-  AFHDS2A_SENSOR_RX_VOLTAGE = 0x00,
-  AFHDS2A_SENSOR_RX_TEMP = 0x01,
-  AFHDS2A_SENSOR_RX_RPM = 0x02,
-  AFHDS2A_SENSOR_A3_VOLTAGE = 0x03,
-  AFHDS2A_SENSOR_RX_ERR_RATE = 0xfe,
-  AFHDS2A_SENSOR_RX_RSSI = 0xfc,
-  AFHDS2A_SENSOR_RX_NOISE = 0xfb,
-  AFHDS2A_SENSOR_RX_SNR = 0xfa,
-};
-
 /*
 
 IntV1: 4.81V
@@ -101,64 +89,9 @@ void AFHDS2A_update_telemetry() {
       tx_rssi = 255;
     packet[8] = tx_rssi;
     processFlySkyPacket(packet + 8);
-  } else {
-    // TRACE("extended IBUS received");
+  } else if (packet[0] == 0xAC) {
+    processFlySkyPacketAC(packet + 8);
   }
-  return;
-
-  //  1     4      4
-  // AA | TXID | rx_id | sensor id | sensor # | value 16 bit big endian | sensor id ......
-  // AC | TXID | rx_id | sensor id | sensor # | length | bytes | sensor id ......
-  /*
-  if (packet[0] == 0xAA) {  // 0xAA Normal telemetry, 0xAC Extended telemetry not decoded here
-    for (uint8_t sensor = 0; sensor < 7; sensor++) {
-      // Send FrSkyD telemetry to TX
-      uint8_t index = 9 + (4 * sensor);
-      uint16_t value = packet[index + 3] << 8 | packet[index + 2];
-      switch (packet[index]) {
-        case AFHDS2A_SENSOR_RX_VOLTAGE:
-          telem_AFHDS2A[RX_IntV] = value;
-          telem_status |= (1 << RX_IntV);
-          break;
-        case AFHDS2A_SENSOR_A3_VOLTAGE:
-          telem_AFHDS2A[RX_ExtV] = value;
-          telem_status |= (1 << RX_ExtV);
-          break;
-        case AFHDS2A_SENSOR_RX_TEMP:
-          telem_AFHDS2A[RX_Temp] = value;
-          telem_status |= (1 << RX_Temp);
-          break;
-        case AFHDS2A_SENSOR_RX_RPM:
-          telem_AFHDS2A[RX_RPM] = value;
-          telem_status |= (1 << RX_RPM);
-          break;
-        case AFHDS2A_SENSOR_RX_ERR_RATE:
-          value = 100 - value;
-          telemetryData.rssi.set(value);
-          //telem_AFHDS2A[RX_Err] = packet[index + 2];
-          telem_status |= (1 << RX_Err);
-          break;
-        case AFHDS2A_SENSOR_RX_RSSI:
-          //RX_RSSI = -packet[index+2];
-          //TRACE("RX_RSSI %d full value %d", -packet[index + 2], -value);
-          break;
-        case AFHDS2A_SENSOR_RX_SNR:
-          //TRACE("SNR (otx RSSI) %d", value);
-          break;
-        case 0xff:  // end of data
-          //TRACE("RX Volt %d Ext V %d RX Temp %d Err %d",
-          // telem_AFHDS2A[RX_IntV],
-          // telem_AFHDS2A[RX_ExtV],
-          // telem_AFHDS2A[RX_Temp],
-          // telem_AFHDS2A[RX_Err]);
-          return;
-          //default:
-          // unknown sensor ID
-          //break;
-      }
-    }
-  }
-  */
 }
 
 static void AFHDS2A_build_bind_packet(void) {
