@@ -226,8 +226,9 @@ void buzzerEvent(unsigned int index)
   }
 }
 
-void setVolume(uint8_t volume)
+void setVolume(int8_t volume)
 {
+  volume += 2;
   switch (volume) {
     case 0: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 16; break;
     case 1: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 8; break;
@@ -276,12 +277,13 @@ inline void buzzerOff()
 
 void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr)
 {
-  if (!(flags & PLAY_NOW) && buzzerState.duration) {
-    // skip PLAY_BACKGROUND if other tone is playing
+  if ((flags & PLAY_BACKGROUND) && !(flags & PLAY_NOW) && (buzzerState.duration || (buzzerState.repeat > 0) || !buzzerFifo.empty())) return;
+
+  if (!(flags & PLAY_NOW) && !(buzzerState.tone.flags & PLAY_BACKGROUND) && buzzerState.duration) {
     if (!(flags & PLAY_BACKGROUND) && !buzzerFifo.full())
       buzzerFifo.push(BuzzerTone(freq, len, pause, flags, freqIncr));
     return;
-  } else if ((flags & PLAY_NOW) && (buzzerState.repeat > 0)) { // push back to queue
+  } else if ((flags & PLAY_NOW) && (buzzerState.repeat > 0)) { // push current back to queue
     if (!buzzerFifo.full()) {
       if (buzzerState.duration - len < buzzerState.tone.duration / 2) {
         buzzerState.repeat--;
@@ -300,20 +302,22 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
     len = getToneLength(len);
   }
 
-  uint8_t repeat = flags & 0x0f;
-  
   buzzerState.freq = freq;
   buzzerState.duration = len;
   buzzerState.pause = pause;
-  buzzerState.repeat = repeat;
+  buzzerState.repeat = flags & 0x0f;
   buzzerState.tone.freq = freq;
   buzzerState.tone.duration = len;
   buzzerState.tone.pause = pause;
-  buzzerState.tone.flags = repeat;
+  buzzerState.tone.flags = flags;
   buzzerState.tone.freqIncr = freqIncr;
 
-  setSampleRate(buzzerState.freq);
-  setVolume(g_eeGeneral.beepVolume + 2);
+  setSampleRate(freq);
+  if (flags & PLAY_BACKGROUND) {
+    setVolume(g_eeGeneral.varioVolume);
+  } else {
+    setVolume(g_eeGeneral.beepVolume);
+  }
   buzzerOn();
 }
 
@@ -328,7 +332,7 @@ void buzzerHeartbeat()
         uint32_t freqChange = BUZZER_BUFFER_DURATION * buzzerState.tone.freqIncr;
         buzzerState.freq += limit<uint16_t>(BEEP_MIN_FREQ, freqChange, BEEP_MAX_FREQ);
         setSampleRate(buzzerState.freq);
-        setVolume(g_eeGeneral.beepVolume + 2);
+        setVolume(g_eeGeneral.beepVolume);
       }
     }
     else {
@@ -347,7 +351,7 @@ void buzzerHeartbeat()
         buzzerState.pause = buzzerState.tone.pause;
 
         setSampleRate(buzzerState.freq);
-        setVolume(g_eeGeneral.beepVolume + 2);
+        setVolume(g_eeGeneral.beepVolume);
         buzzerOn();
       }
     }
