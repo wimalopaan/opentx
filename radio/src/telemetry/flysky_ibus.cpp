@@ -82,8 +82,6 @@ enum {
   AFHDS2A_ID_S88 = 0x88,
   AFHDS2A_ID_S89 = 0x89,
   AFHDS2A_ID_S8a = 0x8A,
-  AFHDS2A_ID_RX_SIG_AFHDS3 = 0xF7,  // SIG
-  AFHDS2A_ID_RX_SNR_AFHDS3 = 0xF8,  // SNR
   AFHDS2A_ID_ALT_FLYSKY = 0xF9,     // Altitude 2 bytes signed in m - used in FlySky native TX
   AFHDS2A_ID_RX_SNR = 0xFA,         // SNR
   AFHDS2A_ID_RX_NOISE = 0xFB,       // Noise
@@ -132,8 +130,6 @@ const FlySkySensor flySkySensors[] = {
   {AFHDS2A_ID_GPS_LON,         ZSTR_GPS,         UNIT_RAW,               7},  // 4 bytes signed WGS84 in degrees * 1E7
   {AFHDS2A_ID_GPS_ALT,         ZSTR_GPSALT,      UNIT_METERS,            2},  // 4 bytes signed GPS alt m*100
   {AFHDS2A_ID_ALT,             ZSTR_ALT,         UNIT_METERS,            2},  // 4 bytes signed Alt m*100
-  {AFHDS2A_ID_RX_SIG_AFHDS3,   ZSTR_RX_QUALITY,  UNIT_RAW,               0},  // RX error rate
-  {AFHDS2A_ID_RX_SNR_AFHDS3,   ZSTR_RX_SNR,      UNIT_DB,                1},  // RX SNR
   {AFHDS2A_ID_RX_SNR,          ZSTR_RX_SNR,      UNIT_DB,                0},  // RX SNR
   {AFHDS2A_ID_RX_NOISE,        ZSTR_RX_NOISE,    UNIT_DB,                0},  // RX Noise
   {AFHDS2A_ID_RX_RSSI,         ZSTR_RSSI,        UNIT_DB,                0},  // RX RSSI (0xfc)
@@ -163,9 +159,6 @@ void processFlySkySensor(const uint8_t *packet, uint8_t type) {
     value = 135 - value;
   } else if (id == AFHDS2A_ID_RX_ERR_RATE) {
     value = 100 - value;
-    telemetryData.rssi.set(value);
-    if (value > 0) telemetryStreaming = TELEMETRY_TIMEOUT10ms;
-  } else if (id == AFHDS2A_ID_RX_SIG_AFHDS3) {
     telemetryData.rssi.set(value);
     if (value > 0) telemetryStreaming = TELEMETRY_TIMEOUT10ms;
   } else if (id == AFHDS2A_ID_PRES && value) {
