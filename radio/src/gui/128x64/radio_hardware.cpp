@@ -237,6 +237,7 @@ void menuRadioHardware(event_t event)
             pauseMixerCalculations();
             pausePulses();
             EXTERNAL_MODULE_OFF();
+            storageDirty(EE_GENERAL);
             RTOS_WAIT_MS(20); // 20ms so that the pulses interrupt will reinit the frame rate
             telemetryProtocol = 255; // force telemetry port + module reinitialization
             EXTERNAL_MODULE_ON();
