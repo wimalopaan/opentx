@@ -29,6 +29,8 @@
   #define WRITE_DELAY_10MS 500
 #elif defined(PCBSKY9X) && !defined(REV0)
   #define WRITE_DELAY_10MS 500
+#elif defined(PCBI6)
+  #define WRITE_DELAY_10MS 500
 #else
   #define WRITE_DELAY_10MS 200
 #endif
