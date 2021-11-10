@@ -129,6 +129,8 @@ int checkIncDec(event_t event, int val, int i_min, int i_max, unsigned int i_fla
 #if defined(NAVIGATION_POT1)
   // change values based on P1
   newval -= p1valdiff;
+  if (newval < i_min) newval = i_min;
+  else if (newval > i_max) newval = i_max;
   p1valdiff = 0;
 #endif
 
