@@ -956,7 +956,11 @@ inline void customFunctionsReset()
 }
 
 #include "telemetry/telemetry.h"
+#if defined(PCBI6)
+#include "crc_driver.h"
+#else
 #include "crc.h"
+#endif
 
 #define PLAY_REPEAT(x)            (x)                 /* Range 0 to 15 */
 #define PLAY_NOW                  0x10

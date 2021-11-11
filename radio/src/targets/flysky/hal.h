@@ -28,7 +28,6 @@
 #define KEYS_MATRIX_R2_PIN              GPIO_Pin_7
 #define KEYS_MATRIX_R3_PIN              GPIO_Pin_8
 
-
 #define KEYS_MATRIX_L1_PIN              GPIO_Pin_12
 #define KEYS_MATRIX_L2_PIN              GPIO_Pin_13
 #define KEYS_MATRIX_L3_PIN              GPIO_Pin_14
@@ -50,9 +49,7 @@
 #define KEYS_GPIO_PIN_DOWN 1024
 
 
-
 // LCD driver
-
 #define LCD_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOD | RCC_AHBPeriph_GPIOE)
 #define LCD_RCC_APB1Periph            0
 #define LCD_RCC_APB2Periph            0
@@ -69,6 +66,8 @@
 #define LCD_CS_PIN                    GPIO_Pin_2
 
 
+// CRC
+#define CRC_RCC_AHB1Periph             RCC_AHBPeriph_CRC
 
 // I2C Bus: EEPROM
 #define I2C_RCC_APB1Periph            RCC_APB1Periph_I2C2
@@ -90,26 +89,26 @@
 #define ADC_TRANSFER_COMPLETE()         (ADC_DMA->HISR & DMA_HISR_TCIF4)
 #define ADC_SAMPTIME                    2   // sample time = 28 cycles
 
-  #define ADC_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_DMA1)
-  #define ADC_RCC_APB1Periph            0
-  #define ADC_RCC_APB2Periph            RCC_APB2Periph_ADC1
-  #define ADC_GPIO_PIN_STICK_RV         GPIO_Pin_0  // PA.00
-  #define ADC_GPIO_PIN_STICK_RH         GPIO_Pin_1  // PA.01
-  #define ADC_GPIO_PIN_STICK_LV         GPIO_Pin_2  // PA.02
-  #define ADC_GPIO_PIN_STICK_LH         GPIO_Pin_3  // PA.03
-  #define ADC_CHANNEL_STICK_RV          ADC_Channel_0  // ADC1_IN0
-  #define ADC_CHANNEL_STICK_RH          ADC_Channel_1  // ADC1_IN1
-  #define ADC_CHANNEL_STICK_LV          ADC_Channel_2  // ADC1_IN2
-  #define ADC_CHANNEL_STICK_LH          ADC_Channel_3  // ADC1_IN3
-  #define ADC_GPIO_PIN_POT1             GPIO_Pin_6  // PA.06
-  #define ADC_GPIO_PIN_POT2             GPIO_Pin_0  // PB.00
-  #define ADC_GPIO_PIN_BATT             GPIO_Pin_0  // PC.00
-  #define ADC_GPIOA_PINS                (ADC_GPIO_PIN_STICK_RV | ADC_GPIO_PIN_STICK_RH | ADC_GPIO_PIN_STICK_LH | ADC_GPIO_PIN_STICK_LV | ADC_GPIO_PIN_POT1)
-  #define ADC_GPIOB_PINS                ADC_GPIO_PIN_POT2
-  #define ADC_GPIOC_PINS                ADC_GPIO_PIN_BATT
-  #define ADC_CHANNEL_POT1              ADC_Channel_6
-  #define ADC_CHANNEL_POT2              ADC_Channel_8
-  #define ADC_CHANNEL_BATT              ADC_Channel_10
+#define ADC_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_DMA1)
+#define ADC_RCC_APB1Periph            0
+#define ADC_RCC_APB2Periph            RCC_APB2Periph_ADC1
+#define ADC_GPIO_PIN_STICK_RV         GPIO_Pin_0  // PA.00
+#define ADC_GPIO_PIN_STICK_RH         GPIO_Pin_1  // PA.01
+#define ADC_GPIO_PIN_STICK_LV         GPIO_Pin_2  // PA.02
+#define ADC_GPIO_PIN_STICK_LH         GPIO_Pin_3  // PA.03
+#define ADC_CHANNEL_STICK_RV          ADC_Channel_0  // ADC1_IN0
+#define ADC_CHANNEL_STICK_RH          ADC_Channel_1  // ADC1_IN1
+#define ADC_CHANNEL_STICK_LV          ADC_Channel_2  // ADC1_IN2
+#define ADC_CHANNEL_STICK_LH          ADC_Channel_3  // ADC1_IN3
+#define ADC_GPIO_PIN_POT1             GPIO_Pin_6  // PA.06
+#define ADC_GPIO_PIN_POT2             GPIO_Pin_0  // PB.00
+#define ADC_GPIO_PIN_BATT             GPIO_Pin_0  // PC.00
+#define ADC_GPIOA_PINS                (ADC_GPIO_PIN_STICK_RV | ADC_GPIO_PIN_STICK_RH | ADC_GPIO_PIN_STICK_LH | ADC_GPIO_PIN_STICK_LV | ADC_GPIO_PIN_POT1)
+#define ADC_GPIOB_PINS                ADC_GPIO_PIN_POT2
+#define ADC_GPIOC_PINS                ADC_GPIO_PIN_BATT
+#define ADC_CHANNEL_POT1              ADC_Channel_6
+#define ADC_CHANNEL_POT2              ADC_Channel_8
+#define ADC_CHANNEL_BATT              ADC_Channel_10
 
 // PWR and LED driver
 #define PWR_RCC_AHB1Periph              (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOE | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_GPIOD | RCC_AHBPeriph_GPIOE)
@@ -564,7 +563,7 @@ F072 IRQs
 #define MIXER_SCHEDULER_TIMER_IRQHandler     TIM17_IRQHandler
 
 //all used RCC goes here
-#define RCC_AHB1_LIST                   (I2C_RCC_AHB1Periph | BACKLIGHT_RCC_AHB1Periph | LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | BUZZER_RCC_AHBPeriph | EXTMODULE_RCC_AHBPeriph)
+#define RCC_AHB1_LIST                   (I2C_RCC_AHB1Periph | BACKLIGHT_RCC_AHB1Periph | LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | BUZZER_RCC_AHBPeriph | EXTMODULE_RCC_AHBPeriph | CRC_RCC_AHB1Periph)
 #define RCC_APB1_LIST                   (I2C_RCC_APB1Periph | INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph)
 #define RCC_APB2_LIST                   (MIXER_SCHEDULER_TIMER_RCC_APB1Periph | PWM_RCC_APB2Periph | EXTMODULE_RCC_APB2Periph)
 
