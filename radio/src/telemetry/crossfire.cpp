@@ -82,7 +82,11 @@ void processCrossfireTelemetryValue(uint8_t index, int32_t value) {
 
 bool checkCrossfireTelemetryFrameCRC() {
   uint8_t len = telemetryRxBuffer[1];
+#if defined(PCBI6)
+  uint8_t crc = crc8_hw(&telemetryRxBuffer[2], len - 1);
+#else
   uint8_t crc = crc8(&telemetryRxBuffer[2], len - 1);
+#endif
   return (crc == telemetryRxBuffer[len + 1]);
 }
 
@@ -293,7 +297,11 @@ bool crossfireTelemetryPush(uint8_t command, uint8_t *data, uint8_t length) {
     for (int i = 0; i < length; i++) {
       telemetryOutputPushByte(data[i]);
     }
+#if defined(PCBI6)
+    telemetryOutputPushByte(crc8_hw(outputTelemetryBuffer + 2, 1 + length));
+#else
     telemetryOutputPushByte(crc8(outputTelemetryBuffer + 2, 1 + length));
+#endif
     telemetryOutputSetTrigger(command);
     return true;
   } else {

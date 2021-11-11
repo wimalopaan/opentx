@@ -237,6 +237,7 @@ void boardInit()
 #endif
   pwrInit();
   keysInit();
+  crcInit();
   adcInit();
   delaysInit();
   lcdInit(); // delaysInit() must be called before

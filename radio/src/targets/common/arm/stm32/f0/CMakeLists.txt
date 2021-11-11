@@ -20,6 +20,7 @@ set(STM32LIB_SRC
   STM32F0xx_StdPeriph_Driver/src/stm32f0xx_pwr.c
   STM32F0xx_StdPeriph_Driver/src/stm32f0xx_usart.c
   STM32F0xx_StdPeriph_Driver/src/stm32f0xx_adc.c
+  STM32F0xx_StdPeriph_Driver/src/stm32f0xx_crc.c
   )
 set(FIRMWARE_TARGET_SRC ${FIRMWARE_TARGET_SRC} ../common/arm/stm32/f0/system_stm32f0xx.c)
 
