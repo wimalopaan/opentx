@@ -215,8 +215,8 @@ void processFlySkySensor(const uint8_t *packet, uint8_t type) {
     setTelemetryValue(TELEM_PROTO_FLYSKY_IBUS, id, 0, instance, value, sensor->unit, sensor->precision);
     return;
   }
-  //unknown
-  setTelemetryValue(TELEM_PROTO_FLYSKY_IBUS, id, 0, instance, value, UNIT_RAW, 0);
+  // unknown - disabled as lots of phony sensors appeared occupying all slots.
+  // setTelemetryValue(TELEM_PROTO_FLYSKY_IBUS, id, 0, instance, value, UNIT_RAW, 0);
 }
 
 void processFlySkyPacket(const uint8_t *packet) {
