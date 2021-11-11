@@ -31,7 +31,6 @@ https://t.me/otx_flysky_i6x
 
 ## Next tasks/Known issues:
 
-* Solve POT editing values outside limits
 * PPM in (Trainer)
 * HELI support
 
