@@ -23,7 +23,11 @@
 #if defined(SPLASH)
 const unsigned char splashdata[]  = {
   'S','P','S',0,
+#if defined(PCBI6)
+  #include "bitmaps/128x64/splash_i6x_trim.lbm"
+#else
   #include "bitmaps/128x64/splash.lbm"
+#endif
   'S','P','E',0 };
 
 const unsigned char * const splash_lbm = splashdata+4;
@@ -31,8 +35,13 @@ const unsigned char * const splash_lbm = splashdata+4;
 void drawSplash()
 {
   lcdClear();
+#if defined(PCBI6)
+  lcdDrawSolidFilledRect(0, 0, LCD_W, LCD_H);
+  lcdDraw1bitBitmap(8, 16, splash_lbm, 0, 0);
+#else
   lcdDraw1bitBitmap(0, 0, splash_lbm, 0, 0);
-  
+#endif
+
 #if MENUS_LOCK == 1
   if (readonly == false) {
     lcdDrawFilledRect((LCD_W-(sizeof(TR_UNLOCKED)-1)*FW)/2 - 9, 50, (sizeof(TR_UNLOCKED)-1)*FW+16, 11, SOLID, ERASE|ROUND);
