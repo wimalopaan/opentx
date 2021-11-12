@@ -357,7 +357,7 @@ extern uint8_t channel_order(uint8_t x);
 
 #if defined(COLORLCD)
   #define SPLASH_NEEDED()              (false)
-#elif defined(PCBTARANIS)
+#elif defined(PCBTARANIS) || defined(PCBI6)
   #define SPLASH_NEEDED()              (g_eeGeneral.splashMode != 3)
 #else
   #define SPLASH_NEEDED()              (g_model.moduleData[EXTERNAL_MODULE].type != MODULE_TYPE_DSM2 && !g_eeGeneral.splashMode)
