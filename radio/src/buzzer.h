@@ -40,8 +40,8 @@ extern uint8_t hapticTick;
 
 void buzzerEvent(unsigned int index);
 
-#define AUDIO_ERROR_MESSAGE(e) PUSH_SYSTEM_PROMPT((e))
-#define AUDIO_TIMER_MINUTE(t)  playDuration(t, 0, 0)
+#define AUDIO_ERROR_MESSAGE(e)   buzzerEvent(e)
+#define AUDIO_TIMER_MINUTE(t)    playDuration(t, 0, 0)
 
 #define AUDIO_KEY_PRESS()        audioKeyPress()
 #define AUDIO_KEY_ERROR()        audioKeyError()
