@@ -6,7 +6,7 @@
 extern MemoryType memoryType;
 #endif
 void bootloaderInitScreen() {
-  backlightEnable(1);
+  backlightEnable();
 }
 
 static void bootloaderDrawMsg(unsigned int x, const char* str, uint8_t line, bool inverted) {

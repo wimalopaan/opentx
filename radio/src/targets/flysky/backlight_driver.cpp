@@ -33,7 +33,7 @@ void backlightInit()
     GPIO_Init(BACKLIGHT_GPIO, &gpio_init);
 }
 
-void backlightEnable(uint8_t level)
+void backlightEnable()
 {
     GPIO_SetBits(BACKLIGHT_GPIO, BACKLIGHT_GPIO_PIN);
 }

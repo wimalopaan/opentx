@@ -399,8 +399,8 @@ void backlightInit(void);
 void backlightDisable(void);
 #define BACKLIGHT_DISABLE()             backlightDisable()
 uint8_t isBacklightEnabled(void);
-void backlightEnable(uint8_t level);
-#define BACKLIGHT_ENABLE()            backlightEnable(g_eeGeneral.backlightBright)
+void backlightEnable();
+#define BACKLIGHT_ENABLE()            backlightEnable()
 
 #if !defined(SIMU)
   void usbJoystickUpdate();
@@ -417,7 +417,6 @@ void backlightEnable(uint8_t level);
 #define I2C_ADDRESS_EEPROM    0x50
 #define EEPROM_SIZE           (16*1024)
 #define EEPROM_PAGE_SIZE      (64)
-#define EEPROM_SIZE           (16*1024)
 #define EEPROM_BLOCK_SIZE     (64)
 //#define EEPROM_VERIFY_WRITES
 
