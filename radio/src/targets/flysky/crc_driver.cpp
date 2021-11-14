@@ -10,7 +10,7 @@
 
 void crcInit() {
   CRC->INIT = CRC8_INIT_VAL;
-  CRC_PolynomialSizeSelect(CRC_PolSize_8);
+  CRC->CR = CRC_PolSize_8;
 }
 
 uint8_t crc8_hw(const uint8_t * ptr, uint32_t len) {
