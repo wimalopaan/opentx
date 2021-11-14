@@ -74,7 +74,7 @@ extern "C" {
 }
 #endif
 
-#if defined(STM32F0) && defined(BOOT)
+#if defined(STM32F0)
 #define VECTOR_TABLE_SIZE (48)                    // 31 positive vectors, 0 vector, 7 negative vectors and 9 extra
 #define SYSCFG_CFGR1_MEM_MODE__MAIN_FLASH      0  // x0: Main Flash memory mapped at 0x0000 0000
 #define SYSCFG_CFGR1_MEM_MODE__SYSTEM_FLASH    1  // 01: System Flash memory mapped at 0x0000 0000
@@ -306,6 +306,8 @@ uint32_t readTrims(void);
 
 #define TRIMS_PRESSED()                 (readTrims())
 #define KEYS_PRESSED()                  (readKeys())
+
+#define BOOTLOADER_KEYS                0x2100
 
 #define NUM_TRIMS                      4
 #define NUM_TRIMS_KEYS                 (NUM_TRIMS * 2)

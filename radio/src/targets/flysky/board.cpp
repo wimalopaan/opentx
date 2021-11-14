@@ -99,7 +99,7 @@ extern "C"
   }
 }
 
-#if defined(STM32F0) && defined(BOOT)
+#if defined(STM32F0)
 volatile uint32_t __attribute__((section(".ram_vector,\"aw\",%nobits @"))) ram_vector[VECTOR_TABLE_SIZE];
 extern volatile uint32_t g_pfnVectors[VECTOR_TABLE_SIZE];
 #endif
@@ -120,6 +120,36 @@ void buzzerInit()
 
 void referenceSystemAudioFiles()
 {
+}
+
+#define __HAL_SYSCFG_REMAPMEMORY_SYSTEMFLASH()  do {SYSCFG->CFGR1 &= ~(SYSCFG_CFGR1_MEM_MODE); \
+                                             SYSCFG->CFGR1 |= SYSCFG_CFGR1_MEM_MODE_0;  \
+                                            }while(0)
+
+void SystemBootloaderJump() {
+    typedef void (*pFunction)(void);
+    pFunction JumpToApplication;
+
+    RCC_DeInit();
+
+    SysTick->CTRL = 0;
+    SysTick->LOAD = 0;
+    SysTick->VAL = 0;
+
+    __disable_irq();
+
+    __DSB();
+    __HAL_SYSCFG_REMAPMEMORY_SYSTEMFLASH();
+    __DSB();
+    __ISB();
+
+    JumpToApplication = (void (*)(void)) (*((uint32_t *) ((0x1FFFC800 + 4))));
+
+    __set_MSP(*(__IO uint32_t*) 0x1FFFC800);
+
+    __enable_irq();
+
+    JumpToApplication();
 }
 
 void watchdogInit(unsigned int duration)
@@ -237,6 +267,11 @@ void boardInit()
 #endif
   pwrInit();
   keysInit();
+
+  if (readTrims() == BOOTLOADER_KEYS) {
+    SystemBootloaderJump();
+  }
+
   crcInit();
   adcInit();
   delaysInit();
