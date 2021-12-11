@@ -701,7 +701,7 @@ void checkBacklight() {
     if (inputsMoved()) {
       inactivity.counter = 0;
       if (g_eeGeneral.backlightMode & e_backlight_mode_sticks) {
-        backlightOn();
+        BACKLIGHT_ENABLE();
       }
     }
 
@@ -1822,10 +1822,6 @@ void opentxInit(OPENTX_INIT_ARGS) {
 
 #if defined(SERIAL2) && !defined(DEBUG)
   serial2Init(g_eeGeneral.serial2Mode, modelTelemetryProtocol());
-#endif
-
-#if defined(PCBTARANIS)
-  BACKLIGHT_ENABLE();
 #endif
 
 #if MENUS_LOCK == 1

@@ -47,16 +47,14 @@ void showMessageBox(const char * str)
   lcdRefresh();
 }
 
-#if !defined(PCBI6) || !defined(DEBUG)
 const unsigned char ASTERISK_BITMAP[]  = {
 #include "asterisk.lbm"
 };
-#endif
 
 void drawAlertBox(const char * title, const char * text, const char * action)
 {
   lcdClear();
-#if !defined(PCBI6) || !defined(DEBUG)
+#if !defined(PCBI6)// || !defined(DEBUG)
   lcdDraw1bitBitmap(2, 0, ASTERISK_BITMAP, 0, 0);
 #else
   lcdDrawRect(2, 2, 32 - 4, 32 - 4);
