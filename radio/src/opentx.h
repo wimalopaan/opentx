@@ -663,7 +663,7 @@ uint16_t isqrt32(uint32_t n);
 #define pauseMixerCalculations()
 #define resumeMixerCalculations()
 #else
-#include "tasks_arm.h"
+#include "tasks.h"
 extern RTOS_MUTEX_HANDLE mixerMutex;
 inline void pauseMixerCalculations()
 {
@@ -1048,7 +1048,7 @@ enum AUDIO_SOUNDS {
 };
 
 #if defined(AUDIO)
-#include "audio_arm.h"
+#include "audio.h"
 #endif
 
 #if defined(BUZZER)

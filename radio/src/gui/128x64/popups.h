@@ -69,8 +69,7 @@ extern uint8_t warningInfoFlags;
   #define POPUP_MENU_MAX_LINES         12
   #define MENU_MAX_DISPLAY_LINES       6
   #define MENU_LINE_LENGTH             (LEN_MODEL_NAME+12)
-  #define POPUP_MENU_SET_BSS_FLAG()
-  #define POPUP_MENU_UNSET_BSS_FLAG()
+
   enum {
     MENU_OFFSET_INTERNAL,
     MENU_OFFSET_EXTERNAL
