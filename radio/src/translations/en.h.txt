@@ -546,12 +546,16 @@
 
 #if defined(PCBTARANIS) || defined(PCBHORUS)
   #define TR_ENTER                     "[ENTER]"
+#elif defined(PCBI6)
+  #define TR_ENTER                     "[OK]"
 #else
   #define TR_ENTER                     "[MENU]"
 #endif
 
 #if defined(PCBHORUS)
   #define TR_EXIT                      "[RTN]"
+#elif defined(PCBI6)
+  #define TR_EXIT                      "[CANCEL]"
 #else
   #define TR_EXIT                      "[EXIT]"
 #endif
