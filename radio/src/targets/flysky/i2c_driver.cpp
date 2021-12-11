@@ -90,7 +90,7 @@ void i2cInit()
 {
   GPIO_InitTypeDef gpio_init;
   gpio_init.GPIO_Pin = I2C_SCL_GPIO_PIN | I2C_SDA_GPIO_PIN;
-  gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+  gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
   gpio_init.GPIO_Mode = GPIO_Mode_AF;
   gpio_init.GPIO_OType = GPIO_OType_OD;
   gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
@@ -137,7 +137,7 @@ void eepromInit() {
   /* setup from libopencm3-examples */
   i2c_enable_analog_filter(i2c);
   i2c_set_digital_filter(i2c, 0);
-  i2c_set_speed(i2c, i2c_speed_sm_100k, 8);  // i2c_speed_fm_400k  i2c_speed_sm_100k
+  i2c_set_speed(i2c, i2c_speed_fm_400k, 8);  // i2c_speed_fm_400k  i2c_speed_sm_100k
   i2c_enable_stretching(i2c);
   i2c_set_7bit_addr_mode(i2c);
 
