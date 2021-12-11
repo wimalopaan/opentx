@@ -82,13 +82,6 @@ void extmodulePpmStart() {
   PF9   ------> TIM15_CH1
   PF10   ------> TIM15_CH2
   */
-  // //PF9
-  // PPM_IN_GPIO_PORT->MODER |= GPIO_MODER_MODER9_1;       // Select alternate function mode
-  // PPM_IN_GPIO_PORT->AFR[1] |= (0x0000000U << (1 * 4));  // Select alternate function 0
-  // PPM_IN_GPIO_PORT->PUPDR |= GPIO_PUPDR_PUPDR9_0;       // PullUp
-  // //PF10
-  // PPM_OUT_GPIO_PORT->MODER |= GPIO_MODER_MODER10_1;      // Select alternate function mode
-  // PPM_OUT_GPIO_PORT->AFR[1] |= (0x0000000U << (2 * 4));  // Select alternate function 0
 
   EXTERNAL_MODULE_ON();
 
@@ -169,8 +162,8 @@ inline void extmoduleSendNextFrame() {
 }
 
 extern "C" void EXTMODULE_TIMER_IRQHandler() {
-  if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {                   // Compare PPM-OUT
-    EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;                     // Clears interrupt on ch2
+  if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
+    EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;    // Clears interrupt on ch2
     if (s_current_protocol[EXTERNAL_MODULE] == PROTO_NONE) {
       setupPulses(EXTERNAL_MODULE);
     }
@@ -180,6 +173,9 @@ extern "C" void EXTMODULE_TIMER_IRQHandler() {
   }
   if (EXTMODULE_TIMER->SR & TIM_SR_CC1IF) {  // Capture PPM-IN
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC1IF;    // Clears interrupt on ch1
-    //ISR_TIMER3_CAPT_vect();
+    // capture = TRAINER_TIMER->CCR2;
+    if (currentTrainerMode == TRAINER_MODE_MASTER_TRAINER_JACK) {
+      captureTrainerPulses(EXTMODULE_TIMER->CCR1);
+    }
   }
 }

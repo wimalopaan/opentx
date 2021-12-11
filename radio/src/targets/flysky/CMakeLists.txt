@@ -4,7 +4,7 @@ option(TARANIS_INTERNAL_PPM "Taranis internal module hack to output PPM" OFF)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "PRESS")
-  set(SPLASH "OFF")
+  set(SPLASH "ON")
   set(CPU_TYPE STM32F0)
   set(CPU_TYPE_FULL STM32F072)  # for size report
   set(LINKER_SCRIPT targets/flysky/STM32F072VB_FLASH.ld)
