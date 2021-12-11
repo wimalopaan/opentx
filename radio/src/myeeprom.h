@@ -477,18 +477,6 @@ enum ModuleTypes {
   MODULE_TYPE_COUNT
 };
 
-enum CRSF_Subtype {
-  CRSF_SUBTYPE_FIRST,
-  CRSF_SUBTYPE_CRSF = CRSF_SUBTYPE_FIRST,
-  CRSF_SUBTYPE_ELRS,
-  CRSF_SUBTYPE_LAST = CRSF_SUBTYPE_ELRS
-};
-
-const char STR_SUBTYPE_CRSF[] =
-    "\004"
-    "CRSF"
-    "ELRS";
-
 #if defined(PCBI6)
 enum AFHDS2A_Subtype {
   AFHDS2A_SUBTYPE_FIRST,

@@ -24,6 +24,10 @@ uint8_t currentSpeakerVolume = 255;
 uint8_t requiredSpeakerVolume = 255;
 uint8_t mainRequestFlags = 0;
 
+#if !defined(LUA) && defined(PCBI6_ELRSV2)
+uint8_t cScriptRunning = 0;
+#endif
+
 #if defined(STM32)
 void onUSBConnectMenu(const char *result)
 {
@@ -62,7 +66,7 @@ void handleUsbConnection()
 #if !defined(PCBI6) || defined(PCBI6_USB_MSD)
       POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
 #endif
-#if defined(DEBUG)
+#if defined(DEBUG) && !defined(PCBI6)
       POPUP_MENU_ADD_ITEM(STR_USB_SERIAL);
 #endif
       POPUP_MENU_START(onUSBConnectMenu);
@@ -335,6 +339,12 @@ void handleGui(event_t event) {
     }
     menuHandlers[menuLevel](event);
     // todo     drawStatusLine(); here???
+  }
+  else
+#elif defined(PCBI6_ELRSV2)
+  if (cScriptRunning == 1) {
+    // standalone c script is active
+    menuHandlers[menuLevel](event);
   }
   else
 #endif

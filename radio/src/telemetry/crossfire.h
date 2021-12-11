@@ -97,6 +97,9 @@ enum CrossfireFrames{
   CRSF_FRAME_MODELID_SENT
 };
 
+void registerCrossfireTelemetryCallback(void (*callback)(uint8_t, uint8_t*, uint8_t));
+void runCrossfireTelemetryCallback(uint8_t command, uint8_t* data, uint8_t length);
+
 void processCrossfireTelemetryData(uint8_t data);
 void crossfireSetDefault(int index, uint8_t id, uint8_t subId);
 bool isCrossfireOutputBufferAvailable();

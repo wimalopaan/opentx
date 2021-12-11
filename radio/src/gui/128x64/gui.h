@@ -372,6 +372,7 @@ void drawProgressBar(const char * label, int num, int den);
 void drawSleepBitmap();
 
 void drawVerticalScrollbar(coord_t x, coord_t y, coord_t h, uint16_t offset, uint16_t count, uint8_t visible);
+void drawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max);
 
 #if defined(PCBTARANIS)
 void drawAlertBox(const char * title, const char * text, const char * action);
