@@ -555,7 +555,7 @@
 #if defined(PCBHORUS)
   #define TR_EXIT                      "[RTN]"
 #elif defined(PCBI6)
-  #define TR_EXIT                      "[CANCEL]"
+  #define TR_EXIT                      "[CNCL]"
 #else
   #define TR_EXIT                      "[EXIT]"
 #endif
