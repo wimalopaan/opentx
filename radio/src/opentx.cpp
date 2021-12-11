@@ -701,7 +701,7 @@ void checkBacklight() {
     if (inputsMoved()) {
       inactivity.counter = 0;
       if (g_eeGeneral.backlightMode & e_backlight_mode_sticks) {
-        BACKLIGHT_ENABLE();
+        backlightOn();
       }
     }
 
