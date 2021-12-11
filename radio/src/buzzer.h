@@ -41,7 +41,7 @@ extern uint8_t hapticTick;
 void buzzerEvent(unsigned int index);
 
 #define AUDIO_ERROR_MESSAGE(e)   buzzerEvent(e)
-#define AUDIO_TIMER_MINUTE(t)    playDuration(t, 0, 0)
+#define AUDIO_TIMER_MINUTE(t)    
 
 #define AUDIO_KEY_PRESS()        audioKeyPress()
 #define AUDIO_KEY_ERROR()        audioKeyError()
@@ -98,7 +98,7 @@ void buzzerEvent(unsigned int index);
 #define PUSH_CUSTOM_PROMPT(p, id)       pushPrompt(PROMPT_CUSTOM_BASE+(p))
 #define PUSH_NUMBER_PROMPT(p)           pushPrompt(PROMPT_I18N_BASE+(p))
 #define PUSH_SYSTEM_PROMPT(p)           pushPrompt(PROMPT_SYSTEM_BASE+(p))
-#define PLAY_NUMBER(n, u, a)            playNumber((n), (u), (a), id)
+#define PLAY_NUMBER(n, u, a)            
 #define PUSH_UNIT_PROMPT(p, i)   		pushUnit((p), (i), id)
 #define PLAY_DURATION(d, att)    		{}
 #define PLAY_TIME
