@@ -63,7 +63,6 @@ inline MenuHandlerFunc lastPopMenu()
 }
 
 void onMainViewMenu(const char * result);
-
 void menuFirstCalib(event_t event);
 void menuMainView(event_t event);
 void menuViewTelemetryFrsky(event_t event);
@@ -71,18 +70,28 @@ void menuSpecialFunctions(event_t event, CustomFunctionData * functions, CustomF
 
 enum MenuRadioIndexes
 {
+#if defined(PCBI6_ELRSV2)
+  MENU_RADIO_TOOLS,
+#endif
   MENU_RADIO_SETUP,
   CASE_SDCARD(MENU_RADIO_SD_MANAGER)
   MENU_RADIO_SPECIAL_FUNCTIONS,
   MENU_RADIO_TRAINER,
   MENU_RADIO_VERSION,
+#if defined(MENU_DIAGKEYS)
   MENU_RADIO_SWITCHES_TEST,
+#endif
+#if defined(MENU_ANALOGS)
   MENU_RADIO_ANALOGS_TEST,
+#endif
   MENU_RADIO_HARDWARE,
   MENU_RADIO_CALIBRATION,
   MENU_RADIO_PAGES_COUNT
 };
 
+#if defined(PCBI6_ELRSV2)
+void menuRadioTools(event_t event);
+#endif
 void menuRadioSetup(event_t event);
 void menuRadioSdManager(event_t event);
 void menuRadioSpecialFunctions(event_t event);
@@ -94,13 +103,20 @@ void menuRadioHardware(event_t event);
 void menuRadioCalibration(event_t event);
 
 static const MenuHandlerFunc menuTabGeneral[]  = {
+#if defined(PCBI6_ELRSV2)
+  menuRadioTools,
+#endif
   menuRadioSetup,
   CASE_SDCARD(menuRadioSdManager)
   menuRadioSpecialFunctions,
   menuRadioTrainer,
   menuRadioVersion,
+#if defined(MENU_DIAGKEYS)
   menuRadioDiagKeys,
+#endif
+#if defined(MENU_DIAGANAS)
   menuRadioDiagAnalogs,
+#endif
   menuRadioHardware,
   menuRadioCalibration
 };

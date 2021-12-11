@@ -216,11 +216,6 @@ void processCrossfireTelemetryFrame() {
         }
       }
       break;
-#if !defined(LUA)
-    case ELRS_ID:
-      elrsProcessResponse(telemetryRxBuffer[1] - 2, telemetryRxBuffer + 3);
-      break;
-#endif
     default:
 #if defined(LUA)
       if (luaInputTelemetryFifo && luaInputTelemetryFifo->hasSpace(telemetryRxBufferCount - 2)) {
@@ -229,6 +224,10 @@ void processCrossfireTelemetryFrame() {
           luaInputTelemetryFifo->push(telemetryRxBuffer[i]);
         }
       }
+#else
+      // <Device address 0><Frame length 1><Type 2><Payload 3><CRC>
+      // destination address and CRC are skipped
+      runCrossfireTelemetryCallback(telemetryRxBuffer[2], telemetryRxBuffer + 2, telemetryRxBuffer[1] - 1);
 #endif
       break;
   }
@@ -289,7 +288,23 @@ void crossfireSetDefault(int index, uint8_t id, uint8_t subId) {
 }
 
 #if !defined(LUA)
+/**
+ * Skip luaInputTelemetryFifo and luaCrossfireTelemetryPop() to save RAM and provide synchronous API instead
+ */
+void (*crossfireTelemetryCallback)(uint8_t, uint8_t*, uint8_t);
+
+void registerCrossfireTelemetryCallback(void (*callback)(uint8_t, uint8_t*, uint8_t)) {
+  crossfireTelemetryCallback = callback;
+}
+
+inline void runCrossfireTelemetryCallback(uint8_t command, uint8_t* data, uint8_t length) {
+  if (crossfireTelemetryCallback != 0) {
+    crossfireTelemetryCallback(command, data, length);
+  }
+}
+
 bool crossfireTelemetryPush(uint8_t command, uint8_t *data, uint8_t length) {
+  // TRACE("crsfPush %x", command);
   if (isCrossfireOutputBufferAvailable()) {
     telemetryOutputPushByte(MODULE_ADDRESS);
     telemetryOutputPushByte(2 + length);  // 1(COMMAND) + data length + 1(CRC)

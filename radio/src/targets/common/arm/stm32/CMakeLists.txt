@@ -136,13 +136,6 @@ set(SRC
   )
 endif()
 
-if(LUA STREQUAL NO)
-set(SRC
-  ${SRC}
-  telemetry/expresslrs.cpp
-  )
-endif()
-
 set(SRC
   ${SRC}
   telemetry/crossfire.cpp  

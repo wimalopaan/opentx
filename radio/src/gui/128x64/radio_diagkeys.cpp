@@ -34,6 +34,7 @@ void displaySwitchState(uint8_t x, uint8_t y, uint8_t sw)
 }
 #endif
 
+#if defined(MENU_DIAGKEYS)
 void menuRadioDiagKeys(event_t event)
 {
   SIMPLE_MENU(STR_MENU_RADIO_SWITCHES, menuTabGeneral, MENU_RADIO_SWITCHES_TEST, 1);
@@ -108,3 +109,4 @@ void menuRadioDiagKeys(event_t event)
 #endif
 
 }
+#endif

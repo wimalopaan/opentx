@@ -50,7 +50,11 @@ set(SDCARD NO)
 set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
-add_definitions(-DPCBI6 -DBUZZER -DPCBI6_USB_MSD)
+add_definitions(-DPCBI6 -DBUZZER)
+add_definitions(-DPCBI6_USB_MSD)
+# add_definitions(-DMENU_DIAGKEYS)
+# add_definitions(-DMENU_DIAGANAS)
+# add_definitions(-DPCBI6_ELRSV2) # ~6kB FLASH
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
   model_mix_edit.cpp
@@ -75,6 +79,7 @@ set(TARGET_SRC
   i2c_common_v2.cpp
   i2c_driver.cpp
   crc_driver.cpp
+  tools/elrsV2.cpp
   ../common/arm/stm32/mixer_scheduler_driver.cpp
   )
 

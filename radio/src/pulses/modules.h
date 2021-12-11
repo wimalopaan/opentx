@@ -78,15 +78,9 @@ inline bool isModuleCrossfire(uint8_t idx)
 {
   return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_CROSSFIRE;
 }
-inline bool isModuleELRS(uint8_t idx){
-  return isModuleCrossfire(EXTERNAL_MODULE) && g_model.moduleData[EXTERNAL_MODULE].subType==CRSF_SUBTYPE_ELRS;
-}
 #else
 inline bool isModuleCrossfire(uint8_t idx)
 {
-  return false;
-}
-inline bool isModuleELRS(uint8_t idx){
   return false;
 }
 

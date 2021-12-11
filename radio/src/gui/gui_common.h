@@ -161,7 +161,7 @@ const mm_protocol_definition *getMultiProtocolDefinition (uint8_t protocol);
 #if defined(PCBXLITE) && !defined(MODULE_R9M_FULLSIZE)
 #define EXTERNAL_MODULE_POWER_ROW      (isModuleMultimodule(EXTERNAL_MODULE) || isModuleR9M(EXTERNAL_MODULE)) ? (isModuleR9M_FCC_VARIANT(EXTERNAL_MODULE) ? TITLE_ROW : (uint8_t) 0) : HIDDEN_ROW
 #else
-#define EXTERNAL_MODULE_POWER_ROW      (isModuleMultimodule(EXTERNAL_MODULE) || isModuleR9M(EXTERNAL_MODULE) || isModuleELRS(EXTERNAL_MODULE)) ? (uint8_t) 0 : HIDDEN_ROW
+#define EXTERNAL_MODULE_POWER_ROW      (isModuleMultimodule(EXTERNAL_MODULE) || isModuleR9M(EXTERNAL_MODULE)) ? (uint8_t) 0 : HIDDEN_ROW
 #endif
 
 void editStickHardwareSettings(coord_t x, coord_t y, int idx, event_t event, LcdFlags flags);
