@@ -42,12 +42,12 @@ jobs:
           command: |
             ls -la /
             ls -la /tmp
-            ls -la /tmp/artifacts
+            ls -la /tmp/circleci-$CIRCLE_BUILD_NUM
 #            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest ~/project/
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  openi6x-workflow:
+  openi6x-release-workflow:
     jobs:
       - build-elrsv2
 #          filters:
