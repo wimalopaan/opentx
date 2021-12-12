@@ -12,7 +12,7 @@ jobs:
      - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
      - store_artifacts:
         path: opentx-i6x-2.3.0.bin
-        destination: opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
+        destination: ./artifacts/opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
   build-gvars:
     machine: true
     steps:
@@ -20,7 +20,7 @@ jobs:
       - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
       - store_artifacts:
           path: opentx-i6x-2.3.0.bin
-          destination: opentx-i6x-gvars-<< pipeline.git.tag >>.bin
+          destination: ./artifacts/opentx-i6x-gvars-<< pipeline.git.tag >>.bin
   build-heli:
     machine: true
     steps:
@@ -28,13 +28,36 @@ jobs:
       - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=YES GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
       - store_artifacts:
           path: opentx-i6x-2.3.0.bin
-          destination: opentx-i6x-heli-<< pipeline.git.tag >>.bin
-
+          destination: ./artifacts/opentx-i6x-heli-<< pipeline.git.tag >>.bin
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ./artifacts/
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-openi6x-workflow:
+  openi6x-workflow:
     jobs:
       - build-elrsv2
+          filters:
+            tags:
+              only: /^.*-release$/
       - build-gvars
+          filters:
+            tags:
+              only: /^.*-release$/
       - build-heli
+          filters:
+            tags:
+              only: /^.*-release$/
+      - publish-github-release
+        requires:
+          - build-elrsv2
+          - build-gvars
+          - build-heli
