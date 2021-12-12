@@ -16,7 +16,7 @@ jobs:
      - persist_to_workspace:
          root: /tmp
          paths:
-           - opentx
+           - ../opentx
   build-gvars:
     machine: true
     steps:
