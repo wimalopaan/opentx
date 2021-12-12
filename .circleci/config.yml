@@ -16,7 +16,7 @@ jobs:
      - persist_to_workspace:
          root: /tmp
          paths:
-           - ./opentx-i6x-2.3.0.bin
+           - .
   build-gvars:
     machine: true
     steps:
