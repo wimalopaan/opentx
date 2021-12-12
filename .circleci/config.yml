@@ -36,14 +36,12 @@ jobs:
       - image: cibuilds/github:0.13
     steps:
       - attach_workspace:
-          at: ./
+          at: $CIRCLE_ARTIFACTS
       - run:
           name: "Publish Release on GitHub"
           command: |
-            find opentx-i6x-elrsv2-.bin
-            ls -la /tmp
-#            ls -la /tmp/circleci-$CIRCLE_SHA1
-#            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest ~/project/
+            ls -la
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest $CIRCLE_ARTIFACTS
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
