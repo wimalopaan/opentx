@@ -20,7 +20,7 @@ jobs:
      - persist_to_workspace:
          root: /tmp
          paths:
-           - artifacts
+           - opentx/artifacts
   build-gvars:
     machine: true
     steps:
