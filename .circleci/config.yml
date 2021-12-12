@@ -49,7 +49,7 @@ jobs:
 workflows:
   openi6x-workflow:
     jobs:
-#      - build-elrsv2
+      - build-elrsv2
 #          filters:
 #            branches:
 #              ignore: /.*/
