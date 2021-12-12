@@ -6,6 +6,7 @@
  * - multiple devices, only ExpressLRS transmitters,
  * - no integer/float/string fields support, ExpressLRS uses only selection anyway,
  * - field unit ie.: "mW" is not displayed,
+ * - info fields display only label without value
  */
 
 #include <stdio.h>
@@ -621,7 +622,7 @@ void ELRSV2_run(event_t event) {
     registerCrossfireTelemetryCallback(refreshNext);
   }
 
-  if (event == EVT_KEY_LONG(KEY_EXIT) || (usbStarted() && getSelectedUsbMode() == USB_MASS_STORAGE_MODE)) {
+  if (event == EVT_KEY_LONG(KEY_EXIT)) {
     registerCrossfireTelemetryCallback(nullptr);
     reloadAllField(); 
     UIbackExec(); 

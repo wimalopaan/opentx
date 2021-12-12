@@ -30,7 +30,7 @@ void checkTrainerSignalWarning()
 	
 }
 #else
-#include "audio_arm.h"
+#include "audio.h"
 
 void checkTrainerSignalWarning()
 {
