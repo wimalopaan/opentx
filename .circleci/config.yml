@@ -18,7 +18,7 @@ jobs:
         path: opentx-i6x-2.3.0.bin
         destination: opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
      - persist_to_workspace:
-         root: /tmp
+         root: .
          paths:
            - opentx/opentx-i6x-2.3.0.bin
   build-gvars:
