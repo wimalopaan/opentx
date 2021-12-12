@@ -36,5 +36,5 @@ workflows:
   build-elrs-workflow:
     jobs:
       - build-elrsv2
-#      - build-gvars
-#      - build-heli
+      - build-gvars
+      - build-heli
