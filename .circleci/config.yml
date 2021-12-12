@@ -12,7 +12,7 @@ jobs:
      - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
      - store_artifacts:
         path: opentx-i6x-2.3.0.bin
-        destination: opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
+        destination: /tmp/opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
   build-gvars:
     machine: true
     steps:
@@ -38,8 +38,7 @@ jobs:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            ls -la
-            echo ${PROJECT_ENV_VAR}
+            ls -la /tmp
             echo ${CIRCLE_ARTIFACTS}
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest $CIRCLE_ARTIFACTS/
 # Invoke jobs via workflows
