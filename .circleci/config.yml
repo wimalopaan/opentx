@@ -9,12 +9,14 @@ jobs:
     machine: true
     steps:
      - checkout
-     - attach_workspace:
-         at: /tmp/workspace
+     - persist_to_workspace:
+         root: /tmp/workspace
+         paths:
+          - artifacts
      - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
      - store_artifacts:
         path: opentx-i6x-2.3.0.bin
-        destination: /tmp/workspace/opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
+        destination: artifacts/opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
   build-gvars:
     machine: true
     steps:
