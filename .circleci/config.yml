@@ -44,20 +44,20 @@ jobs:
 workflows:
   openi6x-workflow:
     jobs:
-      - build-elrsv2
+      - build-elrsv2:
           filters:
             tags:
               only: /^.*-release$/
-      - build-gvars
+      - build-gvars:
           filters:
             tags:
               only: /^.*-release$/
-      - build-heli
+      - build-heli:
           filters:
             tags:
               only: /^.*-release$/
-      - publish-github-release
-        requires:
-          - build-elrsv2
-          - build-gvars
-          - build-heli
+      - publish-github-release:
+          requires:
+            - build-elrsv2
+            - build-gvars
+            - build-heli
