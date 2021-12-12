@@ -31,31 +31,37 @@ jobs:
           destination: ./artifacts/opentx-i6x-heli-<< pipeline.git.tag >>.bin
   publish-github-release:
     docker:
-      - image: cibuilds/github:0.10
+      - image: cibuilds/github:0.13
     steps:
       - attach_workspace:
           at: ./artifacts
       - run:
           name: "Publish Release on GitHub"
           command: |
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} ./artifacts/
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete latest ./artifacts/
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   openi6x-workflow:
     jobs:
-      - build-elrsv2:
-          filters:
-            tags:
-              only: /^.*-release$/
-      - build-gvars:
-          filters:
-            tags:
-              only: /^.*-release$/
-      - build-heli:
-          filters:
-            tags:
-              only: /^.*-release$/
+      - build-elrsv2
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /.*-release$/
+      - build-gvars
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /.*-release$/
+      - build-heli
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /.*-release$/
       - publish-github-release:
           requires:
             - build-elrsv2
