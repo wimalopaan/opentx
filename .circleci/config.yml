@@ -29,16 +29,18 @@ jobs:
       - store_artifacts:
           path: opentx-i6x-2.3.0.bin
           destination: opentx-i6x-heli-<< pipeline.git.tag >>.bin
+      - store_artifacts:
+          path: /artifacts
   publish-github-release:
     docker:
       - image: cibuilds/github:0.13
     steps:
       - attach_workspace:
-          at: .
+          at: ./artifacts
       - run:
           name: "Publish Release on GitHub"
           command: |
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest .
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest ./artifacts/
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
