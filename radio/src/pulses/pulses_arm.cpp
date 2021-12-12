@@ -304,7 +304,7 @@ bool setupPulses(uint8_t port) {
 
 #if defined(CROSSFIRE)
       case PROTO_CROSSFIRE:
-        init_module_timer(port, CROSSFIRE_PERIOD, true);
+        //init_module_timer(port, CROSSFIRE_PERIOD, true);
         mixerSchedulerSetPeriod(EXTERNAL_MODULE, CROSSFIRE_PERIOD);
         send = true;
         break;

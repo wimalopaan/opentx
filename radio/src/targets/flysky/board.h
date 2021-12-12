@@ -219,15 +219,9 @@ void extmoduleSendNextFrame();
   #define TRAINER_CONNECTED()           (GPIO_ReadInputDataBit(TRAINER_DETECT_GPIO, TRAINER_DETECT_GPIO_PIN) == Bit_RESET)
 #endif
 #if defined(TRAINER_GPIO)
-  void init_trainer_ppm(void);
-  void stop_trainer_ppm(void);
   void init_trainer_capture(void);
-  void stop_trainer_capture(void);
 #else
-  #define init_trainer_ppm()
-  #define stop_trainer_ppm()
   #define init_trainer_capture()
-  #define stop_trainer_capture()
 #endif
 #if defined(TRAINER_MODULE_HEARTBEAT)
   void init_cppm_on_heartbeat_capture(void);

@@ -399,7 +399,7 @@ void checkTrainerSettings()
     switch (currentTrainerMode)
     {
     case TRAINER_MODE_MASTER_TRAINER_JACK:
-      stop_trainer_capture();
+      //stop_trainer_capture();
       break;
     /*
     case TRAINER_MODE_SLAVE:

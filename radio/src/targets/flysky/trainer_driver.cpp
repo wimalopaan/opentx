@@ -20,16 +20,6 @@
 
 #include "opentx.h"
 
-//DMAFifo<32> heartbeatFifo __DMA (HEARTBEAT_DMA_Stream);
-
-void trainerSendNextFrame();
-
-void init_trainer_ppm() {
-}
-
-void stop_trainer_ppm() {
-}
-
 void init_trainer_capture() {
   GPIO_PinAFConfig(TRAINER_GPIO, TRAINER_IN_GPIO_PinSource, TRAINER_GPIO_AF);
 
@@ -40,24 +30,4 @@ void init_trainer_capture() {
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;  // erfly6: GPIO_PuPd_UP
   GPIO_Init(TRAINER_GPIO, &GPIO_InitStructure);
-
-  // if timer not enabled, enable.
-  if (s_current_protocol[EXTERNAL_MODULE] == PROTO_PPM) {
-  }
-}
-
-void stop_trainer_capture() {
-}
-
-void init_cppm_on_heartbeat_capture(void) {
-}
-
-void init_sbus_on_heartbeat_capture() {
-}
-
-void stop_sbus_on_heartbeat_capture() {
-}
-
-int sbusGetByte(uint8_t* byte) {
-  return 0;
 }

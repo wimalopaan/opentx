@@ -38,42 +38,45 @@ inline void DisablePPMOut(void) {
 void extmoduleStop() {
   TRACE("extmoduleStop");
   DisablePPMOut();
-  DisablePPMTim();
-  NVIC_DisableIRQ(EXTMODULE_TIMER_IRQn);
+  // DisablePPMTim();
+  // NVIC_DisableIRQ(EXTMODULE_TIMER_IRQn);
 
   EXTERNAL_MODULE_OFF();
 }
 
 void extmoduleTimerStart(uint32_t period, uint8_t state) {
-  TRACE("extmoduleTimerStart period: %dus", period);
+  // TRACE("extmoduleTimerStart period: %dus", period);
 
   if (state)
     EXTERNAL_MODULE_ON();
   else
     EXTERNAL_MODULE_OFF();
 
-  GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
+  // GPIO_PinAFConfig(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PinSource, 0);
 
-  GPIO_InitTypeDef GPIO_InitStructure;
-  GPIO_InitStructure.GPIO_Pin = EXTMODULE_TX_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-  GPIO_Init(EXTMODULE_TX_GPIO, &GPIO_InitStructure);
-  GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);  // Set high
+  // GPIO_InitTypeDef GPIO_InitStructure;
+  // GPIO_InitStructure.GPIO_Pin = EXTMODULE_TX_GPIO_PIN;
+  // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  // GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  // GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  // GPIO_Init(EXTMODULE_TX_GPIO, &GPIO_InitStructure);
+  // GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);  // Set high
 
-  EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
-  EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1;  // 0.5uS (2Mhz)
-  EXTMODULE_TIMER->ARR = (2000 * period);
-  EXTMODULE_TIMER->CCR2 = (2000 * period) - 1000;
-  EXTMODULE_TIMER->EGR = 1;  // Restart
-  EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;
-  EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;  // Enable this interrupt
-  EXTMODULE_TIMER->CR1 |= TIM_CR1_CEN;
+  // EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
+  // EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1;  // 0.5uS (2Mhz)
+  // EXTMODULE_TIMER->ARR = (2000 * period);
+  // EXTMODULE_TIMER->CCR2 = (2000 * period) - 1000;
+  // EXTMODULE_TIMER->EGR = 1;  // Restart
+  // EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;
+  // EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;  // Enable this interrupt
+  // EXTMODULE_TIMER->CR1 |= TIM_CR1_CEN;
 
-  NVIC_EnableIRQ(EXTMODULE_TIMER_IRQn);
-  NVIC_SetPriority(EXTMODULE_TIMER_IRQn, 7);
+  // NVIC_EnableIRQ(EXTMODULE_TIMER_IRQn);
+  // NVIC_SetPriority(EXTMODULE_TIMER_IRQn, 7);
+  initPPMTimer();
+
+  EnablePPMTim();
 }
 
 void initPPMTimer() {
@@ -117,14 +120,7 @@ void extmodulePpmStart() {
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(EXTMODULE_TX_GPIO, &GPIO_InitStructure);
 
-  initPPMTimer();
-
-  EnablePPMTim();
   EnablePPMOut();
-}
-
-void extmodulePxxStart() {
-  TRACE("extmodulePxxStart");
 }
 
 inline void extmoduleSendNextFrame() {

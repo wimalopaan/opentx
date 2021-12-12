@@ -55,7 +55,7 @@ set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
 add_definitions(-DPCBI6 -DBUZZER)
-add_definitions(-DPCBI6_USB_MSD)
+# add_definitions(-DPCBI6_USB_MSD)
 # add_definitions(-DMENU_DIAGKEYS)
 # add_definitions(-DMENU_DIAGANAS)
 set(GUI_SRC ${GUI_SRC}
