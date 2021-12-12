@@ -36,18 +36,18 @@ jobs:
       - image: cibuilds/github:0.13
     steps:
       - attach_workspace:
-          at: /home/circleci/project
+          at: ./
       - run:
           name: "Publish Release on GitHub"
           command: |
-            ls -la /
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest ~/project/
+            ls -la /home
+#            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest ~/project/
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   openi6x-workflow:
     jobs:
-      - build-elrsv2
+#      - build-elrsv2
 #          filters:
 #            branches:
 #              ignore: /.*/
@@ -65,11 +65,11 @@ workflows:
 #              ignore: /.*/
 #            tags:
 #              only: /.*-release$/
-      - publish-github-release:
+      - publish-github-release
 #          filters:
 #            branches:
 #              only: master
-          requires:
-            - build-elrsv2
+#          requires:
+#            - build-elrsv2
 #            - build-gvars
 #            - build-heli
