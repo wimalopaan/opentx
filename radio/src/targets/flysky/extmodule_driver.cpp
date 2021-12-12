@@ -76,6 +76,28 @@ void extmoduleTimerStart(uint32_t period, uint8_t state) {
   NVIC_SetPriority(EXTMODULE_TIMER_IRQn, 7);
 }
 
+void initPPMTimer() {
+  EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
+  EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1;  // 0.5uS
+  EXTMODULE_TIMER->ARR = 65535;
+  EXTMODULE_TIMER->CCR2 = GET_PPM_DELAY(EXTERNAL_MODULE) * 2;
+  EXTMODULE_TIMER->CCMR1 = TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0;
+  EXTMODULE_TIMER->BDTR |= TIM_BDTR_MOE;
+  // Channel 1: PPM IN
+  EXTMODULE_TIMER->CCMR1 |= TIM_CCMR1_CC1S_0 | TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1;
+  EXTMODULE_TIMER->CCER |= TIM_CCER_CC1E | TIM_CCER_CC1P;
+  EXTMODULE_TIMER->EGR = 1;  // Restart
+
+  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC1IF));  // Clear capture interrupt flag (PPMIN)
+  EXTMODULE_TIMER->DIER |= TIM_DIER_CC1IE;          // Enable capture interrupt     (PPMIN)
+
+  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC2IF));  // Clear compare interrupt flag (PPMOUT)
+  EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;          // Enable compare interrupt     (PPMOUT)
+
+  NVIC_EnableIRQ(EXTMODULE_TIMER_IRQn);
+  NVIC_SetPriority(EXTMODULE_TIMER_IRQn, 2);
+}
+
 void extmodulePpmStart() {
   TRACE("extmodulePpmStart");
   /**EXTMODULE_TIMER GPIO Configuration
@@ -95,23 +117,7 @@ void extmodulePpmStart() {
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(EXTMODULE_TX_GPIO, &GPIO_InitStructure);
 
-  EXTMODULE_TIMER->CR1 &= ~TIM_CR1_CEN;
-  EXTMODULE_TIMER->PSC = EXTMODULE_TIMER_FREQ / 2000000 - 1;  // 0.5uS
-  EXTMODULE_TIMER->ARR = 65535;
-  EXTMODULE_TIMER->CCR2 = GET_PPM_DELAY(EXTERNAL_MODULE) * 2;
-  EXTMODULE_TIMER->CCMR1 = TIM_CCMR1_OC2M_1 | TIM_CCMR1_OC2M_0;
-  EXTMODULE_TIMER->BDTR |= TIM_BDTR_MOE;
-  EXTMODULE_TIMER->CCMR1 |= TIM_CCMR1_CC1S_0 | TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1;
-  EXTMODULE_TIMER->EGR = 1;  // Restart
-
-  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC1IF));  // Clear capture interrupt flag (PPMIN)
-  EXTMODULE_TIMER->DIER |= TIM_DIER_CC1IE;          // Enable capture interrupt     (PPMIN)
-
-  WRITE_REG(EXTMODULE_TIMER->SR, ~(TIM_SR_CC2IF));  // Clear compare interrupt flag (PPMOUT)
-  EXTMODULE_TIMER->DIER |= TIM_DIER_CC2IE;          // Enable compare interrupt     (PPMOUT)
-
-  NVIC_EnableIRQ(EXTMODULE_TIMER_IRQn);
-  NVIC_SetPriority(EXTMODULE_TIMER_IRQn, 2);
+  initPPMTimer();
 
   EnablePPMTim();
   EnablePPMOut();
@@ -173,7 +179,6 @@ extern "C" void EXTMODULE_TIMER_IRQHandler() {
   }
   if (EXTMODULE_TIMER->SR & TIM_SR_CC1IF) {  // Capture PPM-IN
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC1IF;    // Clears interrupt on ch1
-    // capture = TRAINER_TIMER->CCR2;
     if (currentTrainerMode == TRAINER_MODE_MASTER_TRAINER_JACK) {
       captureTrainerPulses(EXTMODULE_TIMER->CCR1);
     }

@@ -208,8 +208,8 @@ void extmoduleSendNextFrame();
 //void intmoduleSendNextFrame();
 
 // Trainer driver
-#define SLAVE_MODE()                    (g_model.trainerMode == TRAINER_MODE_SLAVE)
-#if defined(PCBX9E)
+#define SLAVE_MODE()                    (false) // (g_model.trainerMode == TRAINER_MODE_SLAVE)
+#if defined(PCBX9E) || defined(PCBI6)
   #define TRAINER_CONNECTED()           (true)
 #elif defined(PCBX7)
   #define TRAINER_CONNECTED()           (GPIO_ReadInputDataBit(TRAINER_DETECT_GPIO, TRAINER_DETECT_GPIO_PIN) == Bit_SET)
