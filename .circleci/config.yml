@@ -9,18 +9,10 @@ jobs:
     machine: true
     steps:
      - checkout
-     - run:
-         command: |
-           mkdir artifacts
-           docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
-           cp opentx-i6x-2.3.0.bin artifacts/opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
+     - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
      - store_artifacts:
         path: opentx-i6x-2.3.0.bin
         destination: opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
-     - persist_to_workspace:
-         root: .
-         paths:
-           - opentx/opentx-i6x-2.3.0.bin
   build-gvars:
     machine: true
     steps:
@@ -59,23 +51,23 @@ workflows:
 #              ignore: /.*/
 #            tags:
 #              only: /.*-release$/
-#      - build-gvars
+      - build-gvars
 #          filters:
 #            branches:
 #              ignore: /.*/
 #            tags:
 #              only: /.*-release$/
-#      - build-heli
+      - build-heli
 #          filters:
 #            branches:
 #              ignore: /.*/
 #            tags:
 #              only: /.*-release$/
-      - publish-github-release:
-#          filters:
-#            branches:
-#              only: master
-          requires:
-            - build-elrsv2
+#      - publish-github-release:
+##          filters:
+##            branches:
+##              only: master
+#          requires:
+#            - build-elrsv2
 #            - build-gvars
 #            - build-heli
