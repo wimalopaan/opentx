@@ -28,9 +28,9 @@ jobs:
       - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=YES GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
       - store_artifacts:
           path: opentx-i6x-2.3.0.bin
-          destination: opentx-i6x-heli-<< pipeline.git.tag >>.bin
-      - store_artifacts:
-          path: /artifacts
+          destination: ~/artifacts/opentx-i6x-heli-<< pipeline.git.tag >>.bin
+#      - store_artifacts:
+#          path: ~/artifacts
   publish-github-release:
     docker:
       - image: cibuilds/github:0.13
