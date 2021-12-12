@@ -34,7 +34,7 @@ jobs:
       - image: cibuilds/github:0.13
     steps:
       - attach_workspace:
-          at: ./artifacts
+          at: .
       - run:
           name: "Publish Release on GitHub"
           command: |
@@ -63,6 +63,9 @@ workflows:
 #            tags:
 #              only: /.*-release$/
       - publish-github-release:
+#          filters:
+#            branches:
+#              only: master
           requires:
             - build-elrsv2
             - build-gvars
