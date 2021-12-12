@@ -39,6 +39,8 @@ jobs:
           name: "Publish Release on GitHub"
           command: |
             ls -la
+            echo ${PROJECT_ENV_VAR}
+            echo ${CIRCLE_ARTIFACTS}
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest $CIRCLE_ARTIFACTS/
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
