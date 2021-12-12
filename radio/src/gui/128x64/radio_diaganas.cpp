@@ -20,6 +20,7 @@
 
 #include "opentx.h"
 
+#if defined(MENU_DIAGANAS)
 void menuRadioDiagAnalogs(event_t event)
 {
 // TODO enum
@@ -113,3 +114,4 @@ void menuRadioDiagAnalogs(event_t event)
   lcdDrawTextAlignedLeft(7*FH, STICKS_PWM_ENABLED() ? "Sticks: PWM" : "Sticks: ANA");
 #endif
 }
+#endif

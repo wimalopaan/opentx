@@ -93,8 +93,8 @@ foreach(LANGUAGE ${TTS_LANGUAGES})
 endforeach()
 set(SRC
   ${SRC}
-  main_arm.cpp
-  tasks_arm.cpp
+  main.cpp
+  tasks.cpp
   telemetry/telemetry.cpp
   telemetry/telemetry_holders.cpp
   telemetry/telemetry_sensors.cpp
@@ -106,7 +106,7 @@ if(PCB STREQUAL I6X)
 else()
 set(SRC
   ${SRC}
-  audio_arm.cpp
+  audio.cpp
   io/frsky_sport.cpp
   telemetry/frsky.cpp
   telemetry/frsky_d_arm.cpp

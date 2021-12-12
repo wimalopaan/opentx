@@ -99,7 +99,7 @@ extern "C"
   }
 }
 
-#if defined(STM32F0)
+#if defined(STM32F0) && defined(BOOT)
 volatile uint32_t __attribute__((section(".ram_vector,\"aw\",%nobits @"))) ram_vector[VECTOR_TABLE_SIZE];
 extern volatile uint32_t g_pfnVectors[VECTOR_TABLE_SIZE];
 #endif

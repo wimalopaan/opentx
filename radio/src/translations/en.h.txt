@@ -546,12 +546,16 @@
 
 #if defined(PCBTARANIS) || defined(PCBHORUS)
   #define TR_ENTER                     "[ENTER]"
+#elif defined(PCBI6)
+  #define TR_ENTER                     "[OK]"
 #else
   #define TR_ENTER                     "[MENU]"
 #endif
 
 #if defined(PCBHORUS)
   #define TR_EXIT                      "[RTN]"
+#elif defined(PCBI6)
+  #define TR_EXIT                      "[CNCL]"
 #else
   #define TR_EXIT                      "[EXIT]"
 #endif
@@ -1033,16 +1037,8 @@
 #define TR_SCRIPT                      "Script"
 #define TR_INPUTS                      "Inputs"
 #define TR_OUTPUTS                     "Outputs"
-#if defined(COLORLCD)
 #define TR_EEBACKUP                    "EEPROM backup"
 #define TR_FACTORYRESET                "Factory reset"
-#elif defined(PCBXLITE)
-#define TR_EEBACKUP                    "\001[ENT. Long]: Backup"
-#define TR_FACTORYRESET                "\001[\300ENT. Long]: Fact. reset"
-#else
-#define TR_EEBACKUP                    TR("\001[ENTER Long]: Backup", "\012[ENTER Long]: EEPROM backup")
-#define TR_FACTORYRESET                TR("\001[MENU Long]: Fact. reset", "\012[MENU Long]: Factory reset")
-#endif
 #define TR_CONFIRMRESET                TR("Erase ALL", "Erase ALL models and settings?")
 #define TR_TO_MANY_LUA_SCRIPTS         "Too many Lua scripts!"
 

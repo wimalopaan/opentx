@@ -24,21 +24,46 @@
 #define STR2(s) #s
 #define DEFNUMSTR(s)  STR2(s)
 
-  #define EEPROM_STR DEFNUMSTR(EEPROM_VER);
+#define EEPROM_STR DEFNUMSTR(EEPROM_VER);
 
 #if defined(PCBHORUS)
 #define TAB "\037\075"
+#else
+#define TAB "\037\033"
+#endif
+
+#if defined(FRSKY_RELEASE)
+#define DISPLAY_VERSION "-frsky"
+#elif defined(JUMPER_RELEASE)
+#define DISPLAY_VERSION "-jumper"
+#elif defined(RADIOMASTER_RELEASE)
+#define DISPLAY_VERSION "-RM"
+#elif defined(TBS_RELEASE)
+#define DISPLAY_VERSION "-tbs"
+#elif defined(IMRC_RELEASE)
+#define DISPLAY_VERSION "-imrc"
+#else
+#define DISPLAY_VERSION
 #endif
 
 #if defined(COLORLCD)
-  const char vers_stamp[]  =   "VERS" TAB ": " "opentx-" FLAVOUR "-" VERSION " (" GIT_STR ")";
+  const char fw_stamp[]    =   "FW" TAB ": opentx-" FLAVOUR;
+#if defined(RADIOMASTER_RELEASE) || defined(JUMPER_RELEASE)
+  const char vers_stamp[]  =   "VERS" TAB ": Factory firmware (" GIT_STR ")";
+#else
+  const char vers_stamp[]  =   "VERS" TAB ": " VERSION DISPLAY_VERSION " (" GIT_STR ")";
+#endif
   const char date_stamp[]  =   "DATE" TAB ": " DATE;
   const char time_stamp[]  =   "TIME" TAB ": " TIME;
   const char eeprom_stamp[]  = "EEPR" TAB ": " EEPROM_STR;
-#elif defined(PCBTARANIS)
-  const char vers_stamp[]  = "FW\037\033: " "opentx-" FLAVOUR "\036VERS\037\033: " VERSION " (" GIT_STR ")" "\036DATE\037\033: " DATE " " TIME "\036EEPR\037\033: " EEPROM_STR;
+#elif defined(BOARD_NAME)
+  const char vers_stamp[]  = "FW" TAB ": opentx-" BOARD_NAME "\036VERS" TAB ": " VERSION DISPLAY_VERSION " (" GIT_STR ")" "\036DATE" TAB ": " DATE " " TIME "\036EEPR" TAB ": " EEPROM_STR;
+#elif defined(RADIOMASTER_RELEASE)
+  const char vers_stamp[]  = "FW" TAB ": opentx-" FLAVOUR    "\036VERS" TAB ": RM Factory (" GIT_STR ")" "\036BUILT BY : OpenTX" "\036DATE" TAB ": " DATE " " TIME "\036EEPR" TAB ": " EEPROM_STR;
+#elif defined(JUMPER_RELEASE)
+  const char vers_stamp[]  = "FW" TAB ": opentx-" FLAVOUR    "\036VERS" TAB ": Factory (" GIT_STR ")" "\036BUILT BY : OpenTX" "\036DATE" TAB ": " DATE " " TIME "\036EEPR" TAB ": " EEPROM_STR;
 #else
-  const char vers_stamp[]  = "FW\037\033: " "opentx-" FLAVOUR "\036VERS\037\033: " VERSION "\036DATE\037\033: " DATE "\036TIME\037\033: " TIME "\036EEPR\037\033: " EEPROM_STR;
+  const char vers_stamp[]  = "FW" TAB ": opentx-" FLAVOUR    "\036VERS" TAB ": " VERSION DISPLAY_VERSION " (" GIT_STR ")" "\036DATE" TAB ": " DATE " " TIME "\036EEPR" TAB ": " EEPROM_STR;
 #endif
 
 /**

@@ -663,7 +663,7 @@ uint16_t isqrt32(uint32_t n);
 #define pauseMixerCalculations()
 #define resumeMixerCalculations()
 #else
-#include "tasks_arm.h"
+#include "tasks.h"
 extern RTOS_MUTEX_HANDLE mixerMutex;
 inline void pauseMixerCalculations()
 {
@@ -1048,7 +1048,7 @@ enum AUDIO_SOUNDS {
 };
 
 #if defined(AUDIO)
-#include "audio_arm.h"
+#include "audio.h"
 #endif
 
 #if defined(BUZZER)
@@ -1178,7 +1178,7 @@ union ReusableBuffer
     uint8_t maxNameLen;
   } modelFailsafe;
 
-#if defined(STM32) && (!defined(PCBI6) || defined(PCBI6_USB_MSD))
+#if defined(STM32) && (!defined(PCBI6) || defined(PCBI6_USB_MSD) || defined(PCBI6_ELRSV2))
   // Data for the USB mass storage driver. If USB mass storage runs no menu is not allowed to be displayed
   uint8_t MSC_BOT_Data[MSC_MEDIA_PACKET];
 #endif

@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  */
 
-#ifndef _AUDIO_ARM_H_
-#define _AUDIO_ARM_H_
+#ifndef _AUDIO_H_
+#define _AUDIO_H_
 
 #include <stddef.h>
 #include "ff.h"
@@ -652,4 +652,4 @@ void referenceModelAudioFiles();
 
 bool isAudioFileReferenced(uint32_t i, char * filename/*at least AUDIO_FILENAME_MAXLEN+1 long*/);
 
-#endif // _AUDIO_ARM_H_
+#endif // _AUDIO_H_

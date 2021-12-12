@@ -1824,10 +1824,6 @@ void opentxInit(OPENTX_INIT_ARGS) {
   serial2Init(g_eeGeneral.serial2Mode, modelTelemetryProtocol());
 #endif
 
-#if defined(PCBTARANIS)
-  BACKLIGHT_ENABLE();
-#endif
-
 #if MENUS_LOCK == 1
   getMovedSwitch();
   if (TRIMS_PRESSED() && g_eeGeneral.switchUnlockStates == switches_states) {

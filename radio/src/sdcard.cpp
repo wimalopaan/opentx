@@ -293,7 +293,6 @@ bool sdListFiles(const char * path, const char * extension, const uint8_t maxlen
   }
 
   popupMenuNoItems = 0;
-  POPUP_MENU_SET_BSS_FLAG();
 
   FRESULT res = f_opendir(&dir, path);
   if (res == FR_OK) {

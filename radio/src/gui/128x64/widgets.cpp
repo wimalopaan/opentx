@@ -65,6 +65,20 @@ void drawVerticalScrollbar(coord_t x, coord_t y, coord_t h, uint16_t offset, uin
   lcdDrawVerticalLine(x, y + yofs, yhgt, SOLID, FORCE);
 }
 
+void drawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max)
+{
+  // lcdDrawRect(x, y, w+1, h);
+  // lcdDrawFilledRect(x+1, y+1, w-1, 4, SOLID, ERASE);
+  // coord_t len = limit((uint8_t)1, uint8_t((abs(val) * w/2 + max/2) / max), uint8_t(w/2));
+  // coord_t x0 = (val>0) ? x+w/2 : x+1+w/2-len;
+  // for (coord_t i=h-2; i>0; i--) {
+  //   lcdDrawSolidHorizontalLine(x0, y+i, len);
+  // }
+  lcdDrawRect(x, y, w+1, h, 0xff);
+  uint8_t len = limit((uint8_t)1, uint8_t(w*val/max), uint8_t(w));
+  lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
+}
+
 void title(const char * s)
 {
   lcdDrawText(0, 0, s, INVERS);
@@ -224,7 +238,7 @@ void drawStatusLine()
     }
 
     lcdDrawFilledRect(0, LCD_H-statusLineHeight, LCD_W, FH, SOLID, ERASE);
-    lcdDrawText(5, LCD_H+1-statusLineHeight, statusLineMsg, BSS);
+    lcdDrawText(5, LCD_H+1-statusLineHeight, statusLineMsg);
     lcdDrawFilledRect(0, LCD_H-statusLineHeight, LCD_W, FH, SOLID);
   }
 }
@@ -246,14 +260,12 @@ void drawProgressBar(const char * label, int num, int den)
   lcdRefresh();
 }
 
-#if !defined(PCBI6)
 const unsigned char SLEEP_BITMAP[]  = {
 #include "sleep.lbm"
 };
 
 #define SLEEP_BITMAP_WIDTH             60
 #define SLEEP_BITMAP_HEIGHT            60
-#endif
 
 void drawSleepBitmap()
 {
@@ -261,7 +273,7 @@ void drawSleepBitmap()
 #if !defined(PCBI6)
   lcdDraw1bitBitmap((LCD_W-SLEEP_BITMAP_WIDTH)/2, (LCD_H-SLEEP_BITMAP_HEIGHT)/2, SLEEP_BITMAP, 0);
 #else
-  lcdDrawText(LCD_W/2 - 12, LCD_H/2 - 4, "z z z", CENTERED);
+  lcdDrawText(LCD_W/2, LCD_H/2 - 4, "z z z", CENTERED);
 #endif
   lcdRefresh();
 }

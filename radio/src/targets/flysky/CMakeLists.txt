@@ -82,6 +82,7 @@ set(TARGET_SRC
   i2c_common_v2.cpp
   i2c_driver.cpp
   crc_driver.cpp
+  tools/elrsV2.cpp
   ../common/arm/stm32/mixer_scheduler_driver.cpp
   )
 
