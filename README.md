@@ -8,7 +8,7 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
 * PPM in/out
 * CRSF with ExpressLRS and Crossfire modules, CRSFshot enabled
   * MEGA Bauds up to 1.8M
-  * ExpressLRS V2 configuration
+  * ExpressLRS V2 configuration (ELRSV2.lua port)
 * Telemetry
 * Audio tones, alarms and vario custom implementation
 * USB (To enable on standard cable: General Settings > USB Detect set to "Once")
