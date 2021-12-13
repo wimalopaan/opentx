@@ -318,7 +318,7 @@ void menuMainView(event_t event)
 {
   uint8_t view = g_eeGeneral.view;
   uint8_t view_base = view & 0x0f;
-  uint8_t num_pages = MAX_OUTPUT_CHANNELS / 8;
+  uint8_t num_pages = (MAX_OUTPUT_CHANNELS + 8 - 1) / 8;
 
   switch (event) {
     case EVT_ENTRY:
@@ -474,7 +474,9 @@ void menuMainView(event_t event)
     for (uint8_t i=0; i<8; i++) {
       uint8_t x0,y0;
       uint8_t chan = 8*(g_eeGeneral.view / ALTERNATE_VIEW) + i;
-
+      if(chan>=MAX_OUTPUT_CHANNELS){
+        break;
+      }
       int16_t val = channelOutputs[chan];
 
       switch (view_base) {

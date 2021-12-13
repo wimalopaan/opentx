@@ -71,7 +71,7 @@
   #define MAX_TELEMETRY_SENSORS        32
 #elif defined(PCBI6)
   #define MAX_MODELS                   16
-  #define MAX_OUTPUT_CHANNELS          14 // number of real output channels CH1-CH14
+  #define MAX_OUTPUT_CHANNELS          16 // number of real output channels CH1-CH16
   #define MAX_FLIGHT_MODES             5
   #define MAX_MIXERS                   32 
   #define MAX_EXPOS                    14
