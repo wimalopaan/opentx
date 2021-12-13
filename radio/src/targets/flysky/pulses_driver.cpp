@@ -27,7 +27,6 @@ void intmoduleNoneStart(void);
 void intmoduleAfhds2aStart(void);
 
 void extmodulePpmStart(void);
-void extmodulePxxStart(void);
 void extmoduleTimerStart(uint32_t period, uint8_t state);
 
 void init_afhds2a(uint32_t port) {
