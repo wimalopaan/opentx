@@ -5,7 +5,7 @@ option(PCBI6_ELRSV2 "Enable ExpressLRS v2 menu" OFF) # ~6kB FLASH
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "PRESS")
-  set(SPLASH "ON")
+  set(SPLASH "OFF")
   set(CPU_TYPE STM32F0)
   set(CPU_TYPE_FULL STM32F072)  # for size report
   set(LINKER_SCRIPT targets/flysky/STM32F072VB_FLASH.ld)
@@ -55,9 +55,10 @@ set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
 add_definitions(-DPCBI6 -DBUZZER)
-# add_definitions(-DPCBI6_USB_MSD)
+add_definitions(-DPCBI6_USB_MSD)
 # add_definitions(-DMENU_DIAGKEYS)
 # add_definitions(-DMENU_DIAGANAS)
+
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
   model_mix_edit.cpp

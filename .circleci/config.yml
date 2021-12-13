@@ -1,0 +1,73 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build-elrsv2:
+    machine: true
+    steps:
+     - checkout
+     - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
+     - store_artifacts:
+        path: opentx-i6x-2.3.0.bin
+        destination: opentx-i6x-elrsv2-<< pipeline.git.tag >>.bin
+  build-gvars:
+    machine: true
+    steps:
+      - checkout
+      - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
+      - store_artifacts:
+          path: opentx-i6x-2.3.0.bin
+          destination: opentx-i6x-gvars-<< pipeline.git.tag >>.bin
+  build-heli:
+    machine: true
+    steps:
+      - checkout
+      - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=YES GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
+      - store_artifacts:
+          path: opentx-i6x-2.3.0.bin
+          destination: opentx-i6x-heli-<< pipeline.git.tag >>.bin
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.13
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            ls -la
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest $CIRCLE_ARTIFACTS/
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  openi6x-release-workflow:
+    jobs:
+      - build-elrsv2
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /.*-release$/
+      - build-gvars
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /.*-release$/
+      - build-heli
+#          filters:
+#            branches:
+#              ignore: /.*/
+#            tags:
+#              only: /.*-release$/
+#      - publish-github-release:
+##          filters:
+##            branches:
+##              only: master
+#          requires:
+#            - build-elrsv2
+#            - build-gvars
+#            - build-heli
