@@ -54,7 +54,11 @@ add_definitions(-DPCBI6 -DBUZZER)
 add_definitions(-DPCBI6_USB_MSD)
 # add_definitions(-DMENU_DIAGKEYS)
 # add_definitions(-DMENU_DIAGANAS)
-# add_definitions(-DPCBI6_ELRSV2) # ~6kB FLASH
+
+if(PCBI6_ELRSV2 STREQUAL YES)
+  add_definitions(-DPCBI6_ELRSV2) # ~6kB FLASH
+endif()
+
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
   model_mix_edit.cpp
