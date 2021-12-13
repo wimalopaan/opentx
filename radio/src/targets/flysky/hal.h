@@ -358,14 +358,6 @@ void disable_afhds2a(uint32_t port);
 */
 
 // External Module
-
-// /*---------------------PPM_IN------------------------------------------------*/
-#define PPM_IN_GPIO_PORT GPIOF
-#define PPM_IN_PIN_PIN_MASK GPIO_IDR_9
-// /*---------------------PPM_OUT------------------------------------------------*/
-#define PPM_OUT_GPIO_PORT GPIOF
-#define PPM_OUT_PIN_MASK GPIO_IDR_10
-
 #define EXTMODULE_PWR_GPIO            GPIOC
 #define EXTMODULE_PWR_GPIO_PIN        GPIO_Pin_9  // PC.09
 #define EXTMODULE_RCC_AHBPeriph       RCC_AHBPeriph_GPIOF  // GPIOF
@@ -385,32 +377,26 @@ extern void ISR_TIMER1_COMPA_vect(void);
 extern void ISR_TIMER3_CAPT_vect(void);
 
 // Trainer Port
-#if defined(PCBXLITE)
-  #define TRAINER_RCC_AHBPeriph        0
-  #define TRAINER_RCC_APB1Periph        0
-#else
-  #define TRAINER_RCC_AHBPeriph        (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOC)
-  #define TRAINER_RCC_APB1Periph        RCC_APB1Periph_TIM3
-  #define TRAINER_GPIO                  GPIOC
-  #define TRAINER_IN_GPIO_PIN           GPIO_Pin_8  // PC.08
-  #define TRAINER_IN_GPIO_PinSource     GPIO_PinSource8
-  #define TRAINER_OUT_GPIO_PIN          GPIO_Pin_9  // PC.09
-  #define TRAINER_OUT_GPIO_PinSource    GPIO_PinSource9
-  #define TRAINER_DETECT_GPIO           GPIOA
-  #define TRAINER_DETECT_GPIO_PIN       GPIO_Pin_8  // PA.08
-  #define TRAINER_TIMER                 TIM3
-  #define TRAINER_TIMER_IRQn            TIM3_IRQn
-  #define TRAINER_GPIO_AF               GPIO_AF_TIM3
-  #define TRAINER_DMA                   DMA1
-  #define TRAINER_DMA_CHANNEL           DMA_Channel_5
-  #define TRAINER_DMA_STREAM            DMA1_Stream2
-  #define TRAINER_DMA_IRQn              DMA1_Stream2_IRQn
-  #define TRAINER_DMA_IRQHandler        DMA1_Stream2_IRQHandler
-  #define TRAINER_DMA_FLAG_TC           DMA_IT_TCIF2
-  #define TRAINER_TIMER_IRQn            TIM3_IRQn
-  #define TRAINER_TIMER_IRQHandler      TIM3_IRQHandler
-  #define TRAINER_TIMER_FREQ            (PERI1_FREQUENCY * TIMER_MULT_APB1)
-#endif
+#define TRAINER_GPIO                  GPIOF
+#define TRAINER_IN_GPIO_PIN           GPIO_Pin_9  // PC.08
+#define TRAINER_IN_GPIO_PinSource     GPIO_PinSource9
+#define TRAINER_GPIO_AF               GPIO_AF_0
+// #define TRAINER_OUT_GPIO_PIN          GPIO_Pin_9  // PC.09
+// #define TRAINER_OUT_GPIO_PinSource    GPIO_PinSource9
+// #define TRAINER_DETECT_GPIO           GPIOA
+// #define TRAINER_DETECT_GPIO_PIN       GPIO_Pin_8  // PA.08
+// #define TRAINER_TIMER                 EXTMODULE_TIMER
+// #define TRAINER_TIMER_IRQn            EXTMODULE_TIMER_IRQn
+// #define TRAINER_DMA                   DMA1
+// #define TRAINER_DMA_CHANNEL           DMA_Channel_5
+// #define TRAINER_DMA_STREAM            DMA1_Stream2
+// #define TRAINER_DMA_IRQn              DMA1_Stream2_IRQn
+// #define TRAINER_DMA_IRQHandler        DMA1_Stream2_IRQHandler
+// #define TRAINER_DMA_FLAG_TC           DMA_IT_TCIF2
+// #define TRAINER_TIMER_IRQn            TIM3_IRQn
+// #define TRAINER_TIMER_IRQHandler      TIM3_IRQHandler
+// #define TRAINER_TIMER_FREQ            (PERI1_FREQUENCY * TIMER_MULT_APB1)
+
 
 #define SD_RCC_AHB1Periph 0
 #define HAPTIC_RCC_AHB1Periph 0

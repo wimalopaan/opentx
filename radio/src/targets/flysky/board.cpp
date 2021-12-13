@@ -399,12 +399,13 @@ void checkTrainerSettings()
     switch (currentTrainerMode)
     {
     case TRAINER_MODE_MASTER_TRAINER_JACK:
-      stop_trainer_capture();
+      //stop_trainer_capture();
       break;
+    /*
     case TRAINER_MODE_SLAVE:
       stop_trainer_ppm();
       break;
-      /*
+
       case TRAINER_MODE_MASTER_CPPM_EXTERNAL_MODULE:
         stop_cppm_on_heartbeat_capture() ;
         break;
@@ -421,16 +422,18 @@ void checkTrainerSettings()
     currentTrainerMode = requiredTrainerMode;
     switch (requiredTrainerMode)
     {
+    /*
     case TRAINER_MODE_SLAVE:
       init_trainer_ppm();
       break;
-      /*
+
       case TRAINER_MODE_MASTER_CPPM_EXTERNAL_MODULE:
          init_cppm_on_heartbeat_capture();
          break;
       case TRAINER_MODE_MASTER_SBUS_EXTERNAL_MODULE:
          init_sbus_on_heartbeat_capture();
-         break;*/
+         break;
+    */
 
 #if defined(TRAINER_BATTERY_COMPARTMENT)
     case TRAINER_MODE_MASTER_BATTERY_COMPARTMENT:
