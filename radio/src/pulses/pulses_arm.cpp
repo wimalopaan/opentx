@@ -146,20 +146,11 @@ void setupPulsesPXX(uint8_t port) {
 }
 
 bool setupPulses(uint8_t port) {
-  // TRACE("setupPulses");
-  // TRACE("moduleFlag %d", moduleFlag[INTERNAL_MODULE]);
-  //TRACE("sP %d %d",port, g_model.moduleData[port].type);
-  // #if defined(PCBI6)
-  //   // For backwards compatibility with old config that included other types.
-  //   if (g_model.moduleData[INTERNAL_MODULE].type >= MODULE_TYPE_COUNT) {
-  //     g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
-  //   }
-  // #endif
   bool init_needed = false;
   bool send = false;
 
   uint8_t required_protocol = getRequiredProtocol(port);
-
+  
   heartbeat |= (HEART_TIMER_PULSES << port);
 
   if (s_current_protocol[port] != required_protocol) {
@@ -304,7 +295,6 @@ bool setupPulses(uint8_t port) {
 
 #if defined(CROSSFIRE)
       case PROTO_CROSSFIRE:
-        //init_module_timer(port, CROSSFIRE_PERIOD, true);
         mixerSchedulerSetPeriod(EXTERNAL_MODULE, CROSSFIRE_PERIOD);
         send = true;
         break;
