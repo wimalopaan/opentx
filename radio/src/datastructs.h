@@ -925,7 +925,7 @@ static inline void check_struct() {
   CHKSIZE(TelemetrySensor, 14);
 
 #if defined(PCBI6)
-  CHKSIZE(ModuleData, 40);
+  CHKSIZE(ModuleData, 44);
 #else
   CHKSIZE(ModuleData, 70);
 #endif
