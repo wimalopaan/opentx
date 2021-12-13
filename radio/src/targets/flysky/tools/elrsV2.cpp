@@ -41,7 +41,6 @@ uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256];
 uint8_t valuesBufferOffset = 0;
 
 char commandStatusInfo[24];
-char stringTmp[22];
 
 #define deviceId 0xEE
 #define handsetId 0xEF
@@ -275,6 +274,7 @@ void fieldCommandDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   } else { 
     pat = (char *)cmdPat;
   }
+  char stringTmp[24];
   sprintf((char *)&stringTmp, pat, field->nameLength, (char *)&namesBuffer[field->nameOffset]);
   lcdDrawText(10, y, (char *)&stringTmp, attr | BOLD);
 }
