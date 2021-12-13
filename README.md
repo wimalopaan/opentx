@@ -1,18 +1,19 @@
 # FlySky i6x port of OpenTX
 
-This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You can find the latest build and some instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX)  
+This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You can find the latest build and some instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX)
 
 ## Implemented features 
 
 * AFHDS2A protocol
 * PPM in/out
-* CRSF working with ExpressLRS and Crossfire modules at rates from 115k to 3.75M bauds, CRSFshot enabled
+* CRSF with ExpressLRS and Crossfire modules, CRSFshot enabled
+  * MEGA Bauds up to 1.8M
+  * ExpressLRS V2 configuration
 * Telemetry
-* Audio tones, alarms and vario custom implementation (Janek)
-* USB (To enable on standard cable: General Settings > USB Detect set to "Once") (Janek)
-  * Joystick mode (Janek)
-  * Mass Storage to backup/restore eeprom (Janek)
-* ExpressLRS V2 configuration
+* Audio tones, alarms and vario custom implementation
+* USB (To enable on standard cable: General Settings > USB Detect set to "Once")
+  * Joystick mode
+  * Mass Storage to backup/restore eeprom
  
 ## Users Telegram group
 
@@ -35,7 +36,7 @@ https://t.me/otx_flysky_i6x
 
 ## Linux instructions
 ### Compile
-`docker run --rm -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=YES" -v $PWD:/opentx vitass/opentx-fw-build`
+`docker run --rm -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build`
 
 ### Flash
 `sudo st-flash write <file_to_flash>.bin 0x08000000`
