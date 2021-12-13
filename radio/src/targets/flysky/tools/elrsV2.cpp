@@ -40,7 +40,7 @@ uint8_t namesBufferOffset = 0;
 uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256]; 
 uint8_t valuesBufferOffset = 0;
 
-char commandStatusInfo[24]; 
+char commandStatusInfo[24];
 
 #define deviceId 0xEE
 #define handsetId 0xEF
@@ -274,8 +274,9 @@ void fieldCommandDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   } else { 
     pat = (char *)cmdPat;
   }
-  sprintf((char *)&fieldData, pat, field->nameLength, (char *)&namesBuffer[field->nameOffset]);
-  lcdDrawText(10, y, (char *)&fieldData, attr | BOLD);
+  char stringTmp[24];
+  sprintf((char *)&stringTmp, pat, field->nameLength, (char *)&namesBuffer[field->nameOffset]);
+  lcdDrawText(10, y, (char *)&stringTmp, attr | BOLD);
 }
 
 void UIbackExec(FieldProps * field = 0) {
@@ -612,6 +613,14 @@ void runPopupPage(event_t event) {
   }
 }
 
+void ELRSV2_stop() {
+  registerCrossfireTelemetryCallback(nullptr);
+  reloadAllField(); 
+  UIbackExec(); 
+  cScriptRunning = 0;
+  popMenu(); 
+}
+
 void ELRSV2_run(event_t event) {
   static uint8_t drawDelay = 0;
 
@@ -623,11 +632,7 @@ void ELRSV2_run(event_t event) {
   }
 
   if (event == EVT_KEY_LONG(KEY_EXIT)) {
-    registerCrossfireTelemetryCallback(nullptr);
-    reloadAllField(); 
-    UIbackExec(); 
-    cScriptRunning = 0;
-    popMenu(); 
+    ELRSV2_stop();
   } else if (event != 0 || ++drawDelay > 20) { 
     drawDelay = 0;
     if (fieldPopup != 0) {
