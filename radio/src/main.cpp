@@ -55,6 +55,10 @@ void handleUsbConnection()
     usbStart();
 #if !defined(PCBI6) || defined(PCBI6_USB_MSD)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
+#if defined(PCBI6_ELRSV2)
+      extern void ELRSV2_stop();
+      ELRSV2_stop();
+#endif
       opentxClose(false);
       usbPluggedIn();
     }
