@@ -111,14 +111,12 @@ extern uint8_t telemetryState;
 
 //#if SPORT_MAX_BAUDRATE < 400000
 const uint32_t CROSSFIRE_BAUDRATES[] = {
-  3750000,
   1870000,
   921600,
   400000,
   115200,
 };
 const uint8_t CROSSFIRE_PERIODS[] = {
-  4,
   4,
   4,
   4,
