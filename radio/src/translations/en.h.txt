@@ -547,7 +547,7 @@
 #if defined(PCBTARANIS) || defined(PCBHORUS)
   #define TR_ENTER                     "[ENTER]"
 #elif defined(PCBI6)
-  #define TR_ENTER                     "[OK]"
+  #define TR_ENTER                     "[ OK ]"
 #else
   #define TR_ENTER                     "[MENU]"
 #endif

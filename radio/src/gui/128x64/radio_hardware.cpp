@@ -229,7 +229,7 @@ void menuRadioHardware(event_t event)
       }
 
       case ITEM_RADIO_HARDWARE_SERIAL_BAUDRATE:
-        g_eeGeneral.telemetryBaudrate = editChoice(HW_SETTINGS_COLUMN2, y, STR_MAXBAUDRATE, "\0043.7M1.8M921k400k115k", g_eeGeneral.telemetryBaudrate, 0, DIM(CROSSFIRE_BAUDRATES) - 1, attr, event);
+        g_eeGeneral.telemetryBaudrate = editChoice(HW_SETTINGS_COLUMN2, y, STR_MAXBAUDRATE, "\0041.8M921k400k115k", g_eeGeneral.telemetryBaudrate, 0, DIM(CROSSFIRE_BAUDRATES) - 1, attr, event);
         if (attr) {
           if (checkIncDec_Ret) {
             pauseMixerCalculations();
