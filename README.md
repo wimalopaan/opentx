@@ -30,11 +30,15 @@ https://t.me/otx_flysky_i6x
 | BIND   | Go RIGHT. Go to next PAGE. Hold for general menu. |
 | RIGHT POT | Scroll right or left |
 
-## ST-Link pinout
+## Installation
+
+Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
+
+## Info for developers
+### ST-Link pinout 
 
 ![ST-Link pinout](https://raw.githubusercontent.com/marianomd/opentx/2.3_M0/doc/flysky/flysky-i6x%20st-link%20pinout%20small.png)
 
-## Linux instructions
 ### Compile
 `docker run --rm -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build`
 
