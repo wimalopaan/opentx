@@ -11,6 +11,7 @@ This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You 
   * ExpressLRS V2 configuration (ELRSV2.lua port)
 * Telemetry
 * Audio tones, alarms and vario custom implementation
+* Bootloader (DFU bootloader) - Start by pushing trims to the center, like regular OpenTX one
 * USB (To enable on standard cable: General Settings > USB Detect set to "Once")
   * Joystick mode
   * Mass Storage to backup/restore eeprom
