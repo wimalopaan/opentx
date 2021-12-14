@@ -34,20 +34,6 @@ https://t.me/otx_flysky_i6x
 
 Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
 
-## Info for developers
-### ST-Link pinout 
-
-![ST-Link pinout](https://raw.githubusercontent.com/marianomd/opentx/2.3_M0/doc/flysky/flysky-i6x%20st-link%20pinout%20small.png)
-
-### Compile
-`docker run --rm -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build`
-
-### Flash
-`sudo st-flash write <file_to_flash>.bin 0x08000000`
-
-### Debug tty:
-`sudo cat /dev/ttyUSB0 115200`
-
 ## Contributors
 
 * Janek (@ajjjjjjjj) ongoing collaboration.
