@@ -37,7 +37,7 @@ Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
 
 ## Contributors
 
-* ExpressLRS V2 configuration, whole USB support, sound support, bootloader, backporting, bugfixing - Janek (@ajjjjjjjj) ongoing collaboration.
+* ExpressLRS V2 configuration, whole USB support, sound support, bootloader, backporting, bugfixing - Janek (@ajjjjjjjj) ongoing collaboration: https://github.com/ajjjjjjjj
 * All the RF code was taken from the great KotelloRC's erfly6: Er9X for i6 and i6x. You can find his project here: https://bitbucket.org/KotelloRC/erfly6/src/master/
 * ADC code taken from OpenGround: https://github.com/fishpepper/OpenGround
 * This work is based on Jakub's (qba667) work and is forked from his repo.
