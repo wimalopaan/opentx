@@ -45,7 +45,7 @@ char commandStatusInfo[24];
 #define deviceId 0xEE
 #define handsetId 0xEF
 
-char deviceName[21]; 
+char deviceName[16]; 
 uint8_t lineIndex = 1;
 uint8_t pageOffset = 0;
 uint8_t edit = 0; 
@@ -83,6 +83,7 @@ tmr10ms_t selfRefreshDelay = 0;
 #define textXoffset    0
 #define textYoffset    3
 #define textSize       8
+
 #define tostring(c)       (char *)(c + 48)
 #define getTime           get_tmr10ms
 #define EVT_VIRTUAL_EXIT  EVT_KEY_BREAK(KEY_EXIT)
@@ -107,7 +108,7 @@ void handleDevicePageEvent(event_t event);
 
 
 void crossfireTelemetryPush4(const uint8_t cmd, const uint8_t third, const uint8_t fourth) {
-  TRACE("crsf push %x", cmd);
+  // TRACE("crsf push %x", cmd);
   uint8_t crsfPushData[4] { deviceId, handsetId, third, fourth };
   crossfireTelemetryPush(cmd, crsfPushData, 4);
 }
@@ -162,6 +163,7 @@ uint8_t getSemicolonCount(const char * str, const uint8_t len) {
   }
   return count;
 }
+
 void incrField(int8_t step) {
   FieldProps * field = getField(lineIndex);
   if (field->type == 10) {
@@ -174,6 +176,7 @@ void incrField(int8_t step) {
     field->value = limit<uint8_t>(min, field->value + step, max);
   }
 }
+
 void selectField(int8_t step) {
   int8_t newLineIndex = lineIndex;
   FieldProps * field;
@@ -262,13 +265,15 @@ void fieldCommandSave(FieldProps * field) {
   }
 }
 
-void fieldCommandDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
+void fieldUnifiedDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   const char* backPat = "[----BACK----]";
   const char* folderPat = "> %.*s";
   const char* cmdPat = "[%.*s]";
+  uint8_t textIndent = textXoffset + 9;
   char *pat;
-  if (field->type == 11) { 
+  if (field->type == 11) {
     pat = (char *)folderPat;
+    textIndent = textXoffset;
   } else if (field->type == 14) { 
     pat = (char *)backPat;
   } else { 
@@ -276,7 +281,7 @@ void fieldCommandDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   }
   char stringTmp[24];
   sprintf((char *)&stringTmp, pat, field->nameLength, (char *)&namesBuffer[field->nameOffset]);
-  lcdDrawText(10, y, (char *)&stringTmp, attr | BOLD);
+  lcdDrawText(textIndent, y, (char *)&stringTmp, attr | BOLD);
 }
 
 void UIbackExec(FieldProps * field = 0) {
@@ -293,7 +298,7 @@ void parseDeviceInfoMessage(uint8_t* data) {
   TRACE("parseDeviceInfoMessage %x", id);
   offset = strlen((char*)&data[3]) + 1 + 3; 
   if ( deviceId == id) { 
-    strcpy(deviceName, (char *)&data[3]);
+    memcpy(deviceName, (char *)&data[3], 16);
     deviceIsELRS_TX = 1; 
     uint8_t newFieldCount = data[offset+12];
     reloadAllField();
@@ -311,10 +316,10 @@ void parseDeviceInfoMessage(uint8_t* data) {
 const FieldFunctions functions[] = {
   { .load=fieldTextSelectionLoad, .save=fieldTextSelectionSave, .display=fieldTextSelectionDisplay }, 
   { .load=nullptr, .save=nullptr, .display=fieldStringDisplay }, 
-  { .load=nullptr, .save=fieldFolderOpen, .display=fieldCommandDisplay }, 
+  { .load=nullptr, .save=fieldFolderOpen, .display=fieldUnifiedDisplay }, 
   { .load=nullptr, .save=nullptr, .display=fieldStringDisplay }, 
-  { .load=fieldCommandLoad, .save=fieldCommandSave, .display=fieldCommandDisplay }, 
-  { .load=nullptr, .save=UIbackExec, .display=fieldCommandDisplay } 
+  { .load=fieldCommandLoad, .save=fieldCommandSave, .display=fieldUnifiedDisplay }, 
+  { .load=nullptr, .save=UIbackExec, .display=fieldUnifiedDisplay } 
 };
 
 void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
@@ -467,7 +472,7 @@ void lcd_title() {
     if (titleShowWarn) {
       lcdDrawText(textXoffset, 1, elrsFlagsInfo, INVERS);
     } else {
-      sprintf(deviceName, (allParamsLoaded == 1) ? deviceName : "Loading...");
+      sprintf(deviceName, (allParamsLoaded == 1) ? "%.16s" : "Loading...", deviceName);
       lcdDrawText(textXoffset, 1, deviceName, INVERS);
     }
   }
@@ -549,7 +554,7 @@ void runDevicePage(event_t event) {
   if (elrsFlags > 0x1F) {
     lcd_warn();
   } else {
-    for (uint32_t y = 1; y < maxLineIndex+1; y++) {
+    for (uint32_t y = 1; y < maxLineIndex+2; y++) {
       if (pageOffset+y >= fieldsLen) break;
       field = getField(pageOffset+y);
       if (field == 0) {
@@ -572,18 +577,18 @@ uint8_t popupCompat(char * title, event_t event) {
   lcdDrawRect(10, 16, LCD_W-20, 40);
   lcdDrawSizedText(WARNING_LINE_X, WARNING_LINE_Y, title, 23);
   lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS);
+
   if (event == EVT_VIRTUAL_EXIT) {
     return 1; 
   } else if (event == EVT_VIRTUAL_ENTER) {
     return 2; 
   }
-  
   return 0; 
 }
 
 void runPopupPage(event_t event) {
-  if (event == EVT_VIRTUAL_EXIT) {             
-    crossfireTelemetryPush4(0x2D, fieldPopup->id, 5); 
+  if (event == EVT_VIRTUAL_EXIT) {
+    crossfireTelemetryPush4(0x2D, fieldPopup->id, 5);
     fieldTimeout = getTime() + 200; 
   }
 
@@ -617,8 +622,11 @@ void ELRSV2_stop() {
   registerCrossfireTelemetryCallback(nullptr);
   reloadAllField(); 
   UIbackExec(); 
-  cScriptRunning = 0;
-  popMenu(); 
+  fieldPopup = 0;
+  if (cScriptRunning) {
+    cScriptRunning = 0;
+    popMenu();
+  }
 }
 
 void ELRSV2_run(event_t event) {

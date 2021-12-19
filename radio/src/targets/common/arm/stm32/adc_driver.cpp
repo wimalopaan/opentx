@@ -42,7 +42,7 @@
   const int8_t ana_direction[NUM_ANALOGS] = {1,-1,-1,1,  -1,1,  1};
 #elif defined(REV4a)
   const int8_t ana_direction[NUM_ANALOGS] = {1,-1,1,-1,  1,-1,0,  1,1,  1};
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
     const int8_t ana_direction[NUM_ANALOGS] = {1,-1,1,-1,  1,-1,0};
 #else
   const int8_t ana_direction[NUM_ANALOGS] = {1,-1,1,-1,  1,1,0,   1,1,  1};

@@ -115,7 +115,7 @@ void usbStart()
 #endif
       break;
 #endif
-#if defined(USB_SERIAL) && !defined(PCBI6)
+#if defined(USB_SERIAL) && !defined(PCBI6X)
     case USB_SERIAL_MODE:
       // initialize USB as CDC device (virtual serial port)
 #if defined(STM32F0)
@@ -125,7 +125,7 @@ void usbStart()
 #endif
       break;
 #endif
-#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
+#if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
     default:
     case USB_MASS_STORAGE_MODE:
       // initialize USB as MSC device
@@ -178,7 +178,6 @@ void usbJoystickUpdate()
     HID_Buffer[1] = 0;
     HID_Buffer[2] = 0;
     for (int i = 0; i < 8; ++i) {
-      if ( i+8 >= MAX_OUTPUT_CHANNELS) break;
       if ( channelOutputs[i+8] > 0 ) {
         HID_Buffer[0] |= (1 << i);
       }
@@ -197,7 +196,7 @@ void usbJoystickUpdate()
       int16_t value = channelOutputs[i] + 1024;
       if ( value > 2047 ) value = 2047;
       else if ( value < 0 ) value = 0;
-#if defined(PCBI6)
+#if defined(PCBI6X)
       HID_Buffer[i*2 +2] = static_cast<uint8_t>(value & 0xFF);
       HID_Buffer[i*2 +3] = static_cast<uint8_t>((value >> 8) & 0x07);
 #else
@@ -207,10 +206,10 @@ void usbJoystickUpdate()
 
     }
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
     // HID_Buffer index 8 & 9 causes mess. Looks like clock issue but cannot confirm.
     // i reduced buttons to 16 so it will affect only one analog and remapped it [3] -> [5]
-    HID_Buffer[12] = HID_Buffer[8]; // ch[3] remap to ch[5]
+    HID_Buffer[12] = HID_Buffer[8]; // ch[3] remap to ch[5]  // channel 5 void
     HID_Buffer[13] = HID_Buffer[9];
     HID_Buffer[8] = 0;
     HID_Buffer[9] = 0;

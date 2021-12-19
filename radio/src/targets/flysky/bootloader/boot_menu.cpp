@@ -28,7 +28,7 @@ void bootloaderDrawScreen(BootloaderState st, int opt, const char* str) {
     lcdDrawText(FW, 3*FH, "Restore EEPROM", opt == 0 ? INVERS : 0);
     lcdDrawText(FW, 4*FH, "Exit");
 #else
-    lcdDrawText(FW, 4*FH, "Exit", opt == 0 ? INVERS : 0); // only Exit option on PCBI6
+    lcdDrawText(FW, 4*FH, "Exit", opt == 0 ? INVERS : 0); // only Exit option on PCBI6X
 #endif
 
     lcdDrawText(FW, 5 * FH + FH / 2, STR_OR_PLUGIN_USB_CABLE);

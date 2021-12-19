@@ -126,7 +126,7 @@ extern const char STR_OPEN9X[];
   #define OFS_TRNMODE            (OFS_VBEEPMODE + sizeof(TR_VBEEPMODE))
 #endif
 #define OFS_TRNCHN             (OFS_TRNMODE + sizeof(TR_TRNMODE))
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
   #define OFS_UART3MODES       (OFS_TRNCHN + sizeof(TR_TRNCHN))
   #define OFS_SWTYPES          (OFS_UART3MODES + sizeof(TR_UART3MODES))
   #define OFS_POTTYPES         (OFS_SWTYPES + sizeof(TR_SWTYPES))
@@ -958,7 +958,7 @@ extern const char STR_BLCOLOR[];
   extern const char STR_MODS_FORBIDDEN[];
 #endif
 
-#if defined(PCBTARANIS) || defined(DSM2) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(DSM2) || defined(PCBI6X)
   extern const char STR_MODULE_RANGE[];
 #endif
 

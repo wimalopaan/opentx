@@ -209,7 +209,7 @@ void extmoduleSendNextFrame();
 
 // Trainer driver
 #define SLAVE_MODE()                    (false) // (g_model.trainerMode == TRAINER_MODE_SLAVE)
-#if defined(PCBX9E) || defined(PCBI6)
+#if defined(PCBX9E) || defined(PCBI6X)
   #define TRAINER_CONNECTED()           (true)
 #elif defined(PCBX7)
   #define TRAINER_CONNECTED()           (GPIO_ReadInputDataBit(TRAINER_DETECT_GPIO, TRAINER_DETECT_GPIO_PIN) == Bit_SET)
@@ -503,10 +503,11 @@ void ledBlue(void);
 #define LCD_CONTRAST_MAX                63
 #define LCD_CONTRAST_DEFAULT            38
 
+#define lcdRefreshWait()
+
 void lcdInit(void);
 void lcdInitFinish(void);
 void lcdOff(void);
-void lcdRefreshWait(void);
 void lcdSetRefVolt(unsigned char val);
 void lcdSetContrast(void);
 void lcdRefresh();

@@ -20,30 +20,14 @@
 
 #include "opentx.h"
 
-void pushPrompt(uint16_t value)
-{
-  TRACE("pushPrompt %u", value);
-}
-
-void pushCustomPrompt(uint8_t value)
-{
-  pushPrompt(PROMPT_CUSTOM_BASE + value);
-}
-
-void pushNumberPrompt(uint8_t value)
-{
-  pushPrompt(PROMPT_I18N_BASE + value);
-}
-
-void pushUnit(uint8_t unit, uint8_t idx, uint8_t id){
-  TRACE("pushUnit %u", unit);
-}
+#define pushPrompt(value)
+#define pushCustomPrompt(value)
+#define pushNumberPrompt(value)
 
 void audioEvent(unsigned int index){
-  TRACE("audioEvent %u", index);
+//  TRACE("audioEvent %u", index);
 }
 
 bool isPlaying(){
-  TRACE("isPlaying");
 	return false;
 }

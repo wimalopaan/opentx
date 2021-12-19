@@ -4,8 +4,8 @@ set(GUI_SRC
   ../common/stdlcd/popups.cpp
   )
 
-#define (PCBI6)
-#if(PXX2 OR LUA OR MULTIMODULE OR PCBI6)
+#define (PCBI6X)
+#if(PXX2 OR LUA OR MULTIMODULE OR PCBI6X)
   set(GUI_SRC ${GUI_SRC} ../common/stdlcd/radio_tools.cpp)
 #endif()
 

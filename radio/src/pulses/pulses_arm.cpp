@@ -42,7 +42,7 @@ uint8_t getRequiredProtocol(uint8_t port) {
   uint8_t required_protocol;
 
   switch (port) {
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
     case INTERNAL_MODULE:
       switch (g_model.moduleData[INTERNAL_MODULE].type) {
 #if defined(TARANIS_INTERNAL_PPM)
@@ -76,7 +76,7 @@ uint8_t getRequiredProtocol(uint8_t port) {
           required_protocol = PROTO_PXX_EXTERNAL_MODULE;  // either PXX or PXX2 depending on compilation options
           break;
 #endif
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
         case MODULE_TYPE_SBUS:
           required_protocol = PROTO_SBUS;
           break;
@@ -188,7 +188,7 @@ bool setupPulses(uint8_t port) {
       case PROTO_AFHDS2A_SPI:
         disable_afhds2a(port);
         break;
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
       case PROTO_SBUS:
         disable_serial(port);
         break;
@@ -213,7 +213,7 @@ bool setupPulses(uint8_t port) {
       break;
 #endif
 
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
     case PROTO_SBUS:
       setupPulsesSbus(port);
       scheduleNextMixerCalculation(port, SBUS_PERIOD);
@@ -311,7 +311,7 @@ bool setupPulses(uint8_t port) {
         init_serial(port, MULTIMODULE_BAUDRATE, MULTIMODULE_PERIOD * 2000);
         break;
 #endif
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
       case PROTO_SBUS:
         init_serial(port, SBUS_BAUDRATE, SBUS_PERIOD_HALF_US);
         break;

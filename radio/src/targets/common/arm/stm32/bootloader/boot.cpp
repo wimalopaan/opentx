@@ -26,14 +26,14 @@
 
 #if defined(PCBXLITE)
 #define BOOTLOADER_KEYS 0x0f
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
 #define BOOTLOADER_KEYS 0x2100
 #else
 #define BOOTLOADER_KEYS 0x42
 #endif
 #define APP_START_ADDRESS (uint32_t)(FIRMWARE_ADDRESS + BOOTLOADER_SIZE)
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 #define MAIN_MENU_LEN 1
 #elif defined(EEPROM)
 #define MAIN_MENU_LEN 3
@@ -217,7 +217,7 @@ int main() {
   uint32_t nameCount = 0;
 
   wdt_reset();
-#if defined(PCBI6)
+#if defined(PCBI6X)
   RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2_LIST, ENABLE);
@@ -295,7 +295,7 @@ int main() {
             if (!unlocked) {
               unlocked = 1;
               unlockFlash();
-#if defined(PCBI6) && defined(EEPROM)
+#if defined(PCBI6X) && defined(EEPROM)
               i2cInit();
               eepromInit();
 #endif

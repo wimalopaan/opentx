@@ -39,7 +39,7 @@ const char STR_OPEN9X[]  =
 #endif
     ISTR(TRNMODE)
     ISTR(TRNCHN)
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
     ISTR(UART3MODES)
     ISTR(SWTYPES)
     ISTR(POTTYPES)
@@ -692,7 +692,7 @@ const char STR_BLCOLOR[]   = TR_BLCOLOR;
   const char STR_MODS_FORBIDDEN[]  = TR_MODS_FORBIDDEN;
 #endif
 
-#if defined(PCBTARANIS) || defined(DSM2) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(DSM2) || defined(PCBI6X)
   const char STR_MODULE_RANGE[]  = TR_MODULE_RANGE;
 #endif
 
@@ -709,7 +709,7 @@ const char STR_BLCOLOR[]   = TR_BLCOLOR;
   const char STR_ABOUTUS[]  = TR_ABOUTUS;
   const char STR_ABOUT_OPENTX_1[]  = TR_ABOUT_OPENTX_1;
   const char STR_ABOUT_OPENTX_2[]  = TR_ABOUT_OPENTX_2;
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
   const char STR_ABOUT_OPENTX_3[]  = TR_ABOUT_OPENTX_3;
   const char STR_ABOUT_OPENTX_4[]  = TR_ABOUT_OPENTX_4;
   const char STR_ABOUT_OPENTX_5[]  = TR_ABOUT_OPENTX_5;

@@ -37,7 +37,7 @@
   #include "flysky_ibus.h"
   #include "multi.h"
 #endif
-#if defined(PCBI6)
+#if defined(PCBI6X)
   #include "flysky_ibus.h"
 #endif
 
@@ -237,7 +237,7 @@ inline uint8_t modelTelemetryProtocol()
   }
 #endif
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
   if (IS_INTERNAL_MODULE_ENABLED()) {
     return PROTOCOL_FLYSKY_IBUS;
   }
@@ -274,7 +274,7 @@ extern Fifo<uint8_t, LUA_TELEMETRY_INPUT_FIFO_SIZE> * luaInputTelemetryFifo;
 #endif
 
 #if defined(STM32)
-  #if defined(PCBI6)
+  #if defined(PCBI6X)
     #define IS_TELEMETRY_INTERNAL_MODULE() (true)
   #else
     #define IS_TELEMETRY_INTERNAL_MODULE() (g_model.moduleData[INTERNAL_MODULE].type == MODULE_TYPE_XJT)

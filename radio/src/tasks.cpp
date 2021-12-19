@@ -107,7 +107,7 @@ TASK_FUNCTION(mixerTask) {
   mixerSchedulerStart();
 
   while (true) {
-  int timeout = 0;
+    int timeout = 0;
     for (; timeout < MIXER_MAX_PERIOD; timeout += MIXER_FREQUENT_ACTIONS_PERIOD) {
 
       // run periodicals before waiting for the trigger
@@ -146,7 +146,7 @@ TASK_FUNCTION(mixerTask) {
       RTOS_LOCK_MUTEX(mixerMutex);
 
       doMixerCalculations();
-      
+
       sendSynchronousPulses(1 << EXTERNAL_MODULE);
 
       doMixerPeriodicUpdates();
@@ -174,7 +174,7 @@ TASK_FUNCTION(mixerTask) {
   }
 }
 
-#define MENU_TASK_PERIOD_TICKS 25  // 50ms
+#define MENU_TASK_PERIOD_TICKS (50 / RTOS_MS_PER_TICK)   // 50ms
 
 #if defined(COLORLCD) && defined(CLI)
 bool perMainEnabled = true;

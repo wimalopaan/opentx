@@ -63,14 +63,14 @@
 #elif defined(JUMPER_RELEASE)
   const char vers_stamp[]  = "FW" TAB ": opentx-" FLAVOUR    "\036VERS" TAB ": Factory (" GIT_STR ")" "\036BUILT BY : OpenTX" "\036DATE" TAB ": " DATE " " TIME "\036EEPR" TAB ": " EEPROM_STR;
 #else
-  const char vers_stamp[]  = "FW" TAB ": opentx-" FLAVOUR    "\036VERS" TAB ": " VERSION DISPLAY_VERSION " (" GIT_STR ")" "\036DATE" TAB ": " DATE " " TIME "\036EEPR" TAB ": " EEPROM_STR;
+  const char vers_stamp[]  = "FW" TAB ": openi6x" "\036VERS" TAB ": " VERSION DISPLAY_VERSION " (" GIT_STR ")" "\036DATE" TAB ": " DATE " " TIME "\036EEPR" TAB ": " EEPROM_STR;
 #endif
 
 /**
  * Retrieves the version of the bootloader or firmware
  * @return
  */
-#if defined(STM32)
+#if defined(STM32) && !defined(PCBI6X) // FLASH space opt
 
 __SECTION_USED(".fwversiondata")   const char firmware_version[] = "opentx-" FLAVOUR "-" VERSION " (" GIT_STR ")";
 __SECTION_USED(".bootversiondata") const char boot_version[] =     "opentx-" FLAVOUR "-" VERSION " (" GIT_STR ")";

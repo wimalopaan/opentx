@@ -490,7 +490,7 @@ int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, ui
         frskySportSetDefault(index, id, subId, instance);
         break;
 #endif
-#if defined(TELEMETRY_FRSKY) && !defined(PCBI6)
+#if defined(TELEMETRY_FRSKY) && !defined(PCBI6X)
       case TELEM_PROTO_FRSKY_D:
         frskyDSetDefault(index, id);
         break;
@@ -505,7 +505,7 @@ int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, ui
         spektrumSetDefault(index, id, subId, instance);
         break;
 #endif
-#if defined(MULTIMODULE) || defined(PCBI6)
+#if defined(MULTIMODULE) || defined(PCBI6X)
       case TELEM_PROTO_FLYSKY_IBUS:
         flySkySetDefault(index, id, subId, instance);
         break;

@@ -98,7 +98,7 @@
 #define LEN_COUNTRYCODES               TR("\002", "\007")
 #define TR_COUNTRYCODES                TR("US""JP""EU", "America""Japan\0 ""Europe\0")
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 #define LEN_USBDETECTMODES             TR("\004", "\004")
 #define TR_USBDETECTMODES              TR("Auto""Once", "Auto""Once")
 #endif
@@ -107,7 +107,7 @@
 #define TR_USBMODES                    TR("Ask\0  ""Joyst\0""Storag""Serial", "Ask\0    ""Joystick""Storage\0""Serial\0 ")
 
 #define LEN_TARANIS_PROTOCOLS  "\004"
-#if defined(PCBI6)
+#if defined(PCBI6X)
   #define TR_TARANIS_PROTOCOLS   "OFF\0""PPM\0""CRSF"
 #else
   #define TR_TARANIS_PROTOCOLS   "OFF\0""PPM\0""XJT\0""DSM2""CRSF""MULT""R9M\0""SBUS"
@@ -432,7 +432,7 @@
 #elif defined(PCBX9E)
   #define TR_POTS_VSRCRAW              "\310F1\0""\310F2\0""\310F3\0""\310F4\0""\311S1\0""\311S2\0""\311LS\0""\311RS\0"
   #define TR_SW_VSRCRAW                "\312SA\0""\312SB\0""\312SC\0""\312SD\0""\312SE\0""\312SF\0""\312SG\0""\312SH\0""\312SI\0""\312SJ\0""\312SK\0""\312SL\0""\312SM\0""\312SN\0""\312SO\0""\312SP\0""\312SQ\0""\312SR\0"
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
   #define TR_POTS_VSRCRAW              "\310P1\0""\310P2\0"
   #define TR_SW_VSRCRAW                "\312SA\0""\312SB\0""\312SC\0""\312SD\0"
 #elif defined(PCBXLITE)
@@ -470,13 +470,13 @@
   #define TR_ROTENC_SWITCHES
 #endif
 
-#if !defined(PCBTARANIS) && !defined(PCBHORUS)  && !defined(PCBI6)
+#if !defined(PCBTARANIS) && !defined(PCBHORUS)  && !defined(PCBI6X)
   #define TR_2POS_SWITCHES             "THR""RUD""ELE""AIL""GEA""TRN"
 #endif
 
 #define TR_ON_ONE_SWITCHES             "ON\0""One"
 
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
   // only special switches here
   #define TR_VSWITCHES                 "---" TR_TRIMS_SWITCHES TR_ON_ONE_SWITCHES
 #elif defined(PCBSKY9X)
@@ -546,7 +546,7 @@
 
 #if defined(PCBTARANIS) || defined(PCBHORUS)
   #define TR_ENTER                     "[ENTER]"
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
   #define TR_ENTER                     "[ OK ]"
 #else
   #define TR_ENTER                     "[MENU]"
@@ -554,8 +554,8 @@
 
 #if defined(PCBHORUS)
   #define TR_EXIT                      "[RTN]"
-#elif defined(PCBI6)
-  #define TR_EXIT                      "[CNCL]"
+#elif defined(PCBI6X)
+  #define TR_EXIT                      "[CANCEL]"
 #else
   #define TR_EXIT                      "[EXIT]"
 #endif
@@ -968,9 +968,9 @@
 #define TR_RESET_TELEMETRY             "Reset telemetry"
 #define TR_STATISTICS                  "Statistics"
 #define TR_ABOUT_US                    "About"
-#define TR_USB_JOYSTICK                "USB Joystick (HID)"
-#define TR_USB_MASS_STORAGE            "USB Storage (SD)"
-#define TR_USB_SERIAL                  "USB Serial (Debug)"
+#define TR_USB_JOYSTICK                "USB Joystick"
+#define TR_USB_MASS_STORAGE            "USB Storage"
+#define TR_USB_SERIAL                  "USB Serial"
 #define TR_SETUP_SCREENS               "Setup screens"
 #define TR_MONITOR_SCREENS             "Monitors"
 #define TR_AND_SWITCH                  "AND switch"
@@ -1088,7 +1088,7 @@
 // About screen
 #define TR_ABOUTUS                     TR(" ABOUT ", "ABOUT")
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 #define TR_ABOUT_OPENTX_1              TR("OpenI6X", "")
 #define TR_ABOUT_OPENTX_2              TR("is\001based\001on\001OpenTX", "")
 

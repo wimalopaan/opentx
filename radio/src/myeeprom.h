@@ -91,7 +91,7 @@
 #define MODEL_GVAR_MIN(idx) (CFN_GVAR_CST_MIN + g_model.gvars[idx].min)
 #define MODEL_GVAR_MAX(idx) (CFN_GVAR_CST_MAX - g_model.gvars[idx].max)
 
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
 enum SwitchConfig {
   SWITCH_NONE,
   SWITCH_TOGGLE,
@@ -343,7 +343,7 @@ enum Protocols {
 #if defined(PXX2)
   PROTO_PXX2,
 #endif
-#if defined(PCBI6)
+#if defined(PCBI6X)
   PROTO_AFHDS2A_SPI,
 #endif
   PROTO_NONE
@@ -448,7 +448,7 @@ enum MMRFrskySubtypes {
 };
 
 #define HAS_RF_PROTOCOL_FAILSAFE(rf) ((rf) == RF_PROTO_X16)
-#if defined(PCBI6)
+#if defined(PCBI6X)
 #define HAS_RF_PROTOCOL_MODELINDEX(rf) (1)
 #else
 #define HAS_RF_PROTOCOL_MODELINDEX(rf) (((rf) == RF_PROTO_X16) || ((rf) == RF_PROTO_LR12))
@@ -463,12 +463,12 @@ enum DSM2Protocols {
 enum ModuleTypes {
   MODULE_TYPE_NONE = 0,
   MODULE_TYPE_PPM,
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
   MODULE_TYPE_XJT,
   MODULE_TYPE_DSM2,
 #endif
   MODULE_TYPE_CROSSFIRE,
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
   MODULE_TYPE_MULTIMODULE,
   MODULE_TYPE_R9M,
   MODULE_TYPE_SBUS,
@@ -477,7 +477,7 @@ enum ModuleTypes {
   MODULE_TYPE_COUNT
 };
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 enum AFHDS2A_Subtype {
   AFHDS2A_SUBTYPE_FIRST,
   AFHDS2A_SUBTYPE_PWM_IBUS = AFHDS2A_SUBTYPE_FIRST,

@@ -94,7 +94,7 @@ void menuRadioHardware(event_t event)
 }
 #endif // PCBSKY9X
 
-#if defined(PCBTARANIS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBI6X)
 enum MenuRadioHardwareItems {
   ITEM_RADIO_HARDWARE_LABEL_STICKS,
   ITEM_RADIO_HARDWARE_STICK1,
@@ -142,7 +142,7 @@ enum MenuRadioHardwareItems {
 #endif
 #if defined(PCBXLITE)
 #define SWITCH_TYPE_MAX(sw)            (SWITCH_3POS)
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
 #define SWITCH_TYPE_MAX(sw)            ((MIXSRC_SC-MIXSRC_FIRST_SWITCH == sw) ? SWITCH_3POS : SWITCH_2POS)
 #else
 #define SWITCH_TYPE_MAX(sw)            ((MIXSRC_SF-MIXSRC_FIRST_SWITCH == sw || MIXSRC_SH-MIXSRC_FIRST_SWITCH == sw) ? SWITCH_2POS : SWITCH_3POS)

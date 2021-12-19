@@ -35,7 +35,7 @@ void menuChannelsView(event_t event)
       popMenu();
       break;
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
     case EVT_KEY_FIRST(KEY_UP):
     case EVT_KEY_FIRST(KEY_DOWN):
 #else

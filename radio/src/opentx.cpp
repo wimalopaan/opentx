@@ -41,7 +41,7 @@ safetych_t safetyCh[MAX_OUTPUT_CHANNELS];
 // __DMA for the MSC_BOT_Data member
 union ReusableBuffer reusableBuffer __DMA;
 
-#if defined(STM32) && (!defined(PCBI6) || defined(PCBI6_USB_MSD))
+#if defined(STM32) && (!defined(PCBI6X) || defined(PCBI6X_USB_MSD))
 uint8_t *MSC_BOT_Data = reusableBuffer.MSC_BOT_Data;
 #endif
 
@@ -241,7 +241,7 @@ void generalDefault() {
 #endif
   g_eeGeneral.slidersConfig = 0x0f;  // 4 sliders
   g_eeGeneral.blOffBright = 20;
-#elif defined(PCBXLITE) || defined(PCBI6)
+#elif defined(PCBXLITE) || defined(PCBI6X)
   g_eeGeneral.potsConfig = 0x0F;  // S1 and S2 = pot without detent
 #elif defined(PCBX7)
   g_eeGeneral.potsConfig = 0x07;          // S1 = pot without detent, S2 = pot with detent
@@ -252,7 +252,7 @@ void generalDefault() {
 
 #if defined(PCBXLITE)
   g_eeGeneral.switchConfig = (SWITCH_2POS << 6) + (SWITCH_2POS << 4) + (SWITCH_3POS << 2) + (SWITCH_3POS << 0);  // 2x3POS, 2x2POS
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
   g_eeGeneral.switchConfig = (SWITCH_2POS << 6) + (SWITCH_3POS << 4) + (SWITCH_2POS << 2) + (SWITCH_2POS << 0);
 #elif defined(PCBX7)
   g_eeGeneral.switchConfig = 0x000006ff;  // 4x3POS, 1x2POS, 1xTOGGLE
@@ -303,7 +303,7 @@ void generalDefault() {
   strcpy(g_eeGeneral.themeName, theme->getName());
   theme->init();
 #endif
-#if defined(PCBI6)
+#if defined(PCBI6X)
   for (uint8_t i = 0; i < NUM_CALIBRATED_ANALOGS; ++i) {
     g_eeGeneral.calib[i].mid = 0x400;
     g_eeGeneral.calib[i].spanNeg = 0x300;
@@ -464,7 +464,7 @@ void modelDefault(uint8_t id) {
   g_model.moduleData[INTERNAL_MODULE].channelsCount = defaultModuleChannels_M8(INTERNAL_MODULE);
 #elif defined(PCBSKY9X)
   g_model.moduleData[EXTERNAL_MODULE].type = MODULE_TYPE_PPM;
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
   g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
   g_model.moduleData[INTERNAL_MODULE].channelsStart = 0;
   g_model.moduleData[INTERNAL_MODULE].channelsCount = MAX_OUTPUT_CHANNELS;
@@ -1418,7 +1418,7 @@ void doMixerPeriodicUpdates()
         s_cnt_1s -= 10;
         sessionTimer += 1;
         inactivity.counter++;
-#if defined(PCBI6)
+#if defined(PCBI6X)
         if ((((uint8_t)inactivity.counter) & 0x07) == 0x01 && g_eeGeneral.inactivityTimer && inactivity.counter > ((uint16_t)g_eeGeneral.inactivityTimer * 60))
 #else
         if ((((uint8_t)inactivity.counter) & 0x07) == 0x01 && g_eeGeneral.inactivityTimer && g_vbat100mV > 50 && inactivity.counter > ((uint16_t)g_eeGeneral.inactivityTimer * 60))
@@ -1465,7 +1465,7 @@ void doMixerPeriodicUpdates()
       }
     }
 
-#if defined(PXX) || defined(DSM2) || defined(PCBI6)
+#if defined(PXX) || defined(DSM2) || defined(PCBI6X)
     static uint8_t countRangecheck = 0;
     for (uint8_t i = 0; i < NUM_MODULES; ++i) {
 #if defined(MULTIMODULE)
@@ -1488,24 +1488,17 @@ void doMixerPeriodicUpdates()
   s_mixer_first_run_done = true;
 }
 
-#define OPENTX_START_NO_SPLASH 0x01
-#define OPENTX_START_NO_CHECKS 0x02
-
 #if !defined(OPENTX_START_DEFAULT_ARGS)
 #define OPENTX_START_DEFAULT_ARGS 0
 #endif
 
-void opentxStart(const uint8_t startType = OPENTX_START_DEFAULT_ARGS) {
-  TRACE("opentxStart(%u)", startType);
+void opentxStart(const uint8_t startOptions = OPENTX_START_DEFAULT_ARGS) {
+  TRACE("opentxStart(%u)", startOptions);
 
-  if (startType & OPENTX_START_NO_CHECKS) {
-    return;
-  }
-  uint8_t calibration_needed = (g_eeGeneral.chkSum != evalChkSum());
-  //TRACE("gonna do chksum. saved: %d calculated: %d", g_eeGeneral.chkSum, evalChkSum());
-  //TRACE("calibration needed %d", calibration_needed);
+  uint8_t calibration_needed = !(startOptions & OPENTX_START_NO_CALIBRATION) && (g_eeGeneral.chkSum != evalChkSum());
+
 #if defined(GUI)
-  if (!calibration_needed && !(startType & OPENTX_START_NO_SPLASH)) {
+  if (!calibration_needed && !(startOptions & OPENTX_START_NO_SPLASH)) {
     doSplash();
   }
 #endif
@@ -1527,7 +1520,7 @@ void opentxStart(const uint8_t startType = OPENTX_START_DEFAULT_ARGS) {
 #if defined(GUI)
   if (calibration_needed) {
     chainMenu(menuFirstCalib);
-  } else {
+  } else if (!(startOptions & OPENTX_START_NO_CHECKS)) {
     checkAlarm();
     checkAll();
     PLAY_MODEL_NAME();
@@ -1604,7 +1597,8 @@ void opentxResume() {
   loadFontCache();
 #endif
 
-  opentxStart(OPENTX_START_NO_SPLASH);
+  // removed to avoid the double warnings (throttle, switch, etc.)
+  // opentxStart(OPENTX_START_NO_SPLASH | OPENTX_START_NO_CALIBRATION | OPENTX_START_NO_CHECKS);
 
   referenceSystemAudioFiles();
 

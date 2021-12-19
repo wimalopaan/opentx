@@ -357,7 +357,7 @@ extern uint8_t channel_order(uint8_t x);
 
 #if defined(COLORLCD)
   #define SPLASH_NEEDED()              (false)
-#elif defined(PCBTARANIS) || defined(PCBI6)
+#elif defined(PCBTARANIS) || defined(PCBI6X)
   #define SPLASH_NEEDED()              (g_eeGeneral.splashMode != 3)
 #else
   #define SPLASH_NEEDED()              (g_model.moduleData[EXTERNAL_MODULE].type != MODULE_TYPE_DSM2 && !g_eeGeneral.splashMode)
@@ -433,7 +433,7 @@ int zchar2str(char *dest, const char *src, int size);
 #include "keys.h"
 #include "pwr.h"
 
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
 div_t switchInfo(int switchPosition);
 extern uint8_t potsPos[NUM_XPOTS];
 #endif
@@ -501,7 +501,7 @@ void evalLogicalSwitches(bool isCurrentFlightmode=true);
 void logicalSwitchesCopyState(uint8_t src, uint8_t dst);
 #define LS_RECURSIVE_EVALUATION_RESET()
 
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
   void getSwitchesPosition(bool startup);
 #else
   #define getSwitchesPosition(...)
@@ -567,7 +567,7 @@ void flightReset(uint8_t check=true);
 PACK(struct GlobalData {
   uint8_t unexpectedShutdown:1;
   uint8_t sdcardPresent:1;
-#if defined(PCBI6)
+#if defined(PCBI6X)
   uint8_t usbDetect:1;
   uint8_t spare:5;
 #else
@@ -956,7 +956,7 @@ inline void customFunctionsReset()
 }
 
 #include "telemetry/telemetry.h"
-#if defined(PCBI6)
+#if defined(PCBI6X)
 #include "crc_driver.h"
 #else
 #include "crc.h"
@@ -1089,6 +1089,10 @@ void opentxClose(uint8_t shutdown=true);
 void opentxInit();
 void opentxResume();
 
+constexpr uint8_t OPENTX_START_NO_SPLASH = 0x01;
+constexpr uint8_t OPENTX_START_NO_CALIBRATION = 0x02;
+constexpr uint8_t OPENTX_START_NO_CHECKS = 0x04;
+
 #if defined(STATUS_LEDS)
   #define LED_ERROR_BEGIN()            ledRed()
   #define LED_ERROR_END()              ledBlue()
@@ -1178,7 +1182,7 @@ union ReusableBuffer
     uint8_t maxNameLen;
   } modelFailsafe;
 
-#if defined(STM32) && (!defined(PCBI6) || defined(PCBI6_USB_MSD) || defined(PCBI6_ELRSV2))
+#if defined(STM32) && (!defined(PCBI6X) || defined(PCBI6X_USB_MSD) || defined(PCBI6X_ELRSV2))
   // Data for the USB mass storage driver. If USB mass storage runs no menu is not allowed to be displayed
   uint8_t MSC_BOT_Data[MSC_MEDIA_PACKET];
 #endif

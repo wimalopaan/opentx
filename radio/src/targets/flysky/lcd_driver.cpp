@@ -165,26 +165,25 @@ void lcdInit()
   LCD_RD_HI();
   LCD_RS_HI();
   lcdReset();
+  lcdClear();
+  lcdRefresh();
 }
 
 
-static void lcdRefreshInternal(uint8_t clear)
-{
+void lcdRefresh() {
     uint8_t *p = displayBuf;
-    int page = 0;
+    int page = 0xB0;
 	do {
-        int line = 4;
-		lcdSendCtl(page | 0xB0);   //page selection
-		lcdSendCtl(line);            //line -> contoler is 132 lines while lcd only 128
-		lcdSendCtl(0x10u);
+    uint8_t line = LCD_W;
+    lcdSendCtl(page); // page selection
+    lcdSendCtl(4);    // start at line 4 -> controller is 132 lines while lcd 128
+    lcdSendCtl(0x10u);// column address 0
 		do {
-			lcdSendGFX(clear ? 0 : *p++);
-			++line;
-		} while (line < 132);
+			lcdSendGFX(*p++);
+		} while (--line);
 		++page;
-	} while (page < 8);
+	} while (page < 0xB8);
 }
-
 
 void lcdOff(){
     // switch display off
@@ -194,24 +193,10 @@ void lcdOff(){
 }
 
 void lcdSetRefVolt(uint8_t val){
-    if(val<LCD_CONTRAST_MIN){
-        val = LCD_CONTRAST_MIN;
-    }
-    if(val>LCD_CONTRAST_MAX){
-        val = LCD_CONTRAST_MAX;
-    }
+    limit<uint8_t>(LCD_CONTRAST_MIN, val, LCD_CONTRAST_MAX);
     lcdSendCtl(LCD_CMD_EV);
     lcdSendCtl(val);
 }
-
-void lcdRefresh(){
-    lcdRefreshInternal(0);
-}
-
-void lcdRefreshWait(){
-    lcdRefreshInternal(0);
-}
-
 
 void lcdReset(){
     // wait for voltages to be stable
@@ -223,5 +208,4 @@ void lcdReset(){
     for (uint8_t i=0; i<sizeof(lcdInitSequence); i++) {
       lcdSendCtl(lcdInitSequence[i]);
     }
-    lcdRefreshInternal(1);
 }
