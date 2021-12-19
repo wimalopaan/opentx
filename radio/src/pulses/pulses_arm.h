@@ -139,7 +139,7 @@ void Hubsan_Init();
 inline void startPulses() {
   s_pulses_paused = false;
 
-#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
   setupPulses(INTERNAL_MODULE);
   setupPulses(EXTERNAL_MODULE);
 #else

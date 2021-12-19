@@ -20,7 +20,7 @@
 
 #include "opentx.h"
 
-#if defined(PCBI6_ELRSV2)
+#if defined(PCBI6X_ELRSV2)
 void addRadioTool(uint8_t index, const char * label, void (* tool)(event_t event), event_t event)
 {
   int8_t sub = menuVerticalPosition - HEADER_LINE;

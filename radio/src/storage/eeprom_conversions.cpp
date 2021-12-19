@@ -497,7 +497,7 @@ PACK(typedef struct {
   uint8_t nPotsToWarn; \
   int8_t potPosition[NUM_POTS+NUM_SLIDERS]; \
   uint8_t spare[2];
-#elif defined(PCBSKY9X) || defined(PCBI6)
+#elif defined(PCBSKY9X) || defined(PCBI6X)
 #define MODELDATA_EXTRA_216 \
   uint8_t externalModule; \
   ModuleData_v216 moduleData[NUM_MODULES+1]; \

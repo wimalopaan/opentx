@@ -268,7 +268,7 @@ bool isSwitchAvailable(int swtch, SwitchContext context) {
     swtch = -swtch;
   }
 
-#if defined(PCBSKY9X) || defined(PCBI6)
+#if defined(PCBSKY9X) || defined(PCBI6X)
   if (swtch >= SWSRC_FIRST_SWITCH && swtch <= SWSRC_LAST_SWITCH) {
     UNUSED(negative);
     return true;
@@ -465,7 +465,7 @@ bool isR9MModeAvailable(int mode) {
 #endif
 }
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 bool isSubtypeAvailable(int i){
   return true;
 }
@@ -481,7 +481,7 @@ bool isModuleAvailable(int module) {
     return false;
   }
 #endif
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
   #if !defined(DSM2)
     if (module == MODULE_TYPE_DSM2) {
       return false;
@@ -520,7 +520,7 @@ bool isTelemetryProtocolAvailable(int protocol) {
   if (protocol == PROTOCOL_PULSES_CROSSFIRE) {
     return false;
   }
-#if defined(PCBI6)
+#if defined(PCBI6X)
   if (protocol == PROTOCOL_FLYSKY_IBUS) {
     return true;
   }

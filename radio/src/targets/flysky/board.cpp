@@ -248,7 +248,7 @@ extern "C" void INTERRUPT_xMS_IRQHandler()
 void boardInit()
 {
 #if defined(STM32F0) && defined(BOOT)
-  // Move vect table to beggining of RAM
+  // Move vect table to beginning of RAM
   RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
   for (uint32_t i = 0; i < VECTOR_TABLE_SIZE; i++) {
     ram_vector[i] = g_pfnVectors[i];

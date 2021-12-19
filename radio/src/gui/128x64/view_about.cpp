@@ -20,7 +20,7 @@
 
 #include "opentx.h"
 
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
 const unsigned char about_bmp[]  = {
 #include "about.lbm"
 };
@@ -52,7 +52,7 @@ enum AboutScreens {
 #define EVT_KEY_NEXT_VIEW              EVT_KEY_FIRST(KEY_DOWN)
 #endif
 
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
 void menuAboutView(event_t event)
 {
   static uint8_t screenIndex;

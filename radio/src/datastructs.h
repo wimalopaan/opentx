@@ -413,7 +413,7 @@ PACK(struct ModuleData {
   uint8_t failsafeMode : 4;  // only 3 bits used
   uint8_t subType : 3;
   uint8_t invertedSerial : 1;  // telemetry serial inverted from standard
-#if defined(PCBI6)
+#if defined(PCBI6X)
   uint8_t rxID[4];
   uint16_t servoFreq;
 #endif
@@ -492,7 +492,7 @@ typedef uint32_t swarnenable_t;
 typedef uint16_t swconfig_t;
 typedef uint16_t swarnstate_t;
 typedef uint8_t swarnenable_t;
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
 typedef uint8_t swconfig_t;
 typedef uint8_t swarnstate_t;
 typedef uint8_t swarnenable_t;
@@ -566,7 +566,7 @@ PACK(struct CustomScreenData {
   char inputNames[MAX_INPUTS][LEN_INPUT_NAME]; \
   uint8_t potsWarnEnabled;                     \
   int8_t potsWarnPosition[NUM_POTS + NUM_SLIDERS];
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
 #define MODELDATA_EXTRA                            \
   NOBACKUP(uint8_t spare : 3);                     \
   NOBACKUP(uint8_t trainerMode : 3);               \
@@ -701,7 +701,7 @@ PACK(struct TrainerData {
   NOBACKUP(uint8_t spare : 1);                                                                 \
   NOBACKUP(uint8_t blOffBright : 7);                                                           \
   NOBACKUP(char bluetoothName[LEN_BLUETOOTH_NAME]);
-#elif defined(PCBTARANIS) || defined(PCBI6)
+#elif defined(PCBTARANIS) || defined(PCBI6X)
 #if defined(BLUETOOTH)
 #define BLUETOOTH_FIELDS \
   uint8_t spare;         \
@@ -887,7 +887,7 @@ static inline void check_struct() {
   CHKSIZE(FrSkyTelemetryData, 88);
   CHKSIZE(ModelHeader, 12);
   CHKTYPE(CurveData, 4);
-#elif defined(PCBI6)
+#elif defined(PCBI6X)
   CHKSIZE(LimitData, 11);
   CHKSIZE(MixData, 20);
   CHKSIZE(ExpoData, 17);
@@ -924,7 +924,7 @@ static inline void check_struct() {
   CHKSIZE(LogicalSwitchData, 9);
   CHKSIZE(TelemetrySensor, 14);
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
   CHKSIZE(ModuleData, 44);
 #else
   CHKSIZE(ModuleData, 70);

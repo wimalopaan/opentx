@@ -54,7 +54,7 @@ const unsigned char ASTERISK_BITMAP[]  = {
 void drawAlertBox(const char * title, const char * text, const char * action)
 {
   lcdClear();
-#if !defined(PCBI6)// || !defined(DEBUG)
+#if !defined(PCBI6X)
   lcdDraw1bitBitmap(2, 0, ASTERISK_BITMAP, 0, 0);
 #else
   lcdDrawRect(2, 2, 32 - 4, 32 - 4);

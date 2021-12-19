@@ -277,23 +277,27 @@ int8_t STORAGE_GetMaxLun (void)
 /* Firmware.txt */
 const char firmware_txt[] =
 #if defined(BOOT)
-  "OpenTX Bootloader"
+  "OpenI6X Bootloader"
 #else
-  "OpenTX Firmware"
+  "OpenI6X Firmware"
 #endif
+#if !defined(PCBI6X)
   " for " FLAVOUR "\r\n\r\n"
+#else
+  "\r\n\r\n"
+#endif
 #if defined(BOOT)
   "BOOTVER    "
 #else
   "FWVERSION  "
 #endif
-  "opentx-" FLAVOUR "-" VERSION " (" GIT_STR ")\r\n"
+  "openi6x-" VERSION " (" GIT_STR ")\r\n"
   "DATE       " DATE "\r\n"
   "TIME       " TIME "\r\n"
 #if defined(SDCARD)
   "req SD ver " REQUIRED_SDCARD_VERSION "\r\n"
 #endif
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
 #if !defined(BOOT)
 "BOOTVER    "
 #else
@@ -537,7 +541,7 @@ int32_t fat12Read(uint8_t * buffer, uint16_t sector, uint16_t count)
     }
     else if (sector == 4) {
       memcpy(buffer, firmware_txt, sizeof(firmware_txt));
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
       memcpy(buffer + sizeof(firmware_txt) - 1, getOtherVersion(), strlen(getOtherVersion()));
 #endif
     }

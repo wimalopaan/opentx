@@ -27,13 +27,6 @@ extern void pushUnit(uint8_t unit, uint8_t idx, uint8_t id);
 extern bool isPlaying();
 extern void audioEvent(unsigned int index);
 
-extern uint8_t g_beepCnt;
-extern uint8_t beepAgain;
-extern uint8_t beepAgainOrig;
-extern uint8_t beepOn;
-extern bool warble;
-extern bool warbleC;
-
 #if defined(HAPTIC)
 extern uint8_t hapticTick;
 #endif /* HAPTIC */
@@ -75,8 +68,6 @@ void buzzerEvent(unsigned int index);
 #define AUDIO_TRAINER_LOST()     buzzerEvent(AU_TRAINER_LOST)
 #define AUDIO_TRAINER_BACK()     buzzerEvent(AU_TRAINER_BACK)
 
-#define IS_AUDIO_BUSY() (g_beepCnt || beepAgain || beepOn)
-
 #define AUDIO_RESET()
 #define AUDIO_FLUSH()
 
@@ -99,7 +90,7 @@ void buzzerEvent(unsigned int index);
 #define PUSH_NUMBER_PROMPT(p)           pushPrompt(PROMPT_I18N_BASE+(p))
 #define PUSH_SYSTEM_PROMPT(p)           pushPrompt(PROMPT_SYSTEM_BASE+(p))
 #define PLAY_NUMBER(n, u, a)            
-#define PUSH_UNIT_PROMPT(p, i)   		pushUnit((p), (i), id)
+#define PUSH_UNIT_PROMPT(p, i)   		
 #define PLAY_DURATION(d, att)    		{}
 #define PLAY_TIME
 #define IS_PLAY_TIME()                  (0)

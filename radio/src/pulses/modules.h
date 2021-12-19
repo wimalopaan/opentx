@@ -25,7 +25,7 @@
 
 #define CROSSFIRE_CHANNELS_COUNT        16
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 inline bool isModuleA7105(uint8_t idx){
   return idx == INTERNAL_MODULE;
 }
@@ -65,7 +65,7 @@ inline bool isModuleXJT(uint8_t idx)
 #else
 inline bool isModuleXJT(uint8_t idx)
 {
-  #if defined(PCBI6)
+  #if defined(PCBI6X)
   return false;
   #else
   return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_XJT;
@@ -116,7 +116,7 @@ inline bool isModulePPM(uint8_t idx)
 
 inline bool isModuleR9M(uint8_t idx)
 {
-  #if defined(PCBI6)
+  #if defined(PCBI6X)
   return false;
   #else
   return g_model.moduleData[idx].type == MODULE_TYPE_R9M;
@@ -156,7 +156,7 @@ inline bool isModulePXX(uint8_t idx)
 
 inline bool isModuleDSM2(uint8_t idx)
 {
-  #if defined(PCBI6)
+  #if defined(PCBI6X)
     return false;
   #else
     return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_DSM2;
@@ -165,7 +165,7 @@ inline bool isModuleDSM2(uint8_t idx)
 
 inline bool isModuleSBUS(uint8_t idx)
 {
-  #if defined(PCBI6)
+  #if defined(PCBI6X)
     return false;
   #else
     return idx == EXTERNAL_MODULE && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_SBUS;

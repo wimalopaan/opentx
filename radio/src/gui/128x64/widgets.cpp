@@ -270,7 +270,7 @@ const unsigned char SLEEP_BITMAP[]  = {
 void drawSleepBitmap()
 {
   lcdClear();
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
   lcdDraw1bitBitmap((LCD_W-SLEEP_BITMAP_WIDTH)/2, (LCD_H-SLEEP_BITMAP_HEIGHT)/2, SLEEP_BITMAP, 0);
 #else
   lcdDrawText(LCD_W/2, LCD_H/2 - 4, "z z z", CENTERED);

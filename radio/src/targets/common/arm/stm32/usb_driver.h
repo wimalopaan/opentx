@@ -27,14 +27,14 @@ enum usbMode {
   USB_JOYSTICK_MODE,
   USB_MASS_STORAGE_MODE,
   USB_SERIAL_MODE,
-#if defined(USB_SERIAL) && !defined(PCBI6)
+#if defined(USB_SERIAL) && !defined(PCBI6X)
   USB_MAX_MODE = USB_SERIAL_MODE
 #else
   USB_MAX_MODE = USB_MASS_STORAGE_MODE
 #endif
 };
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 enum usbDetect {
   USB_DETECT_AUTO,
   USB_DETECT_ON,

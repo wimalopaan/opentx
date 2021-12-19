@@ -709,7 +709,7 @@ int cliTrace(const char ** argv)
 
 int cliStackInfo(const char ** argv)
 {
-  #if !defined(PCBI6)
+  #if !defined(PCBI6X)
   serialPrint("[MAIN] %d available / %d", stackAvailable(), stackSize() * 4);  // stackSize() returns size in 32bit chunks
   #endif
   serialPrint("[MENUS] %d available / %d", menusStack.available(), menusStack.size());
@@ -792,7 +792,7 @@ const MemArea memAreas[] = {
   { "GPIOD", GPIOD, sizeof(GPIO_TypeDef) },
   { "GPIOE", GPIOE, sizeof(GPIO_TypeDef) },
   { "GPIOF", GPIOF, sizeof(GPIO_TypeDef) },
-  #if !defined(PCBI6)
+  #if !defined(PCBI6X)
   { "GPIOG", GPIOG, sizeof(GPIO_TypeDef) },
   #endif
   { "USART1", USART1, sizeof(USART_TypeDef) },
@@ -1035,7 +1035,7 @@ int cliDisplay(const char ** argv)
         case 2:
           tim = TIM2;
           break;
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
         case 13:
           tim = TIM13;
           break;
@@ -1063,7 +1063,7 @@ int cliDisplay(const char ** argv)
       serialPrint(" CCR4   0x%x", tim->CCR4);
     }
   }
-#if !defined(PCBI6)  
+#if !defined(PCBI6X)  
   else if (!strcmp(argv[1], "dma")) {
     serialPrint("DMA1_Stream7");
     serialPrint(" CR    0x%x", DMA1_Stream7->CR);

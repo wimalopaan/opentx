@@ -27,7 +27,7 @@
 
 #define USBD_CFG_MAX_NUM           1
 #define USBD_ITF_MAX_NUM           1
-#if defined(PCBI6)
+#if defined(PCBI6X)
 #define USB_MAX_STR_DESC_SIZ       20
 #else
 #define USB_MAX_STR_DESC_SIZ       64
@@ -57,7 +57,7 @@
 #define HID_IN_EP                    0x81
 #define HID_OUT_EP                   0x01
 
-#if defined(PCBI6)
+#if defined(PCBI6X)
 #define HID_IN_PACKET                18
 #else
 #define HID_IN_PACKET                19

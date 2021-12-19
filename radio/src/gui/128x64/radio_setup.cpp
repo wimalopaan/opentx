@@ -96,7 +96,7 @@ enum MenuRadioSetupItems {
   // ITEM_SETUP_IMPERIAL,
   IF_FAI_CHOICE(ITEM_SETUP_FAI)
   ITEM_SETUP_SWITCHES_DELAY,
-#if defined(PCBI6)
+#if defined(PCBI6X)
   ITEM_SETUP_USB_ENABLE,
 #endif
   CASE_STM32(ITEM_SETUP_USB_MODE)
@@ -533,7 +533,7 @@ void menuRadioSetup(event_t event)
         lcdDrawText(lcdLastRightPos, y, STR_MS, attr);
         if (attr) CHECK_INCDEC_GENVAR(event, g_eeGeneral.switchesDelay, -15, 100-15);
         break;
-#if defined(PCBI6)
+#if defined(PCBI6X)
       case ITEM_SETUP_USB_ENABLE:
         globalData.usbDetect = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_USBDETECT, STR_USBDETECTMODES, globalData.usbDetect, USB_DETECT_AUTO, USB_MAX_DETECT, attr, event);
         break;

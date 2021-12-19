@@ -1,7 +1,7 @@
 option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
 option(LCD_DUAL_BUFFER "Dual LCD Buffer" OFF)
 option(TARANIS_INTERNAL_PPM "Taranis internal module hack to output PPM" OFF)
-option(PCBI6_ELRSV2 "Enable ExpressLRS v2 menu" OFF) # ~6kB FLASH
+option(PCBI6X_ELRSV2 "Enable ExpressLRS v2 configuration tool" OFF) # ~6kB FLASH
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "PRESS")
@@ -36,8 +36,8 @@ if(PCB STREQUAL I6X)
   set(SERIAL2_DRIVER serial2_driver.cpp)
 endif()
 
-if(PCBI6_ELRSV2)
-  add_definitions(-DPCBI6_ELRSV2)
+if(PCBI6X_ELRSV2)
+  add_definitions(-DPCBI6X_ELRSV2)
 endif()
 
 set(TARGET_SRC
@@ -49,14 +49,14 @@ set(TARGET_SRC
   )
 
 set(HSE_VALUE 8000000)
-set(SDCARD NO)
+set(SDCARD NO) # ~24kB FLASH
 set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
-add_definitions(-DPCBI6 -DBUZZER)
-add_definitions(-DPCBI6_USB_MSD)
+add_definitions(-DPCBI6X -DBUZZER)
+add_definitions(-DPCBI6X_USB_MSD)
+add_definitions(-DMENU_DIAGANAS)
 # add_definitions(-DMENU_DIAGKEYS)
-# add_definitions(-DMENU_DIAGANAS)
 
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp

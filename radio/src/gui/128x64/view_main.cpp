@@ -50,7 +50,7 @@
 #if defined(TELEMETRY_FRSKY)
 #define RSSSI_X       (30)
 #define RSSSI_Y       (31)
-#if defined(PCBI6)
+#if defined(PCBI6X)
   #define RSSI_MAX      100
 #else
   #define RSSI_MAX      105
@@ -255,7 +255,7 @@ void displayVoltageOrAlarm()
   #define EVT_KEY_NEXT_VIEW              EVT_KEY_BREAK(KEY_DOWN)
   #define EVT_KEY_NEXT_PAGE              EVT_KEY_BREAK(KEY_RIGHT)
   #define EVT_KEY_PREVIOUS_PAGE          EVT_KEY_BREAK(KEY_LEFT)
-  #if defined(PCBI6)
+  #if defined(PCBI6X)
     #define EVT_KEY_GENERAL_MENU           EVT_KEY_LONG(KEY_RIGHT)
     #define EVT_KEY_MODEL_MENU             EVT_KEY_LONG(KEY_MENU)
   #else
@@ -281,7 +281,7 @@ void onMainViewMenu(const char *result)
     timerReset(2);
   }
 #endif
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
   else if (result == STR_VIEW_NOTES) {
     pushModelNotes();
   }
@@ -306,7 +306,7 @@ void onMainViewMenu(const char *result)
   else if (result == STR_STATISTICS) {
     chainMenu(menuStatisticsView);
   }
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
   else if (result == STR_ABOUT_US) {
     chainMenu(menuAboutView);
   }
@@ -361,7 +361,7 @@ void menuMainView(event_t event)
       POPUP_MENU_ADD_ITEM(STR_RESET_SUBMENU);
 
       POPUP_MENU_ADD_ITEM(STR_STATISTICS);
-#if !defined(PCBI6)
+#if !defined(PCBI6X)
       POPUP_MENU_ADD_ITEM(STR_ABOUT_US);
 #endif
       POPUP_MENU_START(onMainViewMenu);
@@ -520,7 +520,7 @@ void menuMainView(event_t event)
       doMainScreenGraphics();
 
       // Switches
-#if defined(PCBTARANIS) || defined(PCBI6)
+#if defined(PCBTARANIS) || defined(PCBI6X)
       for (int i=0; i<NUM_SWITCHES; ++i) {
         if (SWITCH_EXISTS(i)) {
           uint8_t x = 2*FW-2, y = 4*FH+i*FH+1;

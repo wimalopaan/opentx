@@ -24,7 +24,8 @@ uint8_t currentSpeakerVolume = 255;
 uint8_t requiredSpeakerVolume = 255;
 uint8_t mainRequestFlags = 0;
 
-#if !defined(LUA) && defined(PCBI6_ELRSV2)
+#if !defined(LUA) && defined(PCBI6X_ELRSV2)
+extern void ELRSV2_stop();
 uint8_t cScriptRunning = 0;
 #endif
 
@@ -35,8 +36,8 @@ void onUSBConnectMenu(const char *result)
   if (result == STR_USB_MASS_STORAGE) {
     setSelectedUsbMode(USB_MASS_STORAGE_MODE);
   }
-  else 
-#endif  
+  else
+#endif
   if (result == STR_USB_JOYSTICK) {
     setSelectedUsbMode(USB_JOYSTICK_MODE);
   }
@@ -50,13 +51,12 @@ void onUSBConnectMenu(const char *result)
 
 void handleUsbConnection()
 {
-#if defined(STM32) && !defined(SIMU)// && !defined(STM32F0)
+#if defined(STM32) && !defined(SIMU)
   if (!usbStarted() && usbPlugged() && !(getSelectedUsbMode() == USB_UNSELECTED_MODE)) {
     usbStart();
-#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
+#if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
-#if defined(PCBI6_ELRSV2)
-      extern void ELRSV2_stop();
+#if defined(PCBI6X_ELRSV2)
       ELRSV2_stop();
 #endif
       opentxClose(false);
@@ -67,10 +67,10 @@ void handleUsbConnection()
   if (!usbStarted() && usbPlugged() && getSelectedUsbMode() == USB_UNSELECTED_MODE) {
     if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && (popupMenuNoItems == 0)) {
       POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
-#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
+#if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
       POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
 #endif
-#if defined(DEBUG) && !defined(PCBI6)
+#if defined(DEBUG) && !defined(PCBI6X)
       POPUP_MENU_ADD_ITEM(STR_USB_SERIAL);
 #endif
       POPUP_MENU_START(onUSBConnectMenu);
@@ -81,7 +81,7 @@ void handleUsbConnection()
   }
   if (usbStarted() && !usbPlugged()) {
     usbStop();
-#if !defined(PCBI6) || defined(PCBI6_USB_MSD)
+#if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
       opentxResume();
     }
@@ -133,7 +133,7 @@ void checkEeprom()
 void checkBatteryAlarms()
 {
   // TRACE("checkBatteryAlarms()");
-#if defined(PCBI6)
+#if defined(PCBI6X)
   if (IS_TXBATT_WARNING()) {
 #else
   if (IS_TXBATT_WARNING() && g_vbat100mV>50) {
@@ -345,7 +345,7 @@ void handleGui(event_t event) {
     // todo     drawStatusLine(); here???
   }
   else
-#elif defined(PCBI6_ELRSV2)
+#elif defined(PCBI6X_ELRSV2)
   if (cScriptRunning == 1) {
     // standalone c script is active
     menuHandlers[menuLevel](event);
@@ -461,7 +461,7 @@ void perMain()
   }
 #endif
 
-#if defined(STM32)
+#if defined(STM32) && defined(SDCARD)
   bool sdcardPresent = SD_CARD_PRESENT();
   if (sdcardPresent && !globalData.sdcardPresent) {
     sdMount();
