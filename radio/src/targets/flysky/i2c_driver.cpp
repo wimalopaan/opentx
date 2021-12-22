@@ -137,7 +137,7 @@ void eepromInit() {
   /* setup from libopencm3-examples */
   i2c_enable_analog_filter(i2c);
   i2c_set_digital_filter(i2c, 0);
-  i2c_set_speed(i2c, i2c_speed_fm_400k, 8);  // i2c_speed_fm_400k  i2c_speed_sm_100k
+  i2c_set_speed(i2c, i2c_speed_sm_100k, 8);  // i2c_speed_fm_400k  400k causes total mess for some users
   i2c_enable_stretching(i2c);
   i2c_set_7bit_addr_mode(i2c);
 
