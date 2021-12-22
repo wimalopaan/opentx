@@ -641,7 +641,7 @@ void ELRSV2_run(event_t event) {
 
   if (event == EVT_KEY_LONG(KEY_EXIT)) {
     ELRSV2_stop();
-  } else if (event != 0 || ++drawDelay > 20) { 
+  } else if (event != 0 || ++drawDelay > 10) { 
     drawDelay = 0;
     if (fieldPopup != 0) {
       runPopupPage(event);
