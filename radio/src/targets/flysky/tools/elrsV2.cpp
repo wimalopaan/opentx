@@ -1,8 +1,7 @@
 /**
  * ExpressLRS V2 lua configuration script port to C.
  * 
- * 
- * Not supported features:
+ * Limitations:
  * - multiple devices, only ExpressLRS transmitters,
  * - no integer/float/string fields support, ExpressLRS uses only selection anyway,
  * - field unit ie.: "mW" is not displayed,
@@ -258,7 +257,7 @@ void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
 void fieldCommandSave(FieldProps * field) {
   if (field->value < 4) { 
     field->value = 1; 
-    crossfireTelemetryPush4(0x2D, field->id, field->value); 
+    fieldTextSelectionSave(field); //crossfireTelemetryPush4(0x2D, field->id, field->value);
     fieldPopup = field;
     fieldPopup->valuesLength = 0; 
     fieldTimeout = getTime() + field->valuesOffset; 
@@ -441,7 +440,7 @@ void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length = 0) {
 
   if (time > linkstatTimeout) {
     if (!deviceIsELRS_TX && allParamsLoaded == 1) {
-      sprintf(goodBadPkt, " "); 
+      goodBadPkt[0] = '\0';
     } else {
       crossfireTelemetryPush4(0x2D, 0x0, 0x0); 
     }
@@ -472,8 +471,7 @@ void lcd_title() {
     if (titleShowWarn) {
       lcdDrawText(textXoffset, 1, elrsFlagsInfo, INVERS);
     } else {
-      sprintf(deviceName, (allParamsLoaded == 1) ? "%.16s" : "Loading...", deviceName);
-      lcdDrawText(textXoffset, 1, deviceName, INVERS);
+      lcdDrawSizedText(textXoffset, 1, (allParamsLoaded == 1) ? deviceName : "Loading...", 16, INVERS);
     }
   }
 }
@@ -503,7 +501,7 @@ void handleDevicePageEvent(event_t event) {
       crossfireTelemetryPush4(0x2C, fieldId, fieldChunk); 
     } else {
       if (folderAccess == 0 && allParamsLoaded == 1) { 
-          reloadAllField();
+        reloadAllField();
         crossfireTelemetryPing();
       }
       UIbackExec();
@@ -599,7 +597,9 @@ void runPopupPage(event_t event) {
       fieldPopup = 0;
   } else if (fieldPopup->value == 3) { 
     result = popupCompat((char *)&commandStatusInfo, event);
-    fieldPopup->valuesLength = fieldPopup->value; 
+    if (fieldPopup != 0) {
+      fieldPopup->valuesLength = fieldPopup->value;
+    }
     if (result == 2) {
       crossfireTelemetryPush4(0x2D, fieldPopup->id, 4); 
       fieldTimeout = getTime() + fieldPopup->valuesOffset; 

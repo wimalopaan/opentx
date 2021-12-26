@@ -262,7 +262,7 @@ void boardInit()
   RCC_APB2PeriphClockCmd(RCC_APB2_LIST, ENABLE);
 #if defined(DEBUG) && defined(SERIAL_GPIO)
   serial2Init(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
-  TRACE("\nFlySky board started :)");
+  TRACE("\ni6X board started :)");
   TRACE("RCC->CSR = %08x", RCC->CSR);
 #endif
   pwrInit();
