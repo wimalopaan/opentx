@@ -494,9 +494,16 @@ if(NOT MSVC)
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 
+    # add_custom_command(
+    #   TARGET firmware POST_BUILD
+    #   COMMAND arm-none-eabi-size firmware.elf
+    #   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    # )
+
     add_custom_command(
       TARGET firmware POST_BUILD
-      COMMAND arm-none-eabi-size firmware.elf
+      COMMAND ${PROJECT_SOURCE_DIR}/tools/get-fw-size.sh firmware.elf 0x20000 0x4000
+      DEPENDS firmware
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 
