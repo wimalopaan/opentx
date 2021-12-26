@@ -11,24 +11,24 @@ jobs:
      - checkout
      - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6X_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
      - store_artifacts:
-        path: opentx-i6x-1.1.0.bin
-        destination: openi6x-elrsv2-<< pipeline.git.tag >>.bin
+        path: opentx-i6x-1.1.1.bin
+        destination: openi6x-1.1.1-elrsv2.bin #-<< pipeline.git.tag >>
   build-gvars:
     machine: true
     steps:
       - checkout
       - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
       - store_artifacts:
-          path: opentx-i6x-1.1.0.bin
-          destination: openi6x-gvars-<< pipeline.git.tag >>.bin
+          path: opentx-i6x-1.1.1.bin
+          destination: openi6x-1.1.1-gvars.bin #-<< pipeline.git.tag >>
   build-gvars-heli:
     machine: true
     steps:
       - checkout
       - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=YES GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
       - store_artifacts:
-          path: opentx-i6x-1.1.0.bin
-          destination: openi6x-gvars-heli-<< pipeline.git.tag >>.bin
+          path: opentx-i6x-1.1.1.bin
+          destination: openi6x-1.1.1-gvars-heli.bin #-<< pipeline.git.tag >>
   publish-github-release:
     docker:
       - image: cibuilds/github:0.13
