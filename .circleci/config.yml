@@ -50,25 +50,25 @@ jobs:
 workflows:
   openi6x-release-workflow:
     jobs:
-      - build-elrsv2
-        filters:
-          branches:
-            only:
-              - master
+      - build-elrsv2:
+          filters:
+            branches:
+              only:
+                - master
 #              ignore: /.*/
 #            tags:
 #              only: /openi6x-*$/
-      - build-gvars
-        filters:
-          branches:
-            only: /master$/
+      - build-gvars:
+          filters:
+            branches:
+              only: /master$/
 #              ignore: /.*/
 #            tags:
 #              only: /openi6x-*$/
-      - build-gvars-heli
-        filters:
-          branches:
-            only: /master$/
+      - build-gvars-heli:
+          filters:
+            branches:
+              only: /master$/
 #              ignore: /.*/
 #            tags:
 #              only: /openi6x-*$/
