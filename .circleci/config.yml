@@ -2,6 +2,11 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+parameters:
+  build-version:
+    type: string
+    default: "1.1.1"
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -11,24 +16,24 @@ jobs:
      - checkout
      - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6X_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
      - store_artifacts:
-        path: opentx-i6x-1.1.1.bin
-        destination: openi6x-1.1.1-elrsv2.bin #-<< pipeline.git.tag >>
+        path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
+        destination: openi6x-<< pipeline.parameters.build-version >>-elrsv2.bin
   build-gvars:
     machine: true
     steps:
       - checkout
       - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
       - store_artifacts:
-          path: opentx-i6x-1.1.1.bin
-          destination: openi6x-1.1.1-gvars.bin #-<< pipeline.git.tag >>
+          path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
+          destination: openi6x-<< pipeline.parameters.build-version >>-gvars.bin
   build-gvars-heli:
     machine: true
     steps:
       - checkout
       - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=YES GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO" -v $PWD:/opentx vitass/opentx-fw-build
       - store_artifacts:
-          path: opentx-i6x-1.1.1.bin
-          destination: openi6x-1.1.1-gvars-heli.bin #-<< pipeline.git.tag >>
+          path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
+          destination: openi6x-<< pipeline.parameters.build-version >>-gvars-heli.bin
   publish-github-release:
     docker:
       - image: cibuilds/github:0.13
@@ -45,24 +50,28 @@ jobs:
 workflows:
   openi6x-release-workflow:
     jobs:
-      - build-elrsv2
-#          filters:
-#            branches:
+      - build-elrsv2:
+          filters:
+            branches:
+              only:
+                - master
 #              ignore: /.*/
 #            tags:
-#              only: /.*-release$/
-      - build-gvars
-#          filters:
-#            branches:
+#              only: /openi6x-*$/
+      - build-gvars:
+          filters:
+            branches:
+              only: /master$/
 #              ignore: /.*/
 #            tags:
-#              only: /.*-release$/
-      - build-gvars-heli
-#          filters:
-#            branches:
+#              only: /openi6x-*$/
+      - build-gvars-heli:
+          filters:
+            branches:
+              only: /master$/
 #              ignore: /.*/
 #            tags:
-#              only: /.*-release$/
+#              only: /openi6x-*$/
 #      - publish-github-release:
 ##          filters:
 ##            branches:
