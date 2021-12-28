@@ -1,6 +1,6 @@
-# FlySky i6x port of OpenTX
+# FlySky i6X port of OpenTX
 
-This is a port of OpenTX for the venerable Flysky I6X RC radio transmitter. You can find the latest build and some instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX)
+This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter. You can find the latest build and some instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX)
 
 ## Implemented features 
 
@@ -37,8 +37,8 @@ Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
 
 ## Contributors
 
-* ExpressLRS V2 configuration, whole USB support, sound support, bootloader, backporting, bugfixing - Janek (@ajjjjjjjj) ongoing collaboration: https://github.com/ajjjjjjjj
-* All the RF code was taken from the great KotelloRC's erfly6: Er9X for i6 and i6x. You can find his project here: https://bitbucket.org/KotelloRC/erfly6/src/master/
-* ADC code taken from OpenGround: https://github.com/fishpepper/OpenGround
-* This work is based on Jakub's (qba667) work and is forked from his repo.
-* All the contributors of OpenTX. 
+* ExpressLRS V2 config, USB support, sound support, bootloader, backporting, bugfixing - Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)) ongoing collaboration.
+* All the RF code was taken from the great KotelloRC's [erfly6: Er9X for i6 and i6x](https://bitbucket.org/KotelloRC/erfly6/src/master/).
+* ADC code taken from [OpenGround](https://github.com/fishpepper/OpenGround).
+* This work is based on Jakub's ([qba667](https://github.com/qba667)) work and is forked from his repo.
+* All the contributors of [OpenTX](https://github.com/opentx/opentx/). 
