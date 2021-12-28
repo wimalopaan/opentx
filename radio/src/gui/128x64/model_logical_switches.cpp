@@ -247,11 +247,13 @@ void onLogicalSwitchesMenu(const char *result)
     storageDirty(EE_MODEL);
 
   }
-  else if (result == STR_CLEAR) {
+  else 
+#endif
+  if (result == STR_CLEAR) {
     memset(cs, 0, sizeof(LogicalSwitchData));
     storageDirty(EE_MODEL);
   }
-#endif
+
 }
 
 void menuModelLogicalSwitches(event_t event)
@@ -268,9 +270,9 @@ void menuModelLogicalSwitches(event_t event)
     if (cs->func)
       s_currIdx = sub;
       POPUP_MENU_ADD_ITEM(STR_EDIT);
+#if defined(SDCARD)
     if (cs->func || cs->v1 || cs->v2 || cs->delay || cs->duration || cs->andsw)
       POPUP_MENU_ADD_ITEM(STR_COPY);
-#if defined(SDCARD)
     if (clipboard.type == CLIPBOARD_TYPE_CUSTOM_SWITCH)
       POPUP_MENU_ADD_ITEM(STR_PASTE);
 #endif
