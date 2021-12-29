@@ -2,6 +2,9 @@
 
 This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter. You can find the latest build and some instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX)
 
+![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
+![Release](https://img.shields.io/github/v/release/OpenI6X/opentx?include_prereleases)
+
 ## Implemented features 
 
 * AFHDS2A protocol
