@@ -104,7 +104,11 @@
 #endif
 
 #define LEN_USBMODES                   TR("\006", "\010")
+#if defined(PCBI6X)                    
+#define TR_USBMODES                    TR("Ask\0  ""Joyst\0""Storag", "Ask\0    ""Joystick""Storage\0")
+#else
 #define TR_USBMODES                    TR("Ask\0  ""Joyst\0""Storag""Serial", "Ask\0    ""Joystick""Storage\0""Serial\0 ")
+#endif
 
 #define LEN_TARANIS_PROTOCOLS  "\004"
 #if defined(PCBI6X)
@@ -180,7 +184,6 @@
 #if defined(IRPROTOS)
   #define TR_IRPROTOS                  "SILV  TRAC09PICZ  SWIFT\0"
 #else
-
   #define TR_IRPROTOS
 #endif
 
@@ -238,11 +241,11 @@
   #define TR_VVARIO                    "[Vario]\0  "
 #endif
 
-//#if defined(AUDIO)
+#if defined(AUDIO) || defined(BUZZER)
   #define TR_SOUND                     "Play Sound"
-//#else
-//  #define TR_SOUND                     "Beep\0     "
-//#endif
+#else
+  #define TR_SOUND                     "Beep\0     "
+#endif
 
 #if defined(HAPTIC)
   #define TR_HAPTIC                    "Haptic\0   "
@@ -1088,11 +1091,6 @@
 // About screen
 #define TR_ABOUTUS                     TR(" ABOUT ", "ABOUT")
 
-#if defined(PCBI6X)
-#define TR_ABOUT_OPENTX_1              TR("OpenI6X", "")
-#define TR_ABOUT_OPENTX_2              TR("is\001based\001on\001OpenTX", "")
-
-#else
 #define TR_ABOUT_OPENTX_1              TR("OpenTX\001is\001open\001source,\001non", "OpenTX is open source, non-")
 #define TR_ABOUT_OPENTX_2              TR("commercial,\001no\001warranties.", "commercial and comes with no")
 #define TR_ABOUT_OPENTX_3              TR("It\001was\001developed\001for\001free.", "warranties. It was developed")
@@ -1141,8 +1139,6 @@
 #define TR_ABOUT_PARENTS_2             TR("Ersky9x (Mike Blandford)", "Ersky9x (Mike Blandford)")
 #define TR_ABOUT_PARENTS_3             "ER9X (Erez Raviv)"
 #define TR_ABOUT_PARENTS_4             "TH9X (Thomas Husterer)"
-
-#endif
 
 #define TR_CHR_SHORT                   's'
 #define TR_CHR_LONG                    'l'
