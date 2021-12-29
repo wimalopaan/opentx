@@ -5,6 +5,7 @@ This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter. 
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
 [![Release](https://img.shields.io/github/v/release/OpenI6X/opentx?include_prereleases)](https://github.com/OpenI6X/opentx/releases)
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
+[![xx](https://img.shields.io/badge/telegram-group-blue)](https://t.me/otx_flysky_i6x)
 
 ## Implemented features 
 
@@ -19,10 +20,6 @@ This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter. 
 * USB (To enable on standard cable: General Settings > USB Detect set to "Once")
   * Joystick mode
   * Mass Storage to backup/restore eeprom
- 
-## Users Telegram group
-
-https://t.me/otx_flysky_i6x
 
 ## Navigation:
 
