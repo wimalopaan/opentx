@@ -124,9 +124,10 @@ const unsigned char font_8x10[]  = {
 #endif
 };
 
-const unsigned char font_22x38_num[]  = {
-#include "font_22x38_num.lbm"
-};
+// only lua uses those
+// const unsigned char font_22x38_num[]  = {
+// #include "font_22x38_num.lbm"
+// };
 
 const unsigned char font_4x6_extra[]  = {
 #include "font_04x06_extra.lbm"

@@ -14,7 +14,7 @@ jobs:
     machine: true
     steps:
      - checkout
-     - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=NO LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6X_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
+     - run: docker run -it -e "BOARD_NAME=I6X" -e "CMAKE_FLAGS=PCB=I6X HELI=NO GVARS=YES LUA_COMPILER=NO MULTIMODULE=NO DEBUG=NO PCBI6X_ELRSV2=YES" -v $PWD:/opentx vitass/opentx-fw-build
      - store_artifacts:
         path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
         destination: openi6x-<< pipeline.parameters.build-version >>-elrsv2.bin
