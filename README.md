@@ -4,6 +4,7 @@ This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter. 
 
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
 [![Release](https://img.shields.io/github/v/release/OpenI6X/opentx?include_prereleases)](https://github.com/OpenI6X/opentx/releases)
+[![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
 
 ## Implemented features 
 
