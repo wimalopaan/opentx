@@ -23,7 +23,8 @@ function print_region() {
     fi
 
     pct=$(( 100 * $size / $max_size ))
-    echo "$name used: $size / $max_size ($pct%)"
+    left=$(( $max_size - $size ))
+    echo "$name used: $size / $max_size ($pct%), left: $left"
 }
 
 raw=$(arm-none-eabi-size $file)
