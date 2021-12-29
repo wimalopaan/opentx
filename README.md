@@ -7,6 +7,10 @@ This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter. 
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
 [![xx](https://img.shields.io/badge/telegram-group-blue)](https://t.me/otx_flysky_i6x)
 
+## Installation
+
+Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
+
 ## Implemented features 
 
 * AFHDS2A protocol
@@ -31,10 +35,6 @@ This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter. 
 | CANCEL | EXIT. Hold for graceful shutdown (Needed to save timers) |                      
 | BIND   | Go RIGHT. Go to next PAGE. Hold for general menu. |
 | RIGHT POT | Scroll right or left |
-
-## Installation
-
-Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
 
 ## Contributors
 
