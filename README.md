@@ -1,6 +1,6 @@
-# FlySky i6X port of OpenTX
+# OpenI6X
 
-This is a port of **OpenTX** for the venerable Flysky i6X RC radio transmitter.<br>
+**OpenTX** port for the venerable Flysky i6X RC radio transmitter.<br>
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX).
 
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
@@ -22,9 +22,7 @@ Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
 * Telemetry
 * Audio tones, alarms and vario custom implementation
 * Bootloader (DFU bootloader) - Start by pushing trims to the center, like regular OpenTX one
-* USB (To enable on standard cable: General Settings > USB Detect set to "Once")
-  * Joystick mode
-  * Mass Storage to backup/restore eeprom
+* USB Joystick & Storage modes (To enable on standard cable: General Settings > USB Detect: "Once")
 
 ## Navigation:
 
