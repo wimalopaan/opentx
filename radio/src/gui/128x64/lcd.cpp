@@ -172,11 +172,11 @@ void getCharPattern(PatternData * pattern, unsigned char c, LcdFlags flags)
       pattern->data = &font_10x14[((uint16_t)c_remapped)*20];
     }
   }
-  else if (fontsize == XXLSIZE) {
-    pattern->width = 22;
-    pattern->height = 38;
-    pattern->data = &font_22x38_num[((uint16_t)c-'0'+5)*110];
-  }
+//  else if (fontsize == XXLSIZE) { // only lua uses those
+//     pattern->width = 22;
+//     pattern->height = 38;
+//     pattern->data = &font_22x38_num[((uint16_t)c-'0'+5)*110];
+//  }
   else if (fontsize == MIDSIZE) {
     pattern->width = 8;
     pattern->height = 12;
@@ -248,10 +248,10 @@ void lcdDrawChar(coord_t x, coord_t y, const unsigned char c, LcdFlags flags)
     }
     lcdPutPattern(x, y, q, 10, 16, flags);
   }
-  else if (fontsize == XXLSIZE) {
-    q = &font_22x38_num[((uint16_t)c-'0'+5)*110];
-    lcdPutPattern(x, y, q, 22, 38, flags);
-  }
+//  else if (fontsize == XXLSIZE) { // only lua uses those
+//     q = &font_22x38_num[((uint16_t)c-'0'+5)*110];
+//     lcdPutPattern(x, y, q, 22, 38, flags);
+//  }
   else if (fontsize == MIDSIZE) {
     q = &font_8x10[((uint16_t)c-0x20)*16];
     lcdPutPattern(x, y, q, 8, 12, flags);

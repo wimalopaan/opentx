@@ -40,6 +40,12 @@ if(PCBI6X_ELRSV2)
   add_definitions(-DPCBI6X_ELRSV2)
 endif()
 
+if(PCBI6X_ELRSV2)
+  # noop
+else()
+  add_definitions(-DPCBI6X_USB_MSD)
+endif()
+
 set(TARGET_SRC
   ${TARGET_SRC}
   A7105_SPI.cpp
@@ -54,7 +60,7 @@ set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
 add_definitions(-DPCBI6X -DBUZZER)
-add_definitions(-DPCBI6X_USB_MSD)
+# add_definitions(-DPCBI6X_USB_MSD)
 add_definitions(-DMENU_DIAGANAS)
 # add_definitions(-DMENU_DIAGKEYS)
 

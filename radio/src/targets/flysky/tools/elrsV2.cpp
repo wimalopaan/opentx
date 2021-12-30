@@ -70,10 +70,10 @@ uint8_t allParamsLoaded = 0;
 uint8_t folderAccess = 0; 
 uint8_t statusComplete = 0; 
 int8_t expectedChunks = -1;
-uint8_t deviceIsELRS_TX = 0; 
-tmr10ms_t linkstatTimeout = 100; 
-tmr10ms_t titleShowWarnTimeout = 100; 
-uint8_t titleShowWarn = 0; 
+// uint8_t deviceIsELRS_TX = 0;
+tmr10ms_t linkstatTimeout = 100;
+tmr10ms_t titleShowWarnTimeout = 100;
+uint8_t titleShowWarn = 0;
 
 tmr10ms_t selfRefreshDelay = 0; 
 
@@ -90,6 +90,8 @@ tmr10ms_t selfRefreshDelay = 0;
 #define EVT_VIRTUAL_NEXT  EVT_KEY_FIRST(KEY_DOWN)
 #define EVT_VIRTUAL_PREV  EVT_KEY_FIRST(KEY_UP)
 
+#define RESULT_OK 2
+#define RESULT_CANCEL 1
 
 void allocateFields();
 void reloadAllField();
@@ -288,9 +290,6 @@ void UIbackExec(FieldProps * field = 0) {
   fields[backButtonId].parent = 255;
 }
 
-/*
- * Skip multiple devices support
- */
 void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t offset;
   uint8_t id = data[2];
@@ -298,7 +297,7 @@ void parseDeviceInfoMessage(uint8_t* data) {
   offset = strlen((char*)&data[3]) + 1 + 3; 
   if ( deviceId == id) { 
     memcpy(deviceName, (char *)&data[3], 16);
-    deviceIsELRS_TX = 1; 
+    // deviceIsELRS_TX = 1; // ((fieldGetValue(data,offset,4) == 0x454C5253) and (deviceId == 0xEE)) or nil -- SerialNumber = 'E L R S' and ID is TX module
     uint8_t newFieldCount = data[offset+12];
     reloadAllField();
     if (newFieldCount != fields_count || newFieldCount == 0) {
@@ -439,11 +438,11 @@ void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length = 0) {
   }
 
   if (time > linkstatTimeout) {
-    if (!deviceIsELRS_TX && allParamsLoaded == 1) {
-      goodBadPkt[0] = '\0';
-    } else {
+    // if (!deviceIsELRS_TX && allParamsLoaded == 1) {
+    //   goodBadPkt[0] = '\0';
+    // } else {
       crossfireTelemetryPush4(0x2D, 0x0, 0x0); 
-    }
+    // }
     linkstatTimeout = time + 100;
   }
   if (time > titleShowWarnTimeout) {
@@ -570,16 +569,14 @@ void runDevicePage(event_t event) {
   }
 }
 
-uint8_t popupCompat(char * title, event_t event) {
-  lcdDrawFilledRect(10, 16, LCD_W-20, 40, SOLID, ERASE);
-  lcdDrawRect(10, 16, LCD_W-20, 40);
-  lcdDrawSizedText(WARNING_LINE_X, WARNING_LINE_Y, title, 23);
+uint8_t popupCompat(event_t event) {
+  showMessageBox((char *)&commandStatusInfo);
   lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS);
 
   if (event == EVT_VIRTUAL_EXIT) {
-    return 1; 
+    return RESULT_CANCEL; 
   } else if (event == EVT_VIRTUAL_ENTER) {
-    return 2; 
+    return RESULT_OK; 
   }
   return 0; 
 }
@@ -592,25 +589,25 @@ void runPopupPage(event_t event) {
 
   uint8_t result = 0;
   if (fieldPopup->value == 0 && fieldPopup->valuesLength != 0) { 
-      popupCompat((char *)&commandStatusInfo, event);
+      popupCompat(event);
       reloadAllField();
       fieldPopup = 0;
   } else if (fieldPopup->value == 3) { 
-    result = popupCompat((char *)&commandStatusInfo, event);
+    result = popupCompat(event);
     if (fieldPopup != 0) {
       fieldPopup->valuesLength = fieldPopup->value;
     }
-    if (result == 2) {
+    if (result == RESULT_OK) {
       crossfireTelemetryPush4(0x2D, fieldPopup->id, 4); 
       fieldTimeout = getTime() + fieldPopup->valuesOffset; 
       fieldPopup->value = 4; 
-    } else if (result == 1) {
+    } else if (result == RESULT_CANCEL) {
       fieldPopup = 0;
     }
   } else if (fieldPopup->value == 2) { 
-    result = popupCompat((char *)&commandStatusInfo, event);
+    result = popupCompat(event);
     fieldPopup->valuesLength = fieldPopup->value; 
-    if (result == 1) {
+    if (result == RESULT_CANCEL) {
       crossfireTelemetryPush4(0x2D, fieldPopup->id, 5); 
       fieldTimeout = getTime() + fieldPopup->valuesOffset; 
       fieldPopup = 0;
@@ -630,8 +627,6 @@ void ELRSV2_stop() {
 }
 
 void ELRSV2_run(event_t event) {
-  static uint8_t drawDelay = 0;
-
   if (cScriptRunning == 0) { 
     cScriptRunning = 1;
     fields_count = 0;
@@ -641,8 +636,7 @@ void ELRSV2_run(event_t event) {
 
   if (event == EVT_KEY_LONG(KEY_EXIT)) {
     ELRSV2_stop();
-  } else if (event != 0 || ++drawDelay > 10) { 
-    drawDelay = 0;
+  } else { 
     if (fieldPopup != 0) {
       runPopupPage(event);
     } else {

@@ -41,7 +41,7 @@ safetych_t safetyCh[MAX_OUTPUT_CHANNELS];
 // __DMA for the MSC_BOT_Data member
 union ReusableBuffer reusableBuffer __DMA;
 
-#if defined(STM32) && (!defined(PCBI6X) || defined(PCBI6X_USB_MSD))
+#if defined(STM32)
 uint8_t *MSC_BOT_Data = reusableBuffer.MSC_BOT_Data;
 #endif
 
