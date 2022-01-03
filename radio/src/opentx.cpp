@@ -1990,6 +1990,10 @@ uint32_t pwrCheck() {
 #else
         while ((TELEMETRY_STREAMING() && !g_eeGeneral.disableRssiPoweroffAlarm)) {
 #endif
+#if defined(PCBI6X)
+          pwr_check_state = PWR_CHECK_OFF;
+          return e_power_off;
+#else
           lcdRefreshWait();
           lcdClear();
 
@@ -2007,6 +2011,7 @@ uint32_t pwrCheck() {
             pwr_check_state = PWR_CHECK_PAUSED;
             return e_power_on;
           }
+#endif
         }
 #if defined(HAPTIC)
         haptic.play(15, 3, PLAY_NOW);
