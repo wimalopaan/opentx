@@ -5,7 +5,7 @@ version: 2.1
 parameters:
   build-version:
     type: string
-    default: "1.1.1"
+    default: "1.2.0"
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -18,7 +18,7 @@ jobs:
      - store_artifacts:
         path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
         destination: openi6x-<< pipeline.parameters.build-version >>-elrsv2.bin
-  build-gvars:
+  build-standard:
     machine: true
     steps:
       - checkout
@@ -26,7 +26,7 @@ jobs:
       - store_artifacts:
           path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
           destination: openi6x-<< pipeline.parameters.build-version >>.bin
-  build-gvars-heli:
+  build-heli:
     machine: true
     steps:
       - checkout
@@ -58,14 +58,14 @@ workflows:
 #              ignore: /.*/
 #            tags:
 #              only: /openi6x-*$/
-      - build-gvars:
+      - build-standard:
           filters:
             branches:
               only: /master$/
 #              ignore: /.*/
 #            tags:
 #              only: /openi6x-*$/
-      - build-gvars-heli:
+      - build-heli:
           filters:
             branches:
               only: /master$/
