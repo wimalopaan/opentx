@@ -80,7 +80,7 @@
   #define MAX_TRAINER_CHANNELS         8
   #define MAX_INPUTS                   16
 #if defined(PCBI6X_ELRSV2)
-  #define MAX_TELEMETRY_SENSORS        24 // 48b each
+  #define MAX_TELEMETRY_SENSORS        26 // 48b each
 #else
   #define MAX_TELEMETRY_SENSORS        30
 #endif

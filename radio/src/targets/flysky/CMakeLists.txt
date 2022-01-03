@@ -38,10 +38,6 @@ endif()
 
 if(PCBI6X_ELRSV2)
   add_definitions(-DPCBI6X_ELRSV2)
-endif()
-
-if(PCBI6X_ELRSV2)
-  # noop
 else()
   add_definitions(-DPCBI6X_USB_MSD)
 endif()

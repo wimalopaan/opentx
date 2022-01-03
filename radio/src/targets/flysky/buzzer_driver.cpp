@@ -277,6 +277,10 @@ inline void buzzerOff()
 
 void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t freqIncr)
 {
+  if (flags & PLAY_BACKGROUND) { // vario workaround for unpleasant buzz
+    flags &= ~PLAY_NOW;
+  }
+
   if ((flags & PLAY_BACKGROUND) && !(flags & PLAY_NOW) && (buzzerState.duration || (buzzerState.repeat > 0) || !buzzerFifo.empty())) return;
 
   if (!(flags & PLAY_NOW) && !(buzzerState.tone.flags & PLAY_BACKGROUND) && buzzerState.duration) {
@@ -285,9 +289,9 @@ void playTone(uint16_t freq, uint16_t len, uint16_t pause, uint8_t flags, int8_t
     return;
   } else if ((flags & PLAY_NOW) && (buzzerState.repeat > 0)) { // push current back to queue
     if (!buzzerFifo.full()) {
-      if (buzzerState.duration - len < buzzerState.tone.duration / 2) {
+    //  if (buzzerState.duration - len < buzzerState.tone.duration / 2) {
         buzzerState.repeat--;
-      }
+    //  }
       buzzerFifo.push(BuzzerTone(
         buzzerState.tone.freq,
         buzzerState.tone.duration,
