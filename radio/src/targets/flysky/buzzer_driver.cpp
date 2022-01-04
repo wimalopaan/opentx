@@ -34,7 +34,8 @@ void audioKeyPress()
 void audioKeyError()
 {
   if (g_eeGeneral.beepMode >= e_mode_nokeys) {
-    playTone(BEEP_DEFAULT_FREQ, 160, 20, PLAY_NOW);
+//    playTone(BEEP_DEFAULT_FREQ, 160, 20, PLAY_NOW);
+    buzzerEvent(AU_WARNING2);
   }
 }
 
@@ -72,7 +73,6 @@ void buzzerEvent(unsigned int index)
   // TRACE("buzzerEvent %u", index);
   if (index == AU_NONE)
     return;
-
 
   if (g_eeGeneral.alarmsFlash) {
     flashCounter = FLASH_DURATION;
@@ -240,22 +240,22 @@ void setVolume(int8_t volume)
 
 void setSampleRate(uint32_t frequency)
 {
-  uint32_t timer = 1000000 / frequency - 1 ;
+  uint32_t timer = 1000000 / frequency - 1;
 
-  PWM_TIMER->CR1 &= ~TIM_CR1_CEN ;
-  PWM_TIMER->CNT = 0 ;
-  PWM_TIMER->ARR = limit<uint32_t>(2, timer, 65535) ;
-  PWM_TIMER->CR1 |= TIM_CR1_CEN ;
+  PWM_TIMER->CR1 &= ~TIM_CR1_CEN;
+  PWM_TIMER->CNT = 0;
+  PWM_TIMER->ARR = limit<uint32_t>(2, timer, 65535);
+  PWM_TIMER->CR1 |= TIM_CR1_CEN;
 }
 
 inline unsigned int getToneLength(uint16_t len)
 {
   unsigned int result = len; // default
-  if (g_eeGeneral.beepLength < 0) {
-    if (g_eeGeneral.beepLength == -1)
+  if (g_eeGeneral.beepLength < 0) { // result /= (1-g_eeGeneral.beepLength);
+    if (g_eeGeneral.beepLength == -1) // result /= (1+1);
         result /= 2; // let compiler replace with shift instead of soft div on M0
-    else
-        result = (result * 341) >> 10;
+    else // result /= (1+2);
+        result = (result * 341) >> 10; // * 0,333 == /3
   }
   else if (g_eeGeneral.beepLength > 0) {
     result *= (1+g_eeGeneral.beepLength);
