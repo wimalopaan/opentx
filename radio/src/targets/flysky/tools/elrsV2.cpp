@@ -606,7 +606,9 @@ void runPopupPage(event_t event) {
     }
   } else if (fieldPopup->value == 2) { 
     result = popupCompat(event);
-    fieldPopup->valuesLength = fieldPopup->value; 
+    if (fieldPopup != 0) {
+      fieldPopup->valuesLength = fieldPopup->value;
+    }
     if (result == RESULT_CANCEL) {
       crossfireTelemetryPush4(0x2D, fieldPopup->id, 5); 
       fieldTimeout = getTime() + fieldPopup->valuesOffset; 
