@@ -162,7 +162,7 @@ typedef struct _DCD
   const USBD_DEVICE                   *usr_device;  
   uint8_t        *pConfig_descriptor;
  }
-DCD_DEV , *DCD_PDEV;
+DCD_DEV , *DCD_PDEV;	// modified by OpenTX
 
 typedef struct USB_Device_handle
 {
@@ -206,7 +206,7 @@ uint32_t   DCD_EP_PrepareRx ( USB_CORE_HANDLE *pdev,
 uint32_t    DCD_EP_Tx (USB_CORE_HANDLE *pdev,
                                uint8_t  ep_addr,
                                const uint8_t  *pbuf,
-                               uint32_t   buf_len);
+                               uint32_t   buf_len);  // modified by OpenTX
 uint32_t    DCD_EP_Stall (USB_CORE_HANDLE *pdev,
                               uint8_t   epnum);
 uint32_t    DCD_EP_ClrStall (USB_CORE_HANDLE *pdev,
