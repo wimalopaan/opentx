@@ -176,7 +176,7 @@ void keysInit()
   //default state is low
   gpio_init.GPIO_Mode = GPIO_Mode_IN;
   gpio_init.GPIO_OType = GPIO_OType_PP;
-  gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+  gpio_init.GPIO_Speed = GPIO_Speed_2MHz;
   gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
   gpio_init.GPIO_Pin = KEYS_LINES_PINS;
   GPIO_Init(KEYS_MATRIX_LINES_GPIO, &gpio_init);

@@ -871,9 +871,11 @@ void checkAll() {
   checkSDVersion();
 #endif
 
+#if !defined(PCBI6X)
   if (g_model.displayChecklist && modelHasNotes()) {
     readModelNotes();
   }
+#endif
 
   if (!clearKeyEvents()) {
     showMessageBox(STR_KEYSTUCK);
