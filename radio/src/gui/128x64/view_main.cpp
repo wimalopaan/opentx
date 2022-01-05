@@ -354,9 +354,11 @@ void menuMainView(event_t event)
     case EVT_KEY_CONTEXT_MENU:
       killEvents(event);
 
+#if !defined(PCBI6X)
       if (modelHasNotes()) {
         POPUP_MENU_ADD_ITEM(STR_VIEW_NOTES);
       }
+#endif
 
       POPUP_MENU_ADD_ITEM(STR_RESET_SUBMENU);
 
