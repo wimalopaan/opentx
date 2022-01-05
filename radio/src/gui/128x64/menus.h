@@ -70,7 +70,7 @@ void menuSpecialFunctions(event_t event, CustomFunctionData * functions, CustomF
 
 enum MenuRadioIndexes
 {
-#if defined(PCBI6X_ELRSV2)
+#if defined(RADIO_TOOLS)
   MENU_RADIO_TOOLS,
 #endif
   MENU_RADIO_SETUP,
@@ -89,9 +89,6 @@ enum MenuRadioIndexes
   MENU_RADIO_PAGES_COUNT
 };
 
-#if defined(PCBI6X_ELRSV2)
-void menuRadioTools(event_t event);
-#endif
 void menuRadioSetup(event_t event);
 void menuRadioSdManager(event_t event);
 void menuRadioSpecialFunctions(event_t event);
@@ -100,10 +97,11 @@ void menuRadioVersion(event_t event);
 void menuRadioDiagKeys(event_t event);
 void menuRadioDiagAnalogs(event_t event);
 void menuRadioHardware(event_t event);
+void menuRadioTools(event_t event);
 void menuRadioCalibration(event_t event);
 
 static const MenuHandlerFunc menuTabGeneral[]  = {
-#if defined(PCBI6X_ELRSV2)
+#if defined(RADIO_TOOLS)
   menuRadioTools,
 #endif
   menuRadioSetup,
