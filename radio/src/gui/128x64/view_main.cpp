@@ -384,7 +384,7 @@ void menuMainView(event_t event)
 
     CASE_EVT_ROTARY_LONG
     case EVT_KEY_GENERAL_MENU:
-      pushMenu(menuRadioSetup);
+      pushMenu(menuTabGeneral[0]);
       killEvents(event);
       break;
 #endif
