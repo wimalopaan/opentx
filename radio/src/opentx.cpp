@@ -271,9 +271,7 @@ void generalDefault() {
   g_eeGeneral.stickMode = DEFAULT_MODE - 1;
 #endif
 
-#if defined(PCBTARANIS)
-  g_eeGeneral.templateSetup = 17; /* TAER */
-#endif
+  g_eeGeneral.templateSetup = DEFAULT_TEMPLATE_SETUP;
 
   g_eeGeneral.backlightMode = e_backlight_mode_all;
   g_eeGeneral.lightAutoOff = 2;
