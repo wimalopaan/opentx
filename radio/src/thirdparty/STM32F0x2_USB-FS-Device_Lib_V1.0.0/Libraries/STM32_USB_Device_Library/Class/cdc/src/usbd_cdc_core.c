@@ -65,6 +65,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_core.h"
+#include "usbd_core.h"
+
+#define USB_CDC_IDLE         0
+#define USB_CDC_BUSY         1
+#define USB_CDC_ZLP          2
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
