@@ -42,7 +42,9 @@
 // #define USB_DEVICE_LOW_PWR_MGMT_SUPPORT
 
 /* Endpoints used by the device */
+// #define EP_NUM     (2)  /* EP0 + EP1 IN For HID */
 #define EP_NUM    (3) /* EP0 + EP1 for MSC IN + EP2 for MSC OUT */
+// #define EP_NUM     (4)  /* EP0 + EP1 For HID + EP2/EP3 for CDC  */
 
 /* Buffer table base address */
 #define BTABLE_ADDRESS    (0x00)
@@ -56,6 +58,15 @@
     
 /* EP2, Rx buffer base address */
 #define MSC_OUT_RX_ADDRESS    (0xD8)
+
+/* EP2 Tx buffer base address */
+#define BULK_IN_TX_ADDRESS  (0xC0) 
+
+/* EP2 Rx buffer base address */
+#define BULK_OUT_RX_ADDRESS (0x110)
+
+/* EP3 Tx buffer base address */
+#define INT_IN_TX_ADDRESS   (0x100)
 
 #define __ALIGN_BEGIN
 #define __ALIGN_END   
