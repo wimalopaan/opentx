@@ -44,7 +44,7 @@ char commandStatusInfo[24];
 #define deviceId 0xEE
 #define handsetId 0xEF
 
-char deviceName[16]; 
+char deviceName[16];
 uint8_t lineIndex = 1;
 uint8_t pageOffset = 0;
 uint8_t edit = 0; 
@@ -92,6 +92,13 @@ tmr10ms_t selfRefreshDelay = 0;
 
 #define RESULT_OK 2
 #define RESULT_CANCEL 1
+
+void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max)
+{
+  lcdDrawRect(x, y, w+1, h, 0xff);
+  uint8_t len = limit((uint8_t)1, uint8_t(w*val/max), uint8_t(w));
+  lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
+}
 
 void allocateFields();
 void reloadAllField();
@@ -464,7 +471,7 @@ void lcd_title() {
 
   if (allParamsLoaded != 1 && fields_count > 0) {
     lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
-    drawGauge(0, 0, COL2, barHeight, fieldId, fields_count);
+    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count);
   } else {
     lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
     if (titleShowWarn) {
