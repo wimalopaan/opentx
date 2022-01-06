@@ -54,7 +54,7 @@ void handleUsbConnection()
 #if defined(STM32) && !defined(SIMU)
   if (!usbStarted() && usbPlugged()) {
     if (getSelectedUsbMode() == USB_UNSELECTED_MODE) {
-      if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && popupMenuItemsCount == 0) {
+      if (g_eeGeneral.USBMode == USB_UNSELECTED_MODE && popupMenuItemsCount == 0) {
         POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
   #if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
         POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
