@@ -1,6 +1,6 @@
 # OpenI6X
 
-**OpenTX** port for the venerable Flysky i6X RC radio transmitter.<br>
+**OpenTX** port for the venerable **Flysky i6X** RC radio transmitter.<br>
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) and [Telegram group](https://t.me/otx_flysky_i6x).
 
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
@@ -43,4 +43,4 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 * This work is based on Jakub's ([qba667](https://github.com/qba667)) work and is forked from his repo.
 * All the contributors of [OpenTX](https://github.com/opentx/opentx/). 
 
-New developers are highly welcome! See [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
+New developers are highly welcome! See [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute) and [known issues](https://github.com/OpenI6X/opentx/issues).
