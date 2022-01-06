@@ -23,6 +23,8 @@ if(PCB STREQUAL I6X)
   set(DEFAULT_MODE 2)
   set(GVAR_SCREEN model_gvars.cpp)
   set(SERIAL2_DRIVER serial2_driver.cpp)
+  set(DEFAULT_TEMPLATE_SETUP "0" CACHE STRING "Default channel order")
+
   add_definitions(-DTELEMETRY_FRSKY)
   add_definitions(-DCROSSFIRE)
   add_definitions(-DNAVIGATION_POT1)
@@ -52,10 +54,15 @@ set(SDCARD NO) # ~24kB FLASH
 set(EEPROM EEPROM_RLC)
 set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
+set(DEFAULT_TEMPLATE_SETUP 21) # AETR
 add_definitions(-DPCBI6X -DBUZZER)
 # add_definitions(-DPCBI6X_USB_MSD)
 add_definitions(-DMENU_DIAGANAS)
 # add_definitions(-DMENU_DIAGKEYS) # ~364B
+
+if(NOT DEFAULT_TEMPLATE_SETUP STREQUAL "")
+  add_definitions(-DDEFAULT_TEMPLATE_SETUP=${DEFAULT_TEMPLATE_SETUP})
+endif()
 
 set(GUI_SRC ${GUI_SRC}
   model_input_edit.cpp
