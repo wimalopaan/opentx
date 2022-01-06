@@ -269,6 +269,7 @@ void menuModelLogicalSwitches(event_t event)
     LogicalSwitchData * cs = lswAddress(sub);
     if (cs->func)
       s_currIdx = sub;
+    if (sub >= 0)
       POPUP_MENU_ADD_ITEM(STR_EDIT);
 #if defined(SDCARD)
     if (cs->func || cs->v1 || cs->v2 || cs->delay || cs->duration || cs->andsw)

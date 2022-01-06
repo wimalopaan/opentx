@@ -52,43 +52,44 @@ void onUSBConnectMenu(const char *result)
 void handleUsbConnection()
 {
 #if defined(STM32) && !defined(SIMU)
-  if (!usbStarted() && usbPlugged() && !(getSelectedUsbMode() == USB_UNSELECTED_MODE)) {
-    usbStart();
-#if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
-    if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
-#if defined(PCBI6X_ELRSV2)
-      ELRSV2_stop();
-#endif
-      opentxClose(false);
-      usbPluggedIn();
+  if (!usbStarted() && usbPlugged()) {
+    if (getSelectedUsbMode() == USB_UNSELECTED_MODE) {
+      if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && popupMenuItemsCount == 0) {
+        POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
+  #if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
+        POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
+  #endif
+  #if defined(DEBUG) && !defined(PCBI6X)
+        POPUP_MENU_ADD_ITEM(STR_USB_SERIAL);
+  #endif
+        POPUP_MENU_START(onUSBConnectMenu);
+      }
+      else {
+        setSelectedUsbMode(g_eeGeneral.USBMode);
+      }
     }
-#endif
+    else {
+      #if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
+      if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
+        #if defined(PCBI6X_ELRSV2)
+        ELRSV2_stop();
+        #endif
+        opentxClose(false);
+        usbPluggedIn();
+      }
+      #endif
+      usbStart();
+    }
   }
-  if (!usbStarted() && usbPlugged() && getSelectedUsbMode() == USB_UNSELECTED_MODE) {
-    if((g_eeGeneral.USBMode == USB_UNSELECTED_MODE) && (popupMenuNoItems == 0)) {
-      POPUP_MENU_ADD_ITEM(STR_USB_JOYSTICK);
-#if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
-      POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
-#endif
-#if defined(DEBUG) && !defined(PCBI6X)
-      POPUP_MENU_ADD_ITEM(STR_USB_SERIAL);
-#endif
-      POPUP_MENU_START(onUSBConnectMenu);
-    }
-    if (g_eeGeneral.USBMode != USB_UNSELECTED_MODE) {
-      setSelectedUsbMode(g_eeGeneral.USBMode);
-    }
-  }
+
   if (usbStarted() && !usbPlugged()) {
     usbStop();
-#if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
+    #if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
     if (getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
       opentxResume();
     }
-#endif
-#if !defined(BOOT)
+    #endif
     setSelectedUsbMode(USB_UNSELECTED_MODE);
-#endif
   }
 #endif // defined(STM32) && !defined(SIMU)
 }
@@ -106,12 +107,10 @@ void checkSpeakerVolume()
 #if defined(EEPROM)
 void checkEeprom()
 {
-  if (!usbPlugged()) {
-    if (eepromIsWriting())
-      eepromWriteProcess();
-    else if (TIME_TO_WRITE())
-      storageCheck(false);
-  }
+  if (eepromIsWriting())
+    eepromWriteProcess();
+  else if (TIME_TO_WRITE())
+    storageCheck(false);
 }
 #else
 void checkEeprom()
@@ -250,7 +249,7 @@ void guiMain(event_t evt)
     while (1) {
       // normal GUI from menus
       const char * warn = warningText;
-      uint8_t menu = popupMenuNoItems;
+      uint8_t menu = popupMenuItemsCount;
 
       static bool popupDisplayed = false;
       if (warn || menu) {
@@ -402,7 +401,7 @@ void guiMain(event_t evt)
     handleGui(0); // suppress events, they are handled by the warning
     DISPLAY_WARNING(evt);
   }
-  else if (popupMenuNoItems > 0) {
+  else if (popupMenuItemsCount > 0) {
     // popup menu is active display it on top of normal menus
     handleGui(0); // suppress events, they are handled by the popup
     if (!inPopupMenu) {
@@ -431,15 +430,22 @@ void guiMain(event_t evt)
 void perMain()
 {
   DEBUG_TIMER_START(debugTimerPerMain1);
+
 #if defined(PCBSKY9X) && !defined(REVA)
   calcConsumption();
 #endif
+
   checkSpeakerVolume();
-  checkEeprom();
-#if defined(SDCARD)
-  logsWrite();
-#endif
+
+  if (!usbPlugged()) {
+    checkEeprom();
+    #if defined(SDCARD)
+    logsWrite();
+    #endif
+  }
+
   handleUsbConnection();
+
   checkTrainerSettings();
   periodicTick();
   DEBUG_TIMER_STOP(debugTimerPerMain1);
@@ -450,7 +456,7 @@ void perMain()
     mainRequestFlags &= ~(1 << REQUEST_FLIGHT_RESET);
   }
 
-  doLoopCommonActions();
+  checkBacklight();
 
   event_t evt = getEvent(false);
 
@@ -462,16 +468,14 @@ void perMain()
 #endif
 
 #if defined(STM32) && defined(SDCARD)
-  bool sdcardPresent = SD_CARD_PRESENT();
-  if (sdcardPresent && !globalData.sdcardPresent) {
+  if (!usbPlugged() && SD_CARD_PRESENT() && !sdMounted()) {
     sdMount();
   }
-  globalData.sdcardPresent = sdcardPresent;
 #endif
 
 #if !defined(EEPROM)
   // In case the SD card is removed during the session
-  if (!SD_CARD_PRESENT() && !globalData.unexpectedShutdown) {
+  if (!usbPlugged() && !SD_CARD_PRESENT() && !globalData.unexpectedShutdown) {
     drawFatalErrorScreen(STR_NO_SDCARD);
     return;
   }

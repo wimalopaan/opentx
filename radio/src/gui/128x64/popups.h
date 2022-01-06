@@ -63,8 +63,8 @@ extern uint8_t warningInfoFlags;
 #endif
 
   #define NAVIGATION_MENUS
-  #define POPUP_MENU_ADD_ITEM(s)       do { popupMenuOffsetType = MENU_OFFSET_INTERNAL; if (popupMenuNoItems < POPUP_MENU_MAX_LINES) popupMenuItems[popupMenuNoItems++] = s; } while (0)
-  #define POPUP_MENU_SELECT_ITEM(s)    s_menu_item =  (s > 0 ? (s < popupMenuNoItems ? s : popupMenuNoItems) : 0)
+  #define POPUP_MENU_ADD_ITEM(s)       do { popupMenuOffsetType = MENU_OFFSET_INTERNAL; if (popupMenuItemsCount < POPUP_MENU_MAX_LINES) popupMenuItems[popupMenuItemsCount++] = s; } while (0)
+  #define POPUP_MENU_SELECT_ITEM(s)    s_menu_item =  (s > 0 ? (s < popupMenuItemsCount ? s : popupMenuItemsCount) : 0)
   #define POPUP_MENU_START(func)       do { popupMenuHandler = (func); AUDIO_KEY_PRESS(); } while (0)
   #define POPUP_MENU_MAX_LINES         12
   #define MENU_MAX_DISPLAY_LINES       6
@@ -80,7 +80,7 @@ extern uint8_t warningInfoFlags;
 #if defined(NAVIGATION_MENUS)
   extern uint16_t popupMenuOffset;
   extern const char * popupMenuItems[POPUP_MENU_MAX_LINES];
-  extern uint16_t popupMenuNoItems;
+  extern uint16_t popupMenuItemsCount;
   const char * runPopupMenu(event_t event);
   extern void (*popupMenuHandler)(const char * result);
 #endif

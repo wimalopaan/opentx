@@ -973,7 +973,7 @@ bool menuModelSetup(event_t event)
                       newFlag = MODULE_BIND;
                     }
                     else {
-                      if (!popupMenuNoItems) {
+                      if (!popupMenuItemsCount) {
                         s_editMode = 0;  // this is when popup is exited before a choice is made
                       }
                     }

@@ -177,7 +177,7 @@ void per10ms() {
     backlightFade();  // increment or decrement brightness until target brightness is reached
 #endif
 
-#if !defined(AUDIO)
+#if !defined(AUDIO) && !defined(PCBI6X)
   if (mixWarning & 1)
     if (((g_tmr10ms & 0xFF) == 0))
       AUDIO_MIX_WARNING(1);
@@ -715,10 +715,6 @@ void checkBacklight() {
   }
 }
 
-void doLoopCommonActions() {
-  checkBacklight();
-}
-
 void backlightOn() {
   lightOffCounter = ((uint16_t)g_eeGeneral.lightAutoOff * 250) << 1;
 }
@@ -799,7 +795,7 @@ void doSplash() {
       }
 #endif
 
-      doLoopCommonActions();
+      checkBacklight();
     }
   }
 }
@@ -961,7 +957,7 @@ void checkTHR() {
       break;
     }
 
-    doLoopCommonActions();
+    checkBacklight();
 
     wdt_reset();
 
@@ -999,7 +995,7 @@ void alert(const char *title, const char *msg, uint8_t sound) {
     if (keyDown())  // wait for key release
       break;
 
-    doLoopCommonActions();
+    checkBacklight();
 
     wdt_reset();
 
@@ -1427,7 +1423,7 @@ void doMixerPeriodicUpdates()
 #endif
           AUDIO_INACTIVITY();
 
-#if defined(AUDIO)
+#if defined(AUDIO) || defined(PCBI6X)
         if (mixWarning & 1)
           if ((sessionTimer & 0x03) == 0)
             AUDIO_MIX_WARNING(1);
@@ -1533,8 +1529,9 @@ void opentxStart(const uint8_t startOptions = OPENTX_START_DEFAULT_ARGS) {
 void opentxClose(uint8_t shutdown) {
   TRACE("opentxClose");
 
+  watchdogSuspend(2000 /*20s*/);
+
   if (shutdown) {
-    watchdogSuspend(2000 /*20s*/);
     pausePulses();  // stop mixer task to disable trims processing while in shutdown
     AUDIO_BYE();
 #if defined(TELEMETRY_FRSKY)

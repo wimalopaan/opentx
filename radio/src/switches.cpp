@@ -747,7 +747,7 @@ void checkSwitches()
 
     if (pwrCheck() == e_power_off || keyDown()) break;
 
-    doLoopCommonActions();
+    checkBacklight();
 
     wdt_reset();
 
