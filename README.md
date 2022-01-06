@@ -1,7 +1,7 @@
 # OpenI6X
 
 **OpenTX** port for the venerable Flysky i6X RC radio transmitter.<br>
-You can find instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX).
+You can find instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) and [Telegram group](https://t.me/otx_flysky_i6x).
 
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
 [![Release](https://img.shields.io/github/v/release/OpenI6X/opentx?include_prereleases)](https://github.com/OpenI6X/opentx/releases)
@@ -10,7 +10,7 @@ You can find instructions and videos contributed by fellow early adopters in the
 
 ## Installation
 
-Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
+Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 
 ## Implemented features 
 
@@ -42,3 +42,5 @@ Go to the wiki for detailed steps: https://github.com/OpenI6X/opentx/wiki
 * ADC code taken from [OpenGround](https://github.com/fishpepper/OpenGround).
 * This work is based on Jakub's ([qba667](https://github.com/qba667)) work and is forked from his repo.
 * All the contributors of [OpenTX](https://github.com/opentx/opentx/). 
+
+New developers are highly welcome! See [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
