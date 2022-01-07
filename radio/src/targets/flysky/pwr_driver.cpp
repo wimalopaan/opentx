@@ -47,6 +47,10 @@ void pwrOff() {
 
 #define PWR_TRIGGER_DELAY 200 // 2s
 
+/**
+ * i6X dont have a dedicated power trigger
+ * so use CANCEL (KEY_EXIT) to emulate it.
+ */
 uint32_t pwrPressed() {
   static tmr10ms_t pwr_trigger_time = 0;
 
