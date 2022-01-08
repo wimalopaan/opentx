@@ -171,7 +171,7 @@ uint32_t switchState(uint8_t index)
 
 void keysInit()
 {
-  RCC_AHBPeriphClockCmd(KEYS_RCC_AHB1Periph, ENABLE);
+  // RCC_AHBPeriphClockCmd(KEYS_RCC_AHB1Periph, ENABLE);
   GPIO_InitTypeDef gpio_init;
   //default state is low
   gpio_init.GPIO_Mode = GPIO_Mode_IN;

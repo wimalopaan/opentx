@@ -33,8 +33,8 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
     return;
   }
 
-  RCC_AHBPeriphClockCmd(TELEMETRY_RCC_AHB1Periph, ENABLE);
-  RCC_APB1PeriphClockCmd(TELEMETRY_RCC_APB1Periph, ENABLE);
+  // RCC_AHBPeriphClockCmd(TELEMETRY_RCC_AHB1Periph, ENABLE);
+  // RCC_APB1PeriphClockCmd(TELEMETRY_RCC_APB1Periph, ENABLE);
 
   /*
   Bits 13:12 PL[1:0]: Channel priority level

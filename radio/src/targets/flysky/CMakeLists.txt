@@ -58,7 +58,7 @@ set(DEFAULT_TEMPLATE_SETUP 21) # AETR
 add_definitions(-DPCBI6X -DBUZZER)
 # add_definitions(-DPCBI6X_USB_MSD)
 add_definitions(-DMENU_DIAGANAS)
-# add_definitions(-DMENU_DIAGKEYS) # ~364B
+add_definitions(-DMENU_DIAGKEYS) # ~364B
 
 if(NOT DEFAULT_TEMPLATE_SETUP STREQUAL "")
   add_definitions(-DDEFAULT_TEMPLATE_SETUP=${DEFAULT_TEMPLATE_SETUP})
