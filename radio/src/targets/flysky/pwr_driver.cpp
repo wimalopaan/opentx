@@ -45,18 +45,24 @@ void pwrOff() {
   }
 }
 
-static uint16_t pwr_key_cnt = 0;
+#define PWR_TRIGGER_DELAY 200 // 2s
 
+/**
+ * i6X dont have a dedicated power trigger
+ * so use CANCEL (KEY_EXIT) to emulate it.
+ */
 uint32_t pwrPressed() {
-  // HOLD EXIT KEY
+  static tmr10ms_t pwr_trigger_time = 0;
+
   if ((readKeys() & (1 << KEY_EXIT))) {
-    pwr_key_cnt++;
-    //TRACE("cnt %d", pwr_key_cnt);
-    if (pwr_key_cnt > 200) {
+    if (pwr_trigger_time == 0) {
+      pwr_trigger_time = get_tmr10ms();
+    }
+    if (get_tmr10ms() - pwr_trigger_time > PWR_TRIGGER_DELAY) {
       return 1;
     }
-  } else if (pwr_key_cnt > 0) {
-    pwr_key_cnt = 0;
+  } else {
+    pwr_trigger_time = 0;
   }
   return 0;
 }
