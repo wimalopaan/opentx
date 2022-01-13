@@ -101,7 +101,7 @@ void playCustomFunctionFile(const CustomFunctionData * sd, uint8_t id)
 }
 #endif
 
-#if defined(VOICE)
+#if defined(VOICE) || defined(PCBI6X)
 bool isRepeatDelayElapsed(const CustomFunctionData * functions, CustomFunctionsContext & functionsContext, uint8_t index)
 {
   const CustomFunctionData * cfn = &functions[index];
@@ -286,7 +286,7 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
             break;
           }
 
-#if defined(SDCARD)
+#if defined(SDCARD) || defined(PCBI6X)
           case FUNC_PLAY_SOUND:
           // case FUNC_PLAY_TRACK:
           // case FUNC_PLAY_VALUE:
@@ -297,7 +297,11 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
             if (isRepeatDelayElapsed(functions, functionsContext, i)) {
               if (!IS_PLAYING(PLAY_INDEX)) {
                 if (CFN_FUNC(cfn) == FUNC_PLAY_SOUND) {
+                  #if defined(PCBI6X)
+                  if (true) {
+                  #else
                   if (audioQueue.isEmpty()) {
+                  #endif
                     AUDIO_PLAY(AU_SPECIAL_SOUND_FIRST + CFN_PARAM(cfn));
                   }
                 }
