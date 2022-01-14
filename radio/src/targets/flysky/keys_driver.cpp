@@ -101,7 +101,7 @@ uint32_t readTrims()
 
 uint8_t trimDown(uint8_t idx)
 {
-  return readTrims() & (1 << idx);
+  return (readTrims() & (1 << (TRM_BASE + idx))) ? 1 : 0;
 }
 
 bool keyDown()
