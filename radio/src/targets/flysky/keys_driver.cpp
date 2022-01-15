@@ -106,8 +106,7 @@ uint32_t readTrims()
 
 uint8_t trimDown(uint8_t idx)
 {
-  // return (readTrims() & (1 << (TRM_BASE + idx))) ? 1 : 0;
-  return keys[TRM_BASE + idx].state();
+  return (readTrims() & (1 << (TRM_BASE + idx))) ? 1 : 0;
 }
 
 bool keyDown()
@@ -148,7 +147,7 @@ uint8_t keyState(uint8_t index)
 #if !defined(BOOT)
 uint32_t switchState(uint8_t index)
 {
-  uint32_t state = 0;
+  uint32_t xxx = 0;
   uint8_t pos = index % 3;    // 0, 1, 2
   uint8_t sw_num = index / 3; // 0, 1, 2, 3
   uint8_t adc_num = sw_num + 4;
@@ -161,10 +160,10 @@ uint32_t switchState(uint8_t index)
       ((value >  KEY_ADC_VAL_1) && (pos == 1) && (value <= KEY_ADC_VAL_2)) ||
       ((value >  KEY_ADC_VAL_2) && (pos == 2)))
   {
-    state = 1 << index;
+    xxx = 1 << index;
   }
-  //TRACE("switch idx %d sw_num %d value %d pos %d state %d", index, sw_num, value, pos, state);
-  return state;
+  //TRACE("switch idx %d sw_num %d value %d pos %d xxx %d", index, sw_num, value, pos, xxx);
+  return xxx;
 }
 #endif
 
