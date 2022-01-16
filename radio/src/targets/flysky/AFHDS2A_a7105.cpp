@@ -170,7 +170,8 @@ void AFHDS2A_build_packet(uint8_t type) {
 
       packet[11] = g_model.moduleData[INTERNAL_MODULE].servoFreq;
       packet[12] = g_model.moduleData[INTERNAL_MODULE].servoFreq >> 8;
-      if (g_model.moduleData[INTERNAL_MODULE].subType & (AFHDS2A_SUBTYPE_PPM_IBUS | AFHDS2A_SUBTYPE_PPM_SBUS)) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_IBUS || 
+            g_model.moduleData[INTERNAL_MODULE].subType ==AFHDS2A_SUBTYPE_PPM_SBUS) {
         packet[13] = 0x01;  // PPM output enabled
       } else {
         packet[13] = 0x00;
@@ -182,7 +183,8 @@ void AFHDS2A_build_packet(uint8_t type) {
       packet[18] = 0x05;  // ?
       packet[19] = 0xdc;  // ?
       packet[20] = 0x05;  // ?
-      if (g_model.moduleData[INTERNAL_MODULE].subType & (AFHDS2A_SUBTYPE_PWM_SBUS | AFHDS2A_SUBTYPE_PPM_SBUS)) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PWM_SBUS || 
+            g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_SBUS) {
         packet[21] = 0xdd;  // SBUS output enabled
       } else {
         packet[21] = 0xde;  // IBUS
