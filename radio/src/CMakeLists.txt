@@ -31,6 +31,7 @@ option(AUTOSOURCE "Automatic source detection in menus" ON)
 option(AUTOSWITCH "Automatic switch detection in menus" ON)
 option(SEMIHOSTING "Enable debugger semihosting" OFF)
 option(JITTER_MEASURE "Enable ADC jitter measurement" OFF)
+option(WATCHDOG "Enable hardware Watchdog" ON)
 option(WATCHDOG_DISABLED "Disable hardware Watchdog" OFF)
 if(SDL_FOUND)
   option(SIMU_AUDIO "Enable simulator audio." ON)
@@ -236,6 +237,14 @@ endif()
 
 if(JITTER_MEASURE)
   add_definitions(-DJITTER_MEASURE)
+endif()
+
+if(ASTERISK)
+  add_definitions(-DASTERISK)
+endif()
+
+if(WATCHDOG)
+  add_definitions(-DWATCHDOG)
 endif()
 
 if(WATCHDOG_DISABLED)

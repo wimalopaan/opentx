@@ -1185,6 +1185,11 @@ union ReusableBuffer
     uint8_t maxNameLen;
   } modelFailsafe;
 
+  struct
+  {
+    int8_t preset;
+  } curveEdit;
+
 #if defined(STM32)
   // Data for the USB mass storage driver. If USB mass storage runs no menu is not allowed to be displayed
   uint8_t MSC_BOT_Data[MSC_MEDIA_PACKET];
@@ -1329,5 +1334,15 @@ extern JitterMeter<uint16_t> avgJitter[NUM_ANALOGS];
 #if defined(BLUETOOTH)
   #include "bluetooth.h"
 #endif
+
+
+inline bool isAsteriskDisplayed()
+{
+#if defined(ASTERISK) || !defined(WATCHDOG) || defined(LOG_TELEMETRY) || defined(LOG_BLUETOOTH) || defined(DEBUG_LATENCY)
+  return true;
+#endif
+
+  return globalData.unexpectedShutdown;
+}
 
 #endif // _OPENTX_H_

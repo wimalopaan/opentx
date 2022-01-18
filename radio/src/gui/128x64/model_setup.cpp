@@ -1512,7 +1512,7 @@ void menuModelFailsafe(event_t event)
 
   SIMPLE_SUBMENU_NOTITLE(sentModuleChannels(g_moduleIdx) + 1);
 
-  lcdDrawTextAlignedCenter(0, FAILSAFESET);
+  lcdDrawText(LCD_W / 2, 0, STR_FAILSAFESET, CENTERED);
   lcdInvertLine(0);
 
   const coord_t x = 1;

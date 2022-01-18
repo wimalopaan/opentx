@@ -578,7 +578,7 @@ void runDevicePage(event_t event) {
 
 uint8_t popupCompat(event_t event) {
   showMessageBox((char *)&commandStatusInfo);
-  lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS);
+  lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS_ENTER_EXIT);
 
   if (event == EVT_VIRTUAL_EXIT) {
     return RESULT_CANCEL; 
@@ -631,6 +631,7 @@ void ELRSV2_stop() {
   fieldPopup = 0;
   if (cScriptRunning) {
     cScriptRunning = 0;
+    memset(reusableBuffer.MSC_BOT_Data, 0, 512);
     popMenu();
   }
 }
