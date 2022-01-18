@@ -372,14 +372,14 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
 #endif
 
 
-//#if defined(SDCARD)
-          // case FUNC_LOGS:
-          //   if (CFN_PARAM(cfn)) {
-          //     newActiveFunctions |= (1 << FUNCTION_LOGS);
-          //     logDelay = CFN_PARAM(cfn);
-          //   }
-          //   break;
-//#endif
+#if defined(SDCARD)
+          case FUNC_LOGS:
+            if (CFN_PARAM(cfn)) {
+              newActiveFunctions |= (1 << FUNCTION_LOGS);
+              logDelay = CFN_PARAM(cfn);
+            }
+            break;
+#endif
 
           case FUNC_BACKLIGHT:
             newActiveFunctions |= (1 << FUNCTION_BACKLIGHT);

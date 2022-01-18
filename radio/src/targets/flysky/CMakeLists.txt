@@ -37,8 +37,9 @@ endif()
 
 if(PCBI6X_ELRSV2)
   add_definitions(-DPCBI6X_ELRSV2)
-else()
+else() # features disabled for ELRSV2
   add_definitions(-DPCBI6X_USB_MSD)
+  add_definitions(-DMENU_DIAGKEYS) # 364B
 endif()
 
 set(TARGET_SRC
@@ -56,9 +57,8 @@ set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
 set(DEFAULT_TEMPLATE_SETUP 21) # AETR
 add_definitions(-DPCBI6X -DBUZZER)
-# add_definitions(-DPCBI6X_USB_MSD)
-add_definitions(-DMENU_DIAGANAS)
-add_definitions(-DMENU_DIAGKEYS) # ~364B
+add_definitions(-DMENU_DIAGANAS) # 360B
+# add_definitions(-DMENU_DIAGKEYS) # 364B
 
 if(NOT DEFAULT_TEMPLATE_SETUP STREQUAL "")
   add_definitions(-DDEFAULT_TEMPLATE_SETUP=${DEFAULT_TEMPLATE_SETUP})
@@ -74,6 +74,7 @@ set(GUI_SRC ${GUI_SRC}
   view_channels.cpp
   view_telemetry.cpp
   view_about.cpp
+  view_channels.cpp
   )
 
 set(SRC ${SRC} buzzer.cpp)

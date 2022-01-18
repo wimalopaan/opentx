@@ -299,6 +299,9 @@ void drawStatusLine();
   void pushModelNotes();
   void readModelNotes();
 
+void menuChannelsView(event_t event);
+void menuChannelsViewCommon(event_t event);
+
 #define LABEL(...) (uint8_t)-1
 
 #define CURSOR_MOVED_LEFT(event)       (IS_ROTARY_LEFT(event) || EVT_KEY_MASK(event) == KEY_LEFT)
@@ -389,7 +392,7 @@ void showAlertBox(const char * title, const char * text, const char * action , u
 #else
 #define IS_TELEMETRY_VIEW_DISPLAYED()  false
 #endif
-#define IS_OTHER_VIEW_DISPLAYED()      false
+#define IS_OTHER_VIEW_DISPLAYED()      menuHandlers[0] == menuChannelsView
 
 void editCurveRef(coord_t x, coord_t y, CurveRef & curve, event_t event, LcdFlags flags);
 

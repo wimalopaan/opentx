@@ -1335,4 +1335,14 @@ extern JitterMeter<uint16_t> avgJitter[NUM_ANALOGS];
   #include "bluetooth.h"
 #endif
 
+
+inline bool isAsteriskDisplayed()
+{
+#if defined(ASTERISK) || !defined(WATCHDOG) || defined(LOG_TELEMETRY) || defined(LOG_BLUETOOTH) || defined(DEBUG_LATENCY)
+  return true;
+#endif
+
+  return globalData.unexpectedShutdown;
+}
+
 #endif // _OPENTX_H_

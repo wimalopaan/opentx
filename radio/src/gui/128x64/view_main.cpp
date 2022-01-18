@@ -59,18 +59,25 @@
 
 #define TRIM_LEN      23
 
-#if defined(TELEMETRY_FRSKY)
-void drawRSSIGauge()
+void drawExternalAntennaAndRSSI()
 {
-  uint8_t bar = (RSSI_MAX - g_model.rssiAlarms.getWarningRssi()) / 4;
+#if defined(INTERNAL_MODULE_PXX1) && defined(EXTERNAL_ANTENNA)
+  if (isModuleXJT(INTERNAL_MODULE) && isExternalAntennaEnabled()) {
+    lcdDrawText(VBATT_X-1, VBATT_Y+8, "E", TINSIZE);
+  }
+#endif
 
-  for(uint8_t i=1; i<5;  i++) {
-    if((TELEMETRY_RSSI() - g_model.rssiAlarms.getWarningRssi()) > bar*(i-1)) {
-      lcdDrawFilledRect(RSSSI_X + i*4, RSSSI_Y - 2*i, 3, 2*i, SOLID, 0);
+  if (TELEMETRY_RSSI() > 0) {
+    auto warningRSSI = g_model.rssiAlarms.getWarningRssi();
+    int8_t value = TELEMETRY_RSSI() - warningRSSI;
+    uint8_t step = (RSSI_MAX - warningRSSI) / 4;
+    for (uint8_t i = 1; i < 5; i++) {
+      if (value > step * (i - 1)) {
+        lcdDrawFilledRect(RSSSI_X + i * 4, RSSSI_Y - 2 * i + 1, 3, 2 * i - 1, SOLID, 0);
+      }
     }
   }
 }
-#endif
 
 void drawPotsBars()
 {
@@ -174,25 +181,6 @@ void displayTrims(uint8_t phase)
       }
     }
     lcdDrawSquare(xm-3, ym-3, 7, att);
-  }
-}
-
-void drawTimerWithMode(coord_t x, coord_t y, uint8_t index)
-{
-  const TimerData & timer = g_model.timers[index];
-  if (timer.mode) {
-    const TimerState & timerState = timersStates[index];
-    const uint8_t negative = (timerState.val<0 ? BLINK | INVERS : 0);
-    LcdFlags att = RIGHT | DBLSIZE | negative;
-    drawTimer(x, y, timerState.val, att, att);
-    uint8_t xLabel = (negative ? x-56 : x-49);
-    uint8_t len = zlen(timer.name, LEN_TIMER_NAME);
-    if (len > 0) {
-      lcdDrawSizedText(xLabel, y+FH, timer.name, len, RIGHT | ZCHAR);
-    }
-    else {
-      drawTimerMode(xLabel, y+FH, timer.mode, RIGHT);
-    }
   }
 }
 
@@ -318,7 +306,9 @@ void menuMainView(event_t event)
 {
   uint8_t view = g_eeGeneral.view;
   uint8_t view_base = view & 0x0f;
-  uint8_t num_pages = (MAX_OUTPUT_CHANNELS + 8 - 1) / 8;
+
+  #define CHANNELS_PAGES ((MAX_OUTPUT_CHANNELS + 8 - 1) / 8)
+  #define CHANNELS_SEGMENT_WIDTH (54 / CHANNELS_PAGES)
 
   switch (event) {
     case EVT_ENTRY:
@@ -338,23 +328,18 @@ void menuMainView(event_t event)
 
     case EVT_KEY_NEXT_PAGE:
     case EVT_KEY_PREVIOUS_PAGE:
-      if (view_base <= VIEW_INPUTS) {
-        if (view_base == VIEW_INPUTS)
-          g_eeGeneral.view ^= ALTERNATE_VIEW;
-        else
-          g_eeGeneral.view = (g_eeGeneral.view + (num_pages*ALTERNATE_VIEW) + 
-          ((event==EVT_KEY_PREVIOUS_PAGE) ? -ALTERNATE_VIEW : ALTERNATE_VIEW)) 
-          % (num_pages*ALTERNATE_VIEW);
-        storageDirty(EE_GENERAL);
-        AUDIO_KEY_PRESS();
-      }
+            if (view_base == VIEW_INPUTS)
+              g_eeGeneral.view ^= ALTERNATE_VIEW;
+            else
+              g_eeGeneral.view = (g_eeGeneral.view + (CHANNELS_PAGES*ALTERNATE_VIEW) + ((event==EVT_KEY_PREVIOUS_PAGE) ? -ALTERNATE_VIEW : ALTERNATE_VIEW)) % (CHANNELS_PAGES*ALTERNATE_VIEW);
       break;
 
 #if defined(NAVIGATION_MENUS)
     case EVT_KEY_CONTEXT_MENU:
       killEvents(event);
-
-#if !defined(PCBI6X)
+#if defined(PCBI6X)
+      if (view_base == VIEW_CHAN_MONITOR) break;
+#else
       if (modelHasNotes()) {
         POPUP_MENU_ADD_ITEM(STR_VIEW_NOTES);
       }
@@ -396,12 +381,12 @@ void menuMainView(event_t event)
     case EVT_KEY_PREVIOUS_VIEW:
     case EVT_KEY_NEXT_VIEW:
       // TODO try to split those 2 cases on 9X
-      g_eeGeneral.view = (event == EVT_KEY_PREVIOUS_VIEW ? (view_base == VIEW_COUNT-1 ? 0 : view_base+1) : (view_base == 0 ? VIEW_COUNT-1 : view_base-1));
+      g_eeGeneral.view = (event == EVT_KEY_PREVIOUS_VIEW ? (view_base == VIEW_COUNT - 1 ? 0 : view_base + 1) : (view_base == 0 ? VIEW_COUNT - 1 : view_base - 1));
       storageDirty(EE_GENERAL);
       break;
 #else
     case EVT_KEY_NEXT_VIEW:
-      g_eeGeneral.view = (view_base == 0 ? VIEW_COUNT-1 : view_base-1);
+      g_eeGeneral.view = (view_base == 0 ? VIEW_COUNT - 1 : view_base - 1);
       storageDirty(EE_GENERAL);
       break;
 #endif
@@ -442,60 +427,33 @@ void menuMainView(event_t event)
 #endif
   }
 
-  {
-    // Flight Mode Name
-    uint8_t mode = mixerCurrentFlightMode;
-    lcdDrawSizedText(PHASE_X, PHASE_Y, g_model.flightModeData[mode].name, sizeof(g_model.flightModeData[mode].name), ZCHAR|PHASE_FLAGS);
+  switch (view_base) {
+    case VIEW_CHAN_MONITOR:
+      menuChannelsViewCommon(event);
+      break;
+    case VIEW_OUTPUTS_VALUES:
+    case VIEW_OUTPUTS_BARS:
+      // scroll bar
+      lcdDrawHorizontalLine(38, 34, 54, DOTTED);
+      lcdDrawSolidHorizontalLine(38 + (g_eeGeneral.view / ALTERNATE_VIEW) * CHANNELS_SEGMENT_WIDTH, 34, CHANNELS_SEGMENT_WIDTH, SOLID);
+      for (uint8_t i=0; i<8; i++) {
+        uint8_t x0, y0;
+        uint8_t chan = 8 * (g_eeGeneral.view / ALTERNATE_VIEW) + i;
+        int16_t val = channelOutputs[chan];
 
-    // Model Name
-    putsModelName(MODELNAME_X, MODELNAME_Y, g_model.header.name, g_eeGeneral.currModel, BIGSIZE);
-
-    // Main Voltage (or alarm if any)
-    displayVoltageOrAlarm();
-
-    // Timer 1
-    drawTimerWithMode(125, 2*FH, 0);
-
-    // Trims sliders
-    displayTrims(mode);
-
-#if defined(TELEMETRY_FRSKY)
-    // RSSI gauge
-    if (TELEMETRY_RSSI() > 0) {
-      drawRSSIGauge();
-    }
-#endif
-  }
-
-  if (view_base < VIEW_INPUTS) {
-    // scroll bar
-    lcdDrawHorizontalLine(38, 34, 54, DOTTED);
-    uint8_t segment_width = 54 / num_pages;
-    lcdDrawSolidHorizontalLine(38 + (g_eeGeneral.view / ALTERNATE_VIEW) * segment_width, 34, segment_width, SOLID);
-
-    for (uint8_t i=0; i<8; i++) {
-      uint8_t x0,y0;
-      uint8_t chan = 8*(g_eeGeneral.view / ALTERNATE_VIEW) + i;
-      if(chan>=MAX_OUTPUT_CHANNELS){
-        break;
-      }
-      int16_t val = channelOutputs[chan];
-
-      switch (view_base) {
-        case VIEW_OUTPUTS_VALUES:
-          x0 = (i%4*9+3)*FW/2;
-          y0 = i/4*FH+40;
+        if (view_base == VIEW_OUTPUTS_VALUES) {
+          x0 = (i % 4 * 9 + 3) * FW / 2;
+          y0 = i / 4 * FH + 40;
 #if defined(PPM_UNIT_US)
-          lcdDrawNumber(x0+4*FW , y0, PPM_CH_CENTER(chan)+val/2, RIGHT);
+          lcdDrawNumber(x0 + 4 * FW, y0, PPM_CH_CENTER(chan) + val / 2, RIGHT);
 #elif defined(PPM_UNIT_PERCENT_PREC1)
-          lcdDrawNumber(x0+4*FW , y0, calcRESXto1000(val), RIGHT|PREC1);
+          lcdDrawNumber(x0 + 4 * FW, y0, calcRESXto1000(val), RIGHT | PREC1);
 #else
           lcdDrawNumber(x0+4*FW , y0, calcRESXto1000(val)/10, RIGHT); // G: Don't like the decimal part*
 #endif
-          break;
-
-        case VIEW_OUTPUTS_BARS:
-#define WBAR2 (50/2)
+        }
+        else {
+          constexpr coord_t WBAR2 =  (50/2);
           x0 = i<4 ? LCD_W/4+2 : LCD_W*3/4-2;
           y0 = 38+(i%4)*5;
 
@@ -512,93 +470,144 @@ void menuMainView(event_t event)
             x0 -= len;
           lcdDrawSolidHorizontalLine(x0, y0+1, len);
           lcdDrawSolidHorizontalLine(x0, y0-1, len);
-          break;
+        }
       }
-    }
-  }
-  else if (view_base == VIEW_INPUTS) {
-    if (view == VIEW_INPUTS) {
-      // Sticks + Pots
-      doMainScreenGraphics();
+      break;
 
-      // Switches
-#if defined(PCBTARANIS) || defined(PCBI6X)
-      for (int i=0; i<NUM_SWITCHES; ++i) {
-        if (SWITCH_EXISTS(i)) {
-          uint8_t x = 2*FW-2, y = 4*FH+i*FH+1;
-          if (i >= NUM_SWITCHES/2) {
-            x = 16*FW+5;
-            y -= (NUM_SWITCHES/2)*FH;
+    case VIEW_TIMER2:
+      drawTimerWithMode(87, 5 * FH, 1, RIGHT | DBLSIZE);
+      break;
+
+    case VIEW_INPUTS:
+      if (view == VIEW_INPUTS) {
+        // Sticks + Pots
+        doMainScreenGraphics();
+
+        // Switches
+#if defined(PCBX9LITES)
+        static const uint8_t x[NUM_SWITCHES-2] = {2*FW-2, 2*FW-2, 17*FW+1, 2*FW-2, 17*FW+1};
+        static const uint8_t y[NUM_SWITCHES-2] = {4*FH+1, 5*FH+1, 5*FH+1, 6*FH+1, 6*FH+1};
+        for (int i=0; i<NUM_SWITCHES - 2; ++i) {
+          if (SWITCH_EXISTS(i)) {
+            getvalue_t val = getValue(MIXSRC_FIRST_SWITCH + i);
+            getvalue_t sw = ((val < 0) ? 3 * i + 1 : ((val == 0) ? 3 * i + 2 : 3 * i + 3));
+            drawSwitch(x[i], y[i], sw, 0, false);
           }
-          getvalue_t val = getValue(MIXSRC_FIRST_SWITCH+i);
-          getvalue_t sw = ((val < 0) ? 3*i+1 : ((val == 0) ? 3*i+2 : 3*i+3));
-          drawSwitch(x, y, sw, 0);
         }
-      }
+        drawSmallSwitch(29, 5*FH+1, 4, SW_SF);
+        drawSmallSwitch(16*FW+1, 5*FH+1, 4, SW_SG);
+#elif defined(PCBX9LITE)
+        static const uint8_t x[NUM_SWITCHES] = {2 * FW - 2, 2 * FW - 2, 16 * FW + 1, 2 * FW - 2, 16 * FW + 1};
+        static const uint8_t y[NUM_SWITCHES] = {4 * FH + 1, 5 * FH + 1, 5 * FH + 1, 6 * FH + 1, 6 * FH + 1};
+        for (int i = 0; i < NUM_SWITCHES; ++i) {
+          if (SWITCH_EXISTS(i)) {
+            getvalue_t val = getValue(MIXSRC_FIRST_SWITCH + i);
+            getvalue_t sw = ((val < 0) ? 3 * i + 1 : ((val == 0) ? 3 * i + 2 : 3 * i + 3));
+            drawSwitch(x[i], y[i], sw, 0, false);
+          }
+        }
+#elif defined(PCBXLITES)
+        static const uint8_t x[NUM_SWITCHES] = {2*FW-2, 16*FW+1, 2*FW-2, 16*FW+1, 2*FW-2, 16*FW+1};
+        static const uint8_t y[NUM_SWITCHES] = {4*FH+1, 4*FH+1, 6*FH+1, 6*FH+1, 5*FH+1, 5*FH+1};
+        for (int i=0; i<NUM_SWITCHES; ++i) {
+          if (SWITCH_EXISTS(i)) {
+            getvalue_t val = getValue(MIXSRC_FIRST_SWITCH + i);
+            getvalue_t sw = ((val < 0) ? 3 * i + 1 : ((val == 0) ? 3 * i + 2 : 3 * i + 3));
+            drawSwitch(x[i], y[i], sw, 0, false);
+          }
+        }
+#elif defined(PCBTARANIS) || defined(PCBI6X)
+        uint8_t switches = min((int)NUM_SWITCHES, 6);
+        for (int i = 0; i < switches; ++i) {
+          if (SWITCH_EXISTS(i)) {
+            uint8_t x = 2 * FW - 2, y = 4 * FH + i * FH + 1;
+            if (i >= switches / 2) {
+              x = 16 * FW + 1 + 4;
+              y -= (switches / 2) * FH;
+            }
+            getvalue_t val = getValue(MIXSRC_FIRST_SWITCH + i);
+            getvalue_t sw = ((val < 0) ? 3 * i + 1 : ((val == 0) ? 3 * i + 2 : 3 * i + 3));
+            drawSwitch(x, y, sw, 0, false);
+          }
+        }
 #else
-      // The ID0 3-POS switch is merged with the TRN switch
-      for (uint8_t i=SWSRC_THR; i<=SWSRC_TRN; i++) {
-        int8_t sw = (i == SWSRC_TRN ? (switchState(SW_ID0) ? SWSRC_ID0 : (switchState(SW_ID1) ? SWSRC_ID1 : SWSRC_ID2)) : i);
-        uint8_t x = 2*FW-2, y = i*FH+1;
-        if (i >= SWSRC_AIL) {
-          x = 17*FW-1;
-          y -= 3*FH;
+        // The ID0 3-POS switch is merged with the TRN switch
+        for (uint8_t i=SWSRC_THR; i<=SWSRC_TRN; i++) {
+          int8_t sw = (i == SWSRC_TRN ? (switchState(SW_ID0) ? SWSRC_ID0 : (switchState(SW_ID1) ? SWSRC_ID1 : SWSRC_ID2)) : i);
+          uint8_t x = 2*FW-2, y = i*FH+1;
+          if (i >= SWSRC_AIL) {
+            x = 17*FW-1;
+            y -= 3*FH;
+          }
+          drawSwitch(x, y, sw, getSwitch(i) ? INVERS : 0, false);
         }
-        drawSwitch(x, y, sw, getSwitch(i) ? INVERS : 0);
-      }
 #endif
-    }
-    else {
-
-      // Logical Switches
-      uint8_t index = 0;
-      uint8_t y = LCD_H-20;
-      for (uint8_t line=0; line<2; line++) {
-        for (uint8_t column=0; column<MAX_LOGICAL_SWITCHES/2; column++) {
-          int8_t len = getSwitch(SWSRC_SW1+index) ? 10 : 1;
-          uint8_t x = (16 + 3*column);
-          lcdDrawSolidVerticalLine(x-1, y-len, len);
-          lcdDrawSolidVerticalLine(x,   y-len, len);
-          index++;
+      }
+      else {
+        // Logical Switches
+        uint8_t index = 0;
+        uint8_t y = LCD_H - 20;
+        for (uint8_t line = 0; line < 2; line++) {
+          for (uint8_t column = 0; column < MAX_LOGICAL_SWITCHES / 2; column++) {
+            int8_t len = getSwitch(SWSRC_SW1 + index) ? 10 : 1;
+            uint8_t x = (16 + 3 * column);
+            lcdDrawSolidVerticalLine(x - 1, y - len, len);
+            lcdDrawSolidVerticalLine(x, y - len, len);
+            index++;
+          }
+          y += 12;
         }
-        y += 12;
       }
+      break;
+  }
+
+  if (view_base != VIEW_CHAN_MONITOR) {
+    // Flight Mode Name
+    uint8_t mode = mixerCurrentFlightMode;
+    lcdDrawSizedText(PHASE_X, PHASE_Y, g_model.flightModeData[mode].name, sizeof(g_model.flightModeData[mode].name), ZCHAR | PHASE_FLAGS);
+
+    // Model Name
+    putsModelName(MODELNAME_X, MODELNAME_Y, g_model.header.name, g_eeGeneral.currModel, BIGSIZE);
+
+    // Main Voltage (or alarm if any)
+    displayVoltageOrAlarm();
+
+    // Timer 1
+    drawTimerWithMode(125, 2 * FH, 0, RIGHT | DBLSIZE);
+
+    // Trims sliders
+    displayTrims(mode);
+
+    // RSSI gauge / external antenna
+    drawExternalAntennaAndRSSI();
+
+    // And ! in case of unexpected shutdown
+    if (isAsteriskDisplayed()) {
+      lcdDrawChar(REBOOT_X, 0 * FH, '!', INVERS);
     }
   }
-  else {
-    // Timer2
-    drawTimerWithMode(87, 5*FH, 1);
-  }
 
-  // And ! in case of unexpected shutdown
-#if defined(LOG_TELEMETRY) || defined(WATCHDOG_DISABLED)
-  lcdDrawChar(REBOOT_X, 0*FH, '!', INVERS);
-#else
-  if (globalData.unexpectedShutdown) {
-    lcdDrawChar(REBOOT_X, 0*FH, '!', INVERS);
-  }
-#endif
-
-#if defined(GVARS) && !defined(PCBSTD)
+#if defined(GVARS)
   if (gvarDisplayTimer > 0) {
     gvarDisplayTimer--;
     warningText = STR_GLOBAL_VAR;
-    drawMessageBox();
-    lcdDrawSizedText(16, 5*FH, g_model.gvars[gvarLastChanged].name, LEN_GVAR_NAME, ZCHAR);
-    lcdDrawText(16+6*FW, 5*FH, "[", BOLD);
-    drawGVarValue(lcdLastRightPos, 5*FH, gvarLastChanged, GVAR_VALUE(gvarLastChanged, getGVarFlightMode(mixerCurrentFlightMode, gvarLastChanged)), LEFT|BOLD);
+    showMessageBox(warningText); // drawMessageBox(warningText);
+    lcdDrawSizedText(16, 5 * FH, g_model.gvars[gvarLastChanged].name, LEN_GVAR_NAME, ZCHAR);
+    lcdDrawText(16 + 6 * FW, 5 * FH, "[", BOLD);
+    drawGVarValue(lcdLastRightPos, 5 * FH, gvarLastChanged, GVAR_VALUE(gvarLastChanged, getGVarFlightMode(mixerCurrentFlightMode, gvarLastChanged)),
+                  LEFT | BOLD);
     if (g_model.gvars[gvarLastChanged].unit) {
-      lcdDrawText(lcdLastRightPos, 5*FH, "%", BOLD);
+      lcdDrawText(lcdLastRightPos, 5 * FH, "%", BOLD);
     }
-    lcdDrawText(lcdLastRightPos, 5*FH, "]", BOLD);
-    warningText = NULL;
+    lcdDrawText(lcdLastRightPos, 5 * FH, "]", BOLD);
+    warningText = nullptr;
   }
 #endif
 
 #if defined(DSM2)
-  if (moduleFlag[0] == MODULE_BIND) {
+  if (moduleState[0].mode == MODULE_MODE_BIND) {
     // Issue 98
-    lcdDrawText(15*FW, 0, "BIND", 0);
+    lcdDrawText(15 * FW, 0, "BIND", 0);
   }
 #endif
 }
