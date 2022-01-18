@@ -20,6 +20,11 @@
 
 #include "opentx.h"
 
+#define KEY_ADC_MAX   4095
+#define KEY_ADC_STEP  KEY_ADC_MAX / 3
+#define KEY_ADC_VAL_1 KEY_ADC_STEP * 1 // 1/3
+#define KEY_ADC_VAL_2 KEY_ADC_STEP * 2 // 2/3
+
 #define KEY_MATRIX_LINES 4
 #define KEY_MATRIX_COLUMNS 3
 static const uint16_t columns[] = {KEYS_MATRIX_R1_PIN, KEYS_MATRIX_R2_PIN, KEYS_MATRIX_R3_PIN};
@@ -151,16 +156,9 @@ uint32_t switchState(uint8_t index)
     adc_num += 2; // skip the 2 pots
   }
   uint16_t value = adcValues[adc_num];
-  // min is 0, max from adc is 4095
-  if ((value < 1365) && (pos == 0))
-  {
-    xxx = 1 << index;
-  }
-  else if ((value > 1365) && (value < 2730) && (pos == 1))
-  {
-    xxx = 1 << index;
-  }
-  else if ((value > 2730) && (pos == 2))
+  if (((value <= KEY_ADC_VAL_1) && (pos == 0)) ||
+      ((value >  KEY_ADC_VAL_1) && (pos == 1) && (value <= KEY_ADC_VAL_2)) ||
+      ((value >  KEY_ADC_VAL_2) && (pos == 2)))
   {
     xxx = 1 << index;
   }
