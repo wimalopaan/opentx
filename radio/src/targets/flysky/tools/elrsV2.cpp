@@ -631,6 +631,7 @@ void ELRSV2_stop() {
   fieldPopup = 0;
   if (cScriptRunning) {
     cScriptRunning = 0;
+    memset(reusableBuffer.MSC_BOT_Data, 0, 512);
     popMenu();
   }
 }
