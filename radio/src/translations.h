@@ -328,10 +328,10 @@ extern const char STR_BLUETOOTH_LOCAL_ADDR[];
 // The 0-terminated-strings
 #define NO_INDENT(x) (x)+LEN_INDENT
 
-extern const char STR_POPUPS[];
+extern const char STR_POPUPS_ENTER_EXIT[];
 
 #if defined(OFS_EXIT)
-  #define STR_EXIT (STR_POPUPS + OFS_EXIT)
+  #define STR_EXIT (STR_POPUPS_ENTER_EXIT + OFS_EXIT)
 #else
   extern const char STR_EXIT[];
 #endif
