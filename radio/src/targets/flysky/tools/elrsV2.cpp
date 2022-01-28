@@ -19,7 +19,7 @@ extern uint8_t cScriptRunning;
 struct FieldProps {
   uint8_t nameOffset;     
   uint8_t valuesLength;   
-  uint16_t valuesOffset;   
+  uint8_t valuesOffset;   
   uint8_t nameLength;     
   uint8_t parent;         
   uint8_t type;// : 4;       
@@ -35,9 +35,9 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data; 
+uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data;
 uint8_t namesBufferOffset = 0;
-uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256 - 44]; 
+uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256]; 
 uint16_t valuesBufferOffset = 0;
 
 char commandStatusInfo[24];
@@ -212,16 +212,22 @@ void selectField(int8_t step) {
 void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   uint8_t len = strlen((char*)&data[offset]);
   uint8_t sLen = len;
+  uint8_t * dataPtr = (uint8_t *)&(data[offset]);
+  const char* packetRate2g4 = "50;150;250;500;F500;F1000";
+  const char* packetRate915 = "25;50;100;200";
+  const char* pitMode = "Off;On;+A1;-A1;+A2;-A2;+A3;-A3";
   if (field->valuesLength == 0) {
-    if (strstr((char*)&data[offset], "F50")) { // 2G4 FLRC
+    if (strstr((char*)&data[offset], "F50")) { // 2G4 +FLRC
       sLen = 25;
-      memcpy(&valuesBuffer[valuesBufferOffset], "50;150;250;500;F500;F1000", sLen);
-    } else if (strstr((char*)&data[offset], "23d")) { // 915,868,866,433
+      dataPtr = (uint8_t *)packetRate2g4;
+    } else if (strstr((char*)&data[offset], "23d")) { // 915
       sLen = 13;
-      memcpy(&valuesBuffer[valuesBufferOffset], "25;50;100;200", sLen);
-    } else {
-      memcpy(&valuesBuffer[valuesBufferOffset], &data[offset], sLen);
+      dataPtr = (uint8_t *)&packetRate915;
+    } else if (strstr((char*)&data[offset], "UX1")) { // Pitmode
+      sLen = 30;
+      dataPtr = (uint8_t *)&pitMode;
     }
+    memcpy(&valuesBuffer[valuesBufferOffset], dataPtr, sLen);
     field->valuesOffset = valuesBufferOffset;
     field->valuesLength = sLen;
     valuesBufferOffset += sLen;
@@ -382,7 +388,7 @@ void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     field->type = type;
     // field->hidden = hidden;
     offset = strlen((char*)&fieldData[2]) + 1 + 2; 
-    if (field->nameLength == 0 && !hidden && field->type != 12/*INFO*/) {
+    if (field->nameLength == 0 && !hidden) {
       field->nameLength = min(offset - 3, NAME_MAX_LEN);
       field->nameOffset = namesBufferOffset;
       memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength); 
