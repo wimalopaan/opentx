@@ -57,7 +57,7 @@ tmr10ms_t fieldTimeout = 0;
 uint8_t fieldId = 1;
 uint8_t fieldChunk = 0;
 
-uint8_t fieldData[102 - 20]; 
+uint8_t fieldData[102]; 
 uint8_t fieldDataLen = 0;
 
 FieldProps fields[25]; 
