@@ -19,7 +19,7 @@ extern uint8_t cScriptRunning;
 struct FieldProps {
   uint8_t nameOffset;     
   uint8_t valuesLength;   
-  uint8_t valuesOffset;   
+  uint16_t valuesOffset;   
   uint8_t nameLength;     
   uint8_t parent;         
   uint8_t type;// : 4;       
@@ -37,13 +37,15 @@ struct FieldFunctions {
 
 uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data; 
 uint8_t namesBufferOffset = 0;
-uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256]; 
-uint8_t valuesBufferOffset = 0;
+uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256 - 44]; 
+uint16_t valuesBufferOffset = 0;
 
 char commandStatusInfo[24];
 
 #define deviceId 0xEE
 #define handsetId 0xEF
+
+#define NAME_MAX_LEN 12
 
 char deviceName[16];
 uint8_t lineIndex = 1;
@@ -380,11 +382,11 @@ void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     field->type = type;
     // field->hidden = hidden;
     offset = strlen((char*)&fieldData[2]) + 1 + 2; 
-    if (field->nameLength == 0 && !hidden) {
-      field->nameLength = offset - 3;
+    if (field->nameLength == 0 && !hidden && field->type != 12/*INFO*/) {
+      field->nameLength = min(offset - 3, NAME_MAX_LEN);
       field->nameOffset = namesBufferOffset;
-      memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], offset - 3); 
-      namesBufferOffset += offset - 3;
+      memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength); 
+      namesBufferOffset += field->nameLength;
     }
     if (functions[field->type - 9].load) {
       functions[field->type - 9].load(field, fieldData, offset);
