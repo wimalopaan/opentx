@@ -57,7 +57,7 @@ tmr10ms_t fieldTimeout = 0;
 uint8_t fieldId = 1;
 uint8_t fieldChunk = 0;
 
-uint8_t fieldData[102]; 
+uint8_t fieldData[102 - 20]; 
 uint8_t fieldDataLen = 0;
 
 FieldProps fields[25]; 
@@ -481,11 +481,12 @@ void lcd_title() {
     lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS); 
   }
 
+  lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
   if (allParamsLoaded != 1 && fields_count > 0) {
-    lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
-    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count); // 136b
+    // lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
+    // luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count); // 136b
   } else {
-    lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
+    // lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
     if (titleShowWarn) {
       lcdDrawText(textXoffset, 1, elrsFlagsInfo, INVERS);
     } else {
