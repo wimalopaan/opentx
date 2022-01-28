@@ -16,6 +16,8 @@
 
 extern uint8_t cScriptRunning;
 
+#define NAME_MAX_LEN 12
+
 struct FieldProps {
   uint8_t nameOffset;     
   uint8_t valuesLength;   
@@ -38,14 +40,12 @@ struct FieldFunctions {
 uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data;
 uint8_t namesBufferOffset = 0;
 uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256]; 
-uint16_t valuesBufferOffset = 0;
+uint8_t valuesBufferOffset = 0;
 
 char commandStatusInfo[24];
 
 #define deviceId 0xEE
 #define handsetId 0xEF
-
-#define NAME_MAX_LEN 12
 
 char deviceName[16];
 uint8_t lineIndex = 1;
