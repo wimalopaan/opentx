@@ -9,11 +9,14 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "opentx.h"
 
 #define PACKED __attribute__((packed))
 
 extern uint8_t cScriptRunning;
+
+#define NAME_MAX_LEN 12
 
 struct FieldProps {
   uint8_t nameOffset;     
@@ -21,11 +24,11 @@ struct FieldProps {
   uint8_t valuesOffset;   
   uint8_t nameLength;     
   uint8_t parent;         
-  uint8_t type : 4;       
-  uint8_t value : 4;      
-  uint8_t id : 5;         
-  uint8_t hidden : 1;     
-  uint8_t spare : 2;     
+  uint8_t type;// : 4;       
+  uint8_t value;// : 4;      
+  uint8_t id;// : 5;         
+  // uint8_t hidden : 1;
+  // uint8_t spare : 2;     
 } PACKED;
 
 struct FieldFunctions {
@@ -34,7 +37,7 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data; 
+uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data;
 uint8_t namesBufferOffset = 0;
 uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256]; 
 uint8_t valuesBufferOffset = 0;
@@ -54,7 +57,7 @@ tmr10ms_t fieldTimeout = 0;
 uint8_t fieldId = 1;
 uint8_t fieldChunk = 0;
 
-uint8_t fieldData[72]; 
+uint8_t fieldData[102]; 
 uint8_t fieldDataLen = 0;
 
 FieldProps fields[25]; 
@@ -153,7 +156,7 @@ FieldProps * getField(const uint8_t line) {
   uint32_t counter = 1;
   for (uint32_t i = 0; i < fieldsLen; i++) {
     FieldProps * field = &fields[i];
-    if (folderAccess == field->parent && field->hidden == 0) {
+    if (folderAccess == field->parent/* && field->hidden == 0*/) {
       if (counter < line) {
         counter = counter + 1;
       } else {
@@ -208,11 +211,26 @@ void selectField(int8_t step) {
 
 void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   uint8_t len = strlen((char*)&data[offset]);
-  if (field->valuesLength == 0) { 
-    memcpy(&valuesBuffer[valuesBufferOffset], &data[offset], len);
+  uint8_t sLen = len;
+  uint8_t * dataPtr = (uint8_t *)&(data[offset]);
+  const char* packetRate2g4 = "50;150;250;500;F500;F1000";
+  const char* packetRate915 = "25;50;100;200";
+  const char* pitMode = "Off;On;+A1;-A1;+A2;-A2;+A3;-A3";
+  if (field->valuesLength == 0) {
+    if (strstr((char*)&data[offset], "F50")) { // 2G4 +FLRC
+      sLen = 25;
+      dataPtr = (uint8_t *)packetRate2g4;
+    } else if (strstr((char*)&data[offset], "23d")) { // 915
+      sLen = 13;
+      dataPtr = (uint8_t *)&packetRate915;
+    } else if (strstr((char*)&data[offset], "UX1")) { // Pitmode
+      sLen = 30;
+      dataPtr = (uint8_t *)&pitMode;
+    }
+    memcpy(&valuesBuffer[valuesBufferOffset], dataPtr, sLen);
     field->valuesOffset = valuesBufferOffset;
-    field->valuesLength = len;
-    valuesBufferOffset += len;
+    field->valuesLength = sLen;
+    valuesBufferOffset += sLen;
   }
   offset += len + 1;
   field->value = data[offset];
@@ -257,7 +275,7 @@ void fieldFolderOpen(FieldProps * field) {
 void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   field->value = data[offset]; 
   field->valuesOffset = data[offset+1]; 
-  strcpy((char *)&commandStatusInfo, (char *)&data[offset+2]); 
+  strcpy(commandStatusInfo, (char *)&data[offset+2]); 
   if (field->value == 0) { 
     fieldPopup = 0; 
   }
@@ -361,20 +379,20 @@ void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     uint8_t hidden = (fieldData[1] & 0x80) ? 1 : 0; 
     uint8_t offset;
     if (field->nameLength != 0) { 
-      if (field->parent != parent || field->type != type || field->hidden != hidden) {
+      if (field->parent != parent || field->type != type/* || field->hidden != hidden*/) {
         fieldDataLen = 0; 
         return; 
       }
     }
     field->parent = parent;
     field->type = type;
-    field->hidden = hidden;
+    // field->hidden = hidden;
     offset = strlen((char*)&fieldData[2]) + 1 + 2; 
-    if (field->nameLength == 0) {  
-      field->nameLength = offset - 3;
+    if (field->nameLength == 0 && !hidden) {
+      field->nameLength = min(offset - 3, NAME_MAX_LEN);
       field->nameOffset = namesBufferOffset;
-      memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], offset - 3); 
-      namesBufferOffset += offset - 3;
+      memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength); 
+      namesBufferOffset += field->nameLength;
     }
     if (functions[field->type - 9].load) {
       functions[field->type - 9].load(field, fieldData, offset);
@@ -471,7 +489,7 @@ void lcd_title() {
 
   if (allParamsLoaded != 1 && fields_count > 0) {
     lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
-    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count);
+    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count); // 136b
   } else {
     lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
     if (titleShowWarn) {
@@ -577,7 +595,7 @@ void runDevicePage(event_t event) {
 }
 
 uint8_t popupCompat(event_t event) {
-  showMessageBox((char *)&commandStatusInfo);
+  showMessageBox(commandStatusInfo);
   lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS_ENTER_EXIT);
 
   if (event == EVT_VIRTUAL_EXIT) {
