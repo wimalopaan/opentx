@@ -215,6 +215,7 @@ void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) 
       sLen = 25;
       memcpy(&valuesBuffer[valuesBufferOffset], "50;150;250;500;F500;F1000", sLen);
     } else if (strstr((char*)&data[offset], "23d")) { // 915,868,866,433
+      sLen = 13;
       memcpy(&valuesBuffer[valuesBufferOffset], "25;50;100;200", sLen);
     } else {
       memcpy(&valuesBuffer[valuesBufferOffset], &data[offset], sLen);
