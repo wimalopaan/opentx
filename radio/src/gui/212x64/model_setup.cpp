@@ -668,7 +668,7 @@ void menuModelSetup(event_t event)
 
 #if defined(TARANIS_INTERNAL_PPM)
       case ITEM_MODEL_INTERNAL_MODULE_MODE:
-        lcdDrawTextAlignedLeft(y, STR_MODE);
+        lcdDrawTextAlignedLeft(y, INDENT TR_MODE);
         lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_TARANIS_PROTOCOLS, g_model.moduleData[INTERNAL_MODULE].type, menuHorizontalPosition==0 ? attr : 0);
         if (isModuleXJT(INTERNAL_MODULE))
           lcdDrawTextAtIndex(MODEL_SETUP_3RD_COLUMN, y, STR_XJT_PROTOCOLS, 1+g_model.moduleData[INTERNAL_MODULE].rfProtocol, menuHorizontalPosition==1 ? attr : 0);
@@ -693,7 +693,7 @@ void menuModelSetup(event_t event)
         break;
 #else
       case ITEM_MODEL_INTERNAL_MODULE_MODE:
-        lcdDrawTextAlignedLeft(y, STR_MODE);
+        lcdDrawTextAlignedLeft(y, INDENT TR_MODE);
         lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_XJT_PROTOCOLS, 1+g_model.moduleData[0].rfProtocol, attr);
         if (attr) {
           g_model.moduleData[INTERNAL_MODULE].rfProtocol = checkIncDec(event, g_model.moduleData[INTERNAL_MODULE].rfProtocol, -1, RF_PROTO_LAST, EE_MODEL, isRfProtocolAvailable);
@@ -709,7 +709,7 @@ void menuModelSetup(event_t event)
         break;
 #endif
       case ITEM_MODEL_TRAINER_MODE:
-        lcdDrawTextAlignedLeft(y, STR_MODE);
+        lcdDrawTextAlignedLeft(y, INDENT TR_MODE);
         lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_VTRAINERMODES, g_model.trainerMode, attr);
         if (attr) {
           g_model.trainerMode = checkIncDec(event, g_model.trainerMode, 0, TRAINER_MODE_MAX(), EE_MODEL, isTrainerModeAvailable);
@@ -727,7 +727,7 @@ void menuModelSetup(event_t event)
         break;
 
       case ITEM_MODEL_EXTERNAL_MODULE_MODE:
-        lcdDrawTextAlignedLeft(y, STR_MODE);
+        lcdDrawTextAlignedLeft(y, INDENT TR_MODE);
         lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_TARANIS_PROTOCOLS, g_model.moduleData[EXTERNAL_MODULE].type, menuHorizontalPosition==0 ? attr : 0);
         if (isModuleXJT(EXTERNAL_MODULE))
           lcdDrawTextAtIndex(MODEL_SETUP_3RD_COLUMN, y, STR_XJT_PROTOCOLS, 1+g_model.moduleData[EXTERNAL_MODULE].rfProtocol, menuHorizontalPosition==1 ? attr : 0);
