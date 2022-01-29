@@ -26,8 +26,8 @@ struct FieldProps {
   uint8_t valuesOffset;   
   uint8_t nameLength;     
   uint8_t parent;         
-  uint8_t type;// : 4;       
-  uint8_t value;// : 4;      
+  uint8_t type : 4;       
+  uint8_t value : 4;      
   uint8_t id;// : 5;         
   // uint8_t hidden : 1;
   // uint8_t spare : 2;     
@@ -44,7 +44,7 @@ uint8_t namesBufferOffset = 0;
 uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256]; 
 uint8_t valuesBufferOffset = 0;
 
-char commandStatusInfo[24];
+char commandMessage[24];
 
 #define deviceId 0xEE
 #define handsetId 0xEF
@@ -62,7 +62,7 @@ uint8_t fieldChunk = 0;
 uint8_t fieldData[102]; 
 uint8_t fieldDataLen = 0;
 
-FieldProps fields[25]; 
+FieldProps fields[26]; 
 uint8_t fieldsLen = 0;
 
 char goodBadPkt[11] = "?/???    ?";
@@ -277,7 +277,7 @@ void fieldFolderOpen(FieldProps * field) {
 void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   field->value = data[offset]; 
   field->valuesOffset = data[offset+1]; 
-  strcpy(commandStatusInfo, (char *)&data[offset+2]); 
+  strcpy(commandMessage, (char *)&data[offset+2]); 
   if (field->value == 0) { 
     fieldPopup = 0; 
   }
@@ -489,11 +489,12 @@ void lcd_title() {
     lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS); 
   }
 
+  lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
   if (allParamsLoaded != 1 && fields_count > 0) {
-    lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
-    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count); // 136b
+    // lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
+    // luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count); // 136b
   } else {
-    lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
+    // lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
     if (titleShowWarn) {
       lcdDrawText(textXoffset, 1, elrsFlagsInfo, INVERS);
     } else {
@@ -597,7 +598,7 @@ void runDevicePage(event_t event) {
 }
 
 uint8_t popupCompat(event_t event) {
-  showMessageBox(commandStatusInfo);
+  showMessageBox(commandMessage);
   lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS_ENTER_EXIT);
 
   if (event == EVT_VIRTUAL_EXIT) {
