@@ -158,7 +158,7 @@ FieldProps * getField(const uint8_t line) {
   uint32_t counter = 1;
   for (uint32_t i = 0; i < fieldsLen; i++) {
     FieldProps * field = &fields[i];
-    if (folderAccess == field->parent/* && field->hidden == 0*/) {
+    if (folderAccess == field->parent && field->nameLength != 0/* && field->hidden == 0*/) {
       if (counter < line) {
         counter = counter + 1;
       } else {
