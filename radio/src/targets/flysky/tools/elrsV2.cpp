@@ -5,7 +5,9 @@
  * - multiple devices, only ExpressLRS transmitters,
  * - no integer/float/string fields support, ExpressLRS uses only selection anyway,
  * - field unit ie.: "mW" is not displayed,
- * - info fields display only label without value
+ * - info fields display only label without value,
+ * - names are trimmed to 12 characters,
+ * - packet rate and pit mode values are replaced with shorter equivalents,
  */
 
 #include <stdio.h>
@@ -223,7 +225,7 @@ void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) 
     } else if (strstr((char*)&data[offset], "23d")) { // 915
       sLen = 13;
       dataPtr = (uint8_t *)&packetRate915;
-    } else if (strstr((char*)&data[offset], "UX1")) { // Pitmode
+    } else if (strstr((char*)&data[offset], "UX2")) { // Pitmode
       sLen = 30;
       dataPtr = (uint8_t *)&pitMode;
     }
