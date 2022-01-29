@@ -441,8 +441,8 @@ TEST_F(MixerTest, SlowOnPhase)
   g_model.mixData[0].srcRaw = MIXSRC_MAX;
   g_model.mixData[0].weight = 100;
   g_model.mixData[0].flightModes = 0x2 + 0x4 + 0x8 + 0x10 /*only enabled in phase 0*/;
-  g_model.mixData[0].speedUp = SLOW_STEP*5;
-  g_model.mixData[0].speedDown = SLOW_STEP*5;
+  g_model.mixData[0].speedUp = 50;
+  g_model.mixData[0].speedDown = 50;
 
   s_mixer_first_run_done = true;
   mixerCurrentFlightMode = 0;
@@ -469,8 +469,8 @@ TEST_F(MixerTest, SlowOnSwitchSource)
   int switch_index = 1;
 #endif
   g_model.mixData[0].weight = 100;
-  g_model.mixData[0].speedUp = SLOW_STEP*5;
-  g_model.mixData[0].speedDown = SLOW_STEP*5;
+  g_model.mixData[0].speedUp = 50;
+  g_model.mixData[0].speedDown = 50;
 
   s_mixer_first_run_done = true;
 
@@ -488,8 +488,8 @@ TEST_F(MixerTest, SlowDisabledOnStartup)
   g_model.mixData[0].mltpx = MLTPX_ADD;
   g_model.mixData[0].srcRaw = MIXSRC_MAX;
   g_model.mixData[0].weight = 100;
-  g_model.mixData[0].speedUp = SLOW_STEP*5;
-  g_model.mixData[0].speedDown = SLOW_STEP*5;
+  g_model.mixData[0].speedUp = 50;
+  g_model.mixData[0].speedDown = 50;
 
   evalFlightModeMixes(e_perout_mode_normal, 0);
   EXPECT_EQ(chans[0], CHANNEL_MAX);
@@ -508,8 +508,8 @@ TEST_F(MixerTest, DelayOnSwitch)
   g_model.mixData[0].swtch = SWSRC_THR;
   int switch_index = 1;
 #endif
-  g_model.mixData[0].delayUp = DELAY_STEP*5;
-  g_model.mixData[0].delayDown = DELAY_STEP*5;
+  g_model.mixData[0].delayUp = 50;
+  g_model.mixData[0].delayDown = 50;
 
   evalFlightModeMixes(e_perout_mode_normal, 0);
   EXPECT_EQ(chans[0], 0);
@@ -538,8 +538,8 @@ TEST_F(MixerTest, SlowOnMultiply)
   g_model.mixData[1].srcRaw = MIXSRC_MAX;
   g_model.mixData[1].weight = 100;
   g_model.mixData[1].swtch = TR(SWSRC_THR, SWSRC_SA0);
-  g_model.mixData[1].speedUp = SLOW_STEP*5;
-  g_model.mixData[1].speedDown = SLOW_STEP*5;
+  g_model.mixData[1].speedUp = 50;
+  g_model.mixData[1].speedDown = 50;
 
   s_mixer_first_run_done = true;
 
@@ -654,8 +654,8 @@ TEST(Trainer, UnpluggedTest)
   g_model.mixData[0].mltpx = MLTPX_ADD;
   g_model.mixData[0].srcRaw = MIXSRC_FIRST_TRAINER;
   g_model.mixData[0].weight = 100;
-  g_model.mixData[0].delayUp = DELAY_STEP*5;
-  g_model.mixData[0].delayDown = DELAY_STEP*5;
+  g_model.mixData[0].delayUp = 50;
+  g_model.mixData[0].delayDown = 50;
   ppmInputValidityTimer = 0;
   ppmInput[0] = 1024;
   CHECK_DELAY(0, 5000);
