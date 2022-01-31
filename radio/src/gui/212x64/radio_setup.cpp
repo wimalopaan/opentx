@@ -299,7 +299,7 @@ void menuRadioSetup(event_t event)
         break;
 
       case ITEM_SETUP_HAPTIC_MODE:
-        g_eeGeneral.hapticMode = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_MODE, STR_VBEEPMODE, g_eeGeneral.hapticMode, -2, 1, attr, event);
+        g_eeGeneral.hapticMode = editChoice(RADIO_SETUP_2ND_COLUMN, y, INDENT TR_MODE, STR_VBEEPMODE, g_eeGeneral.hapticMode, -2, 1, attr, event);
         break;
 
       case ITEM_SETUP_HAPTIC_LENGTH:
@@ -363,7 +363,7 @@ void menuRadioSetup(event_t event)
         break;
 
       case ITEM_SETUP_BACKLIGHT_MODE:
-        g_eeGeneral.backlightMode = editChoice(RADIO_SETUP_2ND_COLUMN, y, STR_MODE, STR_VBLMODE, g_eeGeneral.backlightMode, e_backlight_mode_off, e_backlight_mode_on, attr, event);
+        g_eeGeneral.backlightMode = editChoice(RADIO_SETUP_2ND_COLUMN, y, INDENT TR_MODE, STR_VBLMODE, g_eeGeneral.backlightMode, e_backlight_mode_off, e_backlight_mode_on, attr, event);
         break;
 
       case ITEM_SETUP_FLASH_BEEP:
@@ -487,7 +487,7 @@ void menuRadioSetup(event_t event)
         break;
 
       case ITEM_SETUP_STICK_MODE_LABELS:
-        lcdDrawTextAlignedLeft(y, NO_INDENT(STR_MODE));
+        lcdDrawTextAlignedLeft(y, STR_MODE);
         for (uint8_t i=0; i<4; i++) {
           lcdDraw1bitBitmap((6+4*i)*FW, y, sticks, i, 0);
         }
