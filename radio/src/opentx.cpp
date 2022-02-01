@@ -1811,8 +1811,8 @@ void opentxInit(OPENTX_INIT_ARGS) {
 #endif
 #endif  // #if !defined(EEPROM)
 
-#if defined(SERIAL2) && !defined(DEBUG)
-  serial2Init(g_eeGeneral.serial2Mode, modelTelemetryProtocol());
+#if defined(AUX_SERIAL) && !defined(DEBUG)
+  auxSerialInit(g_eeGeneral.auxSerialMode, modelTelemetryProtocol());
 #endif
 
 #if MENUS_LOCK == 1
