@@ -23,7 +23,7 @@
 
 uint8_t auxSerialMode = 0;
 
-void uartSetup(unsigned int baudrate, bool dma)
+void auxSerialSetup(unsigned int baudrate, bool dma)
 {
   USART_InitTypeDef USART_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -59,22 +59,28 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
   switch (mode)
   {
   case UART_MODE_TELEMETRY_MIRROR:
-    uartSetup(FRSKY_SPORT_BAUDRATE, false);
+#if defined(CROSSFIRE)
+      if (protocol == PROTOCOL_TELEMETRY_CROSSFIRE) {
+        auxSerialSetup(CROSSFIRE_TELEM_MIRROR_BAUDRATE, false);
+        break;
+      }
+#endif
+    auxSerialSetup(FRSKY_SPORT_BAUDRATE, false);
     break;
 #if defined(DEBUG) || defined(CLI)
   case UART_MODE_DEBUG:
-    uartSetup(DEBUG_BAUDRATE, false);
+    auxSerialSetup(DEBUG_BAUDRATE, false);
     break;
 #endif
 #if !defined(PCBI6X)
   case UART_MODE_TELEMETRY:
     if (protocol == PROTOCOL_FRSKY_D_SECONDARY)
     {
-      uartSetup(FRSKY_D_BAUDRATE, true);
+      auxSerialSetup(FRSKY_D_BAUDRATE, true);
     }
     break;
   case UART_MODE_LUA:
-    uartSetup(DEBUG_BAUDRATE, false);
+    auxSerialSetup(DEBUG_BAUDRATE, false);
 #endif
   }
 }
@@ -89,7 +95,7 @@ void auxSerialPutc(char c)
 
 void auxSerialSbusInit()
 {
-  // uartSetup(SBUS_BAUDRATE, true);
+  // auxSerialSetup(SBUS_BAUDRATE, true);
   // AUX_SERIAL_USART->CR1 |= USART_CR1_M | USART_CR1_PCE ;
 }
 
