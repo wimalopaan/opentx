@@ -23,7 +23,7 @@
 
 uint8_t auxSerialMode = 0;
 
-void auxSerialSetup(unsigned int baudrate, bool dma, bool crossfire = false)
+void auxSerialSetup(unsigned int baudrate, bool dma)
 {
   USART_InitTypeDef USART_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -65,7 +65,7 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
   case UART_MODE_TELEMETRY_MIRROR:
 #if defined(CROSSFIRE)
       if (protocol == PROTOCOL_PULSES_CROSSFIRE) { // PROTOCOL_TELEMETRY_CROSSFIRE
-        auxSerialSetup(CROSSFIRE_TELEM_MIRROR_BAUDRATE, false, true);
+        auxSerialSetup(CROSSFIRE_TELEM_MIRROR_BAUDRATE, false);
         break;
       }
 #endif
