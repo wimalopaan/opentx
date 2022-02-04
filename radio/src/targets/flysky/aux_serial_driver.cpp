@@ -49,9 +49,6 @@ void auxSerialSetup(unsigned int baudrate, bool dma)
   USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
   USART_Init(AUX_SERIAL_USART, &USART_InitStructure);
 
-  if (crossfire)
-    USART_InvPinCmd(AUX_SERIAL_USART, AUX_SERIAL_GPIO_PIN_TX, ENABLE);
-
   USART_Cmd(AUX_SERIAL_USART, ENABLE);
 }
 
