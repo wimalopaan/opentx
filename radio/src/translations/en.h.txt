@@ -70,18 +70,19 @@
 #define LEN_TRNCHN                     "\003"
 #define TR_TRNCHN                      "CH1CH2CH3CH4"
 
-#define LEN_AUX_SERIALMODES                 "\015"
 #if defined(PCBI6X)
+#define LEN_AUX_SERIALMODES                 "\014"
 #if defined(CLI) || defined(DEBUG)
-#define TR_AUX_SERIALMODES                  "Debug\0       ""S-Port Mirror"
+#define TR_AUX_SERIALMODES                  "Debug\0      ""Telem Mirror"
 #else
-#define TR_AUX_SERIALMODES                  "OFF\0         ""S-Port Mirror"
+#define TR_AUX_SERIALMODES                  "OFF\0        ""Telem Mirror"
 #endif
 #else
+#define LEN_AUX_SERIALMODES                 "\015"
 #if defined(CLI) || defined(DEBUG)
-#define TR_AUX_SERIALMODES                  "Debug\0       ""S-Port Mirror""Telemetry\0   ""SBUS Trainer\0""LUA\0         "
+#define TR_AUX_SERIALMODES            "Debug\0       ""Telem Mirror\0""Telemetry In\0""SBUS Trainer\0""LUA\0         "
 #else
-#define TR_AUX_SERIALMODES                  "OFF\0         ""S-Port Mirror""Telemetry\0   ""SBUS Trainer\0""LUA\0         "
+#define TR_AUX_SERIALMODES            "OFF\0         ""Telem Mirror\0""Telemetry In\0""SBUS Trainer\0""LUA\0         "
 #endif
 #endif
 
