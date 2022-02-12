@@ -432,7 +432,11 @@ void parseElrsInfoMessage(uint8_t* data) {
   char state = (elrsFlags & 1) ? 'C' : '-';
   sprintf(goodBadPkt, "%u/%u   %c", badPkt, goodPkt, state); 
 
-  elrsFlags = data[6];
+  // If flags are changing, reset the warning timeout to display/hide message immediately
+  if (data[6] != elrsFlags) {
+    elrsFlags = data[6];
+    titleShowWarnTimeout = 0;
+  }
   strcpy(elrsFlagsInfo, (char*)&data[7]); 
 }
 
