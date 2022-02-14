@@ -285,8 +285,8 @@ void boardInit()
   buzzerInit();
   backlightInit();
   i2cInit();
-  eepromInit();
   usbInit();
+  eepromInit();
   //storageEraseAll(false);
   // TRACE("i2c test");
   // i2c_test();
