@@ -215,7 +215,8 @@ void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) 
   uint8_t * dataPtr = (uint8_t *)&(data[offset]);
   const char* packetRate2g4 = "50;150;250;500;F500;F1k";
   const char* packetRate915 = "25;50;100;200";
-  const char* pitMode = "Off;On;+1;-1;+2;-2;+3;-3";//;+4;-4;+5;-5";
+  const char* pitMode = "Off;On;+1;-1;+2;-2;+3;-3;+4;-4;+5;-5";
+  const char* fanTresh = "10;25;50;100;250;500;1k;2k;Never";
   if (field->valuesLength == 0) {
     if (strstr((char*)&data[offset], "F50")) {
       sLen = 23;
@@ -224,8 +225,11 @@ void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) 
       sLen = 13;
       dataPtr = (uint8_t *)&packetRate915;
     } else if (strstr((char*)&data[offset], "X2")) {
-      sLen = 24;
+      sLen = 36;
       dataPtr = (uint8_t *)&pitMode;
+    } else if (strstr((char*)&data[offset], "Nev")) {
+      sLen = 32;
+      dataPtr = (uint8_t *)&fanTresh;
     }
     memcpy(&valuesBuffer[valuesBufferOffset], dataPtr, sLen);
     field->valuesOffset = valuesBufferOffset;
