@@ -28,7 +28,7 @@
 #define USBD_CFG_MAX_NUM           1
 #define USBD_ITF_MAX_NUM           1
 #if defined(PCBI6X)
-#define USB_MAX_STR_DESC_SIZ       20
+#define USB_MAX_STR_DESC_SIZ       (20 * 2) + 2 // max usb desc * 2 + 2
 #else
 #define USB_MAX_STR_DESC_SIZ       64
 #endif
@@ -48,7 +48,7 @@
 // Save some RAM on smaller STM32 processors. Slightly lowers USB mass storage speed
 #if defined(STM32F2) && !defined(BOOT)
 #define MSC_MEDIA_PACKET             512
-#elif defined(STM32F0)
+#elif defined(STM32F0) && !defined(BOOT)
 #define MSC_MEDIA_PACKET             512
 #else
 #define MSC_MEDIA_PACKET             4096

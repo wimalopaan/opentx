@@ -284,7 +284,6 @@ void boardInit()
   __enable_irq();
   buzzerInit();
   backlightInit();
-  backlightEnable();
   i2cInit();
   eepromInit();
   usbInit();
