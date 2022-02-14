@@ -224,7 +224,7 @@ void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) 
       sLen = 13;
       dataPtr = (uint8_t *)&packetRate915;
     } else if (strstr((char*)&data[offset], "X2")) {
-      sLen = 36;
+      sLen = 24;
       dataPtr = (uint8_t *)&pitMode;
     }
     memcpy(&valuesBuffer[valuesBufferOffset], dataPtr, sLen);
