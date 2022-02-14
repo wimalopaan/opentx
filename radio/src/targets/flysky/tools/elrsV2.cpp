@@ -2,7 +2,7 @@
  * ExpressLRS V2 lua configuration script port to C.
  * 
  * Limitations:
- * - multiple devices, only ExpressLRS transmitters,
+ * - no multiple devices, only ExpressLRS transmitter,
  * - no integer/float/string fields support, ExpressLRS uses only selection anyway,
  * - field unit ie.: "mW" is not displayed,
  * - info fields display only label without value,
@@ -26,8 +26,8 @@ struct FieldProps {
   uint8_t valuesOffset;  
   uint8_t valuesLength;
   uint8_t parent;
-  uint8_t type : 4;       
-  uint8_t value : 4;      
+  uint8_t type;// : 4;
+  uint8_t value;// : 4;
   uint8_t id;// : 5;         
   // uint8_t hidden : 1;
   // uint8_t spare : 2;     
@@ -79,8 +79,6 @@ int8_t expectedChunks = -1;
 tmr10ms_t linkstatTimeout = 100;
 tmr10ms_t titleShowWarnTimeout = 100;
 uint8_t titleShowWarn = 0;
-
-tmr10ms_t selfRefreshDelay = 0; 
 
 #define COL2           70
 #define maxLineIndex   6
@@ -217,7 +215,7 @@ void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) 
   uint8_t * dataPtr = (uint8_t *)&(data[offset]);
   const char* packetRate2g4 = "50;150;250;500;F500;F1k";
   const char* packetRate915 = "25;50;100;200";
-  const char* pitMode = "Off;On;+1;-1;+2;-2;+3;-3;+4;-4;+5;-5";
+  const char* pitMode = "Off;On;+1;-1;+2;-2;+3;-3";//;+4;-4;+5;-5";
   if (field->valuesLength == 0) {
     if (strstr((char*)&data[offset], "F50")) {
       sLen = 23;
