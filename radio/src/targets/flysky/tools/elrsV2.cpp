@@ -7,7 +7,7 @@
  * - field unit ie.: "mW" is not displayed,
  * - info fields display only label without value,
  * - names are trimmed to 12 characters,
- * - packet rate and pit mode values are replaced with shorter equivalents,
+ * - dynamically remove bracketed strings, "AUX" and "mW" from values to save RAM.
  */
 
 #include <stdio.h>
@@ -209,29 +209,37 @@ void selectField(int8_t step) {
   }
 }
 
+void strRemove(char * src, char * str) {
+    char srcLen = strlen(src);
+    char strLen = strlen(str);
+    char * srcStrPtr = src;
+    while (srcStrPtr = strstr(srcStrPtr, str)) {
+        memcpy(srcStrPtr, srcStrPtr + strLen, (src + srcLen) - srcStrPtr - strLen + 1); // + \0
+    }
+}
+
+void strRemoveBracketed(char * src) {
+    char srcLen = strlen(src);
+    char * srcStrPtr = src;
+    char * srcStrPtr2;
+    while (srcStrPtr = strstr(srcStrPtr, "(")) {
+        if (srcStrPtr2 = strstr(srcStrPtr, ")")) {
+            memcpy(srcStrPtr, srcStrPtr2 + 1, (src + srcLen) - srcStrPtr2 + 1); // + \0
+        } else {
+            break;
+        }
+    }  
+}
+
 void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   uint8_t len = strlen((char*)&data[offset]);
   uint8_t sLen = len;
-  uint8_t * dataPtr = (uint8_t *)&(data[offset]);
-  const char* packetRate2g4 = "50;150;250;500;F500;F1k";
-  const char* packetRate915 = "25;50;100;200";
-  const char* pitMode = "Off;On;+1;-1;+2;-2;+3;-3;+4;-4;+5;-5";
-  const char* fanTresh = "10;25;50;100;250;500;1k;2k;Never";
   if (field->valuesLength == 0) {
-    if (strstr((char*)&data[offset], "F50")) {
-      sLen = 23;
-      dataPtr = (uint8_t *)packetRate2g4;
-    } else if (strstr((char*)&data[offset], "23d")) {
-      sLen = 13;
-      dataPtr = (uint8_t *)&packetRate915;
-    } else if (strstr((char*)&data[offset], "X2")) {
-      sLen = 36;
-      dataPtr = (uint8_t *)&pitMode;
-    } else if (strstr((char*)&data[offset], "Nev")) {
-      sLen = 32;
-      dataPtr = (uint8_t *)&fanTresh;
-    }
-    memcpy(&valuesBuffer[valuesBufferOffset], dataPtr, sLen);
+    strRemove((char*)&data[offset], "AUX");
+    strRemove((char*)&data[offset], "mW");
+    strRemoveBracketed((char*)&data[offset]);
+    sLen = strlen((char*)&data[offset]);
+    memcpy(&valuesBuffer[valuesBufferOffset], (char*)&data[offset], sLen);
     field->valuesOffset = valuesBufferOffset;
     field->valuesLength = sLen;
     valuesBufferOffset += sLen;
