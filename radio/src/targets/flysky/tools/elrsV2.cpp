@@ -210,21 +210,19 @@ void selectField(int8_t step) {
 }
 
 void strRemove(char * src, char * str) {
-    char srcLen = strlen(src);
     char strLen = strlen(str);
     char * srcStrPtr = src;
     while (srcStrPtr = strstr(srcStrPtr, str)) {
-        memcpy(srcStrPtr, srcStrPtr + strLen, (src + srcLen) - srcStrPtr - strLen + 1); // + \0
+        strcpy(srcStrPtr, srcStrPtr + strLen);
     }
 }
 
 void strRemoveBracketed(char * src) {
-    char srcLen = strlen(src);
     char * srcStrPtr = src;
     char * srcStrPtr2;
     while (srcStrPtr = strstr(srcStrPtr, "(")) {
         if (srcStrPtr2 = strstr(srcStrPtr, ")")) {
-            memcpy(srcStrPtr, srcStrPtr2 + 1, (src + srcLen) - srcStrPtr2 + 1); // + \0
+            strcpy(srcStrPtr, srcStrPtr2 + 1);
         } else {
             break;
         }
