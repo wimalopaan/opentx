@@ -210,23 +210,23 @@ void selectField(int8_t step) {
 }
 
 void strRemove(char * src, char * str) {
-    char strLen = strlen(str);
-    char * srcStrPtr = src;
-    while (srcStrPtr = strstr(srcStrPtr, str)) {
-        strcpy(srcStrPtr, srcStrPtr + strLen);
-    }
+  char strLen = strlen(str);
+  char * srcStrPtr = src;
+  while (srcStrPtr = strstr(srcStrPtr, str)) {
+    strcpy(srcStrPtr, srcStrPtr + strLen);
+  }
 }
 
 void strRemoveBracketed(char * src) {
-    char * srcStrPtr = src;
-    char * srcStrPtr2;
-    while (srcStrPtr = strstr(srcStrPtr, "(")) {
-        if (srcStrPtr2 = strstr(srcStrPtr, ")")) {
-            strcpy(srcStrPtr, srcStrPtr2 + 1);
-        } else {
-            break;
-        }
-    }  
+  char * srcStrPtr = src;
+  char * srcStrPtr2;
+  while (srcStrPtr = strstr(srcStrPtr, "(")) {
+    if (srcStrPtr2 = strstr(srcStrPtr, ")")) {
+      strcpy(srcStrPtr, srcStrPtr2 + 1);
+    } else {
+      break;
+    }
+  }  
 }
 
 void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
