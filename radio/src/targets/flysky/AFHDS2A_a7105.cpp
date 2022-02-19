@@ -66,7 +66,7 @@ static void AFHDS2A_calc_channels() {
   }
 }
 
-/*
+/**
 
 IntV1: 4.81V
 ExtV2: 0.00V sensor x6b voltaje externo
@@ -75,11 +75,21 @@ RSSI1: -60dBm
 Noi.1: -97dBm
 SNR1:   39dB
 
+packet[0] - type
+packet[1] - len
 */
 
 void AFHDS2A_update_telemetry() {
   if (packet[0] == 0xAA && packet[9] == 0xFD)
     return;  // ignore packets which contain the RX configuration: FD FF 32 00 01 00 FF FF FF 05 DC 05 DE FA FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+
+#if defined(AUX_SERIAL)
+  uint8_t len = packet[1];
+  if (g_eeGeneral.auxSerialMode == UART_MODE_TELEMETRY_MIRROR) {
+    for (uint8_t c = 0 + 8; c < len + 2 + 8; c++)
+      auxSerialPutc(packet[c]);
+  }
+#endif
 
   if (packet[0] == 0xAA) {
     int16_t tx_rssi = 256 - (A7105_ReadReg(A7105_1D_RSSI_THOLD) * 8) / 5;  // value from A7105 is between 8 for maximum signal strength to 160 or less
@@ -170,8 +180,7 @@ void AFHDS2A_build_packet(uint8_t type) {
 
       packet[11] = g_model.moduleData[INTERNAL_MODULE].servoFreq;
       packet[12] = g_model.moduleData[INTERNAL_MODULE].servoFreq >> 8;
-      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_IBUS || 
-            g_model.moduleData[INTERNAL_MODULE].subType ==AFHDS2A_SUBTYPE_PPM_SBUS) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType & (AFHDS2A_SUBTYPE_PPM_IBUS & AFHDS2A_SUBTYPE_PPM_SBUS)) {
         packet[13] = 0x01;  // PPM output enabled
       } else {
         packet[13] = 0x00;
@@ -183,8 +192,7 @@ void AFHDS2A_build_packet(uint8_t type) {
       packet[18] = 0x05;  // ?
       packet[19] = 0xdc;  // ?
       packet[20] = 0x05;  // ?
-      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PWM_SBUS || 
-            g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_SBUS) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType & (AFHDS2A_SUBTYPE_PWM_SBUS & AFHDS2A_SUBTYPE_PPM_SBUS)) {
         packet[21] = 0xdd;  // SBUS output enabled
       } else {
         packet[21] = 0xde;  // IBUS
