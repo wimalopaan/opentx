@@ -86,7 +86,9 @@ void AFHDS2A_update_telemetry() {
 #if defined(AUX_SERIAL)
   uint8_t len = packet[1];
   if (g_eeGeneral.auxSerialMode == UART_MODE_TELEMETRY_MIRROR) {
-    for (uint8_t c = 0 + 8; c < len + 2 + 8; c++)
+    auxSerialPutc(packet[0]);
+    auxSerialPutc(packet[1]);
+    for (uint8_t c = 0 + 8; c < len + 8; c++)
       auxSerialPutc(packet[c]);
   }
 #endif
