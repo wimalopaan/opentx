@@ -37,6 +37,10 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 | LEFT POT |  Change edited value. |
 | RIGHT POT |  Scroll pages left/right. |
 
+## Hardware connections (optional)
+
+![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.jpeg?raw=true)
+
 ## Contributors
 
 * ExpressLRS V2 config, USB support, sound support, bootloader, backporting, bugfixing - Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)) ongoing collaboration.
