@@ -39,7 +39,7 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 
 ## Hardware connections (optional)
 
-![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.png?raw=true)
+![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.jpeg?raw=true)
 
 ## Contributors
 
