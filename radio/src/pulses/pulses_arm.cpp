@@ -55,6 +55,9 @@ uint8_t getRequiredProtocol(uint8_t port) {
           required_protocol = PROTO_PXX;
           break;
 #endif
+        case MODULE_TYPE_AFHDS_SPI:
+          required_protocol = PROTO_AFHDS_SPI;
+          break;
         case MODULE_TYPE_AFHDS2A_SPI:
           required_protocol = PROTO_AFHDS2A_SPI;
           break;
@@ -150,7 +153,7 @@ bool setupPulses(uint8_t port) {
   bool send = false;
 
   uint8_t required_protocol = getRequiredProtocol(port);
-  
+
   heartbeat |= (HEART_TIMER_PULSES << port);
 
   if (s_current_protocol[port] != required_protocol) {
@@ -185,8 +188,9 @@ bool setupPulses(uint8_t port) {
 #if defined(MULTIMODULE)
       case PROTO_MULTIMODULE:
 #endif
+      case PROTO_AFHDS_SPI:
       case PROTO_AFHDS2A_SPI:
-        disable_afhds2a(port);
+        disable_internal_rf(port);
         break;
 #if !defined(PCBI6X)
       case PROTO_SBUS:
@@ -319,6 +323,10 @@ bool setupPulses(uint8_t port) {
 #endif
       case PROTO_PPM:
         init_ppm(port);
+        break;
+      case PROTO_AFHDS_SPI:
+        init_afhds(port);
+        mixerSchedulerSetPeriod(INTERNAL_MODULE, 3860);
         break;
       case PROTO_AFHDS2A_SPI:
         init_afhds2a(port);

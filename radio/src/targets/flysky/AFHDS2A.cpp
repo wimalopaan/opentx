@@ -24,11 +24,12 @@
 
 extern int8_t s_editMode;
 
-inline uint32_t GetChipID(void) {
+uint32_t GetChipID(void) {
   return (uint32_t)(READ_REG(*((uint32_t *)UID_BASE))) ^
          (uint32_t)(READ_REG(*((uint32_t *)(UID_BASE + 4U)))) ^
          (uint32_t)(READ_REG(*((uint32_t *)(UID_BASE + 8U))));
 }
+
 void EnableGIO(void) {
   EXTI->PR |= RF_GIO2_PIN;
   SET_BIT(EXTI->IMR, RF_GIO2_PIN);
@@ -170,8 +171,8 @@ void AFHDS2A_build_packet(uint8_t type) {
 
       packet[11] = g_model.moduleData[INTERNAL_MODULE].servoFreq;
       packet[12] = g_model.moduleData[INTERNAL_MODULE].servoFreq >> 8;
-      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_IBUS || 
-            g_model.moduleData[INTERNAL_MODULE].subType ==AFHDS2A_SUBTYPE_PPM_SBUS) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_IBUS ||
+          g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_SBUS) {
         packet[13] = 0x01;  // PPM output enabled
       } else {
         packet[13] = 0x00;
@@ -183,8 +184,8 @@ void AFHDS2A_build_packet(uint8_t type) {
       packet[18] = 0x05;  // ?
       packet[19] = 0xdc;  // ?
       packet[20] = 0x05;  // ?
-      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PWM_SBUS || 
-            g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_SBUS) {
+      if (g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PWM_SBUS ||
+          g_model.moduleData[INTERNAL_MODULE].subType == AFHDS2A_SUBTYPE_PPM_SBUS) {
         packet[21] = 0xdd;  // SBUS output enabled
       } else {
         packet[21] = 0xde;  // IBUS
@@ -200,7 +201,6 @@ void AFHDS2A_build_packet(uint8_t type) {
 void ActionAFHDS2A(void) {
   uint8_t Channel;
   static uint8_t packet_type;
-  static uint16_t telem_counter;
   static uint16_t packet_counter = 0;
   A7105_AdjustLOBaseFreq();
 
@@ -331,10 +331,6 @@ EndSendData_:  //-----------------------------------------------------------
     packet_type = AFHDS2A_PACKET_STICKS;
   SETBIT(RadioState, SEND_RES, RES);
   EnableGIO();
-  if (telem_counter < 100)
-    telem_counter++;
-  else
-    telem_status = 0;
   SETBIT(RadioState, SEND_RES, RES);
   return;
 ResData_:  //-----------------------------------------------------------
@@ -346,7 +342,6 @@ ResData_:  //-----------------------------------------------------------
   if (packet[0] == 0xAA || packet[0] == 0xAC) {
     if (!memcmp(&packet[1], ID.rx_tx_addr, 4)) {  // Validate TX address
       AFHDS2A_update_telemetry();
-      telem_counter = 0;
     }
   }
   SETBIT(RadioState, SEND_RES, SEND);
@@ -366,6 +361,7 @@ void initAFHDS2A() {
   ID.MProtocol_id = GetChipID();
   AFHDS2A_calc_channels();
   A7105_Init();
+  SetPRTTimPeriod(PROTO_AFHDS2A_SPI);
   packet_count = 0;
   hopping_frequency_no = 0;
   BIND_STOP;

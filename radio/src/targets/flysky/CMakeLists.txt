@@ -45,7 +45,8 @@ endif()
 set(TARGET_SRC
   ${TARGET_SRC}
   A7105_SPI.cpp
-  AFHDS2A_a7105.cpp
+  AFHDS2A.cpp
+  AFHDS.cpp
   intmodule_pulses_driver.cpp
   trainer_driver.cpp
   )
