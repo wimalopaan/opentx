@@ -22,6 +22,18 @@
 #define AFHDS2A_HUB_TELEMETRY
 //#define AFHDS2A_NUMFREQ			16
 
+#ifdef AFHDS2A_CHANNELS 
+# ifdef AFHDS2A_LQI_CH
+#  undef AFHDS2A_LQI_CH
+# endif
+#else 
+# define AFHDS2A_CHANNELS 14
+#endif
+
+#if ((AFHDS2A_CHANNELS - 0) > 16)
+# error "wrong number of channels"
+#endif
+
 extern int8_t s_editMode;
 
 inline uint32_t GetChipID(void) {
@@ -133,7 +145,7 @@ void AFHDS2A_build_packet(uint8_t type) {
   switch (type) {
     case AFHDS2A_PACKET_STICKS:
       packet[0] = 0x58;
-      for (uint8_t ch = 0; ch < 14; ch++) {
+      for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ch++) {
         uint16_t channelMicros;
         // channelOutputs: -1024 to 1024
         channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
@@ -149,7 +161,7 @@ void AFHDS2A_build_packet(uint8_t type) {
       break;
     case AFHDS2A_PACKET_FAILSAFE:
       packet[0] = 0x56;
-      for (uint8_t ch = 0; ch < 14; ch++) {
+      for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ch++) {
         if (g_model.moduleData[INTERNAL_MODULE].failsafeMode == FAILSAFE_CUSTOM && g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] < FAILSAFE_CHANNEL_HOLD) {
           uint16_t failsafeMicros = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] / 2 + RADIO_PPM_CENTER;
           packet[9 + ch * 2] = failsafeMicros & 0xff;
