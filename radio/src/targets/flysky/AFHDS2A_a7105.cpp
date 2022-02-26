@@ -149,8 +149,15 @@ void AFHDS2A_build_packet(uint8_t type) {
         uint16_t channelMicros;
         // channelOutputs: -1024 to 1024
         channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
-        packet[9 + ch * 2] = channelMicros & 0xFF;
-        packet[10 + ch * 2] = (channelMicros >> 8) & 0xFF;
+        if (ch < 14) {
+            packet[9 + ch * 2] = channelMicros & 0xFF;
+            packet[10 + ch * 2] = (channelMicros >> 8) & 0x0F;
+        }
+        else {
+            packet[10 + (ch - 14) * 6] |= (channelMicros ) << 4;
+            packet[12 + (ch - 14) * 6] |= (channelMicros ) & 0xF0;
+            packet[14 + (ch - 14) * 6] |= (channelMicros >> 4) & 0xF0;            
+        }
       }
 #ifdef AFHDS2A_LQI_CH
       // override channel with LQI
