@@ -138,17 +138,15 @@ static void AFHDS2A_build_bind_packet(void) {
   }
 }
 
-void AFHDS2A_build_packet(uint8_t type) {
-  uint16_t val = 0;
-  memcpy(&packet[1], ID.rx_tx_addr, 4);
-  memcpy(&packet[5], g_model.moduleData[INTERNAL_MODULE].rxID, 4);
+void AFHDS2A_build_packet(const uint8_t type) {
+  memcpy(&packet[1], ID.rx_tx_addr, sizeof(ID.rx_tx_addr));
+  memcpy(&packet[5], g_model.moduleData[INTERNAL_MODULE].rxID, sizeof(g_model.moduleData[INTERNAL_MODULE].rxID));
   switch (type) {
     case AFHDS2A_PACKET_STICKS:
       packet[0] = 0x58;
-      for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ch++) {
-        uint16_t channelMicros;
+      for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ++ch) {
         // channelOutputs: -1024 to 1024
-        channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
+        const uint16_t channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
         if (ch < 14) {
             packet[9 + ch * 2] = channelMicros & 0xFF;
             packet[10 + ch * 2] = (channelMicros >> 8) & 0x0F;
@@ -161,7 +159,7 @@ void AFHDS2A_build_packet(uint8_t type) {
       }
 #ifdef AFHDS2A_LQI_CH
       // override channel with LQI
-      val = 1000 + 10 * telemetryData.rssi.value;
+      const uint16_t val = 1000 + 10 * telemetryData.rssi.value;
       packet[9 + ((AFHDS2A_LQI_CH - 1) * 2)] = val & 0xff;
       packet[10 + ((AFHDS2A_LQI_CH - 1) * 2)] = (val >> 8) & 0xff;
 #endif
@@ -170,7 +168,7 @@ void AFHDS2A_build_packet(uint8_t type) {
       packet[0] = 0x56;
       for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ch++) {
         if (g_model.moduleData[INTERNAL_MODULE].failsafeMode == FAILSAFE_CUSTOM && g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] < FAILSAFE_CHANNEL_HOLD) {
-          uint16_t failsafeMicros = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] / 2 + RADIO_PPM_CENTER;
+          const uint16_t failsafeMicros = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] / 2 + RADIO_PPM_CENTER;
           packet[9 + ch * 2] = failsafeMicros & 0xff;
           packet[10 + ch * 2] = (failsafeMicros >> 8) & 0xff;
         } else {  // no values
