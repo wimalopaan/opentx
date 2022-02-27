@@ -925,11 +925,7 @@ static inline void check_struct() {
   CHKSIZE(TelemetrySensor, 14);
 
 #if defined(PCBI6X)
-#if ((AFHDS2A_CHANNELS - 0) > 16)
-  CHKSIZE(ModuleData, 48);
-#else
   CHKSIZE(ModuleData, 44);
-#endif
 #else
   CHKSIZE(ModuleData, 70);
 #endif

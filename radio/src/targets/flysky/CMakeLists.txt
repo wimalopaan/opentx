@@ -34,7 +34,7 @@ if(PCB STREQUAL I6X)
   add_definitions(-DEEPROM_VARIANT=0)
   add_definitions(-DSOFTWARE_VOLUME)
   add_definitions(-DAFHDS2A_CHANNELS=16)
-#  add_definitions(-DAFHDS2A_LQI_CH=17) # inject LQI at channel
+  add_definitions(-DAFHDS2A_LQI_CH=14) # inject LQI at channel
 endif()
 
 if(PCBI6X_ELRSV2)

@@ -25,7 +25,7 @@
 #endif
 
 #if ((AFHDS2A_CHANNELS - 0) > 16)
-# ifdef AFHDS2A_LQI_CH 
+# if defined(AFHDS2A_LQI_CH) 
 #  if ((AFHDS2A_LQI_CH > AFHDS2A_CHANNELS) || (AFHDS2A_LQI_CH <= 16))
 #   warning "wrong AFHDS2A_LQI_CH"
 #   ifdef AFHDS2A_LQI_CH
@@ -34,8 +34,8 @@
 #  endif
 # endif
 #else 
-# ifdef AFHDS2A_LQI_CH
-#  undef AFHDS2A_LQI_CH
+# if defined(AFHDS2A_LQI_CH)
+#  warning "questionable AFHDS2A_LQI_CH setting"
 # endif
 #endif
 
