@@ -17,21 +17,26 @@
 #include "iface_a7105.h"
 #include "opentx.h"
 
-#define AFHDS2A_TXPACKET_SIZE 37
-#define AFHDS2A_RXPACKET_SIZE 37
 #define AFHDS2A_HUB_TELEMETRY
 //#define AFHDS2A_NUMFREQ			16
 
-#ifdef AFHDS2A_CHANNELS 
-# ifdef AFHDS2A_LQI_CH
-#  undef AFHDS2A_LQI_CH
-# endif
-#else 
-# define AFHDS2A_CHANNELS 14
+#if ((AFHDS2A_CHANNELS - 0) > 18)
+# error "wrong number of channels"
 #endif
 
 #if ((AFHDS2A_CHANNELS - 0) > 16)
-# error "wrong number of channels"
+# ifdef AFHDS2A_LQI_CH 
+#  if ((AFHDS2A_LQI_CH > AFHDS2A_CHANNELS) || (AFHDS2A_LQI_CH <= 16))
+#   warning "wrong AFHDS2A_LQI_CH"
+#   ifdef AFHDS2A_LQI_CH
+#    undef AFHDS2A_LQI_CH
+#   endif
+#  endif
+# endif
+#else 
+# ifdef AFHDS2A_LQI_CH
+#  undef AFHDS2A_LQI_CH
+# endif
 #endif
 
 extern int8_t s_editMode;
@@ -146,7 +151,13 @@ void AFHDS2A_build_packet(const uint8_t type) {
       packet[0] = 0x58;
       for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ++ch) {
         // channelOutputs: -1024 to 1024
+#ifdef AFHDS2A_LQI_CH
+        const uint16_t channelMicros = (ch == (AFHDS2A_LQI_CH - 1)) ? 
+                                           (1000 + 10 * telemetryData.rssi.value) : 
+                                           (channelOutputs[ch] / 2 + RADIO_PPM_CENTER);
+#else
         const uint16_t channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
+#endif
         if (ch < 14) {
             packet[9 + ch * 2] = channelMicros & 0xFF;
             packet[10 + ch * 2] = (channelMicros >> 8) & 0x0F;
@@ -157,12 +168,6 @@ void AFHDS2A_build_packet(const uint8_t type) {
             packet[14 + (ch - 14) * 6] |= (channelMicros >> 4) & 0xF0;            
         }
       }
-#ifdef AFHDS2A_LQI_CH
-      // override channel with LQI
-      const uint16_t val = 1000 + 10 * telemetryData.rssi.value;
-      packet[9 + ((AFHDS2A_LQI_CH - 1) * 2)] = val & 0xff;
-      packet[10 + ((AFHDS2A_LQI_CH - 1) * 2)] = (val >> 8) & 0xff;
-#endif
       break;
     case AFHDS2A_PACKET_FAILSAFE:
       packet[0] = 0x56;
