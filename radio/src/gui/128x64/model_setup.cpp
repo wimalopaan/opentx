@@ -828,7 +828,7 @@ void menuModelSetup(event_t event)
         lcdDrawTextAlignedLeft(y, "RF Port 2 (PPM)");
         break;
 #endif
-
+#if defined(EXT_MODULE)
       case ITEM_MODEL_EXTERNAL_MODULE_LABEL:
         lcdDrawTextAlignedLeft(y, TR_EXTERNALRF);
         break;
@@ -951,7 +951,8 @@ void menuModelSetup(event_t event)
       }
       break;
 #endif
-
+#endif
+        
 #if defined(PCBTARANIS)
       case ITEM_MODEL_TRAINER_LABEL:
         lcdDrawTextAlignedLeft(y, STR_TRAINER);

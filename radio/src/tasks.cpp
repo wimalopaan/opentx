@@ -73,11 +73,13 @@ bool isModuleSynchronous(uint8_t moduleIdx) {
 }
 
 void sendSynchronousPulses(uint8_t runMask) {
+#if defined(EXT_MODULE)        
   if ((runMask & (1 << EXTERNAL_MODULE)) && isModuleSynchronous(EXTERNAL_MODULE)) {
     if (setupPulses(EXTERNAL_MODULE)) {
       extmoduleSendNextFrame();
     }
   }
+#endif
 }
 
 constexpr uint8_t MIXER_FREQUENT_ACTIONS_PERIOD = 5 /*ms*/;

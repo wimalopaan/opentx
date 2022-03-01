@@ -21,13 +21,15 @@
 #include "opentx.h"
 
 void intmoduleStop(void);
-void extmoduleStop(void);
 
 void intmoduleNoneStart(void);
 void intmoduleAfhds2aStart(void);
 
+#if defined(EXT_MODULE)
+void extmoduleStop(void);
 void extmodulePpmStart(void);
 void extmoduleTimerStart(uint32_t period, uint8_t state);
+#endif
 
 void init_afhds2a(uint32_t port) {
   if (port == INTERNAL_MODULE) {
@@ -44,17 +46,21 @@ void disable_afhds2a(uint32_t port) {
 }
 
 void init_ppm(uint32_t port) {
+#if defined(EXT_MODULE)    
   if (port == EXTERNAL_MODULE) {
     TRACE("Init PPM");
     extmodulePpmStart();
   }
+#endif
 }
 
 void disable_ppm(uint32_t port) {
+#if defined(EXT_MODULE)    
   if (port == EXTERNAL_MODULE) {
     TRACE("Disable PPM");
     extmoduleStop();
   }
+#endif
 }
 
 void init_no_pulses(uint32_t port) {
@@ -62,7 +68,9 @@ void init_no_pulses(uint32_t port) {
   if (port == INTERNAL_MODULE) {    
     intmoduleNoneStart();
   }else{
+#if defined(EXT_MODULE)    
     extmoduleTimerStart(18000, false);
+#endif
   }
 }
 
@@ -72,7 +80,9 @@ void disable_no_pulses(uint32_t port) {
     intmoduleStop();
   } else {
     TRACE("Disable no pulses external");
+#if defined(EXT_MODULE)    
     extmoduleStop();
+#endif
   }
 }
 
@@ -87,15 +97,19 @@ void disable_serial(uint32_t port) {
 }
 
 void init_module_timer(uint32_t port, uint32_t period, uint8_t state) {
+#if defined(EXT_MODULE)    
   if (port == EXTERNAL_MODULE) {
     TRACE("init_module_timer period %d", period);
     extmoduleTimerStart(period, state);
   }
+#endif
 }
 
 void disable_module_timer(uint32_t port) {
+#if defined(EXT_MODULE)    
   if (port == EXTERNAL_MODULE) {
     TRACE("disable_module_timer period");
     extmoduleStop();
   }
+#endif
 }

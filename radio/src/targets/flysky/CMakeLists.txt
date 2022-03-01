@@ -5,6 +5,7 @@ option(PCBI6X_ELRSV2 "Enable ExpressLRS v2 configuration tool" OFF) # ~6kB FLASH
 option(CROSSFIRE "Crossfire" OFF)
 option(PCBI6X_USB_MSD "PCBI6X_USB_MSD" OFF)
 option(VARIO "Vario" OFF)
+option(EXT_MODULE "Ext Module" ON)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "PRESS")
@@ -25,7 +26,8 @@ if(PCB STREQUAL I6X)
   set(LCD_DRIVER lcd_driver.cpp)
   set(DEFAULT_MODE 2)
   set(GVAR_SCREEN model_gvars.cpp)
-  set(AUX_SERIAL_DRIVER aux_serial_driver.cpp)
+#  set(AUX_SERIAL_DRIVER aux_serial_driver.cpp)
+  set(AUX_SERIAL_DRIVER ../common/arm/stm32/aux_serial_driver.cpp)
   set(DEFAULT_TEMPLATE_SETUP "0" CACHE STRING "Default channel order")
 
   add_definitions(-DNAVIGATION_POT1)
@@ -35,6 +37,10 @@ if(PCB STREQUAL I6X)
   add_definitions(-DEEPROM_VARIANT=0)
   add_definitions(-DSOFTWARE_VOLUME)
   add_definitions(-DAFHDS2A_LQI_CH=14) # inject LQI at channel
+endif()
+
+if (EXT_MODULE)
+	add_definitions(-DEXT_MODULE)
 endif()
 
 if (CROSSFIRE)
@@ -96,7 +102,7 @@ set(TARGET_SRC
   board.cpp
   buzzer_driver.cpp
   backlight_driver.cpp
-  extmodule_driver.cpp
+#  extmodule_driver.cpp
   adc_driver.cpp
   i2c_common_v2.cpp
   i2c_driver.cpp
@@ -104,6 +110,14 @@ set(TARGET_SRC
 #  tools/elrsV2.cpp
   ../common/arm/stm32/mixer_scheduler_driver.cpp
   )
+
+if (EXT_MODULE)
+	set(TARGET_SRC
+	  ${TARGET_SRC}
+	  extmodule_driver.cpp
+	)
+endif()
+
 if(PCBI6X_ELRSV2)
 	set(TARGET_SRC
 	  ${TARGET_SRC}

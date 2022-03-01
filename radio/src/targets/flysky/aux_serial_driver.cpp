@@ -85,6 +85,9 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
   case UART_MODE_LUA:
     auxSerialSetup(DEBUG_BAUDRATE, false);
 #endif
+  case UART_MODE_SBUS_TRAINER:
+      auxSerialSbusInit();
+      break;
   }
 }
 
@@ -98,8 +101,8 @@ void auxSerialPutc(char c)
 
 void auxSerialSbusInit()
 {
-  // auxSerialSetup(SBUS_BAUDRATE, true);
-  // AUX_SERIAL_USART->CR1 |= USART_CR1_M | USART_CR1_PCE ;
+   auxSerialSetup(SBUS_BAUDRATE, true);
+   AUX_SERIAL_USART->CR1 |= USART_CR1_M | USART_CR1_PCE ;
 }
 
 void auxSerialStop()

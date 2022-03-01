@@ -21,9 +21,11 @@
 #include "opentx.h"
 
 uint8_t auxSerialMode = 0;
-Fifo<uint8_t, 512> auxSerialTxFifo;
+Fifo<uint8_t, 256> auxSerialTxFifo;
 #if !defined(STM32F0)
 DMAFifo<32> auxSerialRxFifo __DMA (AUX_SERIAL_DMA_Stream_RX);
+#else
+Fifo<uint8_t, 256> auxSerialRxFifo;
 #endif
 void auxSerialSetup(unsigned int baudrate, bool dma)
 {
@@ -103,7 +105,7 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
       auxSerialSetup(DEBUG_BAUDRATE, false);
       break;
 #endif
-
+#if !defined(PCBI6X)
     case UART_MODE_TELEMETRY:
 #if !defined(STM32F0)    
       if (protocol == PROTOCOL_FRSKY_D_SECONDARY) {
@@ -111,9 +113,10 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
       }
 #endif      
       break;
-
     case UART_MODE_LUA:
       auxSerialSetup(DEBUG_BAUDRATE, false);
+      break;
+#endif
   }
 }
 
@@ -183,6 +186,12 @@ extern "C" void AUX_SERIAL_USART_IRQHandler(void)
       }
       status = AUX_SERIAL_USART->SR;
     }
+  }
+#else
+  if (USART_GetITStatus(AUX_SERIAL_USART, USART_IT_RXNE) != RESET) {
+    USART_ClearITPendingBit(AUX_SERIAL_USART, USART_IT_RXNE);
+    uint8_t byte = USART_ReceiveData(AUX_SERIAL_USART);
+    auxSerialRxFifo.push(byte);
   }
 #endif
 }
