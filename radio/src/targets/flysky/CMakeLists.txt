@@ -2,6 +2,9 @@ option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
 option(LCD_DUAL_BUFFER "Dual LCD Buffer" OFF)
 option(TARANIS_INTERNAL_PPM "Taranis internal module hack to output PPM" OFF)
 option(PCBI6X_ELRSV2 "Enable ExpressLRS v2 configuration tool" OFF) # ~6kB FLASH
+option(CROSSFIRE "Crossfire" OFF)
+option(PCBI6X_USB_MSD "PCBI6X_USB_MSD" OFF)
+option(VARIO "Vario" OFF)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "PRESS")
@@ -26,7 +29,6 @@ if(PCB STREQUAL I6X)
   set(DEFAULT_TEMPLATE_SETUP "0" CACHE STRING "Default channel order")
 
   add_definitions(-DTELEMETRY_FRSKY)
-  add_definitions(-DCROSSFIRE)
   add_definitions(-DNAVIGATION_POT1)
   add_definitions(-DNAVIGATION_POT2)
   add_definitions(-DSTM32F072)
@@ -36,11 +38,20 @@ if(PCB STREQUAL I6X)
   add_definitions(-DAFHDS2A_LQI_CH=14) # inject LQI at channel
 endif()
 
+if (CROSSFIRE)
+	add_definitions(-DCROSSFIRE)
+endif()
+
 if(PCBI6X_ELRSV2)
   add_definitions(-DPCBI6X_ELRSV2)
+  add_definitions(-DCROSSFIRE)
 else() # features disabled for ELRSV2
-  add_definitions(-DPCBI6X_USB_MSD)
-  add_definitions(-DMENU_DIAGKEYS) # 364B
+#  add_definitions(-DPCBI6X_USB_MSD)
+#  add_definitions(-DMENU_DIAGKEYS) # 364B
+endif()
+
+if(PCBI6X_USB_MSD)
+	add_definitions(-DPCBI6X_USB_MSD)
 endif()
 
 set(TARGET_SRC
@@ -58,7 +69,7 @@ set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
 set(DEFAULT_TEMPLATE_SETUP 21) # AETR
 add_definitions(-DPCBI6X -DBUZZER)
-add_definitions(-DMENU_DIAGANAS) # 360B
+#add_definitions(-DMENU_DIAGANAS) # 360B
 # add_definitions(-DMENU_DIAGKEYS) # 364B
 
 if(NOT DEFAULT_TEMPLATE_SETUP STREQUAL "")
@@ -90,9 +101,15 @@ set(TARGET_SRC
   i2c_common_v2.cpp
   i2c_driver.cpp
   crc_driver.cpp
-  tools/elrsV2.cpp
+#  tools/elrsV2.cpp
   ../common/arm/stm32/mixer_scheduler_driver.cpp
   )
+if(PCBI6X_ELRSV2)
+	set(TARGET_SRC
+	  ${TARGET_SRC}
+	  tools/elrsV2.cpp
+	)
+endif()
 
 set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}

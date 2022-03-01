@@ -3,6 +3,7 @@ set_property(CACHE LUA PROPERTY STRINGS YES NO NO_MODEL_SCRIPTS)
 set(LUA_SCRIPT_LOAD_MODE "" CACHE STRING "Script loading mode and compilation flags [btTxcd] (see loadScript() API docs). Blank for default ('bt' on radio, 'T' on SIMU/DEBUG builds)")
 option(LUA_COMPILER "Pre-compile and save Lua scripts" OFF)
 option(LUA_ALLOCATOR_TRACER "Trace Lua memory (de)allocations to debug port (also needs DEBUG=YES NANO=NO)" OFF)
+option(CROSSFIRE "Crossfire" OFF)
 
 option(USB_SERIAL "Enable USB serial (CDC)" OFF)
 set(ARCH ARM)
@@ -29,7 +30,8 @@ if(NOT CPU_TYPE STREQUAL STM32F0)
     )
 else() # STM32F0
   set(STM32USB_DIR ${THIRDPARTY_DIR}/STM32F0x2_USB-FS-Device_Lib_V1.0.0/Libraries)
-  add_definitions(-DSTM32 -DVARIO)
+  add_definitions(-DSTM32)
+#  add_definitions(-DSTM32 -DVARIO)
   include_directories(${RADIO_SRC_DIRECTORY}/targets/common/arm/stm32)
   include_directories(${STM32USB_DIR}/STM32_USB_Device_Driver/inc)
   include_directories(${STM32USB_DIR}/STM32_USB_Device_Library/Core/inc)
@@ -46,6 +48,10 @@ else() # STM32F0
     STM32_USB_Device_Library/Core/src/usbd_ioreq.c
     STM32_USB_Device_Library/Core/src/usbd_req.c
     )
+endif()
+
+if(VARIO)
+	add_definitions(-DVARIO)
 endif()
 
 set(TARGET_SRC
@@ -136,12 +142,16 @@ set(SRC
   )
 endif()
 
-set(SRC
-  ${SRC}
-  telemetry/crossfire.cpp  
-  )
+if(CROSSFIRE OR PCBI6X_ELRSV2)
+	set(SRC
+		${SRC}
+		telemetry/crossfire.cpp  
+		)
+endif()
 
-set(PULSES_SRC
-  ${PULSES_SRC}
-  crossfire.cpp
-  )
+if(CROSSFIRE OR PCBI6X_ELRSV2)
+	set(PULSES_SRC
+		${PULSES_SRC}
+		crossfire.cpp
+		)
+endif()

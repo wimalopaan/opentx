@@ -167,12 +167,21 @@ inline void extmoduleSendNextFrame() {
 extern "C" void EXTMODULE_TIMER_IRQHandler() {
   if (EXTMODULE_TIMER->SR & TIM_SR_CC2IF) {  // Compare PPM-OUT
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC2IF;    // Clears interrupt on ch2
-    if ((g_model.moduleData[EXTERNAL_MODULE].type != MODULE_TYPE_CROSSFIRE && s_current_protocol[EXTERNAL_MODULE] == PROTO_CROSSFIRE) || s_current_protocol[EXTERNAL_MODULE] == PROTO_NONE) {
+    if (
+        #if defined(CROSSFIRE)
+            (g_model.moduleData[EXTERNAL_MODULE].type != MODULE_TYPE_CROSSFIRE && 
+             s_current_protocol[EXTERNAL_MODULE] == PROTO_CROSSFIRE) || 
+        #endif
+            s_current_protocol[EXTERNAL_MODULE] == PROTO_NONE) {
       setupPulses(EXTERNAL_MODULE);
     }
+#if defined(CROSSFIRE)
     if (s_current_protocol[EXTERNAL_MODULE] != PROTO_CROSSFIRE) {
       extmoduleSendNextFrame();
     }
+#else
+    extmoduleSendNextFrame();
+#endif
   }
   if (EXTMODULE_TIMER->SR & TIM_SR_CC1IF) {  // Capture PPM-IN
     EXTMODULE_TIMER->SR &= ~TIM_SR_CC1IF;    // Clears interrupt on ch1
