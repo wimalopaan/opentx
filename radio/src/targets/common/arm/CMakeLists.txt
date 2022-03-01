@@ -101,7 +101,14 @@ set(SRC
   crc.cpp
   vario.cpp
   )
-  
+
+if (VARIO)
+	set(SRC
+		${SRC}
+		vario.cpp
+		)
+endif()
+
 if(PCB STREQUAL I6X)
 else()
 set(SRC
