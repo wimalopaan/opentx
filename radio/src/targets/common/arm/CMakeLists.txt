@@ -114,10 +114,10 @@ else()
 set(SRC
   ${SRC}
   audio.cpp
-  io/frsky_sport.cpp
-  telemetry/frsky.cpp
-  telemetry/frsky_d_arm.cpp
-  telemetry/frsky_sport.cpp
+#  io/frsky_sport.cpp
+#  telemetry/frsky.cpp
+#  telemetry/frsky_d_arm.cpp
+#  telemetry/frsky_sport.cpp
   )
 endif()
 if(NOT CPU_TYPE STREQUAL STM32F0)

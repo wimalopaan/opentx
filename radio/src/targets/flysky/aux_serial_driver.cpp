@@ -66,7 +66,9 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
         break;
       }
 #endif
+#if defined(TELEMETRY_FRSKY)
     auxSerialSetup(FRSKY_SPORT_BAUDRATE, false);
+#endif
     break;
 #if defined(DEBUG) || defined(CLI)
   case UART_MODE_DEBUG:

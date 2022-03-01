@@ -47,7 +47,7 @@
 #define TRIM_LH_POS   (TRIM_LH_X-4*FW)
 #define TRIM_RH_NEG   (TRIM_RH_X+1*FW)
 #define TRIM_RH_POS   (TRIM_RH_X-4*FW)
-#if defined(TELEMETRY_FRSKY)
+//#if defined(TELEMETRY_FRSKY)
 #define RSSSI_X       (30)
 #define RSSSI_Y       (31)
 #if defined(PCBI6X)
@@ -55,7 +55,7 @@
 #else
   #define RSSI_MAX      105
 #endif
-#endif
+//#endif
 
 #define TRIM_LEN      23
 

@@ -28,7 +28,6 @@ if(PCB STREQUAL I6X)
   set(AUX_SERIAL_DRIVER aux_serial_driver.cpp)
   set(DEFAULT_TEMPLATE_SETUP "0" CACHE STRING "Default channel order")
 
-  add_definitions(-DTELEMETRY_FRSKY)
   add_definitions(-DNAVIGATION_POT1)
   add_definitions(-DNAVIGATION_POT2)
   add_definitions(-DSTM32F072)
@@ -45,6 +44,7 @@ endif()
 if(PCBI6X_ELRSV2)
   add_definitions(-DPCBI6X_ELRSV2)
   add_definitions(-DCROSSFIRE)
+  add_definitions(-DTELEMETRY_FRSKY)
 else() # features disabled for ELRSV2
 #  add_definitions(-DPCBI6X_USB_MSD)
 #  add_definitions(-DMENU_DIAGKEYS) # 364B
