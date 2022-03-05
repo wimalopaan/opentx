@@ -455,6 +455,8 @@ void checkTrainerSettings()
 
 uint16_t getBatteryVoltage()
 {
-  uint32_t mv = (adcValues[TX_VOLTAGE] * (3300 * BATT_SCALE)) / (4095 * 51);
-  return (uint16_t)(mv / 10) + 20;
+  int32_t instant_vbat = adcValues[TX_VOLTAGE];
+  instant_vbat = (instant_vbat * 100 * (128 + g_eeGeneral.txVoltageCalibration)) / (421 * 128);
+  instant_vbat += 20; // add 0.2V because of the diode
+  return (uint16_t)instant_vbat;
 }
