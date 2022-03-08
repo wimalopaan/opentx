@@ -1897,7 +1897,7 @@ int main()
   loadFonts();
 #endif
 
-#if defined(GUI) && !defined(PCBTARANIS) && !defined(PCBHORUS)
+#if defined(GUI) && !defined(PCBTARANIS) && !defined(PCBHORUS) && !defined(PCBI6X)
   // TODO remove this
   lcdInit();
 #endif
