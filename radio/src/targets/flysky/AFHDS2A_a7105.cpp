@@ -17,10 +17,27 @@
 #include "iface_a7105.h"
 #include "opentx.h"
 
-#define AFHDS2A_TXPACKET_SIZE 37
-#define AFHDS2A_RXPACKET_SIZE 37
 #define AFHDS2A_HUB_TELEMETRY
 //#define AFHDS2A_NUMFREQ			16
+
+#if ((AFHDS2A_CHANNELS - 0) > 18)
+# error "wrong number of channels"
+#endif
+
+#if ((AFHDS2A_CHANNELS - 0) > 16)
+# if defined(AFHDS2A_LQI_CH) 
+#  if ((AFHDS2A_LQI_CH > AFHDS2A_CHANNELS) || (AFHDS2A_LQI_CH <= 16))
+#   warning "wrong AFHDS2A_LQI_CH"
+#   ifdef AFHDS2A_LQI_CH
+#    undef AFHDS2A_LQI_CH
+#   endif
+#  endif
+# endif
+#else 
+# if defined(AFHDS2A_LQI_CH)
+#  warning "questionable AFHDS2A_LQI_CH setting"
+# endif
+#endif
 
 extern int8_t s_editMode;
 
@@ -126,32 +143,37 @@ static void AFHDS2A_build_bind_packet(void) {
   }
 }
 
-void AFHDS2A_build_packet(uint8_t type) {
-  uint16_t val = 0;
-  memcpy(&packet[1], ID.rx_tx_addr, 4);
-  memcpy(&packet[5], g_model.moduleData[INTERNAL_MODULE].rxID, 4);
+void AFHDS2A_build_packet(const uint8_t type) {
+  memcpy(&packet[1], ID.rx_tx_addr, sizeof(ID.rx_tx_addr));
+  memcpy(&packet[5], g_model.moduleData[INTERNAL_MODULE].rxID, sizeof(g_model.moduleData[INTERNAL_MODULE].rxID));
   switch (type) {
     case AFHDS2A_PACKET_STICKS:
       packet[0] = 0x58;
-      for (uint8_t ch = 0; ch < 14; ch++) {
-        uint16_t channelMicros;
+      for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ++ch) {
         // channelOutputs: -1024 to 1024
-        channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
-        packet[9 + ch * 2] = channelMicros & 0xFF;
-        packet[10 + ch * 2] = (channelMicros >> 8) & 0xFF;
-      }
 #ifdef AFHDS2A_LQI_CH
-      // override channel with LQI
-      val = 1000 + 10 * telemetryData.rssi.value;
-      packet[9 + ((AFHDS2A_LQI_CH - 1) * 2)] = val & 0xff;
-      packet[10 + ((AFHDS2A_LQI_CH - 1) * 2)] = (val >> 8) & 0xff;
+        const uint16_t channelMicros = (ch == (AFHDS2A_LQI_CH - 1)) ? 
+                                           (1000 + 10 * telemetryData.rssi.value) : 
+                                           (channelOutputs[ch] / 2 + RADIO_PPM_CENTER);
+#else
+        const uint16_t channelMicros = channelOutputs[ch] / 2 + RADIO_PPM_CENTER;
 #endif
+        if (ch < 14) {
+            packet[9 + ch * 2] = channelMicros & 0xFF;
+            packet[10 + ch * 2] = (channelMicros >> 8) & 0x0F;
+        }
+        else {
+            packet[10 + (ch - 14) * 6] |= (channelMicros ) << 4;
+            packet[12 + (ch - 14) * 6] |= (channelMicros ) & 0xF0;
+            packet[14 + (ch - 14) * 6] |= (channelMicros >> 4) & 0xF0;            
+        }
+      }
       break;
     case AFHDS2A_PACKET_FAILSAFE:
       packet[0] = 0x56;
-      for (uint8_t ch = 0; ch < 14; ch++) {
+      for (uint8_t ch = 0; ch < AFHDS2A_CHANNELS; ch++) {
         if (g_model.moduleData[INTERNAL_MODULE].failsafeMode == FAILSAFE_CUSTOM && g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] < FAILSAFE_CHANNEL_HOLD) {
-          uint16_t failsafeMicros = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] / 2 + RADIO_PPM_CENTER;
+          const uint16_t failsafeMicros = g_model.moduleData[INTERNAL_MODULE].failsafeChannels[ch] / 2 + RADIO_PPM_CENTER;
           packet[9 + ch * 2] = failsafeMicros & 0xff;
           packet[10 + ch * 2] = (failsafeMicros >> 8) & 0xff;
         } else {  // no values
