@@ -2,30 +2,34 @@
  * ExpressLRS V2 lua configuration script port to C.
  * 
  * Limitations:
- * - multiple devices, only ExpressLRS transmitters,
+ * - no multiple devices, only ExpressLRS transmitter,
  * - no integer/float/string fields support, ExpressLRS uses only selection anyway,
- * - field unit ie.: "mW" is not displayed,
- * - info fields display only label without value
+ * - field unit is not displayed,
+ * - info fields display only label without value,
+ * - dynamically remove not critical strings from values ("AUX") to save RAM.
+ * 
  */
 
-#include <stdio.h>
 #include "opentx.h"
+#include "tiny_string.cpp"
 
 #define PACKED __attribute__((packed))
 
 extern uint8_t cScriptRunning;
 
+#define INFO_MAX_LEN 5
+
 struct FieldProps {
   uint8_t nameOffset;     
-  uint8_t valuesLength;   
-  uint8_t valuesOffset;   
-  uint8_t nameLength;     
-  uint8_t parent;         
-  uint8_t type : 4;       
-  uint8_t value : 4;      
-  uint8_t id : 5;         
-  uint8_t hidden : 1;     
-  uint8_t spare : 2;     
+  uint8_t nameLength;
+  uint8_t valuesOffset;  
+  uint8_t valuesLength;
+  uint8_t parent;
+  uint8_t type;// : 4;
+  uint8_t value;// : 4;
+  uint8_t id;// : 5;         
+  // uint8_t hidden : 1;
+  // uint8_t spare : 2;     
 } PACKED;
 
 struct FieldFunctions {
@@ -34,17 +38,17 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data; 
+#define NAMES_BUFFER_SIZE 148
+#define VALUES_BUFFER_SIZE 128
+uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data;
 uint8_t namesBufferOffset = 0;
-uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[256]; 
+uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE]; 
 uint8_t valuesBufferOffset = 0;
-
-char commandStatusInfo[24];
 
 #define deviceId 0xEE
 #define handsetId 0xEF
 
-char deviceName[16];
+static char deviceName[16];
 uint8_t lineIndex = 1;
 uint8_t pageOffset = 0;
 uint8_t edit = 0; 
@@ -54,15 +58,18 @@ tmr10ms_t fieldTimeout = 0;
 uint8_t fieldId = 1;
 uint8_t fieldChunk = 0;
 
-uint8_t fieldData[72]; 
+#define FIELD_DATA_MAX_LEN 120U // 84 + safe margin
+// static uint8_t *fieldData = &reusableBuffer.MSC_BOT_Data[256 - FIELD_DATA_MAX_LEN];
+static uint8_t fieldData[FIELD_DATA_MAX_LEN];
 uint8_t fieldDataLen = 0;
 
-FieldProps fields[25]; 
+#define FIELDS_MAX_COUNT 26 // 26 * 8b = 208b
+FieldProps *fields = (FieldProps *)&reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE]; 
 uint8_t fieldsLen = 0;
 
-char goodBadPkt[11] = "?/???    ?";
+static char goodBadPkt[11] = "?/???    ?";
 uint8_t elrsFlags = 0;
-char elrsFlagsInfo[16] = ""; 
+static char elrsFlagsInfo[16] = ""; 
 uint8_t fields_count = 0;
 uint8_t backButtonId = 2; 
 tmr10ms_t devicesRefreshTimeout = 50; 
@@ -74,8 +81,6 @@ int8_t expectedChunks = -1;
 tmr10ms_t linkstatTimeout = 100;
 tmr10ms_t titleShowWarnTimeout = 100;
 uint8_t titleShowWarn = 0;
-
-tmr10ms_t selfRefreshDelay = 0; 
 
 #define COL2           70
 #define maxLineIndex   6
@@ -93,41 +98,41 @@ tmr10ms_t selfRefreshDelay = 0;
 #define RESULT_OK 2
 #define RESULT_CANCEL 1
 
-void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max)
+static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max)
 {
   lcdDrawRect(x, y, w+1, h, 0xff);
   uint8_t len = limit((uint8_t)1, uint8_t(w*val/max), uint8_t(w));
   lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
 }
 
-void allocateFields();
-void reloadAllField();
-FieldProps * getField(uint8_t line);
-void UIbackExec(FieldProps * field);
-void parseDeviceInfoMessage(uint8_t* data);
-void parseParameterInfoMessage(uint8_t* data, uint8_t length);
-void parseElrsInfoMessage(uint8_t* data);
-void refreshNext(uint8_t command, uint8_t* data, uint8_t length);
-void runPopupPage(event_t event);
-void runDevicePage(event_t event);
-void lcd_title();
-void lcd_warn();
-void handleDevicePageEvent(event_t event);
+static void allocateFields();
+static void reloadAllField();
+static FieldProps * getField(uint8_t line);
+static void UIbackExec(FieldProps * field);
+static void parseDeviceInfoMessage(uint8_t* data);
+static void parseParameterInfoMessage(uint8_t* data, uint8_t length);
+static void parseElrsInfoMessage(uint8_t* data);
+static void refreshNext(uint8_t command, uint8_t* data, uint8_t length);
+static void runPopupPage(event_t event);
+static void runDevicePage(event_t event);
+static void lcd_title();
+static void lcd_warn();
+static void handleDevicePageEvent(event_t event);
 
 
-void crossfireTelemetryPush4(const uint8_t cmd, const uint8_t third, const uint8_t fourth) {
+static void crossfireTelemetryPush4(const uint8_t cmd, const uint8_t third, const uint8_t fourth) {
   // TRACE("crsf push %x", cmd);
   uint8_t crsfPushData[4] { deviceId, handsetId, third, fourth };
   crossfireTelemetryPush(cmd, crsfPushData, 4);
 }
 
-void crossfireTelemetryPing(){
+static void crossfireTelemetryPing(){
   uint8_t crsfPushData[2] = { 0x00, 0xEA };
   crossfireTelemetryPush(0x28, crsfPushData, 2);
 }
 
-void allocateFields() {
-  for (uint32_t i=0; i < fields_count +1U + 0U; i++) {
+static void allocateFields() {
+  for (uint32_t i = 0; i < fields_count + 1U + 0U; i++) {
     fields[i].nameLength = 0;
     fields[i].valuesLength = 0;
   }
@@ -140,7 +145,7 @@ void allocateFields() {
   fields[backButtonId].parent = (folderAccess == 0) ? 255 : folderAccess;
 }
 
-void reloadAllField() {
+static void reloadAllField() {
   allParamsLoaded = 0;
   fieldId = 1;
   fieldChunk = 0;
@@ -149,11 +154,11 @@ void reloadAllField() {
   valuesBufferOffset = 0;
 }
 
-FieldProps * getField(const uint8_t line) {
+static FieldProps * getField(const uint8_t line) {
   uint32_t counter = 1;
   for (uint32_t i = 0; i < fieldsLen; i++) {
     FieldProps * field = &fields[i];
-    if (folderAccess == field->parent && field->hidden == 0) {
+    if (folderAccess == field->parent && field->nameLength != 0/* && field->hidden == 0*/) {
       if (counter < line) {
         counter = counter + 1;
       } else {
@@ -164,7 +169,7 @@ FieldProps * getField(const uint8_t line) {
   return 0;
 }
 
-uint8_t getSemicolonCount(const char * str, const uint8_t len) {
+static uint8_t getSemicolonCount(const char * str, const uint8_t len) {
   uint8_t count = 0;
   for (uint32_t i = 0; i < len; i++) {
     if (str[i] == ';') count++;
@@ -172,7 +177,7 @@ uint8_t getSemicolonCount(const char * str, const uint8_t len) {
   return count;
 }
 
-void incrField(int8_t step) {
+static void incrField(int8_t step) {
   FieldProps * field = getField(lineIndex);
   if (field->type == 10) {
   } else {
@@ -185,7 +190,7 @@ void incrField(int8_t step) {
   }
 }
 
-void selectField(int8_t step) {
+static void selectField(int8_t step) {
   int8_t newLineIndex = lineIndex;
   FieldProps * field;
   do {
@@ -206,10 +211,22 @@ void selectField(int8_t step) {
   }
 }
 
-void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
+static uint8_t strRemoveTo(char * src, const char * str, const uint8_t len) {
+  const char strLen = strlen(str);
+  char * srcStrPtr = src;
+  uint8_t removedLen = 0;
+  while ((srcStrPtr = strstr(srcStrPtr, str)) && (srcStrPtr < src + len)) {
+    memcpy(srcStrPtr, srcStrPtr + strLen, (src + len) - (srcStrPtr + strLen));
+    removedLen += strLen;
+  }
+
+  return removedLen;
+}
+
+static void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   uint8_t len = strlen((char*)&data[offset]);
-  if (field->valuesLength == 0) { 
-    memcpy(&valuesBuffer[valuesBufferOffset], &data[offset], len);
+  if (field->valuesLength == 0) {
+    memcpy(&valuesBuffer[valuesBufferOffset], (char*)&data[offset], len);
     field->valuesOffset = valuesBufferOffset;
     field->valuesLength = len;
     valuesBufferOffset += len;
@@ -218,17 +235,17 @@ void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) 
   field->value = data[offset];
 }
 
-void fieldTextSelectionSave(FieldProps * field) {
+static void fieldTextSelectionSave(FieldProps * field) {
   crossfireTelemetryPush4(0x2D, field->id, field->value);
 }
 
-uint8_t semicolonPos(const char * str, uint8_t last) {
+static uint8_t semicolonPos(const char * str, uint8_t last) {
   uint8_t pos = 0;
   while ((str[pos] != ';') && (pos < last)) pos++;
   return pos + 1;
 }
 
-void fieldTextSelectionDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
+static void fieldTextSelectionDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   uint8_t start = field->valuesOffset;
   uint8_t len;
   uint32_t i = 0;
@@ -243,27 +260,31 @@ void fieldTextSelectionDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   lcdDrawSizedText(COL2, y, (char *)&valuesBuffer[start], len , attr);
 }
 
-void fieldStringDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
+static void fieldStringDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   lcdDrawSizedText(COL2, y, (char *)&valuesBuffer[field->valuesOffset], field->valuesLength, attr);
 }
 
-void fieldFolderOpen(FieldProps * field) {
+static void fieldFolderOpen(FieldProps * field) {
   lineIndex = 1;
   pageOffset = 0;
   folderAccess = field->id;
   fields[backButtonId].parent = folderAccess;
+  for (uint32_t i = 0; i < backButtonId; i++) {
+    fields[i].valuesLength = 0;
+  }
+  reloadAllField();
 }
 
-void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
+static void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   field->value = data[offset]; 
   field->valuesOffset = data[offset+1]; 
-  strcpy((char *)&commandStatusInfo, (char *)&data[offset+2]); 
+  strcpy((char *)&fieldData[FIELD_DATA_MAX_LEN - 24 - 1], (char *)&data[offset+2]); 
   if (field->value == 0) { 
     fieldPopup = 0; 
   }
 }
 
-void fieldCommandSave(FieldProps * field) {
+static void fieldCommandSave(FieldProps * field) {
   if (field->value < 4) { 
     field->value = 1; 
     fieldTextSelectionSave(field); //crossfireTelemetryPush4(0x2D, field->id, field->value);
@@ -273,10 +294,10 @@ void fieldCommandSave(FieldProps * field) {
   }
 }
 
-void fieldUnifiedDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
+static void fieldUnifiedDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   const char* backPat = "[----BACK----]";
-  const char* folderPat = "> %.*s";
-  const char* cmdPat = "[%.*s]";
+  const char* folderPat = "> %s";
+  const char* cmdPat = "[%s]";
   uint8_t textIndent = textXoffset + 9;
   char *pat;
   if (field->type == 11) {
@@ -288,16 +309,20 @@ void fieldUnifiedDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
     pat = (char *)cmdPat;
   }
   char stringTmp[24];
-  sprintf((char *)&stringTmp, pat, field->nameLength, (char *)&namesBuffer[field->nameOffset]);
+  tiny_sprintf((char *)&stringTmp, pat, field->nameLength, 1, (char *)&namesBuffer[field->nameOffset]);
   lcdDrawText(textIndent, y, (char *)&stringTmp, attr | BOLD);
 }
 
-void UIbackExec(FieldProps * field = 0) {
+static void UIbackExec(FieldProps * field = 0) {
   folderAccess = 0;
   fields[backButtonId].parent = 255;
+  for (uint32_t i = 0; i < backButtonId; i++) {
+    fields[i].valuesLength = 0;
+  }
+  reloadAllField();
 }
 
-void parseDeviceInfoMessage(uint8_t* data) {
+static void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t offset;
   uint8_t id = data[2];
   TRACE("parseDeviceInfoMessage %x", id);
@@ -318,7 +343,7 @@ void parseDeviceInfoMessage(uint8_t* data) {
   }
 }
 
-const FieldFunctions functions[] = {
+static const FieldFunctions functions[] = {
   { .load=fieldTextSelectionLoad, .save=fieldTextSelectionSave, .display=fieldTextSelectionDisplay }, 
   { .load=nullptr, .save=nullptr, .display=fieldStringDisplay }, 
   { .load=nullptr, .save=fieldFolderOpen, .display=fieldUnifiedDisplay }, 
@@ -327,7 +352,7 @@ const FieldFunctions functions[] = {
   { .load=nullptr, .save=UIbackExec, .display=fieldUnifiedDisplay } 
 };
 
-void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
+static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   if (data[2] != deviceId || data[3] != fieldId) {
     fieldDataLen = 0; 
     fieldChunk = 0;
@@ -342,13 +367,19 @@ void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     return; 
   }
   expectedChunks = chunks - 1;
-  for (uint32_t i=5; i< length; i++) {
+  for (uint32_t i = 5; i < length; i++) {
     fieldData[fieldDataLen++] = data[i];
   }
+  TRACE("length %d", length); // to know what is the max single chunk size
+  // trim values
+  uint8_t selectionPos = strlen((char*)&fieldData[2]) + 1 + 2;
+  fieldDataLen -= strRemoveTo((char*)&fieldData[selectionPos], "AUX", fieldDataLen - selectionPos);
   if (chunks > 0) {
     fieldChunk = fieldChunk + 1;
     statusComplete = 0;
   } else { 
+    TRACE("%d, %s, %d", fieldId, &fieldData[2], fieldDataLen);
+    DUMP(fieldData, fieldDataLen);
     fieldChunk = 0;
     if (fieldDataLen < 4) { 
       fieldDataLen = 0; 
@@ -361,23 +392,28 @@ void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     uint8_t hidden = (fieldData[1] & 0x80) ? 1 : 0; 
     uint8_t offset;
     if (field->nameLength != 0) { 
-      if (field->parent != parent || field->type != type || field->hidden != hidden) {
+      if (field->parent != parent || field->type != type/* || field->hidden != hidden*/) {
         fieldDataLen = 0; 
         return; 
       }
     }
     field->parent = parent;
     field->type = type;
-    field->hidden = hidden;
-    offset = strlen((char*)&fieldData[2]) + 1 + 2; 
-    if (field->nameLength == 0) {  
-      field->nameLength = offset - 3;
-      field->nameOffset = namesBufferOffset;
-      memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], offset - 3); 
-      namesBufferOffset += offset - 3;
-    }
-    if (functions[field->type - 9].load) {
-      functions[field->type - 9].load(field, fieldData, offset);
+    // field->hidden = hidden;
+    offset = strlen((char*)&fieldData[2]) + 1 + 2;
+
+    if (parent != folderAccess || type < 9) { // not current folder or usupported type
+      field->nameLength = 0; // mark as clear
+    } else {
+      if (field->nameLength == 0 && !hidden) {
+        field->nameLength = (field->type == 13/*info*/) ? min(offset - 3, INFO_MAX_LEN) : offset - 3;
+        field->nameOffset = namesBufferOffset;
+        memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength); 
+        namesBufferOffset += field->nameLength;
+      }
+      if (functions[field->type - 9].load) {
+        functions[field->type - 9].load(field, fieldData, offset);
+      }
     }
 
     if (fieldPopup == 0) { 
@@ -389,7 +425,7 @@ void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
         allParamsLoaded = 1;
         fieldId = 1;
       } else {
-        fieldId = 1 + (fieldId % (fieldsLen-1));
+        fieldId++; // fieldId = 1 + (fieldId % (fieldsLen-1));
       }
       fieldTimeout = getTime() + 200;
     } else {
@@ -400,7 +436,7 @@ void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   }
 }
 
-void parseElrsInfoMessage(uint8_t* data) {
+static void parseElrsInfoMessage(uint8_t* data) {
   if (data[2] != deviceId) {
     fieldDataLen = 0; 
     fieldChunk = 0;
@@ -410,13 +446,17 @@ void parseElrsInfoMessage(uint8_t* data) {
   uint8_t badPkt = data[3];
   uint16_t goodPkt = (data[4]*256) + data[5];
   char state = (elrsFlags & 1) ? 'C' : '-';
-  sprintf(goodBadPkt, "%u/%u   %c", badPkt, goodPkt, state); 
+  tiny_sprintf(goodBadPkt, "%u/%u   %c", 0, 3, badPkt, goodPkt, state);
 
-  elrsFlags = data[6];
+  // If flags are changing, reset the warning timeout to display/hide message immediately
+  if (data[6] != elrsFlags) {
+    elrsFlags = data[6];
+    titleShowWarnTimeout = 0;
+  }
   strcpy(elrsFlagsInfo, (char*)&data[7]); 
 }
 
-void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length = 0) {
+static void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length = 0) {
   if (command == 0x29) {
     parseDeviceInfoMessage(data);
   } else if (command == 0x2B) {
@@ -458,7 +498,7 @@ void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length = 0) {
   }
 }
 
-void lcd_title() {
+static void lcd_title() {
   lcdClear();
 
   const uint8_t barHeight = 9;
@@ -471,7 +511,7 @@ void lcd_title() {
 
   if (allParamsLoaded != 1 && fields_count > 0) {
     lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
-    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count);
+    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count); // 136b
   } else {
     lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
     if (titleShowWarn) {
@@ -482,12 +522,13 @@ void lcd_title() {
   }
 }
 
-void lcd_warn() {
-  lcdDrawText(textSize*3, textSize*2, elrsFlagsInfo, 0);
-  lcdDrawText(textSize*10, textSize*6, "ok", BLINK + INVERS);
+static void lcd_warn() {
+  lcdDrawText(textXoffset, textSize*2, "Error:");
+  lcdDrawText(textXoffset, textSize*3, elrsFlagsInfo);
+  lcdDrawText(LCD_W/2, textSize*5, "[OK]", BLINK + INVERS + CENTERED);
 }
 
-void handleDevicePageEvent(event_t event) {
+static void handleDevicePageEvent(event_t event) {
   if (fieldsLen == 0) { 
     return;
   } else {
@@ -507,7 +548,7 @@ void handleDevicePageEvent(event_t event) {
       crossfireTelemetryPush4(0x2C, fieldId, fieldChunk); 
     } else {
       if (folderAccess == 0 && allParamsLoaded == 1) { 
-        reloadAllField();
+        // reloadAllField();
         crossfireTelemetryPing();
       }
       UIbackExec();
@@ -549,7 +590,7 @@ void handleDevicePageEvent(event_t event) {
   }
 }
 
-void runDevicePage(event_t event) {
+static void runDevicePage(event_t event) {
   handleDevicePageEvent(event);
 
   lcd_title();
@@ -576,8 +617,8 @@ void runDevicePage(event_t event) {
   }
 }
 
-uint8_t popupCompat(event_t event) {
-  showMessageBox((char *)&commandStatusInfo);
+static uint8_t popupCompat(event_t event) {
+  showMessageBox((char *)&fieldData[FIELD_DATA_MAX_LEN - 24 - 1]);
   lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS_ENTER_EXIT);
 
   if (event == EVT_VIRTUAL_EXIT) {
@@ -588,7 +629,7 @@ uint8_t popupCompat(event_t event) {
   return 0; 
 }
 
-void runPopupPage(event_t event) {
+static void runPopupPage(event_t event) {
   if (event == EVT_VIRTUAL_EXIT) {
     crossfireTelemetryPush4(0x2D, fieldPopup->id, 5);
     fieldTimeout = getTime() + 200; 
@@ -626,12 +667,12 @@ void runPopupPage(event_t event) {
 
 void ELRSV2_stop() {
   registerCrossfireTelemetryCallback(nullptr);
-  reloadAllField(); 
+  // reloadAllField();
   UIbackExec(); 
   fieldPopup = 0;
   if (cScriptRunning) {
     cScriptRunning = 0;
-    memset(reusableBuffer.MSC_BOT_Data, 0, 512);
+    // memset(reusableBuffer.MSC_BOT_Data, 0, 512);
     popMenu();
   }
 }

@@ -1,7 +1,7 @@
 option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
 option(LCD_DUAL_BUFFER "Dual LCD Buffer" OFF)
 option(TARANIS_INTERNAL_PPM "Taranis internal module hack to output PPM" OFF)
-option(PCBI6X_ELRSV2 "Enable ExpressLRS v2 configuration tool" OFF) # ~6kB FLASH
+option(PCBI6X_ELRSV2 "Enable ExpressLRS v2 configuration tool" OFF) # ~4kB FLASH
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "PRESS")
@@ -28,20 +28,19 @@ if(PCB STREQUAL I6X)
   add_definitions(-DTELEMETRY_FRSKY)
   add_definitions(-DCROSSFIRE)
   add_definitions(-DNAVIGATION_POT1)
-  add_definitions(-DNAVIGATION_POT2)
+  # add_definitions(-DNAVIGATION_POT2)
   add_definitions(-DSTM32F072)
   add_definitions(-DPWR_BUTTON_${PWR_BUTTON})
   add_definitions(-DEEPROM_VARIANT=0)
   add_definitions(-DSOFTWARE_VOLUME)
   add_definitions(-DAFHDS2A_CHANNELS=18)
-  add_definitions(-DAFHDS2A_LQI_CH=17) # inject LQI at channel
+#  add_definitions(-DAFHDS2A_LQI_CH=17) # inject LQI at channel
 endif()
 
 if(PCBI6X_ELRSV2)
   add_definitions(-DPCBI6X_ELRSV2)
 else() # features disabled for ELRSV2
   add_definitions(-DPCBI6X_USB_MSD)
-#  add_definitions(-DMENU_DIAGKEYS) # 364B
 endif()
 
 set(TARGET_SRC
@@ -59,8 +58,7 @@ set(TARGET_DIR flysky)
 set(PPM_LIMITS_SYMETRICAL YES)
 set(DEFAULT_TEMPLATE_SETUP 21) # AETR
 add_definitions(-DPCBI6X -DBUZZER)
-# add_definitions(-DMENU_DIAGANAS) # 360B
-# add_definitions(-DMENU_DIAGKEYS) # 364B
+# add_definitions(-DMENU_DIAG_ANAS_KEYS) # ~600B
 
 if(NOT DEFAULT_TEMPLATE_SETUP STREQUAL "")
   add_definitions(-DDEFAULT_TEMPLATE_SETUP=${DEFAULT_TEMPLATE_SETUP})

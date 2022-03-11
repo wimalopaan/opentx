@@ -71,7 +71,11 @@
   #define MAX_TELEMETRY_SENSORS        32
 #elif defined(PCBI6X)
   #define MAX_MODELS                   16
+#if ((AFHDS2A_CHANNELS - 0) > 16)
+  #define MAX_OUTPUT_CHANNELS          AFHDS2A_CHANNELS // number of real output channels CH1-CH16
+#else
   #define MAX_OUTPUT_CHANNELS          16 // number of real output channels CH1-CH16
+#endif
   #define MAX_FLIGHT_MODES             5
   #define MAX_MIXERS                   32 
   #define MAX_EXPOS                    14
