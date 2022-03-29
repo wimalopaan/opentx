@@ -28,12 +28,12 @@ void i2cInit()
   I2C_DeInit(I2C);
 
   I2C_InitTypeDef I2C_InitStructure;
-  I2C_InitStructure.I2C_Timing = I2C_TIMING_400K;
+  I2C_InitStructure.I2C_Timing = I2C_TIMING;
   I2C_InitStructure.I2C_OwnAddress1 = 0x00;
   I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
   I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
   I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-  I2C_InitStructure.I2C_AnalogFilter = I2C_AnalogFilter_Enable;
+  I2C_InitStructure.I2C_AnalogFilter = I2C_AnalogFilter_Disable;
   I2C_InitStructure.I2C_DigitalFilter = 0x00;
   I2C_Init(I2C, &I2C_InitStructure);
   I2C_Cmd(I2C, ENABLE);
