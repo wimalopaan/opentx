@@ -574,7 +574,7 @@ void menuMainView(event_t event)
 #if defined(PCBI6X)
     // Add square in case of pending or ongoing eeprom write
     if (storageDirtyMsk || eepromIsWriting()) {
-      lcdDrawRect(REBOOT_X, 0 * FH, 4, 4);
+      lcdDrawRect(REBOOT_X + 3, 0 * FH, 4, 4);
     }
 #endif // PCBI6X
   }
