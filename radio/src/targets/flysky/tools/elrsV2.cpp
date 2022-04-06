@@ -306,11 +306,11 @@ static void fieldFolderOpen(FieldProps * field) {
 }
 
 static void fieldFolderDeviceOpen(FieldProps * field) {
-  crossfireTelemetryPing(); //broadcast with standard handset ID to get all node respond correctly
-// if folderAccess == devices folder, store only devices instead of fields
+  // if folderAccess == devices folder, store only devices instead of fields
   fields_count = devicesLen;
   devicesLen = 0;
   fieldsLen = 0;
+  crossfireTelemetryPing(); //broadcast with standard handset ID to get all node respond correctly
   return fieldFolderOpen(field);
 }
 
@@ -400,22 +400,7 @@ static void createDeviceFields() { // put other devices in the field list
  fields[fields_count + 2 /* + devicesLen */].type = fields[backButtonId].type;
  fields[fields_count + 2 /* + devicesLen */].parent = fields[backButtonId].parent;
  backButtonId = fields_count + 2 /* + devicesLen */; // move back button to the end of the list, so it will always show up at the bottom.
-//  for (uint32_t i = 0; i < devicesLen; i++) {
-//    TRACE("createDeviceFields at %d", fields_count+2+i);
-//    fields[fields_count+2+i].id = devices[i].id; // fields_count+2+i + 1;
-//    fields[fields_count+2+i].nameOffset = devices[i].nameOffset;
-//    fields[fields_count+2+i].nameLength = devices[i].nameLength;
-//    fields[fields_count+2+i].type = 15;
-//    if (devices[i].id == deviceId) {
-//      // fields[fields_count+1+i] = {id = fields_count+1+i, name=devices[i].name, parent = 255, type=15}
-//      fields[fields_count+2+i].parent = 255;
-//    } else {
-//      // fields[fields_count+1+i] = {id = fields_count+1+i, name=devices[i].name, parent = fields_count+1, type=15}
-//      fields[fields_count+2+i].parent = fields_count+1+1;
-//    }
-//  }
  fieldsLen = fields_count + 2 /* + devicesLen */ + 1;
-//  TRACE("fieldsLen %d", fieldsLen);
 }
 
 static void parseDeviceInfoMessage(uint8_t* data) {
@@ -843,7 +828,7 @@ void ELRSV2_stop() {
   handsetId = 0xEF;
   if (cScriptRunning) {
     cScriptRunning = 0;
-    // memset(reusableBuffer.MSC_BOT_Data, 0, 512);
+    memset(reusableBuffer.MSC_BOT_Data, 0, 512);
     popMenu();
   }
 }
