@@ -95,7 +95,7 @@ uint8_t reloadFolder = 0;
 #define textYoffset    3
 #define textSize       8
 
-#define tostring(c)       (char *)(c + 48)
+#define tostring(c)       (char)(c + 48)
 #define getTime           get_tmr10ms
 #define EVT_VIRTUAL_EXIT  EVT_KEY_BREAK(KEY_EXIT)
 #define EVT_VIRTUAL_ENTER EVT_KEY_BREAK(KEY_ENTER)
@@ -642,7 +642,7 @@ static void lcd_title() {
 
   const uint8_t barHeight = 9;
   if (titleShowWarn) {
-    lcdDrawSizedText(LCD_W, 1, tostring(elrsFlags), 1, RIGHT); 
+    lcdDrawChar(LCD_W, 1, tostring(elrsFlags), RIGHT); 
   } else {
     lcdDrawText(LCD_W - 1, 1, goodBadPkt, RIGHT);
     lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS); 
