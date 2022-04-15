@@ -15,7 +15,7 @@
 extern uint8_t cScriptRunning;
 
 // disabled, there is enough space now
-#define INFO_MAX_LEN 5
+//#define INFO_MAX_LEN 5
 
 struct FieldProps {
   uint8_t nameOffset;     
@@ -54,7 +54,7 @@ uint8_t fieldDataLen = 0;
 static FieldProps fields[FIELDS_MAX_COUNT]; // = (FieldProps *)&reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE];
 uint8_t fieldsLen = 0;
 
-#define DEVICES_MAX_COUNT 4
+#define DEVICES_MAX_COUNT 8
 static uint8_t deviceIds[DEVICES_MAX_COUNT];
 uint8_t devicesLen = 0;
 uint8_t otherDevicesId = 255;
@@ -174,7 +174,7 @@ static FieldProps * getField(const uint8_t line) {
       }
     }
   }
-  return 0;
+  return nullptr;
 }
 
 static uint8_t getSemicolonCount(const char * str, const uint8_t len) {
@@ -188,10 +188,11 @@ static uint8_t getSemicolonCount(const char * str, const uint8_t len) {
 static void incrField(int8_t step) {
   FieldProps * field = getField(lineIndex);
   if (field->type == 10) {
+    ; // not implemented
   } else {
-    uint8_t min, max = 0;
-    if (field->type == 9) { 
-      min = 0;
+    uint8_t min = 0, max = 0;
+    if (field->type == 9) {
+//      min = 0;
       max = getSemicolonCount((char *)&valuesBuffer[field->valuesOffset], field->valuesLength); 
     }
     field->value = limit<uint8_t>(min, field->value + step, max);
@@ -219,10 +220,10 @@ static void selectField(int8_t step) {
   }
 }
 
-static uint8_t getDevice(uint8_t deviceId) {
-  TRACE("getDevice %x", deviceId);
+static uint8_t getDevice(uint8_t devId) {
+  TRACE("getDevice %x", devId);
   for (uint8_t i = 0; i < devicesLen; i++) {
-    if (deviceIds[i] == deviceId) {
+    if (deviceIds[i] == devId) {
       return deviceIds[i];
     }
   }
@@ -341,18 +342,18 @@ static void fieldUnifiedDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   const char* folderPat = "> %s";
   const char* otherPat = "> Other Devices";
   const char* cmdPat = "[%s]";
+  const char *pat;
   uint8_t textIndent = textXoffset + 9;
-  char *pat;
   if (field->type == 11) { // FOLDER
-    pat = (char *)folderPat;
+    pat = folderPat;
     textIndent = textXoffset;
   } else if (field->type == 16) { // deviceFOLDER
-    pat = (char *)otherPat;
+    pat = otherPat;
     textIndent = textXoffset;
   } else if (field->type == 14) { // BACK
-    pat = (char *)backPat;
+    pat = backPat;
   } else { // CMD || DEVICE
-    pat = (char *)cmdPat;
+    pat = cmdPat;
   }
   char stringTmp[24];
   tiny_sprintf((char *)&stringTmp, pat, field->nameLength, 1, (char *)&namesBuffer[field->nameOffset]);
@@ -703,7 +704,8 @@ static void handleDevicePageEvent(event_t event) {
     } else {
       FieldProps * field = getField(lineIndex);
       if (field != 0 && field->nameLength > 0 && field->type >= 9) {
-        if (field->type == 10) { 
+        if (field->type == 10) {
+          ; // not implemented
         } else if (field->type < 11) {
           edit = 1 - edit;
         }
