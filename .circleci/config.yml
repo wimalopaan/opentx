@@ -10,6 +10,25 @@ parameters:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  sonar-scan:
+    docker:
+      - image: cimg/python:3.10.4
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: |
+            wget https://launchpad.net/gcc-arm-embedded/4.7/4.7-2013-q3-update/+download/gcc-arm-none-eabi-4_7-2013q3-20130916-linux.tar.bz2 -P /tmp
+            tar -C /tmp -xjf /tmp/gcc-arm-none-eabi-4_7-2013q3-20130916-linux.tar.bz2
+            export PATH=$PATH:/tmp/gcc-arm-none-eabi-4_7-2013q3/bin
+            pip3 install pillow libclang-py3 pyqt5
+            sudo apt-get update -y
+            sudo apt-get install -y libclang-6.0-dev
+            curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+            unzip -o build-wrapper-linux-x86.zip
+            build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw_output ./tools/commit-tests.sh -Wno-error
+      - sonarcloud/scan
+
   build-elrsv2:
     machine:
       image: ubuntu-2004:202111-02
@@ -21,6 +40,7 @@ jobs:
      - store_artifacts:
         path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
         destination: openi6x-<< pipeline.parameters.build-version >>-elrsv2.bin
+
   build-standard:
     machine:
       image: ubuntu-2004:202111-02
@@ -32,6 +52,7 @@ jobs:
       - store_artifacts:
           path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
           destination: openi6x-<< pipeline.parameters.build-version >>.bin
+
   build-heli:
     machine:
       image: ubuntu-2004:202111-02
@@ -43,22 +64,29 @@ jobs:
       - store_artifacts:
           path: opentx-i6x-<< pipeline.parameters.build-version >>.bin
           destination: openi6x-<< pipeline.parameters.build-version >>-heli.bin
-  publish-github-release:
-    docker:
-      - image: cibuilds/github:0.13
-    steps:
-      - attach_workspace:
-          at: /tmp
-      - run:
-          name: "Publish Release on GitHub"
-          command: |
-            ls -la
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest $CIRCLE_ARTIFACTS/
+
+#  publish-github-release:
+#    docker:
+#      - image: cibuilds/github:0.13
+#    steps:
+#      - attach_workspace:
+#          at: /tmp
+#      - run:
+#          name: "Publish Release on GitHub"
+#          command: |
+#            ls -la
+#            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete nightly-latest $CIRCLE_ARTIFACTS/
+
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.3
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   openi6x-release-workflow:
     jobs:
+      - sonar-scan:
+          context: SonarCloud
       - build-elrsv2 #:
 #          filters:
 #            branches:
