@@ -14,8 +14,8 @@ New contributions are highly welcome! See [developers guide](https://github.com/
 ### Nightly builds
 If you want to have all the latest features, fixes (and bugs) you can download latest build here:
 1. Go to: https://github.com/OpenI6X/opentx.
-2. Click on <span style="color:green;font-weight:700;font-size:20px">✓</span> icon next to latest commit id.
-3. Click on "Details" next to build of your choice.
+2. Click on ✓ icon next to latest commit id.
+3. Click on "Details" next to build-all.
 4. Click on "ARTIFACTS" tab.
 5. Download .bin file.
 
@@ -33,6 +33,7 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
     * ExpressLRS V2 configuration (ELRSV2.lua port)
 * 16 channels
 * Telemetry, up to 26 sensors
+* Telemetry mirror on AUX Serial
 * Audio tones, alarms and vario sound custom implementation
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes (To enable on standard cable: General Settings > USB Detect: Once)
