@@ -15,7 +15,7 @@ New contributions are highly welcome! See [developers guide](https://github.com/
 If you want to have all the latest features, fixes (and bugs) you can download latest build here:
 1. Go to: https://github.com/OpenI6X/opentx.
 2. Click on ✓ icon next to latest commit id.
-3. Click on "Details" next to build-all.
+3. Click on "Details" next to build of your choice.
 4. Click on "ARTIFACTS" tab.
 5. Download .bin file.
 
