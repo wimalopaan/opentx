@@ -21,4 +21,3 @@ build.sh
 firm.sh
 flash.sh
 *.patch
-git_tag.txt
