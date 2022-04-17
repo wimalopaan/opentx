@@ -78,9 +78,9 @@
 #else
 #define LEN_AUX_SERIAL_MODES         "\015"
 #if defined(CLI) || defined(DEBUG)
-#define TR_AUX_SERIAL_MODES          "Debug\0       ""S-Port Mirror""Telemetrie\0  ""SBUS Trenér\0 ""LUA\0         "
+#define TR_AUX_SERIAL_MODES          "Debug\0       ""Telem Mirror\0""Telemetrie\0  ""SBUS Trenér\0 ""LUA\0         "
 #else
-#define TR_AUX_SERIAL_MODES          "VYP\0         ""S-Port Mirror""Telemetrie\0  ""SBUS Trenér\0 ""LUA\0         "
+#define TR_AUX_SERIAL_MODES          "VYP\0         ""Telem Mirror\0""Telemetrie\0  ""SBUS Trenér\0 ""LUA\0         "
 #endif
 #endif
 
@@ -1050,8 +1050,8 @@
 #define TR_EEBACKUP            "Záloha EEPROM"
 #define TR_FACTORYRESET        "Factory reset"
 #else
-#define TR_EEBACKUP            TR("[dlouze ENTER]: Záloha", "\010[dlouze ENTER] zálohuje EEPROM")
-#define TR_FACTORYRESET        TR("[dlouze MENU]: Fact.reset", "\012[dlouze MENU]: Factory reset")
+#define TR_EEBACKUP            TR("Záloha", "zálohuje EEPROM")
+#define TR_FACTORYRESET        TR("Fact.reset", "Factory reset")
 #endif
 #define TR_CONFIRMRESET        "Smazat modely a nastavení?"
 #define TR_TO_MANY_LUA_SCRIPTS "Příliš mnoho skriptů!"

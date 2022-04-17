@@ -28,10 +28,10 @@ boards = {
 
 translations = [
     "EN",
-    # "PL",
+    "PL",
     "CZ",
-    "DE"
-    # "ES"
+    "DE",
+    "ES"
 ]
 
 common_options = {
