@@ -17,7 +17,7 @@ If you want to have all the latest features, fixes (and bugs) you can download l
 2. Click on ✓ icon next to latest commit id.
 3. Click on "Details" next to build of your choice.
 4. Click on "ARTIFACTS" tab.
-5. Download .bin file with preffered language.
+5. Download .bin file with preferred language.
 
 ## Installation
 
