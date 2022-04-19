@@ -23,8 +23,8 @@ jobs:
       - sonarcloud/scan
 
   build-elrsv2:
-    machine:
-      image: ubuntu-2004:202111-02
+    docker:
+      - image: cimg/python:3.10.4
     steps:
       - checkout
       - run: |
@@ -39,8 +39,8 @@ jobs:
           path: output
 
   build-heli:
-    machine:
-      image: ubuntu-2004:202111-02
+    docker:
+      - image: cimg/python:3.10.4
     steps:
       - checkout
       - run: |
@@ -55,8 +55,8 @@ jobs:
           path: output
 
   build-std:
-    machine:
-      image: ubuntu-2004:202111-02
+    docker:
+      - image: cimg/python:3.10.4
     steps:
       - checkout
       - run: |
@@ -71,8 +71,8 @@ jobs:
           path: output
 
   build-en:
-    machine:
-      image: ubuntu-2004:202111-02
+    docker:
+      - image: cimg/python:3.10.4
     steps:
       - checkout
       - run: |
