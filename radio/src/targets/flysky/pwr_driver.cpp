@@ -66,5 +66,9 @@ uint32_t pwrPressed() {
   } else {
     pwr_trigger_time = 0;
   }
+#if defined(PWR_BUTTON_PRESS)
   return 0;
+#else
+  return 1;
+#endif // PWR_BUTTON_PRESS
 }
