@@ -167,11 +167,11 @@ void auxSerialSbusInit()
 void auxSerialStop()
 {
 #if defined(AUX_SERIAL_DMA_Channel_RX)
-#if defined(PCBI6X)
+#if defined(STM32F0)
   DMA_DeInit(AUX_SERIAL_DMA_Channel_RX);
 #else
   DMA_DeInit(AUX_SERIAL_DMA_Stream_RX);
-#endif // PCBI6X
+#endif // STM32F0
 #endif // AUX_SERIAL_DMA_Channel_RX
   USART_DeInit(AUX_SERIAL_USART);
 }

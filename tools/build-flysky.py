@@ -42,6 +42,7 @@ common_options = {
     "LUA": "NO",
     "LUA_COMPILER": "NO",
     "DISABLE_COMPANION": "YES",
+    "PPM_UNIT": "PERCENT_PREC1",
 }
 
 
