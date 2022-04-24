@@ -254,7 +254,9 @@ enum UartModes {
 #if !defined(PCBI6X)
   UART_MODE_TELEMETRY,
 #endif
+#if defined(SBUS)
   UART_MODE_SBUS_TRAINER,
+#endif
 #if !defined(PCBI6X)
   UART_MODE_LUA,
 #endif

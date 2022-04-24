@@ -171,7 +171,9 @@ void auxSerialPutc(char c)
 
 void auxSerialSbusInit()
 {
+#if defined(SBUS)
   auxSerialInit(UART_MODE_SBUS_TRAINER, 0);
+#endif
 }
 
 void auxSerialStop()
