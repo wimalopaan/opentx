@@ -27,7 +27,7 @@ if(PCB STREQUAL I6X)
 
   add_definitions(-DTELEMETRY_FRSKY)
   add_definitions(-DCROSSFIRE)
-  add_definitions(-DNAVIGATION_POT1) # ~324B
+  # add_definitions(-DNAVIGATION_POT1) # ~324B
   # add_definitions(-DNAVIGATION_POT2)
   add_definitions(-DSTM32F072)
   add_definitions(-DPWR_BUTTON_${PWR_BUTTON})
