@@ -253,7 +253,9 @@ enum UartModes {
   UART_MODE_TELEMETRY_MIRROR,
 #if !defined(PCBI6X)
   UART_MODE_TELEMETRY,
+#endif
   UART_MODE_SBUS_TRAINER,
+#if !defined(PCBI6X)
   UART_MODE_LUA,
 #endif
   UART_MODE_COUNT,

@@ -1,16 +1,16 @@
 option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
 option(LCD_DUAL_BUFFER "Dual LCD Buffer" OFF)
 option(TARANIS_INTERNAL_PPM "Taranis internal module hack to output PPM" OFF)
-option(PCBI6X_ELRSV2 "Enable ExpressLRS v2 configuration tool" OFF) # ~4kB FLASH
+option(PCBI6X_ELRSV2 "Enable ExpressLRS v2 configuration tool" OFF) # ~4kB
 
 if(PCB STREQUAL I6X)
-  set(PWR_BUTTON "PRESS")
+  set(PWR_BUTTON "PRESS" CACHE STRING "Pwr button type (PRESS/SWITCH)")
   set(SPLASH "OFF")
   set(CPU_TYPE STM32F0)
   set(CPU_TYPE_FULL STM32F072)  # for size report
   set(LINKER_SCRIPT targets/flysky/STM32F072VB_FLASH.ld)
   set(HAPTIC NO)
-  set(LUA_EXPORT lua_export_x7)
+  # set(LUA_EXPORT lua_export_x7)
   set(FLAVOUR i6x)
   set(NANO YES)
   set(FRSKY_HUB NO)
@@ -27,7 +27,7 @@ if(PCB STREQUAL I6X)
 
   add_definitions(-DTELEMETRY_FRSKY)
   add_definitions(-DCROSSFIRE)
-  add_definitions(-DNAVIGATION_POT1)
+  add_definitions(-DNAVIGATION_POT1) # ~324B
   # add_definitions(-DNAVIGATION_POT2)
   add_definitions(-DSTM32F072)
   add_definitions(-DPWR_BUTTON_${PWR_BUTTON})

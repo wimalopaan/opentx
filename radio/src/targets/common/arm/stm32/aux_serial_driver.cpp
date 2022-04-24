@@ -20,6 +20,10 @@
 
 #include "opentx.h"
 
+#if defined(SBUS)
+extern Fifo<uint8_t, 32> trainerSbusFifo;
+#endif
+
 #if defined(AUX_SERIAL)
 uint8_t auxSerialMode = UART_MODE_COUNT;  // Prevent debug output before port is setup
 #if defined(PCBI6X)
@@ -32,7 +36,7 @@ Fifo<uint8_t, 512> auxSerialTxFifo;
 DMAFifo<32> auxSerialRxFifo __DMA (AUX_SERIAL_DMA_Stream_RX);
 #endif
 
-void auxSerialSetup(unsigned int baudrate, bool dma)
+void auxSerialSetup(unsigned int baudrate, bool dma, uint16_t lenght = USART_WordLength_8b, uint16_t parity = USART_Parity_No, uint16_t stop = USART_StopBits_1)
 {
   USART_InitTypeDef USART_InitStructure;
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -48,9 +52,9 @@ void auxSerialSetup(unsigned int baudrate, bool dma)
   GPIO_Init(AUX_SERIAL_GPIO, &GPIO_InitStructure);
 
   USART_InitStructure.USART_BaudRate = baudrate;
-  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-  USART_InitStructure.USART_StopBits = USART_StopBits_1;
-  USART_InitStructure.USART_Parity = USART_Parity_No;
+  USART_InitStructure.USART_WordLength = lenght;
+  USART_InitStructure.USART_StopBits = stop;
+  USART_InitStructure.USART_Parity = parity;
   USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
   USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
   USART_Init(AUX_SERIAL_USART, &USART_InitStructure);
@@ -102,7 +106,7 @@ void auxSerialSetup(unsigned int baudrate, bool dma)
   }
   else {
     USART_Cmd(AUX_SERIAL_USART, ENABLE);
-//    USART_ITConfig(AUX_SERIAL_USART, USART_IT_RXNE, ENABLE);
+    USART_ITConfig(AUX_SERIAL_USART, USART_IT_RXNE, ENABLE);
     USART_ITConfig(AUX_SERIAL_USART, USART_IT_TXE, DISABLE);
     NVIC_SetPriority(AUX_SERIAL_USART_IRQn, 7);
     NVIC_EnableIRQ(AUX_SERIAL_USART_IRQn);
@@ -129,6 +133,13 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
 #if defined(DEBUG) || defined(CLI)
     case UART_MODE_DEBUG:
       auxSerialSetup(DEBUG_BAUDRATE, false);
+      break;
+#endif
+
+#if defined(SBUS)
+    case UART_MODE_SBUS_TRAINER:
+      auxSerialSetup(SBUS_BAUDRATE, false, USART_WordLength_9b, USART_Parity_Even, USART_StopBits_2); // 2 stop bits requires USART_WordLength_9b
+//      AUX_SERIAL_POWER_ON();
       break;
 #endif
 
@@ -160,8 +171,7 @@ void auxSerialPutc(char c)
 
 void auxSerialSbusInit()
 {
-  auxSerialSetup(SBUS_BAUDRATE, true);
-  AUX_SERIAL_USART->CR1 |= USART_CR1_M | USART_CR1_PCE ;
+  auxSerialInit(UART_MODE_SBUS_TRAINER, 0);
 }
 
 void auxSerialStop()
@@ -218,30 +228,35 @@ extern "C" void AUX_SERIAL_USART_IRQHandler(void)
   }
 #endif
   // Receive
-#if !defined(PCBI6X) // works but not needed
+#if defined(SBUS)
 #if defined(STM32F0)
   uint32_t status = AUX_SERIAL_USART->ISR;
 #else
   uint32_t status = AUX_SERIAL_USART->SR;
-#endif
+#endif // STM32F0
   while (status & (USART_FLAG_RXNE | USART_FLAG_ERRORS)) {
 #if defined(STM32F0)
     uint8_t data = AUX_SERIAL_USART->RDR;
 #else
     uint8_t data = AUX_SERIAL_USART->DR;
-#endif
+#endif // STM32F0
+    UNUSED(data);
     if (!(status & USART_FLAG_ERRORS)) {
 #if defined(LUA) & !defined(CLI)
       if (luaRxFifo && auxSerialMode == UART_MODE_LUA)
         luaRxFifo->push(data);
+#endif
+#if !defined(BOOT) && defined(SBUS)
+      if (auxSerialMode == UART_MODE_SBUS_TRAINER)
+        trainerSbusFifo.push(data);
 #endif
     }
 #if defined(STM32F0)
     status = AUX_SERIAL_USART->ISR;
 #else
     status = AUX_SERIAL_USART->SR;
-#endif
+#endif // STM32F0
   }
-#endif // PCBI6X
+#endif // SBUS
 }
 #endif // AUX_SERIAL

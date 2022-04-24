@@ -36,6 +36,7 @@ void testFunc()
 }
 #endif
 
+#if !defined(PCBI6X)
 PLAY_FUNCTION(playValue, source_t idx)
 {
   if (IS_FAI_FORBIDDEN(idx))
@@ -86,6 +87,7 @@ PLAY_FUNCTION(playValue, source_t idx)
     PLAY_NUMBER(val, 0, 0);
   }
 }
+#endif
 
 #if defined(VOICE)
 void playCustomFunctionFile(const CustomFunctionData * sd, uint8_t id)
@@ -130,8 +132,10 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
   MASK_FUNC_TYPE newActiveFunctions  = 0;
   MASK_CFN_TYPE  newActiveSwitches = 0;
 
+#if !defined(PCBI6X)
   uint8_t playFirstIndex = (functions == g_model.customFn ? 1 : 1+MAX_SPECIAL_FUNCTIONS);
   #define PLAY_INDEX   (i+playFirstIndex)
+#endif
 
 #if defined(ROTARY_ENCODERS) && defined(GVARS)
   static rotenc_t rePreviousValues[ROTARY_ENCODERS];

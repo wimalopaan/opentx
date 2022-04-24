@@ -238,7 +238,6 @@ void extmoduleSendNextFrame();
 // SBUS
 int sbusGetByte(uint8_t * byte);
 
-
 // Keys driver
 enum EnumKeys
 {
