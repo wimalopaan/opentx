@@ -20,10 +20,6 @@
 
 #include "opentx.h"
 
-#if defined(SBUS)
-extern Fifo<uint8_t, 32> trainerSbusFifo;
-#endif
-
 #if defined(AUX_SERIAL)
 uint8_t auxSerialMode = UART_MODE_COUNT;  // Prevent debug output before port is setup
 #if defined(PCBI6X)
@@ -138,7 +134,7 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
 
 #if defined(SBUS)
     case UART_MODE_SBUS_TRAINER:
-      auxSerialSetup(SBUS_BAUDRATE, false, USART_WordLength_9b, USART_Parity_Even, USART_StopBits_2); // 2 stop bits requires USART_WordLength_9b
+      auxSerialSetup(SBUS_BAUDRATE, true, USART_WordLength_9b, USART_Parity_Even, USART_StopBits_2); // USART_WordLength_9b due to parity bit
 //      AUX_SERIAL_POWER_ON();
       break;
 #endif
@@ -230,7 +226,7 @@ extern "C" void AUX_SERIAL_USART_IRQHandler(void)
   }
 #endif
   // Receive
-#if defined(SBUS)
+#if !defined(PCBI6X) // works but not needed
 #if defined(STM32F0)
   uint32_t status = AUX_SERIAL_USART->ISR;
 #else
@@ -247,10 +243,6 @@ extern "C" void AUX_SERIAL_USART_IRQHandler(void)
 #if defined(LUA) & !defined(CLI)
       if (luaRxFifo && auxSerialMode == UART_MODE_LUA)
         luaRxFifo->push(data);
-#endif
-#if !defined(BOOT) && defined(SBUS)
-      if (auxSerialMode == UART_MODE_SBUS_TRAINER)
-        trainerSbusFifo.push(data);
 #endif
     }
 #if defined(STM32F0)
