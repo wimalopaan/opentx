@@ -14,9 +14,6 @@
 
 extern uint8_t cScriptRunning;
 
-// disabled, there is enough space now
-//#define INFO_MAX_LEN 5
-
 struct FieldProps {
   uint8_t nameOffset;     
   uint8_t nameLength;
@@ -140,13 +137,13 @@ static void crossfireTelemetryPing(){
 
 static void allocateFields() {
   fieldsLen = fields_count + 2U/* + devicesLen*/; // + (back + other devices) + devices count
-  TRACE("allocateFields: fieldsLen %d", fieldsLen);
+  TRACE("allocateFields: len %d", fieldsLen);
   for (uint32_t i = 0; i < fieldsLen; i++) {
     fields[i].nameLength = 0;
     fields[i].valuesLength = 0;
   }
   backButtonId = fieldsLen - 1;
-  TRACE("add back button at %d", backButtonId);
+  TRACE("add back btn at %d", backButtonId);
   fields[backButtonId].id = backButtonId + 1;
   fields[backButtonId].nameLength = 1; 
   fields[backButtonId].type = 14;
@@ -387,7 +384,7 @@ static void changeDeviceId(uint8_t devId) { //change to selected device ID
 }
 
 static void fieldDeviceIdSelect(FieldProps * field) {
-  TRACE("fieldDeviceIdSelect %x", field->id);
+//  TRACE("fieldDeviceIdSelect %x", field->id);
 //  DeviceProps * device = getDevice(field->id);
  changeDeviceId(field->id);
  crossfireTelemetryPing();
@@ -408,7 +405,7 @@ static void createDeviceFields() { // put other devices in the field list
 static void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t offset;
   uint8_t id = data[2];
-  TRACE("parseDeviceInfoMessage %x folderAcc %d, f_c %d, devLen %d", id, folderAccess, fields_count, devicesLen);
+  // TRACE("parseDeviceInfoMessage %x folderAcc %d, f_c %d, devLen %d", id, folderAccess, fields_count, devicesLen);
   offset = strlen((char*)&data[3]) + 1 + 3;
   uint8_t devId = getDevice(id);
   if (!devId) {
@@ -438,12 +435,12 @@ static void parseDeviceInfoMessage(uint8_t* data) {
     memcpy(deviceName, (char *)&data[3], DEVICE_NAME_MAX_LEN);
     deviceIsELRS_TX = ((memcmp(&data[offset], "ELRS", 4) == 0) && (deviceId == 0xEE)) ? 1 : 0; // SerialNumber = 'E L R S' and ID is TX module
     uint8_t newFieldCount = data[offset+12];
-    TRACE("deviceId match %x, newFieldsCount %d", deviceId, newFieldCount);
+//    TRACE("deviceId match %x, newFieldsCount %d", deviceId, newFieldCount);
     reloadAllField();
     if (newFieldCount != fields_count || newFieldCount == 0) {
       fields_count = newFieldCount;
       allocateFields();
-      TRACE("add other devices at %d", fields_count+1);
+//      TRACE("add other devices at %d", fields_count+1);
       otherDevicesId = fields_count+0+1;
       fields[fields_count+0].id = otherDevicesId; // add "Other Devices"
       fields[fields_count+0].nameLength = 1;
@@ -535,7 +532,7 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
       field->nameLength = 0; // mark as clear
     } else {
       if (field->nameLength == 0 && !hidden) {
-        field->nameLength = offset - 3; // (field->type == 12/*info*/) ? min(offset - 3, INFO_MAX_LEN) : offset - 3;
+        field->nameLength = offset - 3;
         field->nameOffset = namesBufferOffset;
         memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength); 
         namesBufferOffset += field->nameLength;

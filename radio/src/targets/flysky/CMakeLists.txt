@@ -39,7 +39,7 @@ endif()
 if(PCBI6X_ELRSV2)
   add_definitions(-DPCBI6X_ELRSV2)
 else() # features disabled for ELRSV2
-  add_definitions(-DPCBI6X_USB_MSD)
+  add_definitions(-DPCBI6X_USB_MSD) # 3620B
 endif()
 
 set(TARGET_SRC
