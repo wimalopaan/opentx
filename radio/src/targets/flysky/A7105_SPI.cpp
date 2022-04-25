@@ -27,8 +27,8 @@ uint8_t prev_power=0xFD; // unused power value
 
 // test telemetry
 
-int16_t telem_AFHDS2A [6];
-uint8_t telem_status = 0;
+// int16_t telem_AFHDS2A [6];
+// uint8_t telem_status = 0;
 
 uint8_t  packet[AFHDS2A_TXPACKET_SIZE]; 
 
