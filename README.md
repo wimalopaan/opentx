@@ -1,10 +1,11 @@
 # OpenI6X
 
+## OpenTX port for Flysky FS-i6X RC radio transmitter.
+
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
 [![Release](https://img.shields.io/github/v/release/OpenI6X/opentx?include_prereleases)](https://github.com/OpenI6X/opentx/releases)
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
 
-**OpenTX** port for the venerable Flysky FS-i6X RC radio transmitter.
 
 
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram group](https://t.me/otx_flysky_i6x) and [Rakish Rc](https://www.youtube.com/c/RakishRc) youtube channel. 
@@ -28,7 +29,8 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 * Protocols:
   * AFHDS2A with SBUS, IBUS and extended SBUS16, IBUS16 - 16 channels modes
   * PPM in/out
-  * CRSF with ExpressLRS and Crossfire modules, CRSFshot enabled
+  * CRSF with ExpressLRS and Crossfire modules:
+    * CRSFshot
     * MEGA Bauds up to 1.8M
     * ExpressLRS V2 configuration (ELRSV2.lua port)
 * 16 channels
