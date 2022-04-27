@@ -593,7 +593,6 @@
   #define OFS_EXIT             sizeof(TR_ENTER)
 #endif
 
-#define TR_MENUWHENDONE        CENTER "\011" TR_ENTER " Avslutar "
 #define TR_FREE                "kvar"
 #define TR_DELETEMODEL         "Radera Modell"
 #define TR_COPYINGMODEL        "Kopierar Modell "
@@ -732,12 +731,12 @@
   #define TR_MENUTOSTART       TR_ENTER " Startar "
   #define TR_SETMIDPOINT       "Centrera Allt"
   #define TR_MOVESTICKSPOTS    "Rör Spakar/Rattar"
-  #define TR_MENUWHENDONE              TR_ENTER " WHEN DONE"
+  #define TR_MENUWHENDONE              TR_ENTER " Avslutar"
 #else
   #define TR_MENUTOSTART       CENTER "\011" TR_ENTER " Startar "
   #define TR_SETMIDPOINT       TR(CENTER "\012Centrera Allt",CENTER "\013Centrera Allt")
   #define TR_MOVESTICKSPOTS    TR(CENTER "\005Rör Spakar/Rattar",CENTER "\006Rör Spakar/Rattar")
-  #define TR_MENUWHENDONE              CENTER "\006" TR_ENTER " WHEN DONE"
+  #define TR_MENUWHENDONE              CENTER "\006" TR_ENTER " Avslutar"
 #endif
 #define TR_RXBATT              "Rx Batt:"
 #define TR_TXnRX               "Tx:\0Rx:"
