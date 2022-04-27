@@ -582,7 +582,6 @@
   #define OFS_EXIT                     sizeof(TR_ENTER)
 #endif
 
-#define TR_MENUWHENDONE        CENTER "\006" TR_ENTER " WHEN DONE"
 #define TR_FREE                        "free"
 #define TR_DELETEMODEL                 "DELETE" BREAKSPACE "MODEL"
 #define TR_COPYINGMODEL                "Copying model..."

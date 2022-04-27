@@ -590,7 +590,6 @@
   #define OFS_EXIT             sizeof(TR_ENTER)
 #endif
 
-#define TR_MENUWHENDONE        CENTER "\007" TR_ENTER " Conferma"
 #define TR_FREE                "disp"
 #define TR_DELETEMODEL         "Elimina modello?"
 #define TR_COPYINGMODEL        "Copia in corso.."
@@ -725,12 +724,12 @@
   #define TR_MENUTOSTART       TR_ENTER " TO START"
   #define TR_SETMIDPOINT       "CENTRA STICKS/SLIDERS"
   #define TR_MOVESTICKSPOTS    "MUOVI STICKS/POTS"
-  #define TR_MENUWHENDONE      TR_ENTER " WHEN DONE"
+  #define TR_MENUWHENDONE      TR_ENTER " Conferma"
 #else
   #define TR_MENUTOSTART       CENTER"\011" TR_ENTER " per Cal."
   #define TR_SETMIDPOINT       CENTER"\012SETTA CENTRO"
   #define TR_MOVESTICKSPOTS    CENTER"\010MUOVI STICK/POT"
-  #define TR_MENUWHENDONE              CENTER "\006" TR_ENTER " WHEN DONE"
+  #define TR_MENUWHENDONE              CENTER "\006" TR_ENTER " Conferma"
 #endif
 #define TR_RXBATT              "Batt Rx:"
 #define TR_TXnRX               "Tx:\0Rx:"

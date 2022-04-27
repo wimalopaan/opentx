@@ -732,12 +732,10 @@
   #define TR_MENUTOSTART               TR_ENTER " POUR DEBUT"
   #define TR_SETMIDPOINT               "REGLER NEUTRES"
   #define TR_MOVESTICKSPOTS            "BOUGER STICKS/POTS"
-  #define TR_MENUWHENDONE              TR_ENTER " WHEN DONE"
 #else
   #define TR_MENUTOSTART               CENTER"\006" TR_ENTER " POUR DEBUT"
   #define TR_SETMIDPOINT               CENTER"\010REGLER NEUTRES"
   #define TR_MOVESTICKSPOTS            CENTER"\004BOUGER STICKS/POTS"
-  #define TR_MENUWHENDONE              CENTER "\006" TR_ENTER " WHEN DONE"
 #endif
 #define TR_RXBATT                      "Batt.RX"
 #define TR_TXnRX                       "Tx:\0Rx:"
