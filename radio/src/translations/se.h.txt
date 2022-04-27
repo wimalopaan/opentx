@@ -194,6 +194,8 @@
   #define TR_IRPROTOS
 #endif
 
+#define TR_XPPM
+
 #define TR_VPROTOS             "PPM\0  " TR_XPPM TR_PXX TR_DSM2 TR_IRPROTOS
 
 #define LEN_POSNEG             "\003"
