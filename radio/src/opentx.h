@@ -651,9 +651,6 @@ void checkBacklight();
 
 #define BITMASK(bit) (1<<(bit))
 
-/// returns the number of elements of an array
-#define DIM(arr) (sizeof((arr))/sizeof((arr)[0]))
-
 template<class t> inline t min(t a, t b) { return a<b?a:b; }
 template<class t> inline t max(t a, t b) { return a>b?a:b; }
 template<class t> inline t sgn(t a) { return a>0 ? 1 : (a < 0 ? -1 : 0); }
@@ -753,7 +750,7 @@ extern uint8_t g_vbat100mV;
 #define g_blinkTmr10ms    (*(uint8_t*)&g_tmr10ms)
 extern uint8_t            g_beepCnt;
 
-#include "trainer_input.h"
+#include "trainer.h"
 
 extern int32_t            chans[MAX_OUTPUT_CHANNELS];
 extern int16_t            ex_chans[MAX_OUTPUT_CHANNELS]; // Outputs (before LIMITS) of the last perMain

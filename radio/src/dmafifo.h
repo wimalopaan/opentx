@@ -28,9 +28,9 @@ class DMAFifo
 {
   public:
 #if defined(STM32F0)
-    DMAFifo(DMA_Channel_TypeDef * stream):
+    explicit DMAFifo(DMA_Channel_TypeDef * stream):
 #else
-    DMAFifo(DMA_Stream_TypeDef * stream):
+    explicit DMAFifo(DMA_Stream_TypeDef * stream):
 #endif
       stream(stream),
       ridx(0)
@@ -85,13 +85,13 @@ class DMAFifo
       return fifo;
     }
 
-  protected:
-    uint8_t fifo[N];
 #if defined(STM32F0)
     DMA_Channel_TypeDef * stream;
 #else
     DMA_Stream_TypeDef * stream;
 #endif
+  protected:
+    uint8_t fifo[N];
     volatile uint32_t ridx;
 };
 
