@@ -101,7 +101,7 @@ jobs:
 #orbs:
 #  sonarcloud: sonarsource/sonarcloud@1.0.3
 
-#workflows:
+workflows:
   openi6x-release-workflow:
     jobs:
 #      - sonar-scan:
