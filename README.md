@@ -69,6 +69,14 @@ With Mode 1 radio you may experience inverted gimbal movement and swapped gimbal
 
 ## Hardware connections (optional)
 
+| PCB Pin | Function |
+| ------- | ---------|
+| `TX2`   | S.Port |
+| `PA.09` | Serial port TX |
+| `PA.10` | Serial port RX |
+| `PA.15` | USB VBUS (USB connection detection) |
+| `PC.09` | External module power control |
+
 ![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.jpeg?raw=true)
 
 ## Contributors
