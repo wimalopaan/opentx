@@ -69,11 +69,11 @@ With Mode 1 radio you may experience inverted gimbal movement and swapped gimbal
 
 ## Hardware connections (optional)
 
-| PCB Pin | Function |
+| PCB Pad | Function |
 | ------- | ---------|
 | `TX2`   | S.Port |
-| `PA.09` | Serial port TX |
-| `PA.10` | Serial port RX |
+| `PA.09` | AUX Serial port TX |
+| `PA.10` | AUX Serial port RX |
 | `PA.15` | USB VBUS (USB connection detection) |
 | `PC.09` | External module power control |
 
