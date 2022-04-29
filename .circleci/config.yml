@@ -6,6 +6,7 @@ jobs:
   sonar-scan:
     docker:
       - image: cimg/python:3.10.4
+    parallelism: 2
     steps:
       - checkout
       - run:
@@ -25,6 +26,7 @@ jobs:
   build-elrsv2:
     docker:
       - image: cimg/python:3.10.4
+    parallelism: 2
     steps:
       - checkout
       - run: |
@@ -41,6 +43,7 @@ jobs:
   build-heli:
     docker:
       - image: cimg/python:3.10.4
+    parallelism: 2
     steps:
       - checkout
       - run: |
@@ -57,6 +60,7 @@ jobs:
   build-std:
     docker:
       - image: cimg/python:3.10.4
+    parallelism: 2
     steps:
       - checkout
       - run: |
@@ -73,6 +77,7 @@ jobs:
   build-en:
     docker:
       - image: cimg/python:3.10.4
+    parallelism: 2
     steps:
       - checkout
       - run: |
