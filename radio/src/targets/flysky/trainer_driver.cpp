@@ -32,6 +32,12 @@ void init_trainer_capture() {
   GPIO_Init(TRAINER_GPIO, &GPIO_InitStructure);
 }
 
+void stop_trainer_capture()
+{
+  // disable PPM input capture
+  // nothing to do because it would stop EXTMODULE_TIMER
+}
+
 int sbusGetByte(uint8_t * byte)
 {
   switch (currentTrainerMode) {
