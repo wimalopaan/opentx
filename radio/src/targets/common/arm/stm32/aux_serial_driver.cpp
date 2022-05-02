@@ -23,7 +23,7 @@
 #if defined(AUX_SERIAL)
 uint8_t auxSerialMode = UART_MODE_COUNT;  // Prevent debug output before port is setup
 #if defined(PCBI6X)
-Fifo<uint8_t, 128> auxSerialTxFifo;
+Fifo<uint8_t, 256> auxSerialTxFifo;
 #if defined(AUX_SERIAL_DMA_Channel_RX)
 DMAFifo<32> auxSerialRxFifo __DMA (AUX_SERIAL_DMA_Channel_RX);
 #endif
