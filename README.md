@@ -49,17 +49,16 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 | --- |------------------------------------------------------------------------------------|
 | UP     | Up. Scroll values. Hold on main screen for stats.                                  |                              
 | DOWN   | Down. Scroll values. Hold on main screen for telemetry.                            |                                  
-| OK     | Confirm. Hold on main screen for model menu.                                       |
+| OK     | Confirm. Hold on main screen for model menu. Short press on main screen for popup menu. |
 | CANCEL | Exit.                                                                              |                      
 | BIND   | Scroll pages right or left (long press), go right in a line. Hold on main screen for general menu. |
 
 ## Shutdown
 
-Do not switch off you device when you see small square icon in top right corner of main screen - it indicates that there are settings not yet stored. Wait until it disappears or use graceful shutdown method.
+Do not switch off you device when you see small square icon in top right corner of main screen - it indicates that there are settings not yet stored. Wait until it disappears or use "Save all" option from main screen popup menu.
 
-FlySky FS-i6X don't have graceful shutdown button like other OpenTX devices, but you can trigger it by holding CANCEL button until screen turns off, then use switch.
-
-When to use this method:
+When to use "Save all" option:
+* When you don't want to wait until square icon disapper before shutdown.
 * With USB connected - when USB is connected then settings are not stored with standard delay.
 * To save timers.
 
