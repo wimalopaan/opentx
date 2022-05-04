@@ -206,7 +206,7 @@ void boardInit()
 #if defined(DEBUG) && defined(AUX_SERIAL_GPIO)
   auxSerialInit(UART_MODE_DEBUG, 0); // default serial mode (None if DEBUG not defined)
   TRACE("\ni6X board started :)");
-  TRACE("RCC->CSR = %08x", RCC->CSR);
+  // TRACE("RCC->CSR = %08x", RCC->CSR);
 #endif
 
   pwrInit();
@@ -244,6 +244,7 @@ void boardInit()
 
 void boardOff()
 {
+#if !defined(PWR_BUTTON_SWITCH) // not really useful on i6X
   BACKLIGHT_DISABLE();
 
 //#if defined(PWR_BUTTON_PRESS)
@@ -258,7 +259,7 @@ void boardOff()
 
   // disable interrupts
   __disable_irq();
-
+#endif // PWR_BUTTON_SWITCH
   // this function must not return!
 }
 
