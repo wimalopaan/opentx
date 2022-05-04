@@ -33,8 +33,8 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-#define NAMES_BUFFER_SIZE 192 // 156 + margin for future options
-#define VALUES_BUFFER_SIZE 176 // 144 + margin for future options
+static constexpr uint8_t NAMES_BUFFER_SIZE  = 192; // 156 + margin for future options
+static constexpr uint8_t VALUES_BUFFER_SIZE = 176; // 144 + margin for future options
 static uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data;
 uint8_t namesBufferOffset = 0;
 static uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE];
@@ -42,16 +42,16 @@ uint8_t valuesBufferOffset = 0;
 
 // 84 + safe margin, ideally without trimming 144
 // last 25b are also used for popup messages
-#define FIELD_DATA_MAX_LEN (512 - NAMES_BUFFER_SIZE - VALUES_BUFFER_SIZE) // 144+
+static constexpr uint8_t FIELD_DATA_MAX_LEN = (512 - NAMES_BUFFER_SIZE - VALUES_BUFFER_SIZE); // 144+
 static uint8_t *fieldData = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE];
 // static uint8_t fieldData[FIELD_DATA_MAX_LEN];
 uint8_t fieldDataLen = 0;
 
-#define FIELDS_MAX_COUNT 32 // 32 * 8 = 256b // 30 + 2 margin for future fields
+static constexpr uint8_t FIELDS_MAX_COUNT = 32; // 32 * 8 = 256b // 30 + 2 margin for future fields
 static FieldProps fields[FIELDS_MAX_COUNT]; // = (FieldProps *)&reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE];
 uint8_t fieldsLen = 0;
 
-#define DEVICES_MAX_COUNT 8
+static constexpr uint8_t DEVICES_MAX_COUNT = 8;
 static uint8_t deviceIds[DEVICES_MAX_COUNT];
 uint8_t devicesLen = 0;
 uint8_t otherDevicesId = 255;
@@ -59,13 +59,13 @@ uint8_t otherDevicesId = 255;
 uint8_t deviceId = 0xEE;
 uint8_t handsetId = 0xEF;
 
-#define DEVICE_NAME_MAX_LEN 20
+static constexpr uint8_t DEVICE_NAME_MAX_LEN = 20;
 static char deviceName[DEVICE_NAME_MAX_LEN];
 uint8_t lineIndex = 1;
 uint8_t pageOffset = 0;
 uint8_t edit = 0; 
 uint8_t charIndex = 1;
-FieldProps * fieldPopup = 0;
+static FieldProps * fieldPopup = 0;
 tmr10ms_t fieldTimeout = 0; 
 uint8_t fieldId = 1;
 uint8_t fieldChunk = 0;
@@ -86,11 +86,11 @@ uint8_t titleShowWarn = 0;
 tmr10ms_t titleShowWarnTimeout = 100;
 uint8_t reloadFolder = 0;
 
-#define COL2           70
-#define maxLineIndex   6
-#define textXoffset    0
-#define textYoffset    3
-#define textSize       8
+static constexpr uint8_t COL2          = 70;
+static constexpr uint8_t maxLineIndex  =  6;
+static constexpr uint8_t textXoffset   =  0;
+static constexpr uint8_t textYoffset   =  3;
+static constexpr uint8_t textSize      =  8;
 
 #define tostring(c)       (char)(c + 48)
 #define getTime           get_tmr10ms
@@ -99,8 +99,8 @@ uint8_t reloadFolder = 0;
 #define EVT_VIRTUAL_NEXT  EVT_KEY_FIRST(KEY_DOWN)
 #define EVT_VIRTUAL_PREV  EVT_KEY_FIRST(KEY_UP)
 
-#define RESULT_OK 2
-#define RESULT_CANCEL 1
+static constexpr uint8_t RESULT_OK = 2;
+static constexpr uint8_t RESULT_CANCEL = 1;
 
 static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max)
 {
