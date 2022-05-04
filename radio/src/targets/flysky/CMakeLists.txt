@@ -48,6 +48,7 @@ set(TARGET_SRC
   AFHDS2A_a7105.cpp
   intmodule_pulses_driver.cpp
   trainer_driver.cpp
+  ../common/arm/stm32/timers_driver.cpp
   )
 
 add_definitions(-DSBUS)

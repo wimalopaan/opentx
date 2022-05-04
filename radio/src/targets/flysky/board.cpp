@@ -187,59 +187,6 @@ void initBuzzerTimer()
   TIM1->BDTR |= TIM_BDTR_MOE;
 }
 
-// Starts TIMER at 2MHz
-void init2MhzTimer()
-{
-  TIMER_2MHz_TIMER->PSC = (PERI1_FREQUENCY * TIMER_MULT_APB1) / 2000000 - 1; // 0.5 uS, 2 MHz
-  TIMER_2MHz_TIMER->ARR = 65535;
-  TIMER_2MHz_TIMER->CR2 = 0;
-  TIMER_2MHz_TIMER->CR1 = TIM_CR1_CEN;
-}
-
-// Starts TIMER at 200Hz (5ms)
-void init5msTimer()
-{
-  INTERRUPT_xMS_TIMER->ARR = 4999;                                              // 5mS in uS
-  INTERRUPT_xMS_TIMER->PSC = (PERI1_FREQUENCY * TIMER_MULT_APB1) / 1000000 - 1; // 1uS
-  INTERRUPT_xMS_TIMER->CCER = 0;
-  INTERRUPT_xMS_TIMER->CCMR1 = 0;
-  INTERRUPT_xMS_TIMER->EGR = 0;
-  INTERRUPT_xMS_TIMER->CR1 = 5;
-  INTERRUPT_xMS_TIMER->DIER |= 1;
-
-  NVIC_EnableIRQ(INTERRUPT_xMS_IRQn);
-  NVIC_SetPriority(INTERRUPT_xMS_IRQn, 7);
-}
-
-void stop5msTimer(void)
-{
-  INTERRUPT_xMS_TIMER->CR1 = 0; // stop timer
-  NVIC_DisableIRQ(INTERRUPT_xMS_IRQn);
-}
-
-void interrupt5ms()
-{
-  static uint32_t pre_scale; // Used to get 10 Hz counter
-  if (++pre_scale >= 2)
-  {
-    BUZZER_HEARTBEAT();
-    pre_scale = 0;
-    DEBUG_TIMER_START(debugTimerPer10ms);
-    DEBUG_TIMER_SAMPLE(debugTimerPer10msPeriod);
-    per10ms();
-    DEBUG_TIMER_STOP(debugTimerPer10ms);
-  }
-}
-
-#if !defined(SIMU)
-extern "C" void INTERRUPT_xMS_IRQHandler()
-{
-  INTERRUPT_xMS_TIMER->SR &= ~TIM_SR_UIF;
-  interrupt5ms();
-  DEBUG_INTERRUPT(INT_5MS);
-}
-#endif
-
 void boardInit()
 {
 #if defined(STM32F0) && defined(BOOT)
