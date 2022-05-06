@@ -349,9 +349,9 @@ void menuMainView(event_t event)
       POPUP_MENU_ADD_ITEM(STR_RESET_SUBMENU);
 
       POPUP_MENU_ADD_ITEM(STR_STATISTICS);
-
+#if defined(PCBI6X)
       POPUP_MENU_ADD_ITEM(STR_SAVEALLDATA);
-#if !defined(PCBI6X)
+#else
       POPUP_MENU_ADD_ITEM(STR_ABOUT_US);
 #endif
       POPUP_MENU_START(onMainViewMenu);

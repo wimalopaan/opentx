@@ -85,6 +85,12 @@ constexpr uint8_t MIXER_MAX_PERIOD = MAX_REFRESH_RATE / 1000 /*ms*/;
 
 void execMixerFrequentActions()
 {
+  if (!s_pulses_paused) {
+    DEBUG_TIMER_START(debugTimerTelemetryWakeup);
+    telemetryWakeup();
+    DEBUG_TIMER_STOP(debugTimerTelemetryWakeup);
+  }
+
 #if defined(SBUS)
   if (g_eeGeneral.auxSerialMode == UART_MODE_SBUS_TRAINER) {
     processSbusInput();
@@ -94,12 +100,6 @@ void execMixerFrequentActions()
 #if defined(BLUETOOTH)
       bluetoothWakeup();
 #endif
-
-  if (!s_pulses_paused) {
-    DEBUG_TIMER_START(debugTimerTelemetryWakeup);
-    telemetryWakeup();
-    DEBUG_TIMER_STOP(debugTimerTelemetryWakeup);
-  }
 }
 
 TASK_FUNCTION(mixerTask) {
