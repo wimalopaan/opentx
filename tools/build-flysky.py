@@ -48,6 +48,8 @@ common_options = {
     "LUA_COMPILER": "NO",
     "DISABLE_COMPANION": "YES",
     "PPM_UNIT": "PERCENT_PREC0",
+    "PCBI6X_BACKLIGHT_DIM": "YES",
+    "PCBI6X_USB_VBUS": "NO",
 }
 
 
