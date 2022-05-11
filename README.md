@@ -5,7 +5,7 @@
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
 [![Discord](https://img.shields.io/discord/973289741862727741.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/EHQfhHd5)
 
-You can find instructions and videos contributed by fellow early adopters in the [RCGroups thread](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram group](https://t.me/otx_flysky_i6x) and [Rakish Rc](https://www.youtube.com/c/RakishRc) youtube channel. 
+You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x) and [Rakish Rc](https://www.youtube.com/c/RakishRc) youtube channel. 
 
 New contributions are highly welcome! See [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
 
@@ -32,7 +32,7 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
     * ExpressLRS V2 configuration (ELRSV2.lua port)
 * 16 channels
 * Telemetry, up to 26 sensors
-* Adjustable backlight brightness
+* Adjustable backlight brightness (requires [basic mod](#optional-hardware-connections))
 * Audio tones, alarms and vario sound custom implementation
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes (To enable on standard cable: General Settings > USB Detect: Once)
@@ -60,7 +60,7 @@ When to use "Save all" option:
 * With USB connected - when USB is connected then settings are not stored with standard delay.
 * To save timers.
 
-## Mode 1
+## Mode 1 radios
 
 With Mode 1 radio you may experience inverted gimbal movement and swapped gimbals on main screen. To fix this swap gimbal connectors (red-white one with black-white one).
 
@@ -73,7 +73,7 @@ With Mode 1 radio you may experience inverted gimbal movement and swapped gimbal
 | `PA10`     | AUX Serial port RX                              |
 | `PA15`     | USB VBUS (USB connection detection)             |
 | `PC13`     | External module power control                   |
-| `PC9`+`BL` | Wiring those together allows dimmable backlight |
+| `PC9`+`BL` | Wiring those together allows adjustable backlight |
 
 ![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.jpeg?raw=true)
 
