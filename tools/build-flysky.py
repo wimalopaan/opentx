@@ -11,18 +11,39 @@ import tempfile
 boards = {
     "I6X_ELRSV2": {
         "PCB": "I6X",
-        "PCBI6X_ELRSV2": "YES",
         "HELI": "NO",
+        "PCBI6X_ELRSV2": "YES",
+        "PCBI6X_BACKLIGHT_MOD": "NO",
+    },
+    "I6X_ELRSV2_BACKLIGHT_MOD": {
+        "PCB": "I6X",
+        "HELI": "NO",
+        "PCBI6X_ELRSV2": "YES",
+        "PCBI6X_BACKLIGHT_MOD": "YES",
     },
     "I6X_HELI": {
         "PCB": "I6X",
-        "PCBI6X_ELRSV2": "NO",
         "HELI": "YES",
+        "PCBI6X_ELRSV2": "NO",
+        "PCBI6X_BACKLIGHT_MOD": "NO",
+    },
+    "I6X_HELI_BACKLIGHT_MOD": {
+        "PCB": "I6X",
+        "HELI": "YES",
+        "PCBI6X_ELRSV2": "NO",
+        "PCBI6X_BACKLIGHT_MOD": "YES",
     },
     "I6X": {
         "PCB": "I6X",
-        "PCBI6X_ELRSV2": "NO",
         "HELI": "NO",
+        "PCBI6X_ELRSV2": "NO",
+        "PCBI6X_BACKLIGHT_MOD": "NO",
+    },
+    "I6X_BACKLIGHT_MOD": {
+        "PCB": "I6X",
+        "HELI": "NO",
+        "PCBI6X_ELRSV2": "NO",
+        "PCBI6X_BACKLIGHT_MOD": "YES",
     },
 }
 
@@ -48,7 +69,7 @@ common_options = {
     "LUA_COMPILER": "NO",
     "DISABLE_COMPANION": "YES",
     "PPM_UNIT": "PERCENT_PREC0",
-    "PCBI6X_BACKLIGHT_DIM": "YES",
+    # "PCBI6X_BACKLIGHT_MOD": "YES",
     "PCBI6X_USB_VBUS": "NO",
 }
 
