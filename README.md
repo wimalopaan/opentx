@@ -60,6 +60,11 @@ When to use "Save all" option:
 * With USB connected - when USB is connected then settings are not stored with standard delay.
 * To save timers.
 
+## USB connection
+
+FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. This line can be [added manually](#optional-hardware-connections) to make it work.
+Without the modification you have to go to General settings and set USB Detect to "Once" everytime you're connecting USB.
+
 ## Mode 1 & Mode 3 radios
 
 With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swapped gimbals on main screen. To fix this swap gimbal connectors (red-white one with black-white one).
