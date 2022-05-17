@@ -84,8 +84,10 @@ const char STR_OPEN9X[]  =
     ISTR(VTMRMODES)
     ISTR(DATETIME)
     ISTR(VPERSISTENT)
+#if !defined(PCBI6X)
     ISTR(VLCD)
     ISTR(VUNITSSYSTEM)
+#endif
     ISTR(VBEEPCOUNTDOWN)
     ISTR(VVARIOCENTER)
 #if !defined(PCBI6X)

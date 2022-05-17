@@ -185,9 +185,13 @@ extern const char STR_OPEN9X[];
 #endif
 #define OFS_DATETIME            (OFS_VTMRMODES + sizeof(TR_VTMRMODES))
 #define OFS_VPERSISTENT         (OFS_DATETIME + sizeof(TR_DATETIME))
-#define OFS_VLCD                (OFS_VPERSISTENT + sizeof(TR_VPERSISTENT))
-#define OFS_VUNITSSYSTEM        (OFS_VLCD + sizeof(TR_VLCD))
-#define OFS_VBEEPCOUNTDOWN      (OFS_VUNITSSYSTEM + sizeof(TR_VUNITSSYSTEM))
+#if !defined(PCBI6X)
+  #define OFS_VLCD                (OFS_VPERSISTENT + sizeof(TR_VPERSISTENT))
+  #define OFS_VUNITSSYSTEM        (OFS_VLCD + sizeof(TR_VLCD))
+  #define OFS_VBEEPCOUNTDOWN      (OFS_VUNITSSYSTEM + sizeof(TR_VUNITSSYSTEM))
+#else
+  #define OFS_VBEEPCOUNTDOWN      (OFS_VPERSISTENT + sizeof(TR_VPERSISTENT))
+#endif
 #define OFS_VVARIOCENTER        (OFS_VBEEPCOUNTDOWN + sizeof(TR_VBEEPCOUNTDOWN))
 #if !defined(PCBI6X)
   #define OFS_COUNTRYCODES        (OFS_VVARIOCENTER + sizeof(TR_VVARIOCENTER))
