@@ -77,7 +77,7 @@ With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swap
 | `PA9`      | AUX Serial port TX                                    |
 | `PA10`     | AUX Serial port RX                                    |
 | `PA15`     | USB VBUS (USB connection detection)                   |
-| `PC13`     | External module power control                         |
+| `PC13`     | External module power control (it was `PC9` up to OpenI6X 1.5.0) |
 | `PC9`+`BL` | Wiring those together allows for adjustable backlight |
 
 ![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.jpeg?raw=true)
