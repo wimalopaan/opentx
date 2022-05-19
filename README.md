@@ -3,7 +3,7 @@
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
 [![Release](https://img.shields.io/github/v/release/OpenI6X/opentx?include_prereleases)](https://github.com/OpenI6X/opentx/releases/latest)
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
-[![Discord](https://img.shields.io/discord/973289741862727741.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/YNamfrrN)
+[![Discord](https://img.shields.io/discord/973289741862727741.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/3vKfYNTVa2))
 
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x) and [Rakish Rc](https://www.youtube.com/c/RakishRc) youtube channel. 
 
@@ -73,7 +73,7 @@ With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swap
 
 | PCB Pad    | Function                                              |
 |------------|-------------------------------------------------------|
-| `TX2`      | S.Port                                                |
+| `TX2`      | S.Port (CRSF)                                         |
 | `PA9`      | AUX Serial port TX                                    |
 | `PA10`     | AUX Serial port RX                                    |
 | `PA15`     | USB VBUS (USB connection detection)                   |
