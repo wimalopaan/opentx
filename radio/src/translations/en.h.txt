@@ -73,7 +73,7 @@
 #if defined(CLI) || defined(DEBUG)
 #define TR_AUX_SERIAL_MODES                  "Debug\0      ""Telem Mirror""SBUS Trainer"
 #else
-#define TR_AUX_SERIAL_MODES                  "OFF\0        ""Telem Mirror""SBUS Trainer"
+#define TR_AUX_SERIAL_MODES                  "O\0        ""T""S"
 #endif
 #else
 #define LEN_AUX_SERIAL_MODES           "\015"
@@ -125,7 +125,7 @@
 #endif
 
 #define LEN_TELEMETRY_PROTOCOLS        "\017"
-#define TR_TELEMETRY_PROTOCOLS         "FrSky S.PORT\0  ""FrSky D\0       ""FrSky D (Kabel)""TBS Crossfire\0 ""Spektrum\0      ""AFHDS2A IBUS\0  ""Multi Telemetry"
+#define TR_TELEMETRY_PROTOCOLS         "Fr""Fr""Fr""TB\0 ""Sp""AF""Mu"
 
 #define LEN_XJT_PROTOCOLS              "\004"
 #define TR_XJT_PROTOCOLS               "OFF\0""D16\0""D8\0 ""LR12"
@@ -196,7 +196,7 @@
 
   #define TR_XPPM
 
-#define TR_VPROTOS                     "PPM\0  " TR_XPPM TR_PXX TR_DSM2 TR_IRPROTOS
+#define TR_VPROTOS                     "PPM\0  " TR_DSM2
 
 #define LEN_POSNEG                     "\003"
 #define TR_POSNEG                      "POS""NEG"
@@ -314,7 +314,7 @@
   #define TR_SF_SCREENSHOT
 #endif
 
-#define TR_SF_RESERVE                  "[reserve]\0"
+#define TR_SF_RESERVE                  "r\0"
 
   #define TR_VFSWFUNC                  TR_SF_SAFETY "Trainer\0  ""Inst. Trim""Reset\0    ""Set \0     " TR_ADJUST_GVAR "Volume\0   " "SetFailsfe" "RangeCheck" "ModuleBind" TR_SOUND /*TR_PLAY_TRACK TR_PLAY_VALUE*/ TR_SF_RESERVE TR_SF_PLAY_SCRIPT TR_SF_RESERVE /*TR_SF_BG_MUSIC*/ TR_VVARIO TR_HAPTIC /*TR_SDCLOGS*/ "Backlight\0" TR_SF_SCREENSHOT TR_SF_TEST
 
