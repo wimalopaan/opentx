@@ -29,7 +29,7 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
   * CRSF with ExpressLRS and Crossfire modules:
     * CRSFshot
     * MEGA Bauds up to 1.8M
-    * ExpressLRS V2 configuration (ELRSV2.lua port)
+    * ExpressLRS V3 configuration (ELRSV3.lua port)
 * 16 channels
 * Telemetry, up to 26 sensors
 * Adjustable backlight brightness (requires [basic mod](#optional-hardware-connections) & backlight_mod build)
@@ -84,7 +84,7 @@ With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swap
 
 ## Contributors
 
-* ExpressLRS V2 config, USB support, sound support, bootloader, backporting, bugfixing - Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)) ongoing collaboration.
+* ExpressLRS V2/V3 config, USB support, sound support, bootloader, backporting, bugfixing - Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)) ongoing collaboration.
 * All the RF code was taken from the great KotelloRC's [erfly6: Er9X for i6 and i6x](https://bitbucket.org/KotelloRC/erfly6/src/master/).
 * ADC code taken from [OpenGround](https://github.com/fishpepper/OpenGround).
 * This work is based on Jakub's ([qba667](https://github.com/qba667)) work and is forked from his repo.
