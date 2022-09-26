@@ -5,17 +5,21 @@
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
 [![Discord](https://img.shields.io/discord/973289741862727741.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/3vKfYNTVa2)
 
-You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x) and [Rakish Rc](https://www.youtube.com/c/RakishRc) youtube channel. 
+You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
 
-New contributions are highly welcome! See [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
+For new contributions see [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
 
-### Nightly builds
-If you want to have all the latest features, fixes (and bugs) you can download latest build here:
-1. Go to: https://github.com/OpenI6X/opentx.
-2. Click on ✓ icon next to latest commit id.
-3. Click on "Details" next to build of your choice.
-4. Click on "ARTIFACTS" tab.
-5. Download .bin file with preferred language.
+## Table of Contents
+
+[How to install](#installation)<br>
+[Features](#features)<br>
+[Navigation](#navigation)<br>
+[Proper shutdown](#shutdown)<br>
+[USB connection](#usb-connection)<br>
+[Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
+[Optional hardware connections](#optional-hardware-connections)<br>
+[Adjustable backlight level mod](#adjustable-backlight-level-mod)<br>
+[Contributors](#contributors)<br>
 
 ## Installation
 
@@ -31,8 +35,8 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
     * MEGA Bauds up to 1.8M
     * ExpressLRS V3 configuration (ELRSV3.lua port)
 * 16 channels
-* Telemetry, up to 26 sensors
-* Adjustable backlight brightness (requires [basic mod](#optional-hardware-connections) & backlight_mod build)
+* Telemetry
+* Adjustable backlight brightness level (requires [basic mod](#optional-hardware-connections) & backlight_mod build)
 * Audio tones, alarms and vario sound custom implementation
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes (To enable on standard cable: General Settings > USB Detect: Once)
@@ -81,6 +85,10 @@ With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swap
 | `PC9`+`BL` | Wiring those together allows for adjustable backlight |
 
 ![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.jpeg?raw=true)
+
+## Adjustable backlight level mod
+
+![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/backlight_mod.jpg?raw=true)
 
 ## Contributors
 
