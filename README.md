@@ -66,7 +66,7 @@ When to use "Save all" option:
 
 ## USB connection
 
-FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. This line can be [added manually](#optional-hardware-connections) to make it work.
+FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. This feature can be added manually by wiring `PA15` to USB VBUS, described in [Optional hardware connections](#optional-hardware-connections).
 Without the modification you have to go to General settings and set USB Detect to "Once" everytime you're connecting USB.
 
 ## Mode 1 & Mode 3 radios
@@ -87,6 +87,8 @@ With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swap
 ![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/openi6x_hardware.jpeg?raw=true)
 
 ## Adjustable backlight level mod
+
+Wire `PC9` and `BL` pads together.
 
 ![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/backlight_mod.jpg?raw=true)
 
