@@ -17,7 +17,7 @@ For new contributions see [developers guide](https://github.com/OpenI6X/opentx/w
 [Proper shutdown](#shutdown)<br>
 [USB connection](#usb-connection)<br>
 [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
-[Optional hardware connections](#optional-hardware-connections)<br>
+[All optional hardware connections](#all-optional-hardware-connections)<br>
 [Adjustable backlight level mod](#adjustable-backlight-level-mod)<br>
 [Contributors](#contributors)<br>
 
@@ -36,10 +36,10 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
     * ExpressLRS V3 configuration (ELRSV3.lua port)
 * 16 channels
 * Telemetry
-* Adjustable backlight brightness level (requires [basic mod](#optional-hardware-connections) & backlight_mod build)
+* Adjustable backlight brightness level (requires [basic mod](#all-optional-hardware-connections) & backlight_mod build)
 * Audio tones, alarms and vario sound custom implementation
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
-* USB Joystick & Storage modes (To enable on standard cable: General Settings > USB Detect: Once)
+* USB Joystick & Storage modes
 * AUX Serial port with modes:
   * Telemetry mirror
   * SBUS Trainer
@@ -66,14 +66,15 @@ When to use "Save all" option:
 
 ## USB connection
 
-FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. This feature can be added manually by wiring `PA15` to USB VBUS, described in [Optional hardware connections](#optional-hardware-connections).
-Without the modification you have to go to General settings and set USB Detect to "Once" everytime you're connecting USB.
+FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. Without the modification you have to go to General settings and set USB Detect to "Once" everytime you're connecting USB.<br>
+Auto connection detection can be added manually by wiring `PA15` to USB VBUS preferably with a resistor (I have used 1K).
+
 
 ## Mode 1 & Mode 3 radios
 
 With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swapped gimbals on main screen. To fix this swap gimbal connectors (red-white one with black-white one).
 
-## Optional hardware connections
+## All optional hardware connections
 
 | PCB Pad    | Function                                              |
 |------------|-------------------------------------------------------|
