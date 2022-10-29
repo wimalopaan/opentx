@@ -1,10 +1,8 @@
 /**
- * ExpressLRS V3 lua configuration script port to C.
+ * ExpressLRS V3 configurator for i6X based on elrsV2/3.lua
  *
- * Limitations:
- * - no integer/float/string fields support, ExpressLRS uses only selection anyway,
- * - field unit is not displayed,
- * - dynamically shorten values strings ("AUX" -> "A", "50Hz(-115dBm)" -> "50Hz") to save RAM.
+ * Limitations vs elrsV3.lua:
+ * - no some int, float, string fields support, but not used by ExpressLRS anyway,
  */
 
 #include "opentx.h"
@@ -12,19 +10,38 @@
 
 #define PACKED __attribute__((packed))
 
+#define TYPE_UINT8				   0
+#define TYPE_INT8				     1
+#define TYPE_UINT16				   2
+#define TYPE_INT16				   3
+#define TYPE_UINT32				   4
+#define TYPE_INT32				   5
+#define TYPE_UINT64				   6
+#define TYPE_INT64				   7
+#define TYPE_FLOAT				   8
+#define TYPE_TEXT_SELECTION  9
+#define TYPE_STRING				  10
+#define TYPE_FOLDER				  11
+#define TYPE_INFO				    12
+#define TYPE_COMMAND			  13
+#define TYPE_BACK           14
+#define TYPE_DEVICE         15
+#define TYPE_DEVICES_FOLDER 16
+
 extern uint8_t cScriptRunning;
 
 struct FieldProps {
   uint8_t nameOffset;
   uint8_t nameLength;
-  uint8_t valuesOffset;
-  uint8_t valuesLength;
+  uint8_t valuesOffset; // valueOffset|min|timeout for commands
+  uint8_t valuesLength; // valuesLength|max|lastStatus for popup
+  uint8_t unitOffset;
+  uint8_t unitLength;
   uint8_t parent;
   uint8_t type;
   uint8_t value;
   uint8_t id;
   // uint8_t hidden : 1;
-  // uint8_t spare : 2;
 } PACKED;
 
 struct FieldFunctions {
@@ -33,38 +50,39 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-static constexpr uint8_t NAMES_BUFFER_SIZE  = 172; // 172+
-static constexpr uint8_t VALUES_BUFFER_SIZE = 168; // 156+
-static uint8_t *namesBuffer = reusableBuffer.MSC_BOT_Data;
+static constexpr uint8_t NAMES_BUFFER_SIZE  = 204; // 191 - 12 = ~180+ (no Antenna Mode with FM30)
+static constexpr uint8_t VALUES_BUFFER_SIZE = 255; // 154+
+static uint8_t *namesBuffer = &reusableBuffer.MSC_BOT_Data[0];
 uint8_t namesBufferOffset = 0;
 static uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE];
+//static uint8_t valuesBuffer[VALUES_BUFFER_SIZE];
 uint8_t valuesBufferOffset = 0;
 
 // last 25b are also used for popup messages
-static constexpr uint8_t FIELD_DATA_MAX_LEN = (512 - NAMES_BUFFER_SIZE - VALUES_BUFFER_SIZE); // 172+
-static uint8_t *fieldData = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE];
-// static uint8_t fieldData[FIELD_DATA_MAX_LEN];
+static constexpr uint8_t FIELD_DATA_BUFFER_SIZE = 172; // 172+
+//static uint8_t *fieldData = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE];
+static uint8_t fieldData[FIELD_DATA_BUFFER_SIZE];
+static constexpr uint8_t POPUP_MSG_OFFSET = FIELD_DATA_BUFFER_SIZE - 24 - 1;
+// static uint8_t fieldData[FIELD_DATA_BUFFER_SIZE];
 uint8_t fieldDataLen = 0;
 
-static constexpr uint8_t FIELDS_MAX_COUNT = 32; // 32 * 8 = 256b // 30 + 2 margin for future fields
-static FieldProps fields[FIELDS_MAX_COUNT]; // = (FieldProps *)&reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE];
-uint8_t fieldsLen = 0;
+static constexpr uint8_t FIELDS_MAX_COUNT = 17; // 15 + Antenna Mode + Airport // 32 * 8 = 256b // 30 + 2 margin for future fields
+static FieldProps fields[FIELDS_MAX_COUNT];
+//static FieldProps *fields = (FieldProps *)&reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE];
+uint8_t allocatedFieldsCount = 0;
 
-#if defined(PCBI6X_ELRSV3_DEVICES)
 static constexpr uint8_t DEVICES_MAX_COUNT = 8;
 static uint8_t deviceIds[DEVICES_MAX_COUNT];
 uint8_t devicesLen = 0;
 uint8_t otherDevicesId = 255;
+uint8_t otherDevicesAdded = 0;
 
 uint8_t deviceId = 0xEE;
 uint8_t handsetId = 0xEF;
-#else
-static constexpr uint8_t deviceId = 0xEE;
-static constexpr uint8_t handsetId = 0xEF;
-#endif
 
 static constexpr uint8_t DEVICE_NAME_MAX_LEN = 20;
-static char deviceName[DEVICE_NAME_MAX_LEN];
+static uint8_t *deviceName = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE];
+//static char deviceName[DEVICE_NAME_MAX_LEN];
 uint8_t lineIndex = 1;
 uint8_t pageOffset = 0;
 uint8_t edit = 0;
@@ -77,18 +95,14 @@ uint8_t fieldChunk = 0;
 static char goodBadPkt[11] = "?/???    ?";
 uint8_t elrsFlags = 0;
 static char elrsFlagsInfo[16] = "";
-uint8_t fields_count = 0;
+uint8_t expectedFieldsCount = 0;
 uint8_t backButtonId = 2;
 tmr10ms_t devicesRefreshTimeout = 50;
 uint8_t allParamsLoaded = 0;
-uint8_t folderAccess = 0;
+uint8_t folderAccess = 0; // folder id
 uint8_t statusComplete = 0;
 int8_t expectedChunks = -1;
-#if defined(PCBI6X_ELRSV3_DEVICES)
 uint8_t deviceIsELRS_TX = 0;
-#else
-static constexpr uint8_t deviceIsELRS_TX = 1;
-#endif
 tmr10ms_t linkstatTimeout = 100;
 uint8_t titleShowWarn = 0;
 tmr10ms_t titleShowWarnTimeout = 100;
@@ -117,7 +131,9 @@ static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t 
   lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
 }
 
-static void allocateFields();
+static void storeField(FieldProps * field);
+static void clearFields();
+static void addBackButton();
 static void reloadAllField();
 static FieldProps * getField(uint8_t line);
 static void UIbackExec(FieldProps * field);
@@ -130,10 +146,11 @@ static void runDevicePage(event_t event);
 static void lcd_title();
 static void lcd_warn();
 static void handleDevicePageEvent(event_t event);
+static void fieldTextSelectionSave(FieldProps * field);
 
 
 static void crossfireTelemetryPush4(const uint8_t cmd, const uint8_t third, const uint8_t fourth) {
-  // TRACE("crsf push %x", cmd);
+//  TRACE("crsf push %x  %x  %x", cmd, third, fourth);
   uint8_t crsfPushData[4] { deviceId, handsetId, third, fourth };
   crossfireTelemetryPush(cmd, crsfPushData, 4);
 }
@@ -143,22 +160,40 @@ static void crossfireTelemetryPing(){
   crossfireTelemetryPush(0x28, (uint8_t *) crsfPushData, 2);
 }
 
-static void allocateFields() {
-  fieldsLen = fields_count + 2U/* + devicesLen*/; // + (back + other devices) + devices count
-  TRACE("allocateFields: len %d", fieldsLen);
-  for (uint32_t i = 0; i < fieldsLen; i++) {
+static void clearFields() {
+//  TRACE("clearFields %d", allocatedFieldsCount);
+  for (uint32_t i = 0; i < allocatedFieldsCount; i++) {
     fields[i].nameLength = 0;
     fields[i].valuesLength = 0;
   }
-  backButtonId = fieldsLen - 1;
-  TRACE("add back btn at %d", backButtonId);
-  fields[backButtonId].id = backButtonId + 1;
-  fields[backButtonId].nameLength = 1;
-  fields[backButtonId].type = 14;
-  fields[backButtonId].parent = (folderAccess == 0) ? 255 : folderAccess;
+  otherDevicesAdded = 0;
+  allocatedFieldsCount = 0;
+}
+
+// Both buttons must be added as last ones because i cannot overwrite existing Id
+static void addBackButton() {
+  backButtonId = allocatedFieldsCount;
+  FieldProps backBtnField;
+  backBtnField.id = backButtonId;
+  backBtnField.nameLength = 1;
+  backBtnField.type = TYPE_BACK;
+  backBtnField.parent = (folderAccess == 0) ? 255 : folderAccess;
+  storeField(&backBtnField);
+}
+
+static void addOtherDevicesButton() {
+  otherDevicesId = allocatedFieldsCount;
+  FieldProps otherDevicesField;
+  otherDevicesField.id = otherDevicesId;
+  otherDevicesField.nameLength = 1;
+  otherDevicesField.type = TYPE_DEVICES_FOLDER;
+  otherDevicesField.parent = 0;
+  storeField(&otherDevicesField);
+  otherDevicesAdded = 1;
 }
 
 static void reloadAllField() {
+  TRACE("reloadAllField");
   allParamsLoaded = 0;
   fieldId = 1;
   fieldChunk = 0;
@@ -167,19 +202,35 @@ static void reloadAllField() {
   valuesBufferOffset = 0;
 }
 
-static FieldProps * getField(const uint8_t line) {
-  uint32_t counter = 1;
-  for (uint32_t i = 0; i < fieldsLen; i++) {
+static FieldProps * getFieldById(const uint8_t id) {
+  for (uint32_t i = 0; i < allocatedFieldsCount; i++) {
     FieldProps * field = &fields[i];
-    if (folderAccess == field->parent && field->nameLength != 0/* && field->hidden == 0*/) {
-      if (counter < line) {
-        counter = counter + 1;
-      } else {
-        return field;
-      }
+    if (id == field->id) {
+      return field;
     }
   }
   return nullptr;
+}
+
+/**
+ * Store field at it's location or add new one if not found.
+ */
+static void storeField(FieldProps * field) {
+  TRACE("storeField id %d", field->id);
+  FieldProps * storedField = getFieldById(field->id);
+  if (storedField == nullptr) {
+    storedField = &fields[allocatedFieldsCount];
+    allocatedFieldsCount++;
+    TRACE("allocFieldsCount %d", allocatedFieldsCount);
+  }
+  memcpy(storedField, field, sizeof(FieldProps));
+}
+
+/**
+ * Get field from line index taking only loaded current folder fields into account.
+ */
+static FieldProps * getField(const uint8_t line) {
+  return &fields[line - 1];
 }
 
 static uint8_t getSemicolonCount(const char * str, const uint8_t len) {
@@ -192,13 +243,16 @@ static uint8_t getSemicolonCount(const char * str, const uint8_t len) {
 
 static void incrField(int8_t step) {
   FieldProps * field = getField(lineIndex);
-  if (field->type == 10) {
+  if (field->type == TYPE_STRING) {
     ; // not implemented
   } else {
     uint8_t min = 0, max = 0;
-    if (field->type == 9) {
+    if (field->type == TYPE_TEXT_SELECTION) {
 //      min = 0;
       max = getSemicolonCount((char *)&valuesBuffer[field->valuesOffset], field->valuesLength);
+    } else if (field->type == TYPE_UINT8) {
+      min = field->valuesOffset;
+      max = field->valuesLength;
     }
     field->value = limit<uint8_t>(min, field->value + step, max);
   }
@@ -210,8 +264,8 @@ static void selectField(int8_t step) {
   do {
     newLineIndex = newLineIndex + step;
     if (newLineIndex <= 0) {
-      newLineIndex = fieldsLen - 1;
-    } else if (newLineIndex == 1 + fieldsLen) {
+      newLineIndex = allocatedFieldsCount;
+    } else if (newLineIndex == 1 + allocatedFieldsCount) {
       newLineIndex = 1;
       pageOffset = 0;
     }
@@ -225,7 +279,6 @@ static void selectField(int8_t step) {
   }
 }
 
-#if defined(PCBI6X_ELRSV3_DEVICES)
 static uint8_t getDevice(uint8_t devId) {
   TRACE("getDevice %x", devId);
   for (uint8_t i = 0; i < devicesLen; i++) {
@@ -235,41 +288,60 @@ static uint8_t getDevice(uint8_t devId) {
   }
   return 0;
 }
-#endif
 
-static uint8_t strRemove(char * src, const char * str, const uint8_t len) {
-  const char strLen = strlen(str);
+static void strShorten(char * src, const uint8_t maxLen) {
+  int8_t diff = 0;
   char * srcStrPtr = src;
-  uint8_t removedLen = 0;
-  while ((srcStrPtr = strstr(srcStrPtr, str)) && (srcStrPtr < src + len)) {
-    memcpy(srcStrPtr, srcStrPtr + strLen, (src + len) - (srcStrPtr + strLen));
-    removedLen += strLen;
+  char * srcStrPtr2;
+  while ((srcStrPtr2 = strstr(srcStrPtr, ";"))) {
+      uint8_t itemLen = srcStrPtr2 - srcStrPtr;
+      diff = itemLen - maxLen;
+      if (diff > 0) {
+        strcpy(srcStrPtr + maxLen, srcStrPtr2);
+        srcStrPtr2 -= diff;
+      }
+      srcStrPtr = srcStrPtr2 + 1;
   }
-  return removedLen;
 }
 
-static uint8_t strRemoveInBrackets(char * src) {
-    char srcLen = strlen(src);
-    char * srcStrPtr = src;
-    char * srcStrPtr2;
-    while (srcStrPtr = strstr(srcStrPtr, "(")) {
-        if (srcStrPtr2 = strstr(srcStrPtr, ")")) {
-            strcpy(srcStrPtr, srcStrPtr2 + 1);
-        } else {
-            break;
-        }
-    }
-    return srcLen - strlen(src);
+static void unitSave(FieldProps * field, uint8_t * data, uint8_t unitOffset) {
+  uint8_t unitLen = strlen((char*)&data[unitOffset]);
+  if (field->type < TYPE_STRING && unitLen > 0) {
+    memcpy(&namesBuffer[namesBufferOffset], (char*)&data[unitOffset], unitLen);
+    field->unitOffset = namesBufferOffset;
+    field->unitLength = unitLen;
+    namesBufferOffset += unitLen;
+  }
 }
 
+// UINT8
+static void fieldUint8Display(FieldProps * field, uint8_t y, uint8_t attr) {
+  char stringTmp[24];
+  tiny_sprintf((char *)&stringTmp, "%u%s", 3, field->value, field->unitLength, (char *)&namesBuffer[field->unitOffset]);
+  lcdDrawText(COL2, y, (char *)&stringTmp, attr);
+}
+
+static void fieldUint8Load(FieldProps * field, uint8_t * data, uint8_t offset) {
+  field->value = data[offset + 1];
+  field->valuesOffset = data[offset + 2]; // min
+  field->valuesLength = data[offset + 3]; // max
+  unitSave(field, data, offset + 5);
+}
+
+static void fieldUint8Save(FieldProps * field) {
+  fieldTextSelectionSave(field);
+}
+
+// TEXT SELECTION
 /**
  * Reused also for INFO fields value (i.e. commit sha) for 0 flash cost
  */
 static void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   uint8_t len = strlen((char*)&data[offset]);
   field->value = data[offset + len + 1];
-  len -= strRemove((char*)&data[offset], "UX", len); // trim AUX to A
-  len -= strRemoveInBrackets((char*)&data[offset]);
+  unitSave(field, data, offset + len + 5);
+  strShorten((char*)&data[offset], 12);
+  len = strlen((char*)&data[offset]);
   if (field->valuesLength == 0) {
     memcpy(&valuesBuffer[valuesBufferOffset], (char*)&data[offset], len);
     field->valuesOffset = valuesBufferOffset;
@@ -300,17 +372,11 @@ static void fieldTextSelectionDisplay(FieldProps * field, uint8_t y, uint8_t att
     }
   }
   len = semicolonPos((char *)&valuesBuffer[start], field->valuesLength - (start - field->valuesOffset)) - 1;
-  lcdDrawSizedText(COL2, y, (char *)&valuesBuffer[start], len , attr);
-}
 
-// shows commit hash, 56b
-// no need for it since fieldTextSelectionLoad serves exactly the same purpose for info fields
-// static void fieldStringLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
-//   field->valuesOffset = valuesBufferOffset;
-//   field->valuesLength = strlen((char*)&data[offset]);
-//   memcpy(&valuesBuffer[valuesBufferOffset], &data[offset], field->valuesLength);
-//   valuesBufferOffset += field->valuesLength;
-// }
+  char stringTmp[24];
+  tiny_sprintf((char *)&stringTmp, "%s%s", 4, len, (char *)&valuesBuffer[start], field->unitLength, (char *)&namesBuffer[field->unitOffset]);
+  lcdDrawText(COL2, y, (char *)&stringTmp, attr);
+}
 
 static void fieldStringDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   lcdDrawSizedText(COL2, y, (char *)&valuesBuffer[field->valuesOffset], field->valuesLength, attr);
@@ -321,30 +387,26 @@ static void fieldFolderOpen(FieldProps * field) {
   lineIndex = 1;
   pageOffset = 0;
   folderAccess = field->id;
-  fields[backButtonId].parent = folderAccess;
-  for (uint32_t i = 0; i < backButtonId; i++) {
-    fields[i].valuesLength = 0;
-  }
+  clearFields();
   reloadAllField();
 }
 
-#if defined(PCBI6X_ELRSV3_DEVICES)
 static void fieldFolderDeviceOpen(FieldProps * field) {
   // if folderAccess == devices folder, store only devices instead of fields
-  fields_count = devicesLen;
+  expectedFieldsCount = devicesLen;
   devicesLen = 0;
-  fieldsLen = 0;
   crossfireTelemetryPing(); //broadcast with standard handset ID to get all node respond correctly
-  return fieldFolderOpen(field);
+  fieldFolderOpen(field);
 }
-#endif
 
+static void noopLoad(FieldProps * field, uint8_t * data, uint8_t offset) {}
 static void noopSave(FieldProps * field) {}
+static void noopDisplay(FieldProps * field, uint8_t y, uint8_t attr) {}
 
 static void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   field->value = data[offset];
   field->valuesOffset = data[offset+1];
-  strcpy((char *)&fieldData[FIELD_DATA_MAX_LEN - 24 - 1], (char *)&data[offset+2]);
+  strcpy((char *)&fieldData[POPUP_MSG_OFFSET], (char *)&data[offset+2]);
   if (field->value == 0) {
     fieldPopup = 0;
   }
@@ -363,44 +425,34 @@ static void fieldCommandSave(FieldProps * field) {
 static void fieldUnifiedDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   const char* backPat = "[----BACK----]";
   const char* folderPat = "> %s";
-#if defined(PCBI6X_ELRSV3_DEVICES)
   const char* otherPat = "> Other Devices";
-#endif
   const char* cmdPat = "[%s]";
   const char *pat;
   uint8_t textIndent = textXoffset + 9;
-  if (field->type == 11) { // FOLDER
+  if (field->type == TYPE_FOLDER) {
     pat = folderPat;
     textIndent = textXoffset;
-#if defined(PCBI6X_ELRSV3_DEVICES)
-  } else if (field->type == 16) { // deviceFOLDER
+  } else if (field->type == TYPE_DEVICES_FOLDER) {
     pat = otherPat;
     textIndent = textXoffset;
-#endif
-  } else if (field->type == 14) { // BACK
+  } else if (field->type == TYPE_BACK) {
     pat = backPat;
   } else { // CMD || DEVICE
     pat = cmdPat;
   }
   char stringTmp[24];
-  tiny_sprintf((char *)&stringTmp, pat, field->nameLength, 1, (char *)&namesBuffer[field->nameOffset]);
+  tiny_sprintf((char *)&stringTmp, pat, 2, field->nameLength, (char *)&namesBuffer[field->nameOffset]);
   lcdDrawText(textIndent, y, (char *)&stringTmp, attr | BOLD);
 }
 
 static void UIbackExec(FieldProps * field = 0) {
   folderAccess = 0;
-  fields[backButtonId].parent = 255;
-  for (uint32_t i = 0; i < backButtonId; i++) {
-    fields[i].valuesLength = 0;
-  }
+  clearFields();
   reloadAllField();
-#if defined(PCBI6X_ELRSV3_DEVICES)
   devicesLen = 0;
-#endif
-  fields_count = 0;
+  expectedFieldsCount = 0;
 }
 
-#if defined(PCBI6X_ELRSV3_DEVICES)
 static void changeDeviceId(uint8_t devId) { //change to selected device ID
   TRACE("changeDeviceId %x", devId);
   folderAccess = 0;
@@ -413,114 +465,80 @@ static void changeDeviceId(uint8_t devId) { //change to selected device ID
     handsetId = 0xEA;
   }
   deviceId = devId;
-  fields_count = 0; //set this because next target wouldn't have the same count, and this trigger to request the new count
+  expectedFieldsCount = 0; //set this because next target wouldn't have the same count, and this trigger to request the new count
 }
 
 static void fieldDeviceIdSelect(FieldProps * field) {
 //  TRACE("fieldDeviceIdSelect %x", field->id);
-//  DeviceProps * device = getDevice(field->id);
  changeDeviceId(field->id);
  crossfireTelemetryPing();
 }
 
-// copy devices to fields setting parent to "Other devices"
-static void createDeviceFields() { // put other devices in the field list
-  TRACE("createDeviceFields %d", devicesLen);
-//  TRACE("move backbutton from %d to %d", backButtonId, fields_count + 2 + devicesLen);
- fields[fields_count + 2 /* + devicesLen */].id = fields[backButtonId].id;
- fields[fields_count + 2 /* + devicesLen */].nameLength = fields[backButtonId].nameLength;
- fields[fields_count + 2 /* + devicesLen */].type = fields[backButtonId].type;
- fields[fields_count + 2 /* + devicesLen */].parent = fields[backButtonId].parent;
- backButtonId = fields_count + 2 /* + devicesLen */; // move back button to the end of the list, so it will always show up at the bottom.
- fieldsLen = fields_count + 2 /* + devicesLen */ + 1;
-}
-#endif // PCBI6X_ELRSV3_DEVICES
-
 static void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t offset;
   uint8_t id = data[2];
-  // TRACE("parseDeviceInfoMessage %x folderAcc %d, f_c %d, devLen %d", id, folderAccess, fields_count, devicesLen);
+// TRACE("parseDevInfoMsg %x folderAcs %d, expect %d, devsLen %d", id, folderAccess, expectedFieldsCount, devicesLen);
   offset = strlen((char*)&data[3]) + 1 + 3;
-#if defined(PCBI6X_ELRSV3_DEVICES)
   uint8_t devId = getDevice(id);
   if (!devId) {
     deviceIds[devicesLen] = id;
     if (folderAccess == otherDevicesId) { // if "Other Devices" opened store devices to fields
-      fields[devicesLen].id = id;
-      fields[devicesLen].type = 15;
-      fields[devicesLen].nameLength = offset - 4;
-      fields[devicesLen].nameOffset = namesBufferOffset;
-      memcpy(&namesBuffer[namesBufferOffset], &data[3], fields[devicesLen].nameLength);
-      namesBufferOffset += fields[devicesLen].nameLength;
-      if (fields[devicesLen].id == deviceId) {
-        fields[devicesLen].parent = 255; // hide current device
-      } else {
-        fields[devicesLen].parent = otherDevicesId; // set parent to "Other Devices"
-      }
-      if (devicesLen == fields_count - 1) {
+      FieldProps deviceField;
+      deviceField.id = id;
+      deviceField.type = TYPE_DEVICE;
+      deviceField.nameLength = offset - 4;
+      deviceField.nameOffset = namesBufferOffset;
+
+      deviceField.parent = (id == deviceId) ? 255 : devicesLen/*otherDevicesId*/; // hide current device or set parent to "Other Devices"
+      memcpy(&namesBuffer[namesBufferOffset], &data[3], deviceField.nameLength);
+      namesBufferOffset += deviceField.nameLength;
+      storeField(&deviceField);
+      if (devicesLen == expectedFieldsCount - 1) {
         allParamsLoaded = 1;
         fieldId = 1;
-        createDeviceFields();
+        addBackButton();
       }
     }
     devicesLen++;
   }
 
   if (deviceId == id && folderAccess != otherDevicesId) {
-#else
-  if (deviceId == id) {
-#endif
-    memcpy(deviceName, (char *)&data[3], DEVICE_NAME_MAX_LEN);
-#if defined(PCBI6X_ELRSV3_DEVICES)
+    memcpy(&deviceName[0], (char *)&data[3], DEVICE_NAME_MAX_LEN);
     deviceIsELRS_TX = ((memcmp(&data[offset], "ELRS", 4) == 0) && (deviceId == 0xEE)) ? 1 : 0; // SerialNumber = 'E L R S' and ID is TX module
-#endif
     uint8_t newFieldCount = data[offset+12];
-//    TRACE("deviceId match %x, newFieldsCount %d", deviceId, newFieldCount);
+    TRACE("deviceId match %x, newFieldCount %d", deviceId, newFieldCount);
     reloadAllField();
-    if (newFieldCount != fields_count || newFieldCount == 0) {
-      fields_count = newFieldCount;
-      allocateFields();
-#if defined(PCBI6X_ELRSV3_DEVICES)
-//      TRACE("add other devices at %d", fields_count+1);
-      otherDevicesId = fields_count+0+1;
-      fields[fields_count+0].id = otherDevicesId; // add "Other Devices"
-      fields[fields_count+0].nameLength = 1;
-      fields[fields_count+0].parent = 255; // hidden initally
-      fields[fields_count+0].type = 16;
+    if (newFieldCount != expectedFieldsCount || newFieldCount == 0) {
+      expectedFieldsCount = newFieldCount;
+      clearFields();
       if (newFieldCount == 0) {
       // This device has no fields so the Loading code never starts
         allParamsLoaded = 1;
         fieldId = 1;
-        createDeviceFields();
+        addBackButton(); // createDeviceFields();
       }
-#endif
     }
   }
 }
 
 static const FieldFunctions functions[] = {
-  /*
-   * 1 UINT8(0)
-   * 2 INT8(1)
-   * 3 UINT16(2)
-   * 4 INT16(3)
-   * nil
-   * nil
-   * nil
-   * nil
-   * 9 FLOAT(8)
-   */
-  { .load=fieldTextSelectionLoad, .save=fieldTextSelectionSave, .display=fieldTextSelectionDisplay }, // 10 SELECT(9)
+  { .load=fieldUint8Load, .save=fieldUint8Save, .display=fieldUint8Display }, // 1 UINT8(0)
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 2 INT8(1)
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 3 UINT16(2)
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 4 INT16(3)
+  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
+  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
+  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
+  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 9 FLOAT(8)
+  { .load=fieldTextSelectionLoad, .save=fieldTextSelectionSave, .display=fieldTextSelectionDisplay }, // 10 TEXT SELECTION(9)
   { .load=nullptr, .save=noopSave, .display=fieldStringDisplay }, // 11 STRING(10)editing NOTIMPL
   { .load=nullptr, .save=fieldFolderOpen, .display=fieldUnifiedDisplay }, // 12 FOLDER(11)
   { .load=fieldTextSelectionLoad, .save=noopSave, .display=fieldStringDisplay }, // 13 INFO(12)
   { .load=fieldCommandLoad, .save=fieldCommandSave, .display=fieldUnifiedDisplay }, // 14 COMMAND(13)
-  { .load=nullptr, .save=UIbackExec, .display=fieldUnifiedDisplay } // 15 back(14)
-#if defined(PCBI6X_ELRSV3_DEVICES)
-  ,
+  { .load=nullptr, .save=UIbackExec, .display=fieldUnifiedDisplay }, // 15 back(14)
   { .load=nullptr, .save=fieldDeviceIdSelect, .display=fieldUnifiedDisplay }, // 16 device(15)
-  { .load=nullptr, .save=fieldFolderDeviceOpen, .display=fieldUnifiedDisplay } // 17 deviceFOLDER(16)
-#endif
+  { .load=nullptr, .save=fieldFolderDeviceOpen, .display=fieldUnifiedDisplay }, // 17 deviceFOLDER(16)
 };
 
 static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
@@ -535,17 +553,24 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   if (fieldId == reloadFolder) { // if we finally receive the folder id, reset the pending reload folder flag
     reloadFolder = 0;
   }
-  FieldProps* field = &fields[fieldId - 1];
+
+  // Get by id or use temporary one to decide later if it should be stored
+  FieldProps tempField = {0};
+  FieldProps* field = getFieldById(fieldId);
+  if (field == nullptr) {
+    field = &tempField;
+  }
+
   uint8_t chunksRemain = data[4];
   // If no field or the chunksremain changed when we have data, don't continue
-  if (field == 0 || (chunksRemain != expectedChunks && expectedChunks != -1)) {
+  if (/*field == 0 ||*/ (chunksRemain != expectedChunks && expectedChunks != -1)) {
     return;
   }
   expectedChunks = chunksRemain - 1;
   for (uint32_t i = 5; i < length; i++) {
     fieldData[fieldDataLen++] = data[i];
   }
-  TRACE("length %d", length); // to know what is the max single chunk size
+//  TRACE("chunk len %d", length); // to know what is the max single chunk size
 
   if (chunksRemain > 0) {
     fieldChunk = fieldChunk + 1;
@@ -584,22 +609,26 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
         memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength);
         namesBufferOffset += field->nameLength;
       }
-      if (field->type >= 9 && functions[field->type - 9].load) {
-        functions[field->type - 9].load(field, fieldData, offset);
+      if (field->type >= TYPE_TEXT_SELECTION && functions[field->type].load && !hidden) {
+        functions[field->type].load(field, fieldData, offset);
+      }
+      if (/*field->nameLength != 0 && */!hidden) {
+        storeField(field);
       }
     }
 
     if (fieldPopup == 0) {
-      if (fieldId == fields_count) { // if we have loaded all params
+      if (fieldId == expectedFieldsCount) { // if we have loaded all params
         TRACE("namesBufferOffset %d", namesBufferOffset);
         DUMP(namesBuffer, NAMES_BUFFER_SIZE);
         TRACE("valuesBufferOffset %d", valuesBufferOffset);
         DUMP(valuesBuffer, VALUES_BUFFER_SIZE);
+        TRACE("allocatedFieldsCount %d", allocatedFieldsCount);
         allParamsLoaded = 1;
         fieldId = 1;
-#if defined(PCBI6X_ELRSV3_DEVICES)
-        createDeviceFields();
-#endif
+        if (folderAccess != 0) {
+          addBackButton();
+        }
       } else if (allParamsLoaded == 0) {
         fieldId++; // fieldId = 1 + (fieldId % (fieldsLen-1));
       } else if (reloadFolder != 0) { // if we still have to reload the folder name
@@ -636,17 +665,13 @@ static void parseElrsInfoMessage(uint8_t* data) {
   strcpy(elrsFlagsInfo, (char*)&data[7]);
 
   char state = (elrsFlags & 1) ? 'C' : '-';
-  tiny_sprintf(goodBadPkt, "%u/%u   %c", 0, 3, badPkt, goodPkt, state);
+  tiny_sprintf(goodBadPkt, "%u/%u   %c", 3, badPkt, goodPkt, state);
 }
 
 static void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length = 0) {
   if (command == 0x29) {
     parseDeviceInfoMessage(data);
-#if defined(PCBI6X_ELRSV3_DEVICES)
   } else if (command == 0x2B && folderAccess != otherDevicesId /* !devicesFolderOpened */) {
-#else
-  } else if (command == 0x2B) {
-#endif
     parseParameterInfoMessage(data, length);
     if (allParamsLoaded < 1 || statusComplete == 0) {
       fieldTimeout = 0;
@@ -659,12 +684,12 @@ static void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length =
   if (fieldPopup != 0) {
     if (time > fieldTimeout && fieldPopup->value != 3) {
       crossfireTelemetryPush4(0x2D, fieldPopup->id, 6); // lcsQuery
-      fieldTimeout = time + fieldPopup->valuesOffset;
+      fieldTimeout = time + fieldPopup->valuesOffset; // + popup timeout
     }
-  } else if (time > devicesRefreshTimeout && fields_count < 1) {
+  } else if (time > devicesRefreshTimeout && expectedFieldsCount < 1) {
     devicesRefreshTimeout = time + 100;
     crossfireTelemetryPing();
-  } else if (time > fieldTimeout && fields_count != 0/* && !edit*/) {
+  } else if (time > fieldTimeout && expectedFieldsCount != 0/* && !edit*/) {
     if (allParamsLoaded < 1 || statusComplete == 0) {
       crossfireTelemetryPush4(0x2C, fieldId, fieldChunk);
       fieldTimeout = time + 50; // 0.5s
@@ -696,15 +721,15 @@ static void lcd_title() {
     lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS);
   }
 
-  if (allParamsLoaded != 1 && fields_count > 0) {
+  if (allParamsLoaded != 1 && expectedFieldsCount > 0) {
     lcdDrawFilledRect(COL2, 0, LCD_W, barHeight, SOLID);
-    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, fields_count); // 136b
+    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, expectedFieldsCount); // 136b
   } else {
     lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
     if (titleShowWarn) {
       lcdDrawSizedText(textXoffset, 1, elrsFlagsInfo, 16, INVERS);
     } else {
-      lcdDrawSizedText(textXoffset, 1, (allParamsLoaded == 1) ? deviceName : "Loading...", DEVICE_NAME_MAX_LEN, INVERS);
+      lcdDrawSizedText(textXoffset, 1, (allParamsLoaded == 1) ? (char *)&deviceName[0] : "Loading...", DEVICE_NAME_MAX_LEN, INVERS);
     }
   }
 }
@@ -716,10 +741,10 @@ static void lcd_warn() {
 }
 
 static void handleDevicePageEvent(event_t event) {
-  if (fieldsLen == 0) {
+  if (allocatedFieldsCount == 0) {
     return;
   } else {
-    if (fields[backButtonId].nameLength == 0) {
+    if (getFieldById(backButtonId)->nameLength == 0) {
       return;
     }
   }
@@ -735,12 +760,9 @@ static void handleDevicePageEvent(event_t event) {
       crossfireTelemetryPush4(0x2C, fieldId, fieldChunk);
     } else {
       if (folderAccess == 0 && allParamsLoaded == 1) {
-#if defined(PCBI6X_ELRSV3_DEVICES)
         if (deviceId != 0xEE) {
-          changeDeviceId(0xEE); // change device id clear the fields_count, therefore the next ping will do reloadAllField()
-        } else
-#endif
-        {
+          changeDeviceId(0xEE); // change device id clear expectedFieldsCount, therefore the next ping will do reloadAllField()
+        } else {
           reloadAllField();
         }
         crossfireTelemetryPing();
@@ -753,14 +775,14 @@ static void handleDevicePageEvent(event_t event) {
       crossfireTelemetryPush4(0x2D, 0x2E, 0x00);
     } else {
       FieldProps * field = getField(lineIndex);
-      if (field != 0 && field->nameLength > 0 && field->type >= 9) {
+      if (field != 0 && field->nameLength > 0 && field->type >= TYPE_TEXT_SELECTION) {
         if (field->type == 10) {
           ; // not implemented
         } else if (field->type < 11) {
           edit = 1 - edit;
         }
         if (!edit) {
-          if (field->type < 11 || field->type == 13) {
+          if (field->type < 11 || field->type == TYPE_COMMAND) {
             // For editable field types and commands, request this field's
             // data again, with a short delay to allow the module EEPROM to
             // commit. Do this before save() to allow save to override
@@ -771,11 +793,10 @@ static void handleDevicePageEvent(event_t event) {
             if (field->parent) {
               // if it is inside a folder, then we reload the folder
               reloadFolder = field->parent;
-              fields[field->parent - 1].nameLength = 0;
             }
             fieldDataLen = 0;
           }
-          functions[field->type - 9].save(field);
+          functions[field->type].save(field);
         }
       }
     }
@@ -800,16 +821,14 @@ static void runDevicePage(event_t event) {
   lcd_title();
 
   FieldProps * field;
-#if defined(PCBI6X_ELRSV3_DEVICES)
-  if (devicesLen > 1) { // show Other Devices folder
-    fields[fields_count+0].parent = 0;
+  if (allParamsLoaded == 1 && devicesLen > 1 && otherDevicesAdded == 0 && folderAccess == 0) {
+    addOtherDevicesButton();
   }
-#endif
   if (elrsFlags > 0x1F) {
     lcd_warn();
   } else {
     for (uint32_t y = 1; y < maxLineIndex+2; y++) {
-      if (pageOffset+y >= fieldsLen) break;
+      if (pageOffset+y > allocatedFieldsCount) break;
       field = getField(pageOffset+y);
       if (field == 0) {
         break;
@@ -818,8 +837,8 @@ static void runDevicePage(event_t event) {
         if (field->type < 11 or field->type == 12) {
           lcdDrawSizedText(textXoffset, y*textSize+textYoffset, (char *)&namesBuffer[field->nameOffset], field->nameLength, 0);
         }
-        if (field->type >= 9 && functions[field->type - 9].display) {
-          functions[field->type - 9].display(field, y*textSize+textYoffset, attr);
+        if (field->type >= TYPE_TEXT_SELECTION && functions[field->type].display) {
+          functions[field->type].display(field, y*textSize+textYoffset, attr);
         }
       }
     }
@@ -827,7 +846,7 @@ static void runDevicePage(event_t event) {
 }
 
 static uint8_t popupCompat(event_t event) {
-  showMessageBox((char *)&fieldData[FIELD_DATA_MAX_LEN - 24 - 1]);
+  showMessageBox((char *)&fieldData[POPUP_MSG_OFFSET]);
   lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS_ENTER_EXIT);
 
   if (event == EVT_VIRTUAL_EXIT) {
@@ -879,10 +898,9 @@ void ELRSV3_stop() {
   // reloadAllField();
   UIbackExec();
   fieldPopup = 0;
-#if defined(PCBI6X_ELRSV3_DEVICES)
   deviceId = 0xEE;
   handsetId = 0xEF;
-#endif
+
   if (cScriptRunning) {
     cScriptRunning = 0;
     memset(reusableBuffer.MSC_BOT_Data, 0, 512);
@@ -893,8 +911,8 @@ void ELRSV3_stop() {
 void ELRSV3_run(event_t event) {
   if (cScriptRunning == 0) {
     cScriptRunning = 1;
-    fields_count = 0;
-    fieldsLen = 0;
+    expectedFieldsCount = 0;
+    clearFields();
     registerCrossfireTelemetryCallback(refreshNext);
   }
 
