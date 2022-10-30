@@ -1,5 +1,6 @@
 /**
  * ExpressLRS V3 configurator for i6X based on elrsV2/3.lua
+ * @author Jan Kozak (ajjjjjjjj)
  *
  * Limitations vs elrsV3.lua:
  * - no some int, float, string fields support, but not used by ExpressLRS anyway,
@@ -14,10 +15,6 @@
 #define TYPE_INT8				     1
 #define TYPE_UINT16				   2
 #define TYPE_INT16				   3
-#define TYPE_UINT32				   4
-#define TYPE_INT32				   5
-#define TYPE_UINT64				   6
-#define TYPE_INT64				   7
 #define TYPE_FLOAT				   8
 #define TYPE_TEXT_SELECTION  9
 #define TYPE_STRING				  10
@@ -128,8 +125,7 @@ static constexpr uint8_t textSize      =  8;
 static constexpr uint8_t RESULT_OK = 2;
 static constexpr uint8_t RESULT_CANCEL = 1;
 
-static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max)
-{
+static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max) {
   lcdDrawRect(x, y, w+1, h, 0xff);
   uint8_t len = limit((uint8_t)1, uint8_t(w*val/max), uint8_t(w));
   lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
@@ -197,7 +193,7 @@ static void addOtherDevicesButton() {
 }
 
 static void reloadAllField() {
-  TRACE("reloadAllField");
+//  TRACE("reloadAllField");
   allParamsLoaded = 0;
   fieldId = 1;
   fieldChunk = 0;
@@ -217,7 +213,7 @@ static FieldProps * getFieldById(const uint8_t id) {
 }
 
 /**
- * Store field at it's location or add new one if not found.
+ * Store field at its location or add new one if not found.
  */
 static void storeField(FieldProps * field) {
   TRACE("storeField id %d", field->id);
@@ -247,17 +243,15 @@ static uint8_t getSemicolonCount(const char * str, const uint8_t len) {
 
 static void incrField(int8_t step) {
   FieldProps * field = getField(lineIndex);
-  uint8_t min = 0, max = 0;
-  if (field->type == TYPE_UINT8) {
+  int32_t min = 0, max = 0;
+  if (field->type <= TYPE_INT16) {
       min = field->valuesOffset;
       max = field->valuesLength;
   } else if (field->type == TYPE_TEXT_SELECTION) {
 //    min = 0;
     max = getSemicolonCount((char *)&valuesBuffer[field->valuesOffset], field->valuesLength);
   }
-  if (/*min +*/ max != 0) { // if actually supported
-    field->value = limit<uint8_t>(min, field->value + step, max);
-  }
+  field->value = limit<int32_t>(min, field->value + step, max);
 }
 
 static void selectField(int8_t step) {
@@ -508,10 +502,9 @@ static void parseDeviceInfoMessage(uint8_t* data) {
     memcpy(&deviceName[0], (char *)&data[3], DEVICE_NAME_MAX_LEN);
     deviceIsELRS_TX = ((memcmp(&data[offset], "ELRS", 4) == 0) && (deviceId == 0xEE)) ? 1 : 0; // SerialNumber = 'E L R S' and ID is TX module
     uint8_t newFieldCount = data[offset+12];
-    TRACE("deviceId match %x, newFieldCount %d", deviceId, newFieldCount);
+//    TRACE("deviceId match %x, newFieldCount %d", deviceId, newFieldCount);
     reloadAllField();
     if (newFieldCount != expectedFieldsCount || newFieldCount == 0) {
-      TRACE("here 2 %d", expectedFieldsCount);
       expectedFieldsCount = newFieldCount;
       clearFields();
       if (newFieldCount == 0) {
@@ -529,19 +522,19 @@ static const FieldFunctions functions[] = {
   { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 2 INT8(1)
   { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 3 UINT16(2)
   { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 4 INT16(3)
-  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
-  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
-  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
-  { .load=nullptr, .save=nullptr, .display=nullptr }, //   nil
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 5 UINT32(4)
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 6 INT32(5)
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 7 UINT64(6)
+  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 8 INT64(7)
   { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 9 FLOAT(8)
   { .load=fieldTextSelectionLoad, .save=fieldTextSelectionSave, .display=fieldTextSelectionDisplay }, // 10 TEXT SELECTION(9)
-  { .load=nullptr, .save=noopSave, .display=fieldStringDisplay }, // 11 STRING(10)editing NOTIMPL
-  { .load=nullptr, .save=fieldFolderOpen, .display=fieldUnifiedDisplay }, // 12 FOLDER(11)
+  { .load=noopLoad, .save=noopSave, .display=fieldStringDisplay }, // 11 STRING(10)editing NOTIMPL
+  { .load=noopLoad, .save=fieldFolderOpen, .display=fieldUnifiedDisplay }, // 12 FOLDER(11)
   { .load=fieldTextSelectionLoad, .save=noopSave, .display=fieldStringDisplay }, // 13 INFO(12)
   { .load=fieldCommandLoad, .save=fieldCommandSave, .display=fieldUnifiedDisplay }, // 14 COMMAND(13)
-  { .load=nullptr, .save=UIbackExec, .display=fieldUnifiedDisplay }, // 15 back(14)
-  { .load=nullptr, .save=fieldDeviceIdSelect, .display=fieldUnifiedDisplay }, // 16 device(15)
-  { .load=nullptr, .save=fieldFolderDeviceOpen, .display=fieldUnifiedDisplay }, // 17 deviceFOLDER(16)
+  { .load=noopLoad, .save=UIbackExec, .display=fieldUnifiedDisplay }, // 15 back(14)
+  { .load=noopLoad, .save=fieldDeviceIdSelect, .display=fieldUnifiedDisplay }, // 16 device(15)
+  { .load=noopLoad, .save=fieldFolderDeviceOpen, .display=fieldUnifiedDisplay }, // 17 deviceFOLDER(16)
 };
 
 static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
@@ -605,19 +598,15 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
 
     if (parent != folderAccess) {
       field->nameLength = 0; // mark as clear
-    } else {
-      if (field->nameLength == 0 && !hidden) {
+    } else if (!hidden) {
+      if (field->nameLength == 0) {
         field->nameLength = offset - 3;
         field->nameOffset = namesBufferOffset;
         memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength);
         namesBufferOffset += field->nameLength;
       }
-      if (functions[field->type].load && !hidden) {
-        functions[field->type].load(field, fieldData, offset);
-      }
-      if (/*field->nameLength != 0 && */!hidden) {
-        storeField(field);
-      }
+      functions[field->type].load(field, fieldData, offset);
+      storeField(field);
     }
 
     if (fieldPopup == 0) {
@@ -842,9 +831,7 @@ static void runDevicePage(event_t event) {
         if (field->type < TYPE_FOLDER or field->type == TYPE_INFO) {
           lcdDrawSizedText(textXoffset, y*textSize+textYoffset, (char *)&namesBuffer[field->nameOffset], field->nameLength, 0);
         }
-        if (functions[field->type].display) {
-          functions[field->type].display(field, y*textSize+textYoffset, attr);
-        }
+        functions[field->type].display(field, y*textSize+textYoffset, attr);
       }
     }
   }
