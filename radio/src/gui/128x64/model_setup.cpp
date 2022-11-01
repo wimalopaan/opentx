@@ -1111,6 +1111,8 @@ void menuModelSetup(event_t event)
             xOffsetBind = 0;
             lcdDrawTextAlignedLeft(y, STR_RECEIVER);
             if (attr) l_posHorz += 1;
+          } else if (isModuleCrossfire(moduleIdx)) {
+            lcdDrawTextAlignedLeft(y, STR_RECEIVER);
           } else {
             lcdDrawTextAlignedLeft(y, STR_RECEIVER_NUM);
           }
