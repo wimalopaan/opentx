@@ -51,7 +51,7 @@ const unsigned char ASTERISK_BITMAP[]  = {
 void drawAlertBox(const char * title, const char * text, const char * action)
 {
   lcdClear();
-#if defined(TRANSLATIONS_PT) // not enough flash space for PT
+#if defined(TRANSLATIONS_PT) || defined(TRANSLATIONS_CZ) // not enough flash space
   lcdDrawRect(2, 2, 32 - 4, 32 - 4);
   lcdDrawText(11, 6, "x", DBLSIZE);
 #else
