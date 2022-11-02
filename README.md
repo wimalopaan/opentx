@@ -14,7 +14,7 @@ For new contributions see [developers guide](https://github.com/OpenI6X/opentx/w
 [How to install](#installation)<br>
 [Features](#features)<br>
 [Navigation](#navigation)<br>
-[Proper shutdown](#shutdown)<br>
+[Proper shutdown (I see square icon)](#shutdown)<br>
 [USB connection](#usb-connection)<br>
 [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
 [All optional hardware connections](#all-optional-hardware-connections)<br>
