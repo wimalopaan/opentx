@@ -25,7 +25,21 @@ For new contributions see [developers guide](https://github.com/OpenI6X/opentx/w
 
 Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 
-## Features 
+## Features
+
+Comparison with original firmware:
+
+|                           | FlySky i6X | OpenTX i6X |
+|---------------------------|------------|------------|
+| Channels                  | 6/10       | 16         |
+| Mixers                    | 3          | 32         |
+| External module protocols | PPM        | PPM, CRSF  |
+| Logical switches          | _          | ✓          |
+| Global variables          | _          | ✓          |
+| Timers                    | _          | ✓          |
+| Nicer sounds              | _          | ✓          |
+| Use trims as buttons      | _          | ✓          |
+| ExpressLRS ready          | _          | ✓          |
 
 * Protocols:
   * AFHDS2A with SBUS, IBUS and extended SBUS16, IBUS16 - 16 channels modes
@@ -41,10 +55,10 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes
 * AUX Serial port with modes:
-  * Telemetry mirror
+  * CRSF Telemetry mirror
   * SBUS Trainer
   * Debug (on DEBUG builds)
-
+  
 ## Navigation
 
 | Key | Function                                                                                           |
