@@ -446,7 +446,7 @@ enum MMRFrskySubtypes {
 };
 
 #if defined(PCBI6X)
-#define HAS_RF_PROTOCOL_FAILSAFE(rf) (1) /*((rf) == RF_I6X_PROTO_AFHDS2A)*/
+#define HAS_RF_PROTOCOL_FAILSAFE(rf) ((rf) == RF_I6X_PROTO_AFHDS2A)
 #define HAS_RF_PROTOCOL_MODELINDEX(rf) (1)
 #else
 #define HAS_RF_PROTOCOL_FAILSAFE(rf) ((rf) == RF_PROTO_X16)

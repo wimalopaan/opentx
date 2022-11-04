@@ -56,7 +56,7 @@ static uint8_t *valuesBuffer = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE];
 uint8_t valuesBufferOffset = 0;
 
 // last 25b are also used for popup messages
-static constexpr uint8_t FIELD_DATA_BUFFER_SIZE = 172; // 172+
+static constexpr uint8_t FIELD_DATA_BUFFER_SIZE = 174; // 174+
 //static uint8_t *fieldData = &reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE];
 static uint8_t fieldData[FIELD_DATA_BUFFER_SIZE];
 static constexpr uint8_t POPUP_MSG_OFFSET = FIELD_DATA_BUFFER_SIZE - 24 - 1;
