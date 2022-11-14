@@ -471,21 +471,6 @@ void auxSerialStop(void);
 #endif
 #define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_PE) // | USART_FLAG_FE, USART_FLAG_NE
 
-// BT driver
-#define BLUETOOTH_DEFAULT_BAUDRATE      115200
-
-void bluetoothInit(uint32_t baudrate);
-void bluetoothWriteWakeup(void);
-uint8_t bluetoothIsWriting(void);
-void bluetoothDone(void);
-
-// LED driver
-void ledInit(void);
-void ledOff(void);
-void ledRed(void);
-void ledGreen(void);
-void ledBlue(void);
-
 // LCD driver
 #define LCD_W                           128
 #define LCD_H                           64
@@ -497,7 +482,6 @@ void ledBlue(void);
 #define lcdRefreshWait()
 
 void lcdInit(void);
-void lcdInitFinish(void);
 void lcdOff(void);
 void lcdSetRefVolt(unsigned char val);
 void lcdSetContrast(void);
