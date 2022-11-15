@@ -10,7 +10,6 @@ if(PCB STREQUAL I6X)
   set(CPU_TYPE_FULL STM32F072)  # for size report
   set(LINKER_SCRIPT targets/flysky/STM32F072VB_FLASH.ld)
   set(HAPTIC NO)
-  # set(LUA_EXPORT lua_export_x7)
   set(FLAVOUR i6x)
   set(NANO YES)
   set(FRSKY_HUB NO)
@@ -26,6 +25,7 @@ if(PCB STREQUAL I6X)
   set(DEFAULT_TEMPLATE_SETUP "0" CACHE STRING "Default channel order")
 
   add_definitions(-DTELEMETRY_FRSKY)
+  # add_definitions(-DGPS)
   add_definitions(-DCROSSFIRE)
   # add_definitions(-DNAVIGATION_POT1) # ~324B
   # add_definitions(-DNAVIGATION_POT2)
@@ -46,9 +46,13 @@ endif()
 
 if(PCBI6X_ELRSV3 STREQUAL YES)
   add_definitions(-DPCBI6X_ELRSV3)
-else() # features disabled for ELRSV3
-  add_definitions(-DPCBI6X_USB_MSD) # 3620B
+  set(TARGET_SRC
+    ${TARGET_SRC}
+    tools/elrsV3.cpp
+    )
 endif()
+
+add_definitions(-DPCBI6X_USB_MSD) # 3620B
 
 set(TARGET_SRC
   ${TARGET_SRC}
@@ -102,7 +106,6 @@ set(TARGET_SRC
   adc_driver.cpp
   i2c_driver.cpp
   crc_driver.cpp
-  tools/elrsV3.cpp
   ../common/arm/stm32/mixer_scheduler_driver.cpp
   )
 

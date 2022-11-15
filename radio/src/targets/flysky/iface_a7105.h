@@ -106,7 +106,7 @@ extern uint8_t  bind_phase;
 extern uint8_t  hopping_frequency[AFHDS2A_NUMFREQ];
 extern uint8_t  hopping_frequency_no;
 //extern uint8_t  rx_tx_addr[4];
-extern uint8_t  rx_id[5];
+//extern uint8_t  rx_id[5];
 extern uint8_t  option;   // option value should be between 0 and 70 which gives a value between 50 and 400Hz
 extern uint8_t  RX_num;
 extern uint8_t  sub_protocol;
