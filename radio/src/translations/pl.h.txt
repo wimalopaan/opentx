@@ -109,12 +109,12 @@
 
 #if defined(PCBI6X)
 #define LEN_USBDETECTMODES             TR("\004", "\004")
-#define TR_USBDETECTMODES              TR("Auto""Once", "Auto""Once")
+#define TR_USBDETECTMODES              TR("Auto""Raz\0", "Auto""Raz\0")
 #endif
 
 #define LEN_USBMODES                   TR("\006", "\010")
 #if defined(PCBI6X)
-#define TR_USBMODES                    TR("Ask\0  ""Joyst\0""Storag", "Ask\0    ""Joystick""Storage\0")
+#define TR_USBMODES                    TR("Pytaj\0""Joyst\0""Dane\0 ", "Ask\0    ""Joystick""Storage\0")
 #else
 #define TR_USBMODES                    TR("Ask\0  ""Joyst\0""Storag""Serial", "Ask\0    ""Joystick""Storage\0""Serial\0 ")
 #endif
@@ -136,7 +136,7 @@
 #define TR_DSM_PROTOCOLS       "LP45""DSM2""DSMX"
 
 #define LEN_I6X_PROTOCOLS      "\004"
-#define TR_I6X_PROTOCOLS       "OFF\0""FS2A"
+#define TR_I6X_PROTOCOLS       "WYŁ\0""FS2A"
 
 #define LEN_MULTI_PROTOCOLS    "\006"
 #define TR_MULTI_PROTOCOLS     "FlySky""Hubsan""FrSky\0""Hisky\0""V2x2\0 ""DSM\0 ""Devo\0 ""YD717\0""KN\0 ""SymaX\0""SLT\0 ""CX10\0 ""CG023\0""Bayang""ESky\0 ""MT99XX""MJXq\0 ""Shenqi""FY326\0""SFHSS\0""J6 PRO""FQ777\0""Assan\0""Hontai""OpnLrs""FS 2A\0""Q2x2\0 ""Walk.\0""Q303\0 ""GW008\0""DM002\0""Cabell""Esy150""H8 3D\0""Corona""CFlie\0""Hitec\0""WFly\0 ""Bugs\0 ""BugMin""Traxas""NC1701""E01X\0 ""V911S\0""GD00X\0"
@@ -685,9 +685,9 @@
 #define TR_MINUTEBEEP          TR(INDENT "Minuta", INDENT "PikCoMinutę")
 #define TR_BEEPCOUNTDOWN       INDENT "Odliczanie"
 #define TR_PERSISTENT          TR(INDENT "Dokł.", INDENT "Dokładny")
-#define TR_BACKLIGHT_LABEL     "Podświetl"
+#define TR_BACKLIGHT_LABEL     "Podświetlenie"
 #define TR_BLDELAY             INDENT"Czas trwania"
-#define TR_BLONBRIGHTNESS      INDENT"Jasnośc wł."
+#define TR_BLONBRIGHTNESS      INDENT"Jasność wł."
 #define TR_BLOFFBRIGHTNESS     INDENT"Jasność wył."
 #define TR_BLCOLOR             INDENT "Color"
 #define TR_SPLASHSCREEN        "Logo ekranu"
@@ -727,7 +727,7 @@
 #define TR_TXnRX               "Tx:\0Rx:"
 #define OFS_RX                 4
 #define TR_ACCEL               "Acc:"
-#define TR_NODATA              CENTER "BrakDAN"
+#define TR_NODATA              CENTER "Brak danych"
 #define TR_TOTTM1TM2THRTHP     "\037\146SES\036TM1\037\146TM2\036THR\037\146TH%"
 #define TR_TMR1LATMAXUS        "Tmr1Lat max\037\124us"
 #define STR_US                 (STR_TMR1LATMAXUS+13)
@@ -955,7 +955,7 @@
 #define TR_FLASH_EXTERNAL_MODULE       "Flash external module"
 #define TR_FIRMWARE_UPDATE_ERROR TR("FW update Error","Firmware update error")
 #define TR_WRITING             "\032Zapis...  "
-#define TR_CONFIRM_FORMAT      "Zatwierdź Format?"
+#define TR_CONFIRM_FORMAT      "Zatwierdź format?"
 #define TR_INTERNALRF          "Wewn.Moduł RF"
 #define TR_EXTERNALRF          "Zewn.Moduł RF"
 #define TR_FAILSAFE            TR(INDENT"Failsafe",INDENT"Tryb Failsafe")
