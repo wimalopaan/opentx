@@ -2,6 +2,7 @@ option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
 option(PCBI6X_ELRSV3 "Enable ExpressLRS v3 configuration tool" NO) # ~4kB
 option(PCBI6X_USB_VBUS "Remove manual USB connection, just auto using VBUS, requires wiring USB VBUS to PA15 pad" NO)
 option(PCBI6X_BACKLIGHT_MOD "Enable adjustable backlight, requires wiring BL pad to PC9 pad" NO)
+option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" 17)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
@@ -33,8 +34,12 @@ if(PCB STREQUAL I6X)
   add_definitions(-DPWR_BUTTON_${PWR_BUTTON})
   add_definitions(-DEEPROM_VARIANT=0)
   add_definitions(-DSOFTWARE_VOLUME)
-  add_definitions(-DAFHDS2A_LQI_CH=17) # inject LQI at channel
 endif()
+
+if(NOT AFHDS2A_LQI_CH)
+  set(AFHDS2A_LQI_CH 17)
+endif()
+add_definitions(-DAFHDS2A_LQI_CH=${AFHDS2A_LQI_CH})
 
 if(PCBI6X_USB_VBUS STREQUAL YES)
   add_definitions(-DPCBI6X_USB_VBUS)
