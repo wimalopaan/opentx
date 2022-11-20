@@ -7,7 +7,7 @@
 
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
 
-For new contributions see [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
+For new contributions and how to build details see [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
 
 ## Table of Contents
 
@@ -29,17 +29,19 @@ Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 
 Comparison with original firmware:
 
-|                           | FlySky i6X | OpenTX i6X |
-|---------------------------|------------|------------|
-| Channels                  | 6/10       | 16         |
-| Mixers                    | 3          | 32         |
-| External module protocols | PPM        | PPM, CRSF  |
-| Logical switches          | _          | ✓          |
-| Global variables          | _          | ✓          |
-| Timers                    | _          | ✓          |
-| Nicer sounds              | _          | ✓          |
-| Use trims as buttons      | _          | ✓          |
-| ExpressLRS ready          | _          | ✓          |
+| Feature                   | FlySky i6X | OpenTX i6X                   |
+|---------------------------|------------|------------------------------|
+| Channels                  | 6/10       | 16                           |
+| Mixers                    | 3          | 32                           |
+| Models                    | 20         | 16 / unlimited<sup>[1]</sup> |
+| External module protocols | PPM        | PPM, CRSF                    |
+| Logical switches          | _          | ✓                            |
+| Global variables          | _          | ✓                            |
+| Timers                    | _          | ✓                            |
+| Nicer sounds              | _          | ✓                            |
+| Use trims as buttons      | _          | ✓                            |
+| ExpressLRS ready          | _          | ✓                            |
+<small>[1] Unlimited by using USB mass storage mode eeprom backup restore.</small>
 
 * Protocols:
   * AFHDS2A with SBUS, IBUS and extended SBUS16, IBUS16 - 16 channels modes
@@ -71,7 +73,7 @@ Comparison with original firmware:
 
 ## Shutdown
 
-FlySky FS-i6X don't have a software controlled shutdown button, therefore do not switch off you device when you see small square icon in top right corner of main screen - it indicates that there are settings not yet saved. Wait until it disappears or use "Save all" option from main screen popup menu.
+FlySky FS-i6X don't have a software controlled shutdown button, therefore do not switch off radio when you see `▫` icon in top right corner of main screen - it indicates that settings are not yet saved. Wait until it disappears or use "Save all" option from main screen popup menu.
 
 When to use "Save all" option:
 * When you don't want to wait until square icon disapper before shutdown.
