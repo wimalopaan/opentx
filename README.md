@@ -41,7 +41,8 @@ Comparison with original firmware:
 | Nicer sounds              | _          | ✓                            |
 | Use trims as buttons      | _          | ✓                            |
 | ExpressLRS ready          | _          | ✓                            |
-<small>[1] Unlimited by using USB mass storage mode eeprom backup restore.</small>
+
+<sup>[1] Unlimited by using USB mass storage mode eeprom backup restore.</sup>
 
 * Protocols:
   * AFHDS2A with SBUS, IBUS and extended SBUS16, IBUS16 - 16 channels modes
