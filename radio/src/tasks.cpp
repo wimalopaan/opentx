@@ -164,13 +164,8 @@ TASK_FUNCTION(mixerTask) {
         usbJoystickUpdate();
       }
 #endif
-      /**
-       * This is a workaround for PCBI6X
-       * When HEART_WDT_CHECK (int + ext module) == 7
-       * then it fails if heartbeat is up to 3 on internal module.
-       * because pulses logic is custom i have made this condition also custom.
-       */
-      if (heartbeat == HEART_WDT_CHECK || heartbeat == 3) {
+
+      if (heartbeat == HEART_WDT_CHECK) {
         wdt_reset();
         heartbeat = 0;
       }
