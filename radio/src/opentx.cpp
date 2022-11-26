@@ -892,7 +892,7 @@ void checkAll() {
   checkSDVersion();
 #endif
 
-#if !defined(PCBI6X)
+#if defined(SDCARD)
   if (g_model.displayChecklist && modelHasNotes()) {
     readModelNotes();
   }

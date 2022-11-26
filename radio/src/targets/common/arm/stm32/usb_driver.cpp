@@ -117,7 +117,7 @@ void usbStart()
 #endif
       break;
 #endif
-#if defined(USB_SERIAL) && !defined(PCBI6X)
+#if defined(USB_SERIAL)
     case USB_SERIAL_MODE:
       // initialize USB as CDC device (virtual serial port)
 #if defined(STM32F0)
