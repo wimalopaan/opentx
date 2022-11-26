@@ -53,7 +53,7 @@ Comparison with original firmware:
     * ExpressLRS V3 configuration (ELRSV3.lua port)
 * 16 channels
 * Telemetry
-* Adjustable backlight brightness level (requires [basic mod](#all-optional-hardware-connections) & backlight_mod build)
+* Adjustable backlight brightness level (requires basic [modification](#adjustable-backlight-level-mod) & backlight_mod build)
 * Audio tones, alarms and vario sound custom implementation
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes
@@ -83,8 +83,8 @@ When to use "Save all" option:
 
 ## USB connection
 
-FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. Without the modification you have to go to General settings and set USB Detect to "Once" everytime you're connecting USB.<br>
-Auto connection detection can be added manually by wiring `PA15` to USB VBUS preferably with a resistor (I have used 1K).
+FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. Without modification, you need to press OK on main screen and select "USB Connect" everytime you've connected USB.<br>
+Automatic connection detection can be added by wiring `PA15` pad to USB VBUS preferably with a resistor (I have used 1K).
 
 
 ## Mode 1 & Mode 3 radios
@@ -112,8 +112,12 @@ Wire `PC9` and `BL` pads together.
 
 ## Contributors
 
-* ExpressLRS V2/V3 config, USB support, sound support, bootloader, backporting, bugfixing - Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)) ongoing collaboration.
-* All the RF code was taken from the great KotelloRC's [erfly6: Er9X for i6 and i6x](https://bitbucket.org/KotelloRC/erfly6/src/master/).
+* Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)), continues Mariano's work, added sound, USB, ExpressLRS V2/V3 configuration, telemetry mirror, SBUS trainer, new/fixed drivers, ports, bugfixes.
+* Mariano ([marianomd](https://github.com/marianomd)), continued Kuba's work and made it up to useable condition! Added AFHDS2A, PPM, CRSF.
+* Kuba ([qba667](https://github.com/qba667)), started this work and made this project possible, it is forked from his repo.
+* [wimalopaan](https://github.com/wimalopaan) added 16 channels SBUS16 / IBUS16 modes.
+* The internal RF code was taken from the great KotelloRC's [erfly6: Er9X for i6 and i6x](https://bitbucket.org/KotelloRC/erfly6/src/master/).
+* Some of the internal RF fixes are a result of analysing [pascallanger's](https://github.com/pascallanger) [DIY-Multiprotocol-TX-Module](https://github.com/pascallanger/DIY-Multiprotocol-TX-Module).
+* Some of the ports are from [EdgeTX](https://github.com/EdgeTX/edgetx/).
 * ADC code taken from [OpenGround](https://github.com/fishpepper/OpenGround).
-* This work is based on Jakub's ([qba667](https://github.com/qba667)) work and is forked from his repo.
 * All the contributors of [OpenTX](https://github.com/opentx/opentx/). 
