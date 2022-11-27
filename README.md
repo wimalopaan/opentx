@@ -115,7 +115,7 @@ Wire `PC9` and `BL` pads together.
 * Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)), continues Mariano's work, added sound, USB, ExpressLRS V2/V3 configuration, telemetry mirror, SBUS trainer, new/fixed drivers, ports, bugfixes.
 * Mariano ([marianomd](https://github.com/marianomd)), continued Kuba's work and made it up to useable condition! Added AFHDS2A, PPM, CRSF.
 * Kuba ([qba667](https://github.com/qba667)), started this work and made this project possible, it is forked from his repo.
-* [wimalopaan](https://github.com/wimalopaan) added 16 channels SBUS16 / IBUS16 modes.
+* Wilhelm ([wimalopaan](https://github.com/wimalopaan)) added 16 channels SBUS16 / IBUS16 modes.
 * The internal RF code was taken from the great KotelloRC's [erfly6: Er9X for i6 and i6x](https://bitbucket.org/KotelloRC/erfly6/src/master/).
 * Some of the internal RF fixes are a result of analysing [pascallanger's](https://github.com/pascallanger) [DIY-Multiprotocol-TX-Module](https://github.com/pascallanger/DIY-Multiprotocol-TX-Module).
 * ExpressLRS configurator is based on elrsV2/V3.lua from [ExpressLRS](https://github.com/ExpressLRS/ExpressLRS).
