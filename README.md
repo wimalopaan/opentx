@@ -83,7 +83,7 @@ When to use "Save all" option:
 
 ## USB connection
 
-FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. Without modification, you need to press OK on main screen and select "USB Connect" everytime you've connected USB.<br>
+FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. Without modification, you need to press OK on main screen and select "USB Connect" everytime you've connected USB (In version 1.8.0 or earlier it's in: Radio Setup -> "USB Detect").<br>
 Automatic connection detection can be added by wiring `PA15` pad to USB VBUS preferably with a resistor (I have used 1K).
 
 
@@ -118,6 +118,7 @@ Wire `PC9` and `BL` pads together.
 * [wimalopaan](https://github.com/wimalopaan) added 16 channels SBUS16 / IBUS16 modes.
 * The internal RF code was taken from the great KotelloRC's [erfly6: Er9X for i6 and i6x](https://bitbucket.org/KotelloRC/erfly6/src/master/).
 * Some of the internal RF fixes are a result of analysing [pascallanger's](https://github.com/pascallanger) [DIY-Multiprotocol-TX-Module](https://github.com/pascallanger/DIY-Multiprotocol-TX-Module).
+* ExpressLRS configurator is based on elrsV2/V3.lua from [ExpressLRS](https://github.com/ExpressLRS/ExpressLRS).
 * Some of the ports are from [EdgeTX](https://github.com/EdgeTX/edgetx/).
 * ADC code taken from [OpenGround](https://github.com/fishpepper/OpenGround).
 * All the contributors of [OpenTX](https://github.com/opentx/opentx/). 
