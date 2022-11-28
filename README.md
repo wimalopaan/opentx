@@ -34,7 +34,7 @@ Comparison with original firmware:
 | Channels                  | 6/10       | 16                           |
 | Mixers                    | 3          | 32                           |
 | Models                    | 20         | 16 / unlimited<sup>[1]</sup> |
-| External module protocols | PPM        | PPM, CRSF                    |
+| Protocols                 | AFHDS, AFHDS2A, PPM | AFHDS2A, PPM, CRSF                    |
 | Logical switches          | _          | ✓                            |
 | Global variables          | _          | ✓                            |
 | Timers                    | _          | ✓                            |
