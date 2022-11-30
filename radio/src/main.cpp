@@ -341,8 +341,8 @@ void handleGui(event_t event) {
     // todo     drawStatusLine(); here???
   }
   else
-#elif defined(PCBI6X_ELRSV3)
-  if (globalData.cScriptRunning == 1) {
+#elif defined(PCBI6X) && defined(RADIO_TOOLS)
+  if (globalData.cToolRunning == 1) {
     // standalone c script is active
     menuHandlers[menuLevel](event);
   }

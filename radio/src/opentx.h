@@ -202,7 +202,7 @@
   #define IS_SLAVE_TRAINER()           (g_model.trainerMode == TRAINER_MODE_SLAVE)
 #endif
 
-#if defined(PCBI6X_ELRSV3) || defined(LUA) || defined(PXX2) || defined(MULTIMODULE)
+#if defined(PCBI6X_ELRSV3) || defined(PCBI6X_HELLO) || defined(LUA) || defined(PXX2) || defined(MULTIMODULE)
   #define RADIO_TOOLS
 #endif
 
@@ -574,7 +574,7 @@ PACK(struct GlobalData {
   uint8_t sdcardPresent:1;
 #if defined(PCBI6X)
   uint8_t usbConnect:1;
-  uint8_t cScriptRunning:1;
+  uint8_t cToolRunning:1;
   uint8_t spare:4;
 #else
   uint8_t spare:6;
@@ -1177,11 +1177,13 @@ union ReusableBuffer
     uint8_t stickMode;
   } generalSettings;
 
+#if defined(SDCARD)
   struct {
     char filename[TEXT_FILENAME_MAXLEN];
     char lines[NUM_BODY_LINES][LCD_COLS + 1];
     int linesCount;
   } viewText;
+#endif
 
   struct {
     bool longNames;

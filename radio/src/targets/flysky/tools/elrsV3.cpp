@@ -115,8 +115,9 @@ uint8_t fieldChunk = 0;
 
 static char goodBadPkt[11] = "?/???    ?";
 uint8_t elrsFlags = 0;
-static char *elrsFlagsInfo = (char *)&reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE + DEVICES_MAX_COUNT + DEVICE_NAME_MAX_LEN]; // 16
-//static char elrsFlagsInfo[16] = "";
+static constexpr uint8_t ELRS_FLAGS_INFO_MAX_LEN = 20;
+static char *elrsFlagsInfo = (char *)&reusableBuffer.MSC_BOT_Data[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE + DEVICES_MAX_COUNT + DEVICE_NAME_MAX_LEN];
+//static char elrsFlagsInfo[ELRS_FLAGS_INFO_MAX_LEN] = "";
 uint8_t expectedFieldsCount = 0;
 uint8_t backButtonId = 2;
 tmr10ms_t devicesRefreshTimeout = 50;
@@ -136,7 +137,6 @@ static constexpr uint8_t textXoffset   =  0;
 static constexpr uint8_t textYoffset   =  3;
 static constexpr uint8_t textSize      =  8;
 
-#define tostring(c)       (char)(c + 48)
 #define getTime           get_tmr10ms
 #define EVT_VIRTUAL_EXIT  EVT_KEY_BREAK(KEY_EXIT)
 #define EVT_VIRTUAL_ENTER EVT_KEY_BREAK(KEY_ENTER)
@@ -716,7 +716,7 @@ static void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length =
   } else if (time > devicesRefreshTimeout && expectedFieldsCount < 1) {
     devicesRefreshTimeout = time + 100;
     crossfireTelemetryPing();
-  } else if (time > fieldTimeout && expectedFieldsCount != 0/* && !edit*/) {
+  } else if (time > fieldTimeout && expectedFieldsCount != 0) {
     if (allParamsLoaded < 1 || statusComplete == 0) {
       crossfireTelemetryPush4(0x2C, fieldId, fieldChunk);
       fieldTimeout = time + 50; // 0.5s
@@ -742,7 +742,7 @@ static void lcd_title() {
 
   const uint8_t barHeight = 9;
   if (titleShowWarn) {
-    lcdDrawChar(LCD_W, 1, tostring(elrsFlags), RIGHT);
+    lcdDrawNumber(LCD_W, 1, elrsFlags, RIGHT);
   } else {
     lcdDrawText(LCD_W - 1, 1, goodBadPkt, RIGHT);
     lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS);
@@ -754,7 +754,7 @@ static void lcd_title() {
   } else {
     lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
     if (titleShowWarn) {
-      lcdDrawSizedText(textXoffset, 1, elrsFlagsInfo, 16, INVERS);
+      lcdDrawSizedText(textXoffset, 1, elrsFlagsInfo, ELRS_FLAGS_INFO_MAX_LEN, INVERS);
     } else {
       lcdDrawSizedText(textXoffset, 1, (allParamsLoaded == 1) ? (char *)&deviceName[0] : "Loading...", DEVICE_NAME_MAX_LEN, INVERS);
     }
@@ -764,7 +764,7 @@ static void lcd_title() {
 static void lcd_warn() {
   lcdDrawText(textXoffset, textSize*2, "Error:");
   lcdDrawText(textXoffset, textSize*3, elrsFlagsInfo);
-  lcdDrawText(LCD_W/2, textSize*5, "[OK]", BLINK + INVERS + CENTERED);
+  lcdDrawText(LCD_W/2, textSize*5, TR_ENTER, BLINK + INVERS + CENTERED);
 }
 
 static void handleDevicePageEvent(event_t event) {
@@ -922,16 +922,16 @@ void ELRSV3_stop() {
   deviceId = 0xEE;
   handsetId = 0xEF;
 
-  if (globalData.cScriptRunning) {
-    globalData.cScriptRunning = 0;
+  if (globalData.cToolRunning) {
+    globalData.cToolRunning = 0;
     memclear(reusableBuffer.MSC_BOT_Data, 512);
     popMenu();
   }
 }
 
 void ELRSV3_run(event_t event) {
-  if (globalData.cScriptRunning == 0) {
-    globalData.cScriptRunning = 1;
+  if (globalData.cToolRunning == 0) {
+    globalData.cToolRunning = 1;
     registerCrossfireTelemetryCallback(refreshNext);
   }
 
