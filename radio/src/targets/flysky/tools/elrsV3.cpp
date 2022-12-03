@@ -242,7 +242,7 @@ static void storeField(FieldProps * field) {
   if (storedField == nullptr) {
     storedField = &fields[allocatedFieldsCount];
     allocatedFieldsCount++;
-    TRACE("allocFieldsCount %d", allocatedFieldsCount);
+//    TRACE("allocFieldsCount %d", allocatedFieldsCount);
   }
   memcpy(storedField, field, sizeof(FieldProps));
 }
@@ -599,8 +599,8 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     fieldChunk = fieldChunk + 1;
     statusComplete = 0;
   } else {
-    TRACE("%d, %s, %d", fieldId, &fieldData[2], fieldDataLen);
-    DUMP(fieldData, fieldDataLen);
+    TRACE("%d %s %d", fieldId, &fieldData[2], fieldDataLen);
+//    DUMP(fieldData, fieldDataLen);
     fieldChunk = 0;
     if (fieldDataLen < 4) {
       fieldDataLen = 0;
@@ -614,7 +614,7 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     uint8_t offset;
 
     if (type > TYPE_COMMAND) {
-      TRACE("type %d", type);
+//      TRACE("type %d", type);
       return;
     }
 
@@ -645,9 +645,9 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     if (fieldPopup == 0) {
       if (fieldId == expectedFieldsCount) { // if we have loaded all params
         TRACE("namesBufferOffset %d", namesBufferOffset);
-        DUMP(namesBuffer, NAMES_BUFFER_SIZE);
+//        DUMP(namesBuffer, NAMES_BUFFER_SIZE);
         TRACE("valuesBufferOffset %d", valuesBufferOffset);
-        DUMP(valuesBuffer, VALUES_BUFFER_SIZE);
+//        DUMP(valuesBuffer, VALUES_BUFFER_SIZE);
         TRACE("allocatedFieldsCount %d", allocatedFieldsCount);
         allParamsLoaded = 1;
         fieldId = 1;
@@ -701,7 +701,7 @@ static void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length =
   } else if (command == 0x2B && folderAccess != otherDevicesId /* !devicesFolderOpened */) {
     parseParameterInfoMessage(data, length);
     if (allParamsLoaded < 1 || statusComplete == 0) {
-      fieldTimeout = 0;
+      fieldTimeout = getTime() + 1; // be gentle to CPU and TX, wait at least 10ms
     }
   } else if (command == 0x2E) {
     parseElrsInfoMessage(data);
