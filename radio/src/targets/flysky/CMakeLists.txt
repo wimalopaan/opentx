@@ -7,7 +7,11 @@ option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" 17)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
-  set(SPLASH "OFF") # ~628B
+  if(TRANSLATIONS STREQUAL EN)
+    set(SPLASH "ON") # ~650B
+  else()
+    set(SPLASH "OFF")
+  endif()
   set(CPU_TYPE STM32F0)
   set(CPU_TYPE_FULL STM32F072)  # for size report
   set(LINKER_SCRIPT targets/flysky/STM32F072VB_FLASH.ld)
