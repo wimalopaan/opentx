@@ -45,9 +45,9 @@ struct FieldProps {
   };
   union {
     uint8_t valuesLength;
-    uint8_t max;
     uint8_t lastStatus;
   };
+  uint8_t max;
   uint8_t unitOffset;
   uint8_t unitLength;
   uint8_t parent;
@@ -254,23 +254,15 @@ static FieldProps * getField(const uint8_t line) {
   return &fields[line - 1];
 }
 
-static uint8_t getSemicolonCount(const char * str, const uint8_t len) {
-  uint8_t count = 0;
-  for (uint32_t i = 0; i < len; i++) {
-    if (str[i] == ';') count++;
-  }
-  return count;
-}
-
 static void incrField(int8_t step) {
   FieldProps * field = getField(lineIndex);
   int32_t min = 0, max = 0;
   if (field->type <= TYPE_INT16) {
-      min = field->min;
-      max = field->max;
+    min = field->min;
+    max = field->max;
   } else if (field->type == TYPE_TEXT_SELECTION) {
 //    min = 0;
-    max = getSemicolonCount((char *)&valuesBuffer[field->valuesOffset], field->valuesLength);
+    max = field->max;
   }
   field->value = limit<int32_t>(min, field->value + step, max);
 }
@@ -356,6 +348,7 @@ static void fieldUint8Save(FieldProps * field) {
 static void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   uint8_t len = strlen((char*)&data[offset]);
   field->value = data[offset + len + 1];
+  field->max = data[offset + len + 3];
   unitSave(field, data, offset + len + 5);
   strShorten((char*)&data[offset], 12);
   len = strlen((char*)&data[offset]);
@@ -695,18 +688,20 @@ static void parseElrsInfoMessage(uint8_t* data) {
   tiny_sprintf(goodBadPkt, "%u/%u   %c", 3, badPkt, goodPkt, state);
 }
 
-static void refreshNext(uint8_t command = 0, uint8_t* data = 0, uint8_t length = 0) {
+static void refreshNextCallback(uint8_t command, uint8_t* data, uint8_t length) {
   if (command == 0x29) {
     parseDeviceInfoMessage(data);
   } else if (command == 0x2B && folderAccess != otherDevicesId /* !devicesFolderOpened */) {
     parseParameterInfoMessage(data, length);
     if (allParamsLoaded < 1 || statusComplete == 0) {
-      fieldTimeout = getTime() + 1; // be gentle to CPU and TX, wait at least 10ms
+      fieldTimeout = 0;
     }
   } else if (command == 0x2E) {
     parseElrsInfoMessage(data);
   }
+}
 
+static void refreshNext() {
   tmr10ms_t time = getTime();
   if (fieldPopup != nullptr) {
     if (time > fieldTimeout && fieldPopup->status != STEP_CONFIRM) {
@@ -857,7 +852,7 @@ static void runDevicePage(event_t event) {
     for (uint32_t y = 1; y < maxLineIndex+2; y++) {
       if (pageOffset+y > allocatedFieldsCount) break;
       field = getField(pageOffset+y);
-      if (field == 0) {
+      if (field == nullptr) {
         break;
       } else if (field->nameLength > 0) {
         uint8_t attr = (lineIndex == (pageOffset+y)) ? ((edit && BLINK) + INVERS) : 0;
@@ -922,17 +917,17 @@ void ELRSV3_stop() {
   deviceId = 0xEE;
   handsetId = 0xEF;
 
-  if (globalData.cToolRunning) {
+//  if (globalData.cToolRunning) {
     globalData.cToolRunning = 0;
     memclear(reusableBuffer.MSC_BOT_Data, 512);
     popMenu();
-  }
+//  }
 }
 
 void ELRSV3_run(event_t event) {
   if (globalData.cToolRunning == 0) {
     globalData.cToolRunning = 1;
-    registerCrossfireTelemetryCallback(refreshNext);
+    registerCrossfireTelemetryCallback(refreshNextCallback);
   }
 
   if (event == EVT_KEY_LONG(KEY_EXIT)) {
