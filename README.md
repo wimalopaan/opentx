@@ -16,6 +16,7 @@ For new contributions and how to build details see [developers guide](https://gi
 [Navigation](#navigation)<br>
 [Proper shutdown (I see square icon)](#shutdown)<br>
 [USB connection](#usb-connection)<br>
+[Powering by 2S Li-Po/Li-ion/18650](#powering-by-2s-li-poli-ion18650)<br>
 [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
 [All optional hardware connections](#all-optional-hardware-connections)<br>
 [Adjustable backlight level mod](#adjustable-backlight-level-mod)<br>
@@ -86,6 +87,9 @@ When to use "Save all" option:
 FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. Without modification, you need to press OK on main screen and select "USB Connect" everytime you've connected USB (In version 1.8.0 or earlier it's in: Radio Setup -> "USB Detect").<br>
 Automatic connection detection can be added by wiring `PA15` pad to USB VBUS preferably with a resistor (I have used 1K).
 
+## Powering by 2S Li-Po/Li-ion/18650
+
+FlySky i6X is officially rated for up to 6V, internal regulators are rated for up to 6.5V, but i don't guarantee that. Running anything above will damage your radio. Use step-down regulator to lower voltage to safe values.
 
 ## Mode 1 & Mode 3 radios
 
