@@ -1,17 +1,19 @@
-# OpenI6X: OpenTX for Flysky FS-i6X
-
 ![OpenI6X](https://circleci.com/gh/OpenI6X/opentx.svg?style=shield)
 [![Release](https://img.shields.io/github/v/release/OpenI6X/opentx?include_prereleases)](https://github.com/OpenI6X/opentx/releases/latest)
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
 [![Discord](https://img.shields.io/discord/973289741862727741.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/3vKfYNTVa2)
 
-You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
+![Banner](https://github.com/OpenI6X/opentx/doc/flysky/banner.png?raw=true)
 
-For new contributions and how to build details see [developers guide](https://github.com/OpenI6X/opentx/wiki/Contribute).
+## Welcome to Openi6X!
+###OpenTX for Flysky FS-i6X with a touch of EdgeTX
+
+You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
 
 ## Table of Contents
 
-[How to install](#installation)<br>
+[How to install, upgrade or restore original FW](https://github.com/OpenI6X/opentx/wiki) <br>
+[Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Contribute) <br>
 [Features](#features)<br>
 [Navigation](#navigation)<br>
 [Proper shutdown (I see square icon)](#shutdown)<br>
@@ -20,11 +22,8 @@ For new contributions and how to build details see [developers guide](https://gi
 [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
 [All optional hardware connections](#all-optional-hardware-connections)<br>
 [Adjustable backlight level mod](#adjustable-backlight-level-mod)<br>
-[Contributors](#contributors)<br>
+[Credits](#credits)<br>
 
-## Installation
-
-Go to the [wiki](https://github.com/OpenI6X/opentx/wiki) for detailed steps.
 
 ## Features
 
@@ -114,7 +113,7 @@ Wire `PC9` and `BL` pads together.
 
 ![hw](https://github.com/OpenI6X/opentx/raw/master/doc/flysky/backlight_mod.jpg?raw=true)
 
-## Contributors
+## Credits
 
 * Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)), continues Mariano's work, added sound, USB, ExpressLRS V2/V3 configuration, telemetry mirror, SBUS trainer, new/fixed drivers, ports, bugfixes.
 * Mariano ([marianomd](https://github.com/marianomd)), continued Kuba's work and made it up to useable condition! Added AFHDS2A, PPM, CRSF.
