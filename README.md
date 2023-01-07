@@ -3,10 +3,10 @@
 [![GitHub all releases](https://img.shields.io/github/downloads/OpenI6X/opentx/total)](https://github.com/OpenI6X/opentx/releases)
 [![Discord](https://img.shields.io/discord/973289741862727741.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/3vKfYNTVa2)
 
-![Banner](https://github.com/OpenI6X/opentx/doc/flysky/banner.png?raw=true)
+![Banner](https://github.com/OpenI6X/opentx/blob/master/doc/flysky/banner.png?raw=true)
 
 ## Welcome to Openi6X!
-###OpenTX for Flysky FS-i6X with a touch of EdgeTX
+### OpenTX for Flysky FS-i6X with a touch of EdgeTX
 
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
 
