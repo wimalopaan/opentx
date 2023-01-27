@@ -58,7 +58,7 @@ Comparison with original firmware:
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes
 * AUX Serial port with modes:
-  * CRSF Telemetry mirror
+  * Telemetry mirror for AFHDS2A and CRSF
   * SBUS Trainer
   * Debug (on DEBUG builds)
   
