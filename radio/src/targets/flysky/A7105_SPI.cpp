@@ -25,9 +25,9 @@ volatile uint8_t RadioState;
 uint8_t protocol_flags=0,protocol_flags2=0;
 uint8_t prev_power=0xFD; // unused power value
 
-//uint8_t  packet[AFHDS2A_TXPACKET_SIZE];
 // reuse telemetryRxBuffer for native AFHDS2A support
-uint8_t *packet = telemetryRxBuffer;
+uint8_t *packet = &telemetryRxBuffer[0];
+uint8_t *packet_in = &telemetryRxBuffer[AFHDS2A_TXPACKET_SIZE];
 
 //Protocol variables
 ID_t ID;

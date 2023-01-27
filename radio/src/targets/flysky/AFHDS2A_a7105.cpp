@@ -67,7 +67,6 @@ static void AFHDS2A_calc_channels() {
 }
 
 /*
-
 IntV1: 4.81V
 ExtV2: 0.00V sensor x6b voltaje externo
 Err. 1: 10
@@ -75,8 +74,11 @@ RSSI1: -60dBm
 Noi.1: -97dBm
 SNR1:   39dB
 
+packet[0] - type
+packet[1-4] - rx_tx_addr
+packet[5-8] - rx_id
+0xff - AFHDS2A_ID_END
 */
-
 void AFHDS2A_update_telemetry() {
   if (packet[0] == 0xAA && packet[9] == 0xFD)
     return;  // ignore packets which contain the RX configuration: FD FF 32 00 01 00 FF FF FF 05 DC 05 DE FA FF FF FF FF FF FF FF FF FF FF FF FF FF FF
@@ -84,11 +86,30 @@ void AFHDS2A_update_telemetry() {
   if (packet[0] == 0xAA) {
     int16_t tx_rssi = 256 - (A7105_ReadReg(A7105_1D_RSSI_THOLD) * 8) / 5;  // value from A7105 is between 8 for maximum signal strength to 160 or less
     tx_rssi = limit<int16_t>(0, tx_rssi, 255);
-    packet[8] = tx_rssi;
-    processFlySkyPacket(packet + 8);
-  } else if (packet[0] == 0xAC) {
-    processFlySkyPacketAC(packet + 8);
+    packet_in[0] = tx_rssi;
   }
+
+  memcpy(packet_in + 1, packet + 9, AFHDS2A_RXPACKET_SIZE - 8 - 1);
+
+  if (packet[0] == 0xAA) {
+    processFlySkyPacket(packet_in);
+  } else if (packet[0] == 0xAC) {
+    processFlySkyPacketAC(packet_in);
+  }
+
+#if defined(AUX_SERIAL)
+  if (g_eeGeneral.auxSerialMode == UART_MODE_TELEMETRY_MIRROR) {
+    // header
+    auxSerialPutc('M');
+    auxSerialPutc('P');
+    auxSerialPutc((packet[0] == 0xAA) ? 0x06 : 0x0c); // Multiprotocol module telemetry type for AFHDS2A
+    auxSerialPutc(AFHDS2A_RXPACKET_SIZE - 8);
+    // data
+    for (uint8_t c = 0; c < AFHDS2A_RXPACKET_SIZE - 8; c++) { // RSSI value followed by 4*7 bytes of telemetry data, skip rx and tx id
+      auxSerialPutc(packet_in[c]);
+    }
+  }
+#endif
 }
 
 static void AFHDS2A_build_bind_packet(void) {
