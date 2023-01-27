@@ -307,6 +307,9 @@ void generalDefault() {
     g_eeGeneral.calib[i].spanNeg = 0x300;
     g_eeGeneral.calib[i].spanPos = 0x300;
   }
+
+  g_eeGeneral.telemetryBaudrate = 1; // default: 400k
+
   g_eeGeneral.chkSum = evalChkSum();
 #else
   g_eeGeneral.chkSum = 0xFFFF;
