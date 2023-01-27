@@ -1439,15 +1439,9 @@ void doMixerPeriodicUpdates()
           AUDIO_INACTIVITY();
 
 #if defined(AUDIO) || defined(PCBI6X)
-        if (mixWarning & 1)
-          if ((sessionTimer & 0x03) == 0)
-            AUDIO_MIX_WARNING(1);
-        if (mixWarning & 2)
-          if ((sessionTimer & 0x03) == 1)
-            AUDIO_MIX_WARNING(2);
-        if (mixWarning & 4)
-          if ((sessionTimer & 0x03) == 2)
-            AUDIO_MIX_WARNING(3);
+        if (mixWarning & 1) if ((sessionTimer & 0x03) == 0) AUDIO_MIX_WARNING(1);
+        if (mixWarning & 2) if ((sessionTimer & 0x03) == 1) AUDIO_MIX_WARNING(2);
+        if (mixWarning & 4) if ((sessionTimer & 0x03) == 2) AUDIO_MIX_WARNING(3);
 #endif
 
         val = s_sum_samples_thr_1s / s_cnt_samples_thr_1s;

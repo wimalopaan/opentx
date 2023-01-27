@@ -179,12 +179,12 @@ void initBuzzerTimer()
 
   // Timer output mode PWM
   /* Select the Output Compare (OC) Mode 1 */
-  TIM1->CCMR1 |= (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); // = TIM_OCMODE_PWM1
+  PWM_TIMER->CCMR1 |= (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1); // = TIM_OCMODE_PWM1
   /* Reset and set the Output N Polarity level to LOW */
   // TIM1->CCER &= ~TIM_CCER_CC1P; 
-  TIM1->CCER |= TIM_CCER_CC1P | TIM_CCER_CC1E; // = TIM_OCPOLARITY_LOW + enable Capture compare channel
+  PWM_TIMER->CCER |= TIM_CCER_CC1P | TIM_CCER_CC1E; // = TIM_OCPOLARITY_LOW + enable Capture compare channel
   /* Enable the main output */
-  TIM1->BDTR |= TIM_BDTR_MOE;
+  PWM_TIMER->BDTR |= TIM_BDTR_MOE;
 }
 
 void boardInit()
