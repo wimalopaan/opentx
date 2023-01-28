@@ -34,13 +34,15 @@ Comparison with original firmware:
 | Channels                  | 6/10       | 16                           |
 | Mixers                    | 3          | 32                           |
 | Models                    | 20         | 16 / unlimited<sup>[1]</sup> |
-| Protocols                 | AFHDS, AFHDS2A, PPM | AFHDS2A, PPM, CRSF                    |
+| Protocols                 | AFHDS, AFHDS2A, PPM | AFHDS2A, PPM, CRSF  |
+| Trainer                   | PPM        | SBUS, PPM                    |
 | Logical switches          | _          | ✓                            |
 | Global variables          | _          | ✓                            |
 | Timers                    | _          | ✓                            |
 | Nicer sounds              | _          | ✓                            |
 | Use trims as buttons      | _          | ✓                            |
 | ExpressLRS ready          | _          | ✓                            |
+| Telemetry mirror          | _          | ✓                            |
 
 <sup>[1] Unlimited by using USB mass storage mode eeprom backup restore.</sup>
 
@@ -51,7 +53,6 @@ Comparison with original firmware:
     * CRSFshot
     * MEGA Bauds up to 1.8M
     * ExpressLRS V3 configuration (ELRSV3.lua port)
-* 16 channels
 * Telemetry
 * Adjustable backlight brightness level (requires basic [modification](#adjustable-backlight-level-mod) & backlight_mod build)
 * Audio tones, alarms and vario sound custom implementation
@@ -74,7 +75,7 @@ Comparison with original firmware:
 
 ## Shutdown
 
-FlySky FS-i6X don't have a software controlled shutdown button, therefore do not switch off radio when you see `▫` icon in top right corner of main screen - it indicates that settings are not yet saved. Wait until it disappears or use "Save all" option from main screen popup menu.
+FlySky FS-i6X don't have a software controlled shutdown button. Do not switch off radio when you see `▫` (small square) icon in top right corner of main screen. It indicates that settings are not yet saved. Wait until it disappears or use "Save all" option from main screen popup menu.
 
 When to use "Save all" option:
 * When you don't want to wait until square icon disapper before shutdown.
@@ -83,12 +84,12 @@ When to use "Save all" option:
 
 ## USB connection
 
-FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. Without modification, you need to press OK on main screen and select "USB Connect" everytime you've connected USB (In version 1.8.0 or earlier it's in: Radio Setup -> "USB Detect").<br>
+FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. To connect without modification, press OK on main screen and select "USB Connect" (In version 1.8.0 or earlier it's in: Radio Setup -> "USB Detect").<br>
 Automatic connection detection can be added by wiring `PA15` pad to USB VBUS preferably with a resistor (I have used 1K).
 
 ## Powering by 2S Li-Po/Li-ion/18650
 
-FlySky i6X is officially rated for up to 6V, internal regulators are rated for up to 6.5V, but i don't guarantee that. Running anything above will damage your radio. Use step-down regulator to lower voltage to safe values.
+FlySky i6X is officially rated for up to 6V. Running anything above may damage your radio.
 
 ## Mode 1 & Mode 3 radios
 
