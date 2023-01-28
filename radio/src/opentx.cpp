@@ -1022,12 +1022,14 @@ void alert(const char *title, const char *msg, uint8_t sound) {
 
     wdt_reset();
 
+#if !defined(PCBI6X) // no software controlled power on i6X
     const uint32_t pwr_check = pwrCheck();
     if (pwr_check == e_power_off) {
       drawSleepBitmap();
       boardOff();
       return;  // only happens in SIMU, required for proper shutdown
     }
+#endif
 #if defined(PWR_BUTTON_PRESS)
     else if (pwr_check == e_power_press) {
       refresh = true;

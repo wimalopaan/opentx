@@ -105,6 +105,8 @@ enum MenuModelTelemetryFrskyItems {
 
 #if defined (PCBTARANIS)
   #define TELEMETRY_TYPE_SHOW_TELEMETRY  (! IS_INTERNAL_MODULE_ENABLED() && g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_PPM) ? (uint8_t)0 : HIDDEN_ROW
+#elif defined(PCBI6X) // no telemetry input implemented
+  #define TELEMETRY_TYPE_SHOW_TELEMETRY  HIDDEN_ROW
 #else
   #define TELEMETRY_TYPE_SHOW_TELEMETRY  (g_model.moduleData[EXTERNAL_MODULE].type == MODULE_TYPE_PPM) ? (uint8_t)0 : HIDDEN_ROW
 #endif
@@ -487,6 +489,7 @@ void menuModelTelemetryFrsky(event_t event)
     else
 
     switch (k) {
+#if !defined(PCBI6X) // no telemetry input implemented
       case ITEM_TELEMETRY_PROTOCOL_TYPE:
         lcdDrawTextAlignedLeft(y, STR_TELEMETRY_TYPE);
         lcdDrawTextAtIndex(TELEM_COL2, y, STR_TELEMETRY_PROTOCOLS, g_model.telemetryProtocol, attr);
@@ -494,7 +497,7 @@ void menuModelTelemetryFrsky(event_t event)
           g_model.telemetryProtocol = checkIncDec(event, g_model.telemetryProtocol, PROTOCOL_TELEMETRY_FIRST, PROTOCOL_TELEMETRY_LAST, EE_MODEL, isTelemetryProtocolAvailable);
         }
         break;
-
+#endif
 #if defined(REVX)
       case ITEM_TELEMETRY_INVERTED_SERIAL:
         ON_OFF_MENU_ITEM(g_model.moduleData[EXTERNAL_MODULE].invertedSerial, TELEM_COL2, y, STR_INVERTED_SERIAL, attr, event);
