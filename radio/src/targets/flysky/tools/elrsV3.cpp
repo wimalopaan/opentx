@@ -50,14 +50,12 @@ struct FieldProps {
   uint8_t max;
   uint8_t unitOffset;
   uint8_t unitLength;
-  uint8_t parent;
   uint8_t type;
   union {
     uint8_t value;
     uint8_t status;
   };
   uint8_t id;
-  // uint8_t hidden : 1;
 } PACKED;
 
 struct FieldFunctions {
@@ -66,32 +64,34 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-static constexpr uint8_t NAMES_BUFFER_SIZE  = 184; // 165 + 19 (units) => 184+
-static constexpr uint8_t VALUES_BUFFER_SIZE = 236; // 236+
+static constexpr uint8_t NAMES_BUFFER_SIZE  = 190; // 170 + 19 (units) => 189+
+static constexpr uint8_t VALUES_BUFFER_SIZE = 250; // 250+
 static uint8_t *namesBuffer = &reusableBuffer.cToolData[0];
 uint8_t namesBufferOffset = 0;
 static uint8_t *valuesBuffer = &reusableBuffer.cToolData[NAMES_BUFFER_SIZE];
-//static uint8_t valuesBuffer[VALUES_BUFFER_SIZE];
 uint8_t valuesBufferOffset = 0;
 
 // last 25b are also used for popup messages
 static constexpr uint8_t FIELD_DATA_BUFFER_SIZE = 176; // 175+
 static uint8_t *fieldData = &reusableBuffer.cToolData[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE];
-//static uint8_t fieldData[FIELD_DATA_BUFFER_SIZE];
-static constexpr uint8_t POPUP_MSG_OFFSET = FIELD_DATA_BUFFER_SIZE - 24 - 1;
+
+// Reuse tail of fieldData for popup messages
+static constexpr uint8_t POPUP_MSG_MAX_LEN = 24; // popup hard limit is 32
+static constexpr uint8_t POPUP_MSG_OFFSET = FIELD_DATA_BUFFER_SIZE - POPUP_MSG_MAX_LEN;
 uint8_t fieldDataLen = 0;
 
-static constexpr uint8_t FIELDS_MAX_COUNT = 16;
+static constexpr uint8_t FIELDS_MAX_COUNT = 14;
 static constexpr uint8_t FIELDS_SIZE = FIELDS_MAX_COUNT * sizeof(FieldProps);
-//static FieldProps fields[FIELDS_MAX_COUNT];
 static FieldProps *fields = (FieldProps *)&reusableBuffer.cToolData[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE];
 uint8_t allocatedFieldsCount = 0;
 
-static constexpr uint8_t DEVICES_MAX_COUNT = 8;
+static constexpr uint8_t DEVICES_MAX_COUNT = 4;
 static uint8_t *deviceIds = &reusableBuffer.cToolData[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE + FIELDS_SIZE];
 //static uint8_t deviceIds[DEVICES_MAX_COUNT];
 uint8_t devicesLen = 0;
-uint8_t otherDevicesId = 255;
+
+static constexpr uint8_t backButtonId = 100;
+static constexpr uint8_t otherDevicesId = 101;
 
 #define BTN_NONE 0
 #define BTN_REQUESTED 1
@@ -107,19 +107,18 @@ static char deviceName[DEVICE_NAME_MAX_LEN];
 uint8_t lineIndex = 1;
 uint8_t pageOffset = 0;
 uint8_t edit = 0;
-uint8_t charIndex = 1;
 static FieldProps * fieldPopup = nullptr;
-volatile tmr10ms_t fieldTimeout = 0;
+tmr10ms_t fieldTimeout = 0;
 uint8_t fieldId = 1;
 uint8_t fieldChunk = 0;
 
-static char goodBadPkt[11] = "?/???    ?";
+static char goodBadPkt[11] = "";
 uint8_t elrsFlags = 0;
 static constexpr uint8_t ELRS_FLAGS_INFO_MAX_LEN = 20;
 //static char *elrsFlagsInfo = (char *)&reusableBuffer.cToolData[NAMES_BUFFER_SIZE + VALUES_BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE + FIELDS_SIZE + DEVICES_MAX_COUNT + DEVICE_NAME_MAX_LEN];
 static char elrsFlagsInfo[ELRS_FLAGS_INFO_MAX_LEN] = "";
 uint8_t expectedFieldsCount = 0;
-uint8_t backButtonId = 2;
+
 tmr10ms_t devicesRefreshTimeout = 50;
 uint8_t allParamsLoaded = 0;
 uint8_t folderAccess = 0; // folder id
@@ -141,14 +140,9 @@ static constexpr uint8_t textSize      =  8;
 #define EVT_VIRTUAL_NEXT  EVT_KEY_FIRST(KEY_DOWN)
 #define EVT_VIRTUAL_PREV  EVT_KEY_FIRST(KEY_UP)
 
+static constexpr uint8_t RESULT_NONE = 0;
 static constexpr uint8_t RESULT_OK = 2;
 static constexpr uint8_t RESULT_CANCEL = 1;
-
-static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max) {
-  lcdDrawRect(x, y, w+1, h, 0xff);
-  uint8_t len = limit((uint8_t)1, uint8_t(w*val/max), uint8_t(w));
-  lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
-}
 
 static void storeField(FieldProps * field);
 static void clearFields();
@@ -166,6 +160,11 @@ static void lcd_warn();
 static void handleDevicePageEvent(event_t event);
 static void fieldTextSelectionSave(FieldProps * field);
 
+static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max) {
+  lcdDrawRect(x, y, w+1, h, SOLID);
+  uint8_t len = limit((uint8_t)1, uint8_t(w*val/max), uint8_t(w));
+  lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
+}
 
 static void crossfireTelemetryPush4(const uint8_t cmd, const uint8_t third, const uint8_t fourth) {
 //  TRACE("crsf push %x  %x  %x", cmd, third, fourth);
@@ -180,32 +179,25 @@ static void crossfireTelemetryPing(){
 
 static void clearFields() {
 //  TRACE("clearFields %d", allocatedFieldsCount);
-  for (uint32_t i = 0; i < allocatedFieldsCount; i++) {
-    fields[i].nameLength = 0;
-    fields[i].valuesLength = 0;
-  }
+  memset(fields, 0, sizeof(fields));
   otherDevicesState = BTN_NONE;
   allocatedFieldsCount = 0;
 }
 
 // Both buttons must be added as last ones because i cannot overwrite existing Id
 static void addBackButton() {
-  backButtonId = 100; // cannot be allocatedFieldsCount because can overwrite existing id
   FieldProps backBtnField;
   backBtnField.id = backButtonId;
-  backBtnField.nameLength = 1;
+  backBtnField.nameLength = 1; // mark as present
   backBtnField.type = TYPE_BACK;
-  backBtnField.parent = (folderAccess == 0) ? 255 : folderAccess;
   storeField(&backBtnField);
 }
 
 static void addOtherDevicesButton() {
-  otherDevicesId = 101; // cannot be allocatedFieldsCount because can overwrite existing id
   FieldProps otherDevicesField;
   otherDevicesField.id = otherDevicesId;
   otherDevicesField.nameLength = 1;
   otherDevicesField.type = TYPE_DEVICES_FOLDER;
-  otherDevicesField.parent = 0;
   storeField(&otherDevicesField);
   otherDevicesState = BTN_ADDED;
 }
@@ -310,6 +302,17 @@ static void strShorten(char * src, const uint8_t maxLen) {
   }
 }
 
+/**
+ * Remove substring inplace, 76B
+ */
+static void strRemove(char * src, const char * str) {
+  char strLen = strlen(str);
+  char * srcStrPtr = src;
+  while ((srcStrPtr = strstr(srcStrPtr, str))) {
+    strcpy(srcStrPtr, srcStrPtr + strLen);
+  }
+}
+
 static void unitSave(FieldProps * field, uint8_t * data, uint8_t unitOffset) {
   uint8_t unitLen = strlen((char*)&data[unitOffset]);
   //if (unitLen > 10) unitLen = 0; // Workaround for "Output Mode" missing last 2 bytes, proper solution would be to never read over packet length
@@ -347,6 +350,7 @@ static void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t o
   field->value = data[offset + len + 1];
   field->max = data[offset + len + 3];
   unitSave(field, data, offset + len + 5);
+  strRemove((char*)&data[offset], "UX");
   strShorten((char*)&data[offset], 12);
   len = strlen((char*)&data[offset]);
   if (field->valuesLength == 0) {
@@ -393,11 +397,11 @@ static void fieldFolderOpen(FieldProps * field) {
   lineIndex = 1;
   pageOffset = 0;
   folderAccess = field->id;
-  clearFields();
   reloadAllField();
   if (field->type == TYPE_FOLDER) { // guard because it is reused for devices
     fieldId = field->id + 1; // UX hack: start loading from first folder item to fetch it faster
   }
+  clearFields();
 }
 
 static void fieldFolderDeviceOpen(FieldProps * field) {
@@ -415,7 +419,7 @@ static void noopDisplay(FieldProps * field, uint8_t y, uint8_t attr) {}
 static void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   field->status = data[offset];
   field->timeout = data[offset+1];
-  strcpy((char *)&fieldData[POPUP_MSG_OFFSET], (char *)&data[offset+2]);
+  strncpy((char *)&fieldData[POPUP_MSG_OFFSET], (char *)&data[offset+2], POPUP_MSG_MAX_LEN);
   if (field->status == STEP_IDLE) {
     fieldPopup = nullptr;
   }
@@ -498,7 +502,6 @@ static void parseDeviceInfoMessage(uint8_t* data) {
       deviceField.nameLength = offset - 4;
       deviceField.nameOffset = namesBufferOffset;
 
-      deviceField.parent = (id == deviceId) ? 255 : devicesLen/*otherDevicesId*/; // hide current device or set parent to "Other Devices"
       memcpy(&namesBuffer[namesBufferOffset], &data[3], deviceField.nameLength);
       namesBufferOffset += deviceField.nameLength;
       storeField(&deviceField);
@@ -524,22 +527,24 @@ static void parseDeviceInfoMessage(uint8_t* data) {
       // This device has no fields so the Loading code never starts
         allParamsLoaded = 1;
         fieldId = 1;
-        addBackButton(); // createDeviceFields();
+        addBackButton();
       }
     }
   }
 }
 
+//static const FieldFunctions noopFunctions = { .load=noopLoad, .save=noopSave, .display=noopDisplay };
+
 static const FieldFunctions functions[] = {
   { .load=fieldUint8Load, .save=fieldUint8Save, .display=fieldIntegerDisplay }, // 1 UINT8(0)
-  { .load=noopLoad, .save=noopSave, .display=fieldIntegerDisplay }, // 2 INT8(1)
-  { .load=noopLoad, .save=noopSave, .display=fieldIntegerDisplay }, // 3 UINT16(2)
-  { .load=noopLoad, .save=noopSave, .display=fieldIntegerDisplay }, // 4 INT16(3)
-  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 5 UINT32(4)
-  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 6 INT32(5)
-  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 7 UINT64(6)
-  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 8 INT64(7)
-  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 9 FLOAT(8)
+  // { .load=noopLoad, .save=noopSave, .display=fieldIntegerDisplay }, // 2 INT8(1)
+  // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 3 UINT16(2)
+  // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 4 INT16(3)
+  // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 5 UINT32(4)
+  // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 6 INT32(5)
+  // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 7 UINT64(6)
+  // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 8 INT64(7)
+  // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 9 FLOAT(8)
   { .load=fieldTextSelectionLoad, .save=fieldTextSelectionSave, .display=fieldTextSelectionDisplay }, // 10 TEXT SELECTION(9)
   { .load=noopLoad, .save=noopSave, .display=fieldStringDisplay }, // 11 STRING(10)editing NOTIMPL
   { .load=noopLoad, .save=fieldFolderOpen, .display=fieldUnifiedDisplay }, // 12 FOLDER(11)
@@ -549,6 +554,14 @@ static const FieldFunctions functions[] = {
   { .load=noopLoad, .save=fieldDeviceIdSelect, .display=fieldUnifiedDisplay }, // 16 device(15)
   { .load=noopLoad, .save=fieldFolderDeviceOpen, .display=fieldUnifiedDisplay }, // 17 deviceFOLDER(16)
 };
+
+static FieldFunctions getFunctions(uint32_t i) {
+  i = (i > 0) ? i - 8 : i;
+//  if (i > 0 && i < 9) {
+//    return noopFunctions;
+//  }
+  return functions[i];
+}
 
 static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   if (data[2] != deviceId || data[3] != fieldId) {
@@ -573,14 +586,14 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     return;
   }
   expectedChunks = chunksRemain - 1;
-  for (uint32_t i = 5; i < length; i++) {
-    if (fieldDataLen > FIELD_DATA_BUFFER_SIZE) {
-      TRACE("fieldData OF");
-      return;
-    }
-    fieldData[fieldDataLen++] = data[i];
-  }
+
 //  TRACE("chunk len %d", length); // to know what is the max single chunk size
+  if (fieldDataLen + length - 5 > FIELD_DATA_BUFFER_SIZE) {
+    TRACE("elrs data OF");
+    return;
+  }
+  memcpy(&fieldData[fieldDataLen], &data[5], length - 5);
+  fieldDataLen += length - 5;
 
   if (chunksRemain > 0) {
     fieldChunk = fieldChunk + 1;
@@ -605,12 +618,12 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     }
 
     if (field->nameLength != 0) {
-      if (field->parent != parent || field->type != type/* || field->hidden != hidden*/) {
+      if (folderAccess != parent || field->type != type/* || field->hidden != hidden*/) {
         fieldDataLen = 0;
         return;
       }
     }
-    field->parent = parent;
+
     field->type = type;
     // field->hidden = hidden;
     offset = strlen((char*)&fieldData[2]) + 1 + 2;
@@ -624,7 +637,7 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
         memcpy(&namesBuffer[namesBufferOffset], &fieldData[2], field->nameLength);
         namesBufferOffset += field->nameLength;
       }
-      functions[field->type].load(field, fieldData, offset);
+      getFunctions(field->type).load(field, fieldData, offset);
       storeField(field);
     }
 
@@ -668,7 +681,7 @@ static void parseElrsInfoMessage(uint8_t* data) {
     elrsFlags = newFlags;
     titleShowWarnTimeout = 0;
   }
-  strcpy(elrsFlagsInfo, (char*)&data[7]);
+  strncpy(elrsFlagsInfo, (char*)&data[7], ELRS_FLAGS_INFO_MAX_LEN);
 
   char state = (elrsFlags & 1) ? 'C' : '-';
   tiny_sprintf(goodBadPkt, "%u/%u   %c", 3, badPkt, goodPkt, state);
@@ -752,9 +765,10 @@ static void handleDevicePageEvent(event_t event) {
   if (allocatedFieldsCount == 0) { // if there is no field yet
     return;
   } else {
-    if (getFieldById(backButtonId)->nameLength == 0) { // if back button is not assigned yet, means there is no field yet.
-      return;
-    }
+    // Will stuck on main page because back button is not present
+    // if (getFieldById(backButtonId)/*->nameLength*/ == nullptr) { // if back button is not assigned yet, means there is no field yet.
+    //   return;
+    // }
   }
 
   if (event == EVT_VIRTUAL_EXIT) {
@@ -803,9 +817,9 @@ static void handleDevicePageEvent(event_t event) {
             fieldTimeout = getTime() + 20;
             clearFields();
             reloadAllField();
-            fieldId = field->parent + 1; // Start loading from first folder item
+            fieldId = folderAccess + 1; // Start loading from first folder item
           }
-          functions[field->type].save(field);
+          getFunctions(field->type).save(field);
         }
       }
     }
@@ -846,7 +860,7 @@ static void runDevicePage(event_t event) {
         if (field->type < TYPE_FOLDER or field->type == TYPE_INFO) {
           lcdDrawSizedText(textXoffset, y*textSize+textYoffset, (char *)&namesBuffer[field->nameOffset], field->nameLength, 0);
         }
-        functions[field->type].display(field, y*textSize+textYoffset, attr);
+        getFunctions(field->type).display(field, y*textSize+textYoffset, attr);
       }
     }
   }
@@ -861,7 +875,7 @@ static uint8_t popupCompat(event_t event) {
   } else if (event == EVT_VIRTUAL_ENTER) {
     return RESULT_OK;
   }
-  return 0;
+  return RESULT_NONE;
 }
 
 static void runPopupPage(event_t event) {
@@ -870,7 +884,7 @@ static void runPopupPage(event_t event) {
     fieldTimeout = getTime() + 200;
   }
 
-  uint8_t result = 0;
+  uint8_t result = RESULT_NONE;
   if (fieldPopup->status == STEP_IDLE && fieldPopup->lastStatus != STEP_IDLE) { // stopped
       popupCompat(event);
       reloadAllField();
