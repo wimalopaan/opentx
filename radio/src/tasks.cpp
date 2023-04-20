@@ -233,7 +233,9 @@ TASK_FUNCTION(menusTask) {
   ledOff();
 #endif
 
+#if !defined(PCBI6X)
   drawSleepBitmap();
+#endif
   opentxClose();
   boardOff();  // Only turn power off if necessary
 
