@@ -22,23 +22,23 @@ jobs:
             build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw_output ./tools/commit-tests.sh -Wno-error
       - sonarcloud/scan
 
-  build-elrsv3:
+  build-std:
     docker:
       - image: ajjjjjjjj/opentx-docker-i6x:1.0.0
     steps:
       - checkout
       - run: |
-          python3 ./tools/build-flysky.py -bI6X_ELRSV3 -tALL $PWD/
+          python3 ./tools/build-flysky.py -bI6X -tALL $PWD/
       - store_artifacts:
           path: output
 
-  build-elrsv3-backlight:
+  build-std-backlight:
     docker:
       - image: ajjjjjjjj/opentx-docker-i6x:1.0.0
     steps:
       - checkout
       - run: |
-          python3 ./tools/build-flysky.py -bI6X_ELRSV3_BACKLIGHT_MOD -tALL $PWD/
+          python3 ./tools/build-flysky.py -bI6X_BACKLIGHT_MOD -tALL $PWD/
       - store_artifacts:
           path: output
 
@@ -59,26 +59,6 @@ jobs:
       - checkout
       - run: |
           python3 ./tools/build-flysky.py -bI6X_HELI_BACKLIGHT_MOD -tALL $PWD/
-      - store_artifacts:
-          path: output
-
-  build-std:
-    docker:
-      - image: ajjjjjjjj/opentx-docker-i6x:1.0.0
-    steps:
-      - checkout
-      - run: |
-          python3 ./tools/build-flysky.py -bI6X -tALL $PWD/
-      - store_artifacts:
-          path: output
-
-  build-std-backlight:
-    docker:
-      - image: ajjjjjjjj/opentx-docker-i6x:1.0.0
-    steps:
-      - checkout
-      - run: |
-          python3 ./tools/build-flysky.py -bI6X_BACKLIGHT_MOD -tALL $PWD/
       - store_artifacts:
           path: output
 
