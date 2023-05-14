@@ -153,9 +153,8 @@ static void handleDevicePageEvent(event_t event);
 static void fieldTextSelectionSave(FieldProps * field);
 
 static void luaLcdDrawGauge(coord_t x, coord_t y, coord_t w, coord_t h, int32_t val, int32_t max) {
-  lcdDrawSolidFilledRect(x+1, y+1, w, h-2);
-  uint8_t len = limit((uint8_t)1, uint8_t(w*val/max), uint8_t(w));
-  lcdDrawSolidFilledRect(x+1, y+1, len, h-2);
+  uint8_t len = limit<uint8_t>(1, w*val/max, w);
+  lcdDrawSolidFilledRect(x+len, y, w - len, h-2);
 }
 
 static void bufferPush(char * data, uint8_t len) {
@@ -703,7 +702,7 @@ static void lcd_title() {
 
   lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
   if (allParamsLoaded != 1 && expectedFieldsCount > 0) {
-    luaLcdDrawGauge(0, 0, COL2, barHeight, fieldId, expectedFieldsCount); // 136b
+    luaLcdDrawGauge(0, 1, COL2, barHeight, fieldId, expectedFieldsCount);
   } else {
     if (titleShowWarn) {
       lcdDrawSizedText(textXoffset, 1, elrsFlagsInfo, ELRS_FLAGS_INFO_MAX_LEN, INVERS);
