@@ -99,14 +99,14 @@ workflows:
                 - master
 #          requires:
 #            - sonar-scan
-      - build-elrsv3:
+      - build-std:
           filters:
             branches:
               only:
                 - master
 #          requires:
 #            - sonar-scan
-      - build-elrsv3-backlight:
+      - build-std-backlight:
           filters:
             branches:
               only:
