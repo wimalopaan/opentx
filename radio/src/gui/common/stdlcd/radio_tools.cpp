@@ -36,6 +36,7 @@ void addRadioTool(uint8_t index, const char * label, void (* tool)(event_t event
 
 void ELRSV3_run(event_t event);
 void hello_run(event_t event);
+void inavRun(event_t event);
 
 void menuRadioTools(event_t event)
 {
@@ -47,6 +48,10 @@ void menuRadioTools(event_t event)
 
 #if defined(PCBI6X_HELLO)
   addRadioTool(index++, "Hello World", hello_run, event);
+#endif
+
+#if defined(PCBI6X_INAV)
+  addRadioTool(index++, "INAV Lite", inavRun, event);
 #endif
 
   SIMPLE_MENU("TOOLS", menuTabGeneral, MENU_RADIO_TOOLS, HEADER_LINE + index);

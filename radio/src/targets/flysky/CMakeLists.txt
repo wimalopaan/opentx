@@ -1,6 +1,7 @@
 option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
 option(PCBI6X_ELRSV3 "Enable ExpressLRS v3 configuration tool" NO) # ~4kB
 option(PCBI6X_HELLO "Enable Hello World example tool" NO)
+option(PCBI6X_INAV "Enable INAV Lite telemetry" NO)
 option(PCBI6X_USB_VBUS "Remove manual USB connection, just auto using VBUS, requires wiring USB VBUS to PA15 pad" NO)
 option(PCBI6X_BACKLIGHT_MOD "Enable adjustable backlight, requires wiring BL pad to PC9 pad" NO)
 option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" 17)
@@ -8,7 +9,7 @@ option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" 17)
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
   if(TRANSLATIONS STREQUAL EN)
-    set(SPLASH "ON") # ~650B
+    set(SPLASH "OFF") # ~650B
   else()
     set(SPLASH "OFF")
   endif()
@@ -66,6 +67,14 @@ if(PCBI6X_HELLO STREQUAL YES)
 set(TARGET_SRC
   ${TARGET_SRC}
   tools/hello.cpp
+  )
+endif()
+
+if(PCBI6X_INAV STREQUAL YES)
+  add_definitions(-DPCBI6X_INAV)
+set(TARGET_SRC
+  ${TARGET_SRC}
+  tools/inav.cpp
   )
 endif()
 
