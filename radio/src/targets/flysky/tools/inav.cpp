@@ -53,7 +53,7 @@ struct InavData {
   int32_t homeLon;
   int32_t currentLat;
   int32_t currentLon;
-  uint8_t homeHeading;
+  // uint8_t homeHeading;
   uint8_t heading;
 };
 
@@ -78,7 +78,7 @@ static void inavDrawCraft(uint8_t x, uint8_t y) {
   constexpr int8_t pLY = 10;
   constexpr int8_t pRX =  3;
   constexpr int8_t pRY = 10;
-  uint8_t angle = inavData.heading + inavData.homeHeading;
+  uint8_t angle = inavData.heading; // + inavData.homeHeading;
   int8_t sinVal = sine[angle];
   int8_t cosVal = sine[(angle + 8) & 0x1F];
 
@@ -300,7 +300,7 @@ void inavRun(event_t event) {
   } else if (inavData.homeLat == 0 || event == EVT_KEY_LONG(KEY_ENTER)) { // set home on init or long press OK
     inavData.homeLat = inavData.currentLat;
     inavData.homeLon = inavData.currentLon;
-    inavData.homeHeading = inavData.heading;
+    // inavData.homeHeading = inavData.heading;
   }
 
   inavDraw();
