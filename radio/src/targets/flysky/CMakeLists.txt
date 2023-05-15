@@ -1,18 +1,14 @@
 option(SHUTDOWN_CONFIRMATION "Shutdown confirmation" OFF)
 option(PCBI6X_ELRSV3 "Enable ExpressLRS v3 configuration tool" NO) # ~4kB
 option(PCBI6X_HELLO "Enable Hello World example tool" NO)
-option(PCBI6X_INAV "Enable INAV Lite telemetry" NO)
+option(PCBI6X_INAV "Enable INAV Lite telemetry screen" NO) # ~2kB
 option(PCBI6X_USB_VBUS "Remove manual USB connection, just auto using VBUS, requires wiring USB VBUS to PA15 pad" NO)
 option(PCBI6X_BACKLIGHT_MOD "Enable adjustable backlight, requires wiring BL pad to PC9 pad" NO)
 option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" 17)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
-  if(TRANSLATIONS STREQUAL EN)
-    set(SPLASH "OFF") # ~650B
-  else()
-    set(SPLASH "OFF")
-  endif()
+  set(SPLASH "OFF")
   set(CPU_TYPE STM32F0)
   set(CPU_TYPE_FULL STM32F072)  # for size report
   set(LINKER_SCRIPT targets/flysky/STM32F072VB_FLASH.ld)

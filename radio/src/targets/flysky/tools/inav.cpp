@@ -5,6 +5,9 @@
  */
 #include "opentx.h"
 
+#define INAVLITE_AFHDS2A
+#define INAVLITE_CRSF
+
 static const int8_t sine[32] = {
   0,24,48,70,90,106,117,125,127,125,117,106,90,70,48,24,0,-25,-49,-71,-91,-107,-118,-126,-128,-126,-118,-107,-91,-71,-49,-25
 };
@@ -101,7 +104,7 @@ static void inavDrawCraft(uint8_t x, uint8_t y) {
 }
 
 // Mode: 0 - Passthrough, 1-Armed(rate), 2-Horizon, 3-Angle, 4-Waypoint, 5-AltHold, 6-PosHold, 7-Rth, 8-Launch, 9-Failsafe
-static void inavDrawMode(uint8_t mode) {
+static void inavDrawFM(uint8_t mode) {
   static const char modeText[10][8] = {
     {'P','A','S','S','T','H','R','U'},
     {'A','R','M','E','D','\0',' ',' '},
@@ -143,6 +146,7 @@ static void inavDraw() {
     TelemetryItem & telemetryItem = telemetryItems[i];
 
     if (telemetryProtocol == PROTOCOL_PULSES_CROSSFIRE) {
+#if defined(INAVLITE_CRSF)
       TelemetrySensor & sensor = g_model.telemetrySensors[i];
 
       if (strstr(sensor.label, ZSTR_RX_RSSI1)) { // RSSI
@@ -182,9 +186,9 @@ static void inavDraw() {
         inavData.currentLat = telemetryItem.gps.longitude;
         inavData.currentLon = telemetryItem.gps.latitude;
       }
-
+#endif // INAVLITE_CRSF
     } else if (telemetryProtocol == PROTOCOL_FLYSKY_IBUS) {
-
+#if defined(INAVLITE_AFHDS2A)
       rssi = telemetryData.rssi.value;
 
       switch(g_model.telemetrySensors[i].instance) { // inav index - 1
@@ -199,7 +203,7 @@ static void inavDraw() {
           fix = (telemetryItem.value / 100) - sats * 10;
           hdop = (telemetryItem.value / 10) - (sats * 100) - (fix * 10);
           mode = telemetryItem.value - (sats * 1000) - (fix * 100) - (hdop * 10);
-          inavDrawMode(mode);
+          inavDrawFM(mode);
           break;
         case 4: // Course in degree - store for drawing
           inavData.heading = telemetryItem.value / 1125; // div by 5.625 => 64 degrees
@@ -232,6 +236,7 @@ static void inavDraw() {
           speed = telemetryItem.value / 10;
           break;
       }
+#endif // INAVLITE_AFHDS2A
     }
   }
 
