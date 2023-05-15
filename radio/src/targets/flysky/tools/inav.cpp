@@ -1,37 +1,7 @@
 /**
- * INAV telemetry radar
+ * INAV Lite
+ * Telemetry radar screen for CRSF and AFHDS2A (expects ibus_telemetry_type=0-3)
  *
- * for CRSF and AFHDS2A telemetry (expects ibus_telemetry_type=0-3)
- *
- * 
- TODO:
- + lines and status bar,
- + model name, timer1, tx batt, rssi,
- - telemetry:
-   + recognize telemetry type: crsf (by type) /ibus (by index) - by enabled module / flag?,
-     telemetryProtocol == PROTOCOL_FLYSKY_IBUS / PROTOCOL_PULSES_CROSSFIRE
-     https://github.com/iNavFlight/inav/blob/master/docs/Telemetry.md#available-smartport-sport-sensors
-     https://github.com/iNavFlight/OpenTX-Telemetry-Widget/blob/master/src/SCRIPTS/TELEMETRY/iNav.lua
-   + batt V, curr, alt, dist, speed,
-   + FM, sats
-   - GPS HDOP, "<9m","~85m",">90m"
-   + store home GPS coords on long press OK,
-   + GPS coords, heading,
-   - GPS alt,
-   - rotate coords to homeHeading,
-   - North or homeHeading orientation modes toggle, by BIND?
- + draw home and craft:
-   + calculate home and craft position BBox,
-   + scale and translate to fit screen BBox,
-   + draw home,
-   + draw craft,
-   + draw rotated craft arrow,
-   + test,
-
-afhds2a telem:
-   - test
-crsf telemetry:
-   - test
  */
 #include "opentx.h"
 
@@ -165,7 +135,7 @@ static void inavDraw() {
   drawTimer(58, 1, timersStates[0].val, SMLSIZE | INVERS);
 
   uint8_t rxBatt = 0, rssi = 0, sats = 0, fix, hdop = 9, mode = 0;
-  int32_t dist = 0, alt = 0, galt = 0, speed = 0;
+  int32_t dist = 0, alt = 0, galt = 0, speed = 0, current = 0;
 
   for (int i = 0; i < MAX_TELEMETRY_SENSORS; i++) {
     if (!isTelemetryFieldAvailable(i)) break;
@@ -188,7 +158,7 @@ static void inavDraw() {
       } else if (strstr(sensor.label, ZSTR_BATT)) { // Voltage
         rxBatt = telemetryItem.value;
       } else if (strstr(sensor.label, ZSTR_CURR)) { // Current
-        drawValueWithUnit(INAV_CURRENT_POSX, INAV_CURRENT_POSY, telemetryItem.value, sensor.unit, PREC1 | MIDSIZE | RIGHT);
+        current = telemetryItem.value;
       } else if (strstr(sensor.label, ZSTR_FLIGHT_MODE)) { // flight mode
         lcdDrawSizedText(INAV_FM_POSX, INAV_FM_POSY, telemetryItem.text, sizeof(telemetryItem.text), CENTERED);
       // } else if (sensor.id == TEMP2_ID) { // GPS lock status, accuracy, home reset trigger, and number of satellites.
@@ -202,7 +172,6 @@ static void inavDraw() {
       } else if (strstr(sensor.label, ZSTR_GSPD)) { // GPS Speed
         speed = telemetryItem.value;
       } else if (strstr(sensor.label, ZSTR_SATELLITES)) { // GPS Sats
-        // lcdDrawNumber(INAV_SATS_POSX, INAV_SATS_POSY, telemetryItem.value, MIDSIZE | RIGHT);
         sats = telemetryItem.value;
 
         // Fake CRSF HDOP
@@ -230,14 +199,13 @@ static void inavDraw() {
           fix = (telemetryItem.value / 100) - sats * 10;
           hdop = (telemetryItem.value / 10) - (sats * 100) - (fix * 10);
           mode = telemetryItem.value - (sats * 1000) - (fix * 100) - (hdop * 10);
-
           inavDrawMode(mode);
           break;
         case 4: // Course in degree - store for drawing
           inavData.heading = telemetryItem.value / 1125; // div by 5.625 => 64 degrees
           break;
         case 5: // Current in Amperes
-            drawValueWithUnit(INAV_CURRENT_POSX, INAV_CURRENT_POSY, telemetryItem.value, UNIT_AMPS, PREC2 | MIDSIZE | RIGHT);
+          current = telemetryItem.value / 10;
           break;
         case 6: // Altitude
           alt = (int16_t)(telemetryItem.value) / 100;
@@ -273,6 +241,7 @@ static void inavDraw() {
   lcdDrawNumber(LCD_W, INAV_SATS_POSY + 21, hdop * 5 + 8, PREC1 | MIDSIZE | RIGHT);
 
   drawValueWithUnit(LCD_W - 6, 1, rxBatt / 10, UNIT_VOLTS, PREC1 | SMLSIZE | INVERS | RIGHT);
+  drawValueWithUnit(INAV_CURRENT_POSX, INAV_CURRENT_POSY, current, UNIT_AMPS, PREC1 | MIDSIZE | RIGHT);
 
   drawValueWithUnit(LCD_W - 11, 53, rssi, UNIT_DB, MIDSIZE | RIGHT);
   drawValueWithUnit(INAV_GSPD_POSX, INAV_GSPD_POSY, speed, UNIT_KMH, PREC1 | RIGHT);
@@ -334,8 +303,5 @@ void inavRun(event_t event) {
     inavData.homeHeading = inavData.heading;
   }
 
-  // static uint16_t frame = 0;
-  // if (frame++ & 1) { // every other frame to reduce CPU load
-    inavDraw();
-  // }
+  inavDraw();
 }
