@@ -207,7 +207,7 @@
 #endif
 
 #if defined(PCBI6X_ELRSV3)
-#define CTOOL_DATA_SIZE 792
+#define CTOOL_DATA_SIZE 816
 #else
 #define CTOOL_DATA_SIZE 512 // minimize RAM usage for non ELRSV3 enabled builds, like DEBUG
 #endif
