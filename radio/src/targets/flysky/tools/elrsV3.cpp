@@ -32,6 +32,13 @@ enum COMMAND_STEP {
 #define TYPE_DEVICE         15
 #define TYPE_DEVICES_FOLDER 16
 
+#define CRSF_FRAMETYPE_DEVICE_PING 0x28
+#define CRSF_FRAMETYPE_DEVICE_INFO 0x29
+#define CRSF_FRAMETYPE_PARAMETER_SETTINGS_ENTRY 0x2B
+#define CRSF_FRAMETYPE_PARAMETER_READ 0x2C
+#define CRSF_FRAMETYPE_PARAMETER_WRITE 0x2D
+#define CRSF_FRAMETYPE_ELRS_STATUS 0x2E
+
 PACK(struct FieldProps {
   uint16_t offset;
   uint8_t nameLength;
@@ -59,7 +66,7 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-static constexpr uint16_t BUFFER_SIZE  = 472;
+static constexpr uint16_t BUFFER_SIZE  = 486;
 static uint8_t *buffer = &reusableBuffer.cToolData[0];
 uint16_t bufferOffset = 0;
 
@@ -72,7 +79,7 @@ static constexpr uint8_t POPUP_MSG_MAX_LEN = 24; // popup hard limit is 32
 static constexpr uint8_t POPUP_MSG_OFFSET = FIELD_DATA_BUFFER_SIZE - POPUP_MSG_MAX_LEN;
 uint8_t fieldDataLen = 0;
 
-static constexpr uint8_t FIELDS_MAX_COUNT = 14;
+static constexpr uint8_t FIELDS_MAX_COUNT = 15;
 static constexpr uint8_t FIELDS_SIZE = FIELDS_MAX_COUNT * sizeof(FieldProps);
 static FieldProps *fields = (FieldProps *)&reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE];
 uint8_t allocatedFieldsCount = 0;
@@ -170,7 +177,7 @@ static void crossfireTelemetryPush4(const uint8_t cmd, const uint8_t third, cons
 
 static void crossfireTelemetryPing(){
   const uint8_t crsfPushData[2] = { 0x00, 0xEA };
-  crossfireTelemetryPush(0x28, (uint8_t *) crsfPushData, 2);
+  crossfireTelemetryPush(CRSF_FRAMETYPE_DEVICE_PING, (uint8_t *) crsfPushData, 2);
 }
 
 static void clearFields() {
@@ -325,7 +332,7 @@ static void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t o
 }
 
 static void fieldTextSelectionSave(FieldProps * field) {
-  crossfireTelemetryPush4(0x2D, field->id, field->value);
+  crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, field->id, field->value);
 }
 
 static uint8_t semicolonPos(const char * str, uint8_t last) {
@@ -392,7 +399,7 @@ static void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset)
 static void fieldCommandSave(FieldProps * field) {
   if (field->status < 4) {
     field->status = 1;
-    fieldTextSelectionSave(field); //crossfireTelemetryPush4(0x2D, field->id, field->status);
+    fieldTextSelectionSave(field); //crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, field->id, field->status);
     fieldPopup = field;
     fieldPopup->lastStatus = 0;
     fieldTimeout = getTime() + field->timeout;
@@ -648,14 +655,14 @@ static void parseElrsInfoMessage(uint8_t* data) {
 }
 
 static void refreshNextCallback(uint8_t command, uint8_t* data, uint8_t length) {
-  if (command == 0x29) {
+  if (command == CRSF_FRAMETYPE_DEVICE_INFO) {
     parseDeviceInfoMessage(data);
-  } else if (command == 0x2B && folderAccess != otherDevicesId /* !devicesFolderOpened */) {
+  } else if (command == CRSF_FRAMETYPE_PARAMETER_SETTINGS_ENTRY && folderAccess != otherDevicesId /* !devicesFolderOpened */) {
     parseParameterInfoMessage(data, length);
     if (allParamsLoaded < 1) {
       fieldTimeout = 0; // request next chunk immediately
     }
-  } else if (command == 0x2E) {
+  } else if (command == CRSF_FRAMETYPE_ELRS_STATUS) {
     parseElrsInfoMessage(data);
   }
 }
@@ -664,7 +671,7 @@ static void refreshNext() {
   tmr10ms_t time = getTime();
   if (fieldPopup != nullptr) {
     if (time > fieldTimeout && fieldPopup->status != STEP_CONFIRM) {
-      crossfireTelemetryPush4(0x2D, fieldPopup->id, 6); // lcsQuery
+      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, 6); // lcsQuery
       fieldTimeout = time + fieldPopup->timeout; // + popup timeout
     }
   } else if (time > devicesRefreshTimeout && expectedFieldsCount < 1) {
@@ -672,7 +679,7 @@ static void refreshNext() {
     crossfireTelemetryPing();
   } else if (time > fieldTimeout && expectedFieldsCount != 0) {
     if (allParamsLoaded < 1) {
-      crossfireTelemetryPush4(0x2C, fieldId, fieldChunk);
+      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_READ, fieldId, fieldChunk);
       fieldTimeout = time + 50; // 0.5s
     }
   }
@@ -681,7 +688,7 @@ static void refreshNext() {
     if (!deviceIsELRS_TX && allParamsLoaded == 1) {
       goodBadPkt[0] = '\0';
     } else {
-      crossfireTelemetryPush4(0x2D, 0x0, 0x0); // request linkstat
+      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, 0x0, 0x0); // request linkstat
     }
     linkstatTimeout = time + 100;
   }
@@ -736,7 +743,7 @@ static void handleDevicePageEvent(event_t event) {
       fieldId = field->id;
       fieldChunk = 0;
       fieldDataLen = 0;
-      crossfireTelemetryPush4(0x2C, fieldId, fieldChunk);
+      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_READ, fieldId, fieldChunk);
     } else {
       if (folderAccess == 0 && allParamsLoaded == 1) {
         if (deviceId != 0xEE) {
@@ -751,7 +758,7 @@ static void handleDevicePageEvent(event_t event) {
   } else if (event == EVT_VIRTUAL_ENTER) {
     if (elrsFlags > 0x1F) {
       elrsFlags = 0;
-      crossfireTelemetryPush4(0x2D, 0x2E, 0x00);
+      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, 0x2E, 0x00);
     } else {
       FieldProps * field = getField(lineIndex);
       if (field != 0 && field->nameLength > 0) {
@@ -837,7 +844,7 @@ static uint8_t popupCompat(event_t event) {
 
 static void runPopupPage(event_t event) {
   if (event == EVT_VIRTUAL_EXIT) {
-    crossfireTelemetryPush4(0x2D, fieldPopup->id, STEP_CANCEL);
+    crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CANCEL);
     fieldTimeout = getTime() + 200;
   }
 
@@ -850,7 +857,7 @@ static void runPopupPage(event_t event) {
     result = popupCompat(event);
     fieldPopup->lastStatus = fieldPopup->status;
     if (result == RESULT_OK) {
-      crossfireTelemetryPush4(0x2D, fieldPopup->id, STEP_CONFIRMED); // lcsConfirmed
+      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CONFIRMED); // lcsConfirmed
       fieldTimeout = getTime() + fieldPopup->timeout; // we are expecting an immediate response
       fieldPopup->status = STEP_CONFIRMED;
     } else if (result == RESULT_CANCEL) {
@@ -860,7 +867,7 @@ static void runPopupPage(event_t event) {
     result = popupCompat(event);
     fieldPopup->lastStatus = fieldPopup->status;
     if (result == RESULT_CANCEL) {
-      crossfireTelemetryPush4(0x2D, fieldPopup->id, STEP_CANCEL);
+      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CANCEL);
       fieldTimeout = getTime() + fieldPopup->timeout;
       fieldPopup = nullptr;
     }
