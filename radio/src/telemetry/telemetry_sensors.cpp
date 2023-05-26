@@ -545,8 +545,10 @@ void TelemetrySensor::init(const char* label, uint8_t unit, uint8_t prec) {
     prec = 1;
   }
   this->prec = prec;
+#if defined(SDCARD)
   // Log sensors by default
   this->logs = true;
+#endif
 }
 
 void TelemetrySensor::init(uint16_t id) {
