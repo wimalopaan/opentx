@@ -461,7 +461,7 @@ void menuModelTelemetryFrsky(event_t event)
         lcdDrawChar(17*FW, y, '*');
       }
 #if 0 // draw telemetry sensor ID
-      lcdDrawNumber(LCD_W, y, g_model.telemetrySensors[index].instance, attr | RIGHT);
+      lcdDrawNumber(LCD_W, y, g_model.telemetrySensors[index].instance, RIGHT);
 #endif
       TelemetryItem & telemetryItem = telemetryItems[index];
       if (telemetryItem.isAvailable()) {

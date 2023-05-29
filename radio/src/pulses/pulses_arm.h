@@ -150,6 +150,7 @@ void Hubsan_Init();
 #endif
 
 inline void startPulses() {
+//  TRACE_NOCRLF("sP");
   s_pulses_paused = false;
 
 #if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)

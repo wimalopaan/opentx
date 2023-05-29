@@ -143,6 +143,7 @@ void setupPulsesPXX(uint8_t port) {
 }
 
 bool setupPulses(uint8_t port) {
+//  TRACE_NOCRLF("sp%d", port);
   bool init_needed = false;
   bool send = false;
 
