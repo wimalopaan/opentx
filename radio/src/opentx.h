@@ -576,14 +576,13 @@ extern uint8_t trimsDisplayMask;
 void flightReset(uint8_t check=true);
 
 PACK(struct GlobalData {
-  uint8_t unexpectedShutdown:1;
-  uint8_t sdcardPresent:1;
 #if defined(PCBI6X)
-  uint8_t usbConnect:1;
-  uint8_t cToolRunning:1;
-  uint8_t spare:4;
+  uint8_t unexpectedShutdown;
+  uint8_t usbConnect;
+  uint8_t cToolRunning;
 #else
-  uint8_t spare:6;
+  uint8_t unexpectedShutdown:1;
+  uint8_t spare:7;
 #endif
 });
 
