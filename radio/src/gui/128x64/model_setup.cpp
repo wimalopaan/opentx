@@ -1451,7 +1451,7 @@ void menuModelSetup(event_t event)
 
 #if defined(PXX) || defined(PCBI6X)
   if (IS_RANGECHECK_ENABLE()) {
-    showMessageBox("RSSI: ");
+    showMessageBox("RQly ");
     lcdDrawNumber(16+4*FW, 5*FH, TELEMETRY_RSSI(), BOLD);
   }
 #endif

@@ -557,7 +557,7 @@ void menuModelTelemetryFrsky(event_t event)
           lcdDrawTextAlignedLeft(y, "RSNR");
         else
 #endif
-        lcdDrawTextAlignedLeft(y, "RSSI");
+        lcdDrawTextAlignedLeft(y, "Rqly");
         break;
 
       case ITEM_TELEMETRY_RSSI_ALARM1:
