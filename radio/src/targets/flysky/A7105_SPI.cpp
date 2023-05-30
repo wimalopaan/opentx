@@ -139,7 +139,7 @@ void A7105_WriteReg(uint8_t address, uint8_t data) {
 
 void A7105_WriteData(uint8_t len, uint8_t channel) {
   uint8_t i;
-  uint8_t out[41];
+  uint8_t out[AFHDS2A_TXPACKET_SIZE + 1];
   A7105_Strobe(A7105_STANDBY);
   A7105_Strobe(A7105_RST_WRPTR);
 
