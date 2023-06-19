@@ -110,43 +110,41 @@ jobs:
 workflows:
   openi6x-release-workflow:
     jobs:
-#      - sonar-scan:
-#          context: SonarCloud
       - build-en:
           filters:
             branches:
               ignore:
                 - master
-#          requires:
-#            - sonar-scan
       - build-std:
           filters:
             branches:
               only:
                 - master
-#          requires:
-#            - sonar-scan
       - build-std-backlight:
           filters:
             branches:
               only:
                 - master
-#          requires:
-#            - sonar-scan
+      - build-elrs:
+          filters:
+            branches:
+              only:
+                - master
+      - build-elrs-backlight:
+          filters:
+            branches:
+              only:
+                - master
       - build-heli:
           filters:
             branches:
               only:
                 - master
-#          requires:
-#            - sonar-scan
       - build-heli-backlight:
           filters:
             branches:
               only:
                 - master
-#          requires:
-#            - sonar-scan
       - build-std:
           filters:
             branches:
@@ -157,8 +155,6 @@ workflows:
             branches:
               only:
                 - master
-#          requires:
-#            - sonar-scan
 #      - publish-github-release:
 ##          filters:
 ##            branches:
