@@ -42,6 +42,26 @@ jobs:
       - store_artifacts:
           path: output
 
+  build-elrs:
+    docker:
+      - image: ajjjjjjjj/opentx-docker-i6x:1.2.0
+    steps:
+      - checkout
+      - run: |
+          python3 ./tools/build-flysky.py -bI6X_ELRS -tALL $PWD/
+      - store_artifacts:
+          path: output
+
+  build-elrs-backlight:
+    docker:
+      - image: ajjjjjjjj/opentx-docker-i6x:1.2.0
+    steps:
+      - checkout
+      - run: |
+          python3 ./tools/build-flysky.py -bI6X_ELRS_BACKLIGHT_MOD -tALL $PWD/
+      - store_artifacts:
+          path: output
+
   build-heli:
     docker:
       - image: ajjjjjjjj/opentx-docker-i6x:1.2.0
