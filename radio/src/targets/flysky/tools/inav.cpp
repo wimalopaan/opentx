@@ -44,7 +44,7 @@ static const int8_t sine[32] = {
 #define BBOX_CENTER_Y  (36)
 #define BBOX_SIZE      (21)
 
-#define HOME_ICON '\xce'
+#define HOME_ICON '\xc7'
 #define SATS_ICON '\xd1'
 
 struct Point2D {
@@ -299,10 +299,9 @@ static void inavDraw() {
     inavSetHome();
   }
 
-    // translate to LCD center space and draw
-    inavDrawHome(BBOX_CENTER_X + scaledHomeLon, BBOX_CENTER_Y + scaledHomeLat);
-    inavDrawCraft(BBOX_CENTER_X + scaledCurrentLon, BBOX_CENTER_Y + scaledCurrentLat);
-  }
+  // translate to LCD center space and draw
+  inavDrawHome(BBOX_CENTER_X + scaledHomeLat, BBOX_CENTER_Y + scaledHomeLon);
+  inavDrawCraft(BBOX_CENTER_X + scaledCurrentLat, BBOX_CENTER_Y + scaledCurrentLon);
 
   // draw VSpd line
   vspd = limit<int16_t>(-5, vspd / 4, 5);
