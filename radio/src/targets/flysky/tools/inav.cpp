@@ -300,8 +300,8 @@ static void inavDraw() {
   }
 
   // translate to LCD center space and draw
-  inavDrawHome(BBOX_CENTER_X + scaledHomeLat, BBOX_CENTER_Y + scaledHomeLon);
-  inavDrawCraft(BBOX_CENTER_X + scaledCurrentLat, BBOX_CENTER_Y + scaledCurrentLon);
+  inavDrawHome(BBOX_CENTER_X - scaledHomeLat, BBOX_CENTER_Y + scaledHomeLon);
+  inavDrawCraft(BBOX_CENTER_X - scaledCurrentLat, BBOX_CENTER_Y + scaledCurrentLon);
 
   // draw VSpd line
   vspd = limit<int16_t>(-5, vspd / 4, 5);
