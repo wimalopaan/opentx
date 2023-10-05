@@ -468,6 +468,28 @@ void auxSerialPutc(char c);
 void auxSerialSbusInit(void);
 void auxSerialStop(void);
 #endif
+
+// Aux2 serial port driver
+#if defined(FLYSKY_GIMBAL)
+#define AUX2_SERIAL
+#define AUX2_SERIAL_BAUDRATE FLYSKY_GIMBAL_BAUDRATE
+#define AUX2_SERIAL_RXFIFO_SIZE 256
+#elif defined(DFPLAYER)
+#define AUX2_SERIAL
+#define AUX2_SERIAL_BAUDRATE 9600 //DFPLAYER_BAUDRATE
+#define AUX2_SERIAL_RXFIFO_SIZE 16
+#endif
+#if defined(AUX2_SERIAL)
+// extern uint8_t aux2SerialMode;
+// #if defined __cplusplus
+// void aux2SerialSetup(unsigned int baudrate, bool dma, uint16_t length = USART_WordLength_8b, uint16_t parity = USART_Parity_No, uint16_t stop = USART_StopBits_1);
+// #endif
+void aux2SerialInit(void);
+void aux2SerialPutc(char c);
+void aux2SerialStop();
+void aux2SerialSetIdleCb(void (*cb)());
+#endif
+
 #define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_PE) // | USART_FLAG_FE, USART_FLAG_NE
 
 // LCD driver
@@ -491,9 +513,7 @@ void checkTrainerSettings(void);
 
 #if defined(__cplusplus)
 //#include "fifo.h"
-#if defined(AUX_SERIAL_DMA_Channel_RX)
 #include "dmafifo.h"
-#endif // AUX_SERIAL_DMA_Channel_RX
 
 #if defined(CROSSFIRE)
 #define TELEMETRY_FIFO_SIZE             128
@@ -502,10 +522,10 @@ void checkTrainerSettings(void);
 #endif
 
 // extern Fifo<uint8_t, TELEMETRY_FIFO_SIZE> telemetryFifo;
-#if defined(AUX_SERIAL_DMA_Channel_RX)
 extern DMAFifo<32> auxSerialRxFifo;
-#endif // AUX_SERIAL_DMA_Channel_RX
+#if defined(AUX2_SERIAL)
+extern DMAFifo<AUX2_SERIAL_RXFIFO_SIZE> aux2SerialRxFifo;
 #endif
-
+#endif
 
 #endif // _BOARD_H_
