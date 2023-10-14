@@ -223,7 +223,9 @@ void boardInit()
   init2MhzTimer();
   init5msTimer();
   __enable_irq();
+#if defined(FLYSKY_GIMBAL)
   flysky_gimbal_init();
+#endif
   buzzerInit();
   i2cInit();
   usbInit();
