@@ -24,9 +24,12 @@
 // not needed
 #else
 const int8_t ana_direction[NUM_ANALOGS] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
-const uint8_t ana_mapping[NUM_ANALOGS] =  {3, 2, 1, 0, 6, 7, 4, 5, 8, 9, 10};
-                                          
-#endif
+#if defined (FLYSKY_GIMBAL)
+const uint8_t ana_mapping[NUM_ANALOGS] =  {0, 1, 2, 3, 6, 7, 4, 5, 8, 9, 10};
+#else
+const uint8_t ana_mapping[NUM_ANALOGS] = {3, 2, 1, 0, 6, 7, 4, 5, 8, 9, 10};
+#endif // FLYSKY_GIMBAL                   
+#endif // SIMU
 
 #if NUM_PWMANALOGS > 0
 #define FIRST_ANALOG_ADC (ANALOGS_PWM_ENABLED() ? NUM_PWMANALOGS : 0)
@@ -35,9 +38,12 @@ const uint8_t ana_mapping[NUM_ANALOGS] =  {3, 2, 1, 0, 6, 7, 4, 5, 8, 9, 10};
 #define FIRST_ANALOG_ADC 0
 #define NUM_ANALOGS_ADC 10
 #define NUM_ANALOGS_ADC_EXT (NUM_ANALOGS - 10)
+#elif defined (FLYSKY_GIMBAL)
+#define FIRST_ANALOG_ADC 4
+#define NUM_ANALOGS_ADC (NUM_ANALOGS - 4)
 #else
 #define FIRST_ANALOG_ADC 0
-#define NUM_ANALOGS_ADC NUM_ANALOGS
+#define NUM_ANALOGS_ADC (NUM_ANALOGS)
 #endif
 
 uint16_t adcValues[NUM_ANALOGS] __DMA;
@@ -70,7 +76,12 @@ void adcInit()
   GPIO_StructInit(&gpio_init);
 
   // set up analog inputs ADC0...ADC7(PA0...PA7)
+  #if defined(FLYSKY_GIMBAL)
+  gpio_init.GPIO_Pin = 0b11110000;
+  #else
   gpio_init.GPIO_Pin = 0b11111111;
+  #endif
+
   gpio_init.GPIO_Mode = GPIO_Mode_AN;
   GPIO_Init(GPIOA, &gpio_init);
 
@@ -100,8 +111,13 @@ void adcInit()
   ADC_Init(ADC1, &adc_init);
 
   // configure each channel
-  ADC_ChannelConfig(ADC1, ADC_Channel_0 | ADC_Channel_1 | ADC_Channel_2 | ADC_Channel_3 | ADC_Channel_4 | ADC_Channel_5 |
-    ADC_Channel_6 | ADC_Channel_7 | ADC_Channel_8 | ADC_Channel_9 | ADC_Channel_10, ADC_SampleTime_41_5Cycles);
+  #if !defined(FLYSKY_GIMBAL)
+  ADC_ChannelConfig(ADC1, ADC_Channel_0 | ADC_Channel_1 | ADC_Channel_2 | ADC_Channel_3 |
+  #else
+  ADC_ChannelConfig(ADC1,
+  #endif
+    ADC_Channel_4 | ADC_Channel_5 | ADC_Channel_6 | ADC_Channel_7 | ADC_Channel_8 | ADC_Channel_9 | ADC_Channel_10, ADC_SampleTime_41_5Cycles);
+
 
   // enable ADC
   ADC_Cmd(ADC1, ENABLE);
@@ -137,7 +153,7 @@ void adcInit()
   dma_init.DMA_BufferSize = NUM_ANALOGS;
   // source and destination start addresses
   dma_init.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
-  dma_init.DMA_MemoryBaseAddr = (uint32_t)adcValues;
+  dma_init.DMA_MemoryBaseAddr = (uint32_t)&adcValues[FIRST_ANALOG_ADC];
   // send values to DMA registers
   DMA_Init(ADC_DMA_CHANNEL, &dma_init);
 
@@ -186,4 +202,10 @@ uint16_t getAnalogValue(uint8_t index)
   else
     return adcValues[index];
 }
+#if defined(FLYSKY_GIMBAL)
+uint16_t* getAnalogValues()
+{
+  return adcValues;
+}
+#endif // FLYSKY_GIMBAL
 #endif // #if !defined(SIMU)

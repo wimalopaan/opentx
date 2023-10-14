@@ -23,6 +23,7 @@
 
 #include "stddef.h"
 #include "stdbool.h"
+#include "flysky_gimbal_driver.h"
 
 #if defined(__cplusplus) && !defined(SIMU)
 extern "C" {
@@ -362,6 +363,7 @@ void adcInit(void);
 void adcRead(void);
 extern uint16_t adcValues[NUM_ANALOGS];
 uint16_t getAnalogValue(uint8_t index);
+uint16_t* getAnalogValues();
 uint16_t getBatteryVoltage();   // returns current battery voltage in 10mV steps
 
 #define BATT_SCALE                    150
@@ -472,8 +474,8 @@ void auxSerialStop(void);
 // Aux2 serial port driver
 #if defined(FLYSKY_GIMBAL)
 #define AUX2_SERIAL
-#define AUX2_SERIAL_BAUDRATE FLYSKY_GIMBAL_BAUDRATE
-#define AUX2_SERIAL_RXFIFO_SIZE 256
+#define AUX2_SERIAL_BAUDRATE FLYSKY_HALL_BAUDRATE // 921600
+#define AUX2_SERIAL_RXFIFO_SIZE HALLSTICK_BUFF_SIZE // 128
 #elif defined(DFPLAYER)
 #define AUX2_SERIAL
 #define AUX2_SERIAL_BAUDRATE 9600 //DFPLAYER_BAUDRATE
@@ -486,8 +488,10 @@ void auxSerialStop(void);
 // #endif
 void aux2SerialInit(void);
 void aux2SerialPutc(char c);
-void aux2SerialStop();
+void aux2SerialStop(void);
 void aux2SerialSetIdleCb(void (*cb)());
+void flysky_gimbal_init();
+void flysky_gimbal_loop(void);
 #endif
 
 #define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_PE) // | USART_FLAG_FE, USART_FLAG_NE

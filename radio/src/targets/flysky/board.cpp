@@ -216,7 +216,6 @@ void boardInit()
   // TRACE("RCC->CSR = %08x", RCC->CSR);
 #endif
 
-  crcInit();
   adcInit();
   delaysInit();
   lcdInit(); // delaysInit() must be called before
@@ -224,6 +223,7 @@ void boardInit()
   init2MhzTimer();
   init5msTimer();
   __enable_irq();
+  flysky_gimbal_init();
   buzzerInit();
   i2cInit();
   usbInit();

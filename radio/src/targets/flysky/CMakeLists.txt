@@ -47,6 +47,10 @@ endif()
 
 if(FLYSKY_GIMBAL STREQUAL YES)
   add_definitions(-DFLYSKY_GIMBAL)
+  set(TARGET_SRC
+    ${TARGET_SRC}
+    ../common/arm/stm32/flysky_gimbal_driver.cpp
+    )
 endif()
 
 if(DFPLAYER STREQUAL YES)
