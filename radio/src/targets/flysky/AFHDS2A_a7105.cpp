@@ -94,13 +94,13 @@ void AFHDS2A_update_telemetry() {
 
 #if defined(AUX_SERIAL)
   if (g_eeGeneral.auxSerialMode == UART_MODE_TELEMETRY_MIRROR) {
-    // header
-    auxSerialPutc('M');
-    auxSerialPutc('P');
-    auxSerialPutc((packet[0] == 0xAA) ? 0x06 : 0x0C); // Multiprotocol module telemetry type for AFHDS2A
-    auxSerialPutc(AFHDS2A_RXPACKET_SIZE - 8);
-    // data
-    for (uint8_t c = 8; c < AFHDS2A_RXPACKET_SIZE; c++) { // RSSI value followed by 4*7 bytes of telemetry data, skip rx and tx id
+    // header, add to packet before packet data for easier possible DMA transfer
+    packet[4] = 'M';
+    packet[5] = 'P';
+    packet[6] = (packet[0] == 0xAA) ? 0x06 : 0x0C; // Multiprotocol module telemetry type for AFHDS2A
+    packet[7] = AFHDS2A_RXPACKET_SIZE - 8;
+
+    for (uint8_t c = 4; c < AFHDS2A_RXPACKET_SIZE; c++) { // MP[type][size][RSSI] followed by 4*7 bytes of telemetry data, skip rx and tx id
       auxSerialPutc(packet[c]);
     }
   }

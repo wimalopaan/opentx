@@ -228,7 +228,7 @@ static FieldProps * getFieldById(const uint8_t id) {
  * Store field at its location or add new one if not found.
  */
 static void storeField(FieldProps * field) {
-  TRACE("storeField id %d", field->id);
+//   TRACE("storeField id %d", field->id);
   FieldProps * storedField = getFieldById(field->id);
   if (storedField == nullptr) {
     storedField = &fields[allocatedFieldsCount];
@@ -280,7 +280,7 @@ static void selectField(int8_t step) {
 }
 
 static uint8_t getDevice(uint8_t devId) {
-  TRACE("getDevice %x", devId);
+//   TRACE("getDevice %x", devId);
   for (uint32_t i = 0; i < devicesLen; i++) {
     if (deviceIds[i] == devId) {
       return deviceIds[i];
@@ -364,7 +364,7 @@ static void fieldStringDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
 }
 
 static void fieldFolderOpen(FieldProps * field) {
-  TRACE("fieldFolderOpen %d", field->id);
+  //TRACE("fieldFolderOpen %d", field->id);
   lineIndex = 1;
   pageOffset = 0;
   currentFolderId = field->id;
@@ -438,7 +438,7 @@ static void UIbackExec(FieldProps * field = 0) {
 }
 
 static void changeDeviceId(uint8_t devId) { //change to selected device ID
-  TRACE("changeDeviceId %x", devId);
+  //TRACE("changeDeviceId %x", devId);
   currentFolderId = 0;
   deviceIsELRS_TX = 0;
   elrsFlags = 0;
@@ -564,7 +564,7 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   if (chunksRemain > 0) {
     fieldChunk = fieldChunk + 1;
   } else {
-    TRACE("%d %s %d", fieldId, &fieldData[2], fieldDataLen);
+    // TRACE("%d %s %d", fieldId, &fieldData[2], fieldDataLen);
 //    DUMP(fieldData, fieldDataLen);
     fieldChunk = 0;
     if (fieldDataLen < 4) {
@@ -607,9 +607,9 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
 
     if (fieldPopup == nullptr) {
       if (fieldId == expectedFieldsCount) { // if we have loaded all params
-        TRACE("bufferOffset %d", bufferOffset);
+        // TRACE("bufferOffset %d", bufferOffset);
         // DUMP(buffer, bufferOffset);
-        TRACE("allocatedFieldsCount %d", allocatedFieldsCount);
+        // TRACE("allocatedFieldsCount %d", allocatedFieldsCount);
         allParamsLoaded = 1;
         fieldId = 1;
         if (currentFolderId == 0) {

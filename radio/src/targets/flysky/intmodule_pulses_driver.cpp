@@ -109,6 +109,7 @@ void intmoduleAfhds2aStart() {
   SET_BIT(RCC->APB2ENR, RCC_APB2ENR_SYSCFGCOMPEN);
   /* Delay after an RCC peripheral clock enabling */
   tmpreg = READ_BIT(RCC->APB2ENR, RCC_APB2ENR_SYSCFGCOMPEN);
+  UNUSED(tmpreg);
   // RF_GIO1
   SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI2_PB;  // Set EXTI Source
   EXTI->FTSR |= EXTI_FTSR_TR2;                   // Falling edge
