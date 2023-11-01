@@ -131,7 +131,8 @@ void menuStatisticsDebug(event_t event)
       break;
 
     case EVT_KEY_FIRST(KEY_ENTER):
-      maxMixerDuration  = 0;
+      telemetryErrors = 0;
+      maxMixerDuration = 0;
       break;
 
 
