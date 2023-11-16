@@ -4,6 +4,7 @@ option(PCBI6X_HELLO "Enable Hello World example tool" NO)
 option(PCBI6X_INAV "Enable INAV Lite telemetry screen" NO) # ~2kB
 option(PCBI6X_USB_VBUS "Remove manual USB connection, just auto using VBUS, requires wiring USB VBUS to PA15 pad" NO)
 option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" 17)
+option(DFPLAYER "Enables DFPlayer on AUX3 TX" NO) # ~1.7kB
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
@@ -54,6 +55,10 @@ endif()
 
 if(DFPLAYER STREQUAL YES)
   add_definitions(-DDFPLAYER)
+  set(TARGET_SRC
+  ${TARGET_SRC}
+  dfplayer_driver.cpp
+  )
 endif()
 
 if(PCBI6X_ELRS STREQUAL YES)
@@ -80,7 +85,7 @@ set(TARGET_SRC
   )
 endif()
 
-add_definitions(-DPCBI6X_USB_MSD) # 3620B
+add_definitions(-DPCBI6X_USB_MSD) # 3.2kB
 
 set(TARGET_SRC
   ${TARGET_SRC}

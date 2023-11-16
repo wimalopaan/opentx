@@ -217,7 +217,7 @@ void boardInit()
 #endif
 
   adcInit();
-  delaysInit();
+//   delaysInit();
   lcdInit(); // delaysInit() must be called before
   initBuzzerTimer();
   init2MhzTimer();
@@ -240,6 +240,10 @@ void boardInit()
 #endif
 
   backlightInit();
+
+#if defined(DFPLAYER)
+  dfplayerInit();
+#endif
 
 #endif // !defined(SIMU)
 }

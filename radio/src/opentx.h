@@ -75,6 +75,12 @@
   #define CASE_AUDIO(x)
 #endif
 
+#if defined(DFPLAYER)
+  #define CASE_DFPLAYER(x) x,
+#else
+  #define CASE_DFPLAYER(x)
+#endif
+
 #if defined(PWM_BACKLIGHT)
   #define CASE_PWM_BACKLIGHT(x) x,
 #else
@@ -1021,6 +1027,9 @@ enum AUDIO_SOUNDS {
   AU_SLIDER3_MIDDLE,
   AU_SLIDER4_MIDDLE,
 #endif
+#elif defined(PCBI6X)
+  AU_POT1_MIDDLE,
+  AU_POT2_MIDDLE,
 #else
   AU_POT1_MIDDLE,
   AU_POT2_MIDDLE,

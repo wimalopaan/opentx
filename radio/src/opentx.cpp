@@ -1559,9 +1559,11 @@ void opentxClose(uint8_t shutdown) {
 
   saveAllData();
 
+#if !defined(PCBI6X)
   while (IS_PLAYING(ID_PLAY_PROMPT_BASE + AU_BYE)) {
     RTOS_WAIT_MS(10);
   }
+#endif
 
   RTOS_WAIT_MS(100);
 
@@ -1822,10 +1824,6 @@ void opentxInit()
   auxSerialInit(g_eeGeneral.auxSerialMode, modelTelemetryProtocol());
 #endif
 
-#if defined(AUX2_SERIAL)
-  aux2SerialInit();
-#endif
-
 #if MENUS_LOCK == 1
   getMovedSwitch();
   if (TRIMS_PRESSED() && g_eeGeneral.switchUnlockStates == switches_states) {
@@ -1841,6 +1839,10 @@ void opentxInit()
 
   referenceSystemAudioFiles();
   audioQueue.start();
+#endif
+
+#if defined(DFPLAYER)
+  dfplayerSetVolume(g_eeGeneral.wavVolume);
 #endif
 
   BACKLIGHT_ENABLE();

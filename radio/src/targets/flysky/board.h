@@ -120,7 +120,7 @@ void init5msTimer();
 #ifdef __cplusplus
 extern "C" {
 #endif
-void delaysInit(void);
+// void delaysInit(void);
 void delay_01us(uint16_t nb);
 void delay_us(uint16_t nb);
 void delay_ms(uint32_t ms);
@@ -173,6 +173,10 @@ uint32_t sdMounted(void);
 #if !defined(BOOT)
 #include "buzzer_driver.h"
 #define BUZZER_HEARTBEAT buzzerHeartbeat
+#endif
+
+#if defined(DFPLAYER)
+#include "dfplayer_driver.h"
 #endif
 
 // Flash Write driver
@@ -466,25 +470,29 @@ void auxSerialStop(void);
 
 // Aux2 serial port driver
 #if defined(FLYSKY_GIMBAL)
-#define AUX2_SERIAL
-#define AUX2_SERIAL_BAUDRATE FLYSKY_HALL_BAUDRATE // 921600
-#define AUX2_SERIAL_RXFIFO_SIZE HALLSTICK_BUFF_SIZE // 128
-#elif defined(DFPLAYER)
-#define AUX2_SERIAL
-#define AUX2_SERIAL_BAUDRATE 9600 //DFPLAYER_BAUDRATE
-#define AUX2_SERIAL_RXFIFO_SIZE 16
+#define AUX4_SERIAL
+#define AUX4_SERIAL_BAUDRATE FLYSKY_HALL_BAUDRATE // 921600
+#define AUX4_SERIAL_RXFIFO_SIZE HALLSTICK_BUFF_SIZE // 128
+void flysky_gimbal_init();
 #endif
-#if defined(AUX2_SERIAL)
+#if defined(DFPLAYER)
+#define AUX3_SERIAL
+#define AUX3_SERIAL_BAUDRATE DFPLAYER_BAUDRATE
+#endif
+
+#if defined(AUX3_SERIAL)
 // extern uint8_t aux2SerialMode;
 // #if defined __cplusplus
 // void aux2SerialSetup(unsigned int baudrate, bool dma, uint16_t length = USART_WordLength_8b, uint16_t parity = USART_Parity_No, uint16_t stop = USART_StopBits_1);
 // #endif
-void aux2SerialInit(void);
-void aux2SerialPutc(char c);
-void aux2SerialStop(void);
-void aux2SerialSetIdleCb(void (*cb)());
-void flysky_gimbal_init();
-void flysky_gimbal_loop(void);
+void aux3SerialInit(void);
+void aux3SerialPutc(char c);
+#endif
+
+#if defined(AUX4_SERIAL)
+void aux4SerialInit(void);
+void aux4SerialStop(void);
+void aux4SerialSetIdleCb(void (*cb)());
 #endif
 
 #define USART_FLAG_ERRORS (USART_FLAG_ORE | USART_FLAG_PE) // | USART_FLAG_FE, USART_FLAG_NE
@@ -520,8 +528,8 @@ void checkTrainerSettings(void);
 
 // extern Fifo<uint8_t, TELEMETRY_FIFO_SIZE> telemetryFifo;
 extern DMAFifo<32> auxSerialRxFifo;
-#if defined(AUX2_SERIAL)
-extern DMAFifo<AUX2_SERIAL_RXFIFO_SIZE> aux2SerialRxFifo;
+#if defined(AUX4_SERIAL)
+extern DMAFifo<AUX4_SERIAL_RXFIFO_SIZE> aux4SerialRxFifo;
 #endif
 #endif
 
