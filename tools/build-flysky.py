@@ -52,7 +52,7 @@ translations = [
 common_options = {
     "PCB": "I6X",
     "MULTIMODULE": "NO",
-    "CROSSFIRE": "YES",
+    # "CROSSFIRE": "YES",
     "GVARS": "YES",
     "LUA": "NO",
     "LUA_COMPILER": "NO",
