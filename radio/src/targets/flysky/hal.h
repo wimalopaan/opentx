@@ -95,7 +95,7 @@
 // #define ADC_SET_DMA_FLAGS()             ADC_DMA->HIFCR = (DMA_HIFCR_CTCIF4 | DMA_HIFCR_CHTIF4 | DMA_HIFCR_CTEIF4 | DMA_HIFCR_CDMEIF4 | DMA_HIFCR_CFEIF4)
 // #define ADC_TRANSFER_COMPLETE()         (ADC_DMA->HISR & DMA_HISR_TCIF4)
 #define ADC_DMA_TC_FLAG               DMA1_FLAG_TC1
-#define ADC_SAMPTIME                    ADC_SampleTime_41_5Cycles
+#define ADC_SAMPTIME                  ADC_SampleTime_239_5Cycles // ADC_SampleTime_41_5Cycles
 
 #define ADC_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_DMA1)
 #define ADC_RCC_APB1Periph            0
