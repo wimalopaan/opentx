@@ -269,6 +269,44 @@ void processFlySkyPacketAC(const uint8_t *packet) {
   }
 }
 
+#if defined(AFHDS2A)
+/*
+IntV1: 4.81V
+ExtV2: 0.00V sensor x6b voltaje externo
+Err. 1: 10
+RSSI1: -60dBm
+Noi.1: -97dBm
+SNR1:   39dB
+
+packet[0] - type
+packet[1-4] - rx_tx_addr
+packet[5-8] - rx_id
+0xff - AFHDS2A_ID_END
+*/
+void processFlySkyTelemetryFrame(uint8_t * frame) {
+  if (frame[0] == 0xAA) {
+    processFlySkyPacket(frame + 8);
+  } else if (frame[0] == 0xAC) {
+    processFlySkyPacketAC(frame + 8);
+  }
+
+#if defined(AUX_SERIAL)
+  if (g_eeGeneral.auxSerialMode == UART_MODE_TELEMETRY_MIRROR) {
+    // header, add to packet before packet data
+    // MP[type][size][RSSI] followed by 4*7 bytes of telemetry data, skip rx and tx id
+    frame[4] = 'M';
+    frame[5] = 'P';
+    frame[6] = (frame[0] == 0xAA) ? 0x06 : 0x0C; // MPM telemetry types for AFHDS2A
+    frame[7] = AFHDS2A_RXPACKET_SIZE - 8;
+
+    for (uint8_t c = 4; c < AFHDS2A_RXPACKET_SIZE; c++) {
+      auxSerialPutc(frame[c]);
+    }
+  }
+#endif
+}
+#endif // AFHDS2A
+
 #if defined(MULTIMODULE)
 void processFlySkyTelemetryData(uint8_t data, uint8_t *rxBuffer, uint8_t &rxBufferCount) {
   if (rxBufferCount == 0)
