@@ -916,7 +916,7 @@
 #define TR_FORMATTING          "Formatowanie.."
 #define TR_TEMP_CALIB          "Temp. kalibracji"
 #define TR_TIME                "Czas"
-#define TR_MAXBAUDRATE         "Max bauds"
+#define TR_MAXBAUDRATE         "Baudrate"
 
 #define TR_BLUETOOTH            "Bluetooth"
 #define TR_BLUETOOTH_DISC       "Discover"
