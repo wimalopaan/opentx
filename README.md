@@ -10,19 +10,17 @@
 
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
 
-## Table of Contents
-
-[Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help<br>
-[How to install and upgrade firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
-[Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development) <br>
-[Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
-[Features](#features)<br>
-[Navigation](#navigation)<br>
-[Proper shutdown (I see square icon)](#shutdown)<br>
-[USB connection](#usb-connection)<br>
-[Powering by 2S Li-Po/Li-ion/18650](#powering-by-2s-li-poli-ion18650)<br>
-[Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
-[Credits](#credits)<br>
+- [Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help<br>
+  - [How to install and upgrade firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
+  - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development) <br>
+  - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
+- [Features](#features)<br>
+- [Navigation](#navigation)<br>
+- [Proper shutdown (I see square icon)](#shutdown)<br>
+- [USB connection](#usb-connection)<br>
+- [Powering by 2S Li-Po/Li-ion/18650](#powering-by-2s-li-poli-ion18650)<br>
+- [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
+- [Credits](#credits)<br>
 
 
 ## Features
@@ -54,7 +52,7 @@ Comparison with original firmware:
     * MEGA Bauds up to 1.8M
     * ExpressLRS V3 configuration built-in (no need to copy ELRSV3.lua)
 * Telemetry
-* Adjustable backlight brightness level (requires basic [modification](#adjustable-backlight-level-mod) & backlight_mod build)
+* Adjustable backlight brightness level (see modifications in wiki)
 * Audio tones, alarms and vario sound custom implementation
 * DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes
