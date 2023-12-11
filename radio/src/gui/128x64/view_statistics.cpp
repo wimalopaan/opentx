@@ -209,7 +209,7 @@ void menuStatisticsDebug(event_t event)
   }
 #endif
 
-#if defined(PCBTARANIS)
+#if defined(PCBTARANIS) //|| defined(PCBI6X)
 #if !defined(SIMU) && defined(DEBUG)
   lcdDrawTextAlignedLeft(MENU_DEBUG_Y_USB, "Usb");
   lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_USB, charsWritten, LEFT);
