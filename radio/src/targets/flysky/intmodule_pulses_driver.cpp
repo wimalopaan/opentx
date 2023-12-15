@@ -45,9 +45,8 @@ void initIntModuleTimer(uint16_t periodUs) {
   CLEAR_BIT(TIM16->SMCR, TIM_SMCR_MSM);  // Disable Master Slave Mode
   WRITE_REG(TIM16->PSC, 2);              // Prescaler
   WRITE_REG(TIM16->ARR, 65535 - periodUs); // Preload, was: 61759 => 3776
-
-  /* TIM16 interrupt Init */
   SET_BIT(TIM16->DIER, TIM_DIER_UIE);    // Enable update interrupt (UIE)
+
   NVIC_SetPriority(TIM16_IRQn, 2);
   NVIC_EnableIRQ(TIM16_IRQn);
 }

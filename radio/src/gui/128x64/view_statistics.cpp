@@ -131,7 +131,7 @@ void menuStatisticsDebug(event_t event)
       break;
 
     case EVT_KEY_FIRST(KEY_ENTER):
-      telemetryErrors = 0;
+    //   telemetryErrors = 0;
       maxMixerDuration = 0;
       break;
 
@@ -159,8 +159,8 @@ void menuStatisticsDebug(event_t event)
   }
 
 #if defined(PCBI6X) // single debug screen
-  lcdDrawTextAlignedLeft(MENU_DEBUG_ROW1, "Tlm RX Err");
-  lcdDrawNumber(MENU_DEBUG_COL1_OFS + FW, MENU_DEBUG_ROW1, telemetryErrors, RIGHT);
+//   lcdDrawTextAlignedLeft(MENU_DEBUG_ROW1, "Tlm RX Err");
+//   lcdDrawNumber(MENU_DEBUG_COL1_OFS + FW, MENU_DEBUG_ROW1, telemetryErrors, RIGHT);
 #endif
 
 #if defined(PCBSKY9X)
@@ -279,8 +279,8 @@ void menuStatisticsDebug2(event_t event)
       break;
   }
 
-  lcdDrawTextAlignedLeft(MENU_DEBUG_ROW1, "Tlm RX Err");
-  lcdDrawNumber(MENU_DEBUG_COL1_OFS + FW, MENU_DEBUG_ROW1, telemetryErrors, RIGHT);
+//   lcdDrawTextAlignedLeft(MENU_DEBUG_ROW1, "Tlm RX Err");
+//   lcdDrawNumber(MENU_DEBUG_COL1_OFS + FW, MENU_DEBUG_ROW1, telemetryErrors, RIGHT);
 #if defined(BLUETOOTH)
 #if defined(PCBX7)
   lcdDrawTextAlignedLeft(MENU_DEBUG_ROW2, "BT status");

@@ -208,7 +208,7 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
   while (status & (USART_FLAG_RXNE | USART_FLAG_ERRORS)) {
     uint8_t data = TELEMETRY_USART->RDR;
     if (status & USART_FLAG_ERRORS) {
-      telemetryErrors++;
+      // telemetryErrors++;
       if (status & USART_FLAG_ORE) {
         USART_ClearITPendingBit(TELEMETRY_USART, USART_IT_ORE);
       }
@@ -223,15 +223,6 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
       }
     } else {
       telemetryFifo.push(data);
-#if defined(LUA)
-    if (telemetryProtocol == PROTOCOL_FRSKY_SPORT) {
-      static uint8_t prevdata;
-      if (prevdata == 0x7E && outputTelemetryBufferSize > 0 && data == outputTelemetryBufferTrigger) {
-        sportSendBuffer(outputTelemetryBuffer, outputTelemetryBufferSize);
-      }
-      prevdata = data;
-    }
-#endif
     }
     status = TELEMETRY_USART->ISR;
   }
