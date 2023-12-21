@@ -42,6 +42,7 @@ Comparison with original firmware:
 | Use trims as buttons      | _          | ✓                            |
 | ExpressLRS ready          | _          | ✓                            |
 | Telemetry mirror          | _          | ✓                            |
+| FlySky FS-HZCZ03-ADJ Gimbal support| _ | ✓                            |
 
 <sub>[1] Unlimited by using USB mass storage mode eeprom backup/restore.</sub><br>
 <sub>[2] By adding DFPlayer, see modifications in wiki.</sub>
