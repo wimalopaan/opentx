@@ -6,7 +6,8 @@
 ![Banner](https://github.com/OpenI6X/opentx/blob/master/doc/flysky/banner.png?raw=true)
 
 ## Welcome to Openi6X!
-### OpenTX for Flysky FS-i6X with a touch of EdgeTX
+
+OpenTX for Flysky FS-i6X with a touch of EdgeTX.
 
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
 
@@ -37,12 +38,13 @@ Comparison with original firmware:
 | Logical switches          | _          | ✓                            |
 | Global variables          | _          | ✓                            |
 | Timers                    | _          | ✓                            |
-| Nicer sounds              | _          | ✓                            |
+| Voice annoucements        | _          | ✓<sup>[2]</sup>              |
 | Use trims as buttons      | _          | ✓                            |
 | ExpressLRS ready          | _          | ✓                            |
 | Telemetry mirror          | _          | ✓                            |
 
-<sup>[1] Unlimited by using USB mass storage mode eeprom backup/restore.</sup>
+<sub>[1] Unlimited by using USB mass storage mode eeprom backup/restore.</sub><br>
+<sub>[2] By adding DFPlayer, see modifications in wiki.</sub>
 
 * Protocols:
   * AFHDS2A with SBUS, IBUS and extended SBUS16, IBUS16 - 16 channels modes
@@ -52,14 +54,16 @@ Comparison with original firmware:
     * MEGA Bauds up to 1.8M
     * ExpressLRS V3 configuration built-in (no need to copy ELRSV3.lua)
 * Telemetry
-* Adjustable backlight brightness level (see modifications in wiki)
+* Adjustable backlight brightness level
 * Audio tones, alarms and vario sound custom implementation
-* DFU bootloader - Start by pushing trims to the center, like regular OpenTX one
+* Voice annoucements
+* DFU bootloader - Start by pushing horizontal trims to the center, like regular OpenTX one
 * USB Joystick & Storage modes
 * AUX Serial port with modes:
   * Telemetry mirror for AFHDS2A and CRSF
   * SBUS Trainer
   * Debug (on DEBUG builds)
+* FlySky FS-HZCZ03-ADJ Digital Gimbal support 
   
 ## Navigation
 
@@ -99,7 +103,7 @@ With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swap
 * Mariano ([marianomd](https://github.com/marianomd)), continued Kuba's work and made it up to useable condition! Added AFHDS2A, PPM, CRSF.
 * Kuba ([qba667](https://github.com/qba667)), started this work and made this project possible, it is forked from his repo.
 * Wilhelm ([wimalopaan](https://github.com/wimalopaan)) added 16 channels SBUS16 / IBUS16 modes.
-* Rafael ([rafolg](https://github.com/rafolg)), ported FlySky Hall Gimbal support from EdgeTX, 
+* Rafael ([rafolg](https://github.com/rafolg)), ported FlySky Hall Gimbal support from EdgeTX.
 * Tom ([tmcadam](https://github.com/tmcadam)) fixed AFHDS2A PWM mode selection.
 * The internal RF code was taken from the great KotelloRC's [erfly6: Er9X for i6 and i6x](https://bitbucket.org/KotelloRC/erfly6/src/master/).
 * Some of the internal RF fixes are a result of analysing [pascallanger's](https://github.com/pascallanger) [DIY-Multiprotocol-TX-Module](https://github.com/pascallanger/DIY-Multiprotocol-TX-Module).
