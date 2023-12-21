@@ -51,7 +51,6 @@ const char * audioNames =
   "fm-2  "
   "fm-3  "
   "fm-4  "
-  "fm-5  "
   "fm-acr"
   "fm-ang"
   "fm-crs"
