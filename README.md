@@ -9,7 +9,8 @@
 
 OpenTX for Flysky FS-i6X with a touch of EdgeTX.
 
-You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX), [Telegram](https://t.me/otx_flysky_i6x), [Discord](https://discord.gg/3vKfYNTVa2) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
+Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx_flysky_i6x).<br>
+You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
 
 - [Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help<br>
   - [How to install and upgrade firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
@@ -80,7 +81,7 @@ Comparison with original firmware:
 FlySky FS-i6X don't have a software controlled shutdown button. Do not switch off radio when you see `▫` (small square) icon in top right corner of main screen. It indicates that settings are not yet saved. Wait until it disappears or use "Save all" option from main screen popup menu.
 
 When to use "Save all" option:
-* When you don't want to wait until square icon disapper before shutdown.
+* When you don't want to wait until square icon disappear before shutdown.
 * With USB connected - when USB is connected then settings are not stored with standard delay.
 * To save timers.
 
@@ -100,7 +101,7 @@ With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swap
 ## Credits
 
 * Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)), continues Kuba's and Mariano's work, added sound, USB, ExpressLRS V2/V3 configuration, telemetry mirror, SBUS trainer, new/fixed drivers, ports, bugfixes.
-* Mariano ([marianomd](https://github.com/marianomd)), continued Kuba's work and made it up to useable condition! Added AFHDS2A, PPM, CRSF.
+* Mariano ([marianomd](https://github.com/marianomd)), continued Kuba's work and made it up to useable condition! Added gimbals, buttons, AFHDS2A, PPM, CRSF.
 * Kuba ([qba667](https://github.com/qba667)), started this work and made this project possible, it is forked from his repo.
 * Wilhelm ([wimalopaan](https://github.com/wimalopaan)) added 16 channels SBUS16 / IBUS16 modes.
 * Rafael ([rafolg](https://github.com/rafolg)), ported FlySky Hall Gimbal support from EdgeTX.
