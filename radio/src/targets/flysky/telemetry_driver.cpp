@@ -21,7 +21,7 @@
 #include "opentx.h"
 
 Fifo<uint8_t, TELEMETRY_FIFO_SIZE> telemetryFifo;
-uint32_t telemetryErrors = 0;
+// uint32_t telemetryErrors = 0;
 static USART_InitTypeDef USART_InitStructure;
 void uartSetDirection(bool tx);
 

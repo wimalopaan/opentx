@@ -129,7 +129,7 @@ void dfplayerPlayFile(uint16_t number) {
 }
 
 void dfplayerSetVolume(int8_t volume) {
-    uint8_t volumes[5] = { 0, 12, 18, 24, 30 }; // allowed range: 0-30
+    uint8_t volumes[5] = { 0, 15, 20, 25, 30 }; // allowed range: 0-30
     //RTOS_WAIT_MS(200);
     dfplayerCommand(DFP_SET_VOLUME, /*((2 + volume) * 6)*/volumes[2 + volume]);
 }
