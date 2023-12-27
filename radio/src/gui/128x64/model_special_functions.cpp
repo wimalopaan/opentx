@@ -332,10 +332,9 @@ void menuSpecialFunctions(event_t event, CustomFunctionData * functions, CustomF
             }
             break;
           }
-          else 
 #endif // SDCARD
 #if defined(DFPLAYER)
-          if (func == FUNC_PLAY_TRACK) {
+          else if (func == FUNC_PLAY_TRACK) {
             val_min = DFPLAYER_CUSTOM_FILE_INDEX;
             val_max = DFPLAYER_LAST_FILE_INDEX;
             if (val_displayed < val_min) val_displayed = val_min;
