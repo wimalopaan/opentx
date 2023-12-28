@@ -7,7 +7,7 @@
 
 ## Welcome to Openi6X!
 
-OpenTX for Flysky FS-i6X with a touch of EdgeTX.
+OpenTX/EdgeTX for Flysky FS-i6X.
 
 Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx_flysky_i6x).<br>
 You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
