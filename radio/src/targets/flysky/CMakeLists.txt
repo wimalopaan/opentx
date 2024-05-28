@@ -5,6 +5,7 @@ option(PCBI6X_INAV "Enable INAV Lite telemetry screen" NO) # ~2kB
 option(PCBI6X_USB_VBUS "Remove manual USB connection, just auto using VBUS, requires wiring USB VBUS to PA15 pad" NO)
 option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" 17)
 option(DFPLAYER "Enables DFPlayer on AUX3 TX" NO) # ~1.7kB
+option(ALL3POS "Makes all switches 3pos" NO)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
@@ -34,6 +35,10 @@ if(PCB STREQUAL I6X)
   add_definitions(-DEEPROM_VARIANT=0)
   add_definitions(-DSOFTWARE_VOLUME)
   add_definitions(-DAFHDS2A)
+endif()
+
+if (ALL3POS)
+  add_definitions(-DALL3POS)
 endif()
 
 if(NOT AFHDS2A_LQI_CH)

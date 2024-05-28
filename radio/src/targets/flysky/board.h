@@ -291,7 +291,11 @@ enum EnumSwitchesPositions
   SW_SD1,
   SW_SD2,
 };
+#ifdef ALL3POS
+#define IS_3POS(x)            (((x) == SW_SA) || ((x) == SW_SC) || ((x) == SW_SC) || ((x) == SW_SC))
+#else
 #define IS_3POS(x)            ((x) == SW_SC)
+#endif
 #define IS_TOGGLE(x)					false
 #define NUM_SWITCHES          4
 
