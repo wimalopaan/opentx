@@ -263,9 +263,14 @@
   #define TR_PLAY_BOTH         "\221\222Pár stop\0"
   #define TR_PLAY_VALUE        TR3("\221\222Hlásit\0  ", "\221\222Hlásit\0  ", "Hlásit stav")
 #else
-  #define TR_PLAY_TRACK        "[\221\222Stopa]\0 "
   #define TR_PLAY_BOTH         "[\221\222Pár]\0   "
+#if defined(DFPLAYER)
+  #define TR_PLAY_TRACK        "\221\222Stopa\0  "
+  #define TR_PLAY_VALUE        "\221\222Hlásit\0 "
+#else
+  #define TR_PLAY_TRACK        "[\221\222Stopa]"
   #define TR_PLAY_VALUE        "[\221\222Hlásit]\0"
+#endif
 #endif
 
 #define TR_SF_BG_MUSIC        TR3("\221\222Hudba\0   ""\221\222Hudba ||\0", "\221\222Hudba\0   ""\221\222Hudba ||\0", "Hudba\0     ""Hudba pauza")
@@ -308,7 +313,7 @@
 
 #define TR_SF_RESERVE         "[rezerva]\0 "
 
-  #define TR_VFSWFUNC          TR_SF_SAFETY "Trenér \0   ""Insta-Trim\0""Reset\0     ""Změna \0    " TR_ADJUST_GVAR "Hlasitost\0 " "SetFailsafe" "RangeCheck\0" "ModuleBind\0" TR_SOUND /*TR_PLAY_TRACK TR_PLAY_VALUE*/ TR_SF_RESERVE TR_SF_PLAY_SCRIPT TR_SF_RESERVE /*TR_SF_BG_MUSIC*/ TR_VVARIO TR_HAPTIC /*TR_SDCLOGS*/ "Podsvětlení" TR_SF_SCREENSHOT TR_SF_TEST
+  #define TR_VFSWFUNC          TR_SF_SAFETY "Trenér \0   ""Insta-Trim\0""Reset\0     ""Změna \0    " TR_ADJUST_GVAR "Hlasitost\0 " "SetFailsafe" "RangeCheck\0" "ModuleBind\0" TR_SOUND TR_PLAY_TRACK TR_PLAY_VALUE TR_SF_RESERVE TR_SF_PLAY_SCRIPT TR_SF_RESERVE /*TR_SF_BG_MUSIC*/ TR_VVARIO TR_HAPTIC /*TR_SDCLOGS*/ "Podsvětlení" TR_SF_SCREENSHOT TR_SF_TEST
 
 #define LEN_VFSWRESET          TR("\004", "\012")
 
