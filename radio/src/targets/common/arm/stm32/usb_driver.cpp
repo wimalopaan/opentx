@@ -49,15 +49,16 @@ void setSelectedUsbMode(int mode)
 
 int usbPlugged()
 {
-  // debounce
-  static uint8_t debounced_state = 0;
-  static uint8_t last_state = 0;
-
 #if defined(PCBI6X) && !defined(PCBI6X_USB_VBUS)
   if (globalData.usbConnect) {
     return 1;
   }
 #endif
+
+#if defined(USB_GPIO_PIN_VBUS)
+  // debounce
+  static uint8_t debounced_state = 0;
+  static uint8_t last_state = 0;
 
   if (GPIO_ReadInputDataBit(USB_GPIO, USB_GPIO_PIN_VBUS)) {
     if (last_state) {
@@ -72,6 +73,9 @@ int usbPlugged()
     last_state = 0;
   }
   return debounced_state;
+#else
+  return 0;
+#endif // USB_GPIO_PIN_VBUS
 }
 
 #if defined(STM32F0)

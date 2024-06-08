@@ -59,6 +59,7 @@ void USB_BSP_Init(USB_CORE_HANDLE *pdev) {
 // included in RCC_APB1_LIST
 //  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USB, ENABLE);
 
+#if defined(USB_GPIO_PIN_VBUS)
   /* Configure VBUS Pin */
   GPIO_InitTypeDef GPIO_InitStructure;
   GPIO_InitStructure.GPIO_Pin = USB_GPIO_PIN_VBUS;
@@ -67,6 +68,7 @@ void USB_BSP_Init(USB_CORE_HANDLE *pdev) {
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
   GPIO_Init(USB_GPIO, &GPIO_InitStructure);
+#endif
 }
 
 void USB_BSP_Deinit(USB_CORE_HANDLE *pdev) {
