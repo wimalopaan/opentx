@@ -244,18 +244,19 @@ void setVolume(int8_t volume)
     case 0: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 16; break;
     case 1: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 8; break;
     case 2: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 4; break;
-    case 3: PWM_TIMER->CCR1 = (PWM_TIMER->ARR / 4) + (PWM_TIMER->ARR / 8); break;
+    case 3: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 3; break;
     case 4: PWM_TIMER->CCR1 = PWM_TIMER->ARR / 2; break;
   }
 }
 
 void setSampleRate(uint32_t frequency)
 {
-  uint32_t timer = 1000000 / frequency - 1;
+  uint32_t autoReload = 1000000 / frequency - 1;
 
   PWM_TIMER->CR1 &= ~TIM_CR1_CEN;
   PWM_TIMER->CNT = 0;
-  PWM_TIMER->ARR = limit<uint32_t>(2, timer, 65535);
+  PWM_TIMER->ARR = limit<uint32_t>(2, autoReload, 65535);
+//  PWM_TIMER->EGR = TIM_EGR_UG; // reset timer
   PWM_TIMER->CR1 |= TIM_CR1_CEN;
 }
 
