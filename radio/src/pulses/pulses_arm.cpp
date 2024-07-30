@@ -152,7 +152,7 @@ bool setupPulses(uint8_t port) {
   heartbeat |= (HEART_TIMER_PULSES << port);
 
   if (moduleState[port].protocol != required_protocol) {
-    TRACE("setupPulses %d change %d->%d", port, moduleState[port].protocol, required_protocol);
+    TRACE("setupPulses %d: %d->%d", port, moduleState[port].protocol, required_protocol);
     init_needed = true;
     switch (moduleState[port].protocol) {  // stop existing protocol hardware
 #if defined(PXX)
