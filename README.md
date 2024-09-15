@@ -43,6 +43,7 @@ Comparison with original firmware:
 | Use trims as buttons      | _          | ✓                            |
 | ExpressLRS ready          | _          | ✓                            |
 | Telemetry mirror          | _          | ✓                            |
+| Languages                 | EN,CN      | PL,EN,CZ,DE,ES,FI,FR,IT,NL,PT,SE |
 
 <sub>[1] Unlimited by using USB mass storage mode eeprom backup/restore.</sub><br>
 <sub>[2] By adding DFPlayer, see modifications in wiki.</sub>
