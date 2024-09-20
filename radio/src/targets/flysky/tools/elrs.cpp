@@ -19,18 +19,18 @@ enum COMMAND_STEP {
 };
 
 #define TYPE_UINT8				   0
-#define TYPE_INT8				     1
+#define TYPE_INT8				   1
 #define TYPE_UINT16				   2
 #define TYPE_INT16				   3
 #define TYPE_FLOAT				   8
-#define TYPE_TEXT_SELECTION  9
+#define TYPE_SELECT                9
 #define TYPE_STRING				  10
 #define TYPE_FOLDER				  11
-#define TYPE_INFO				    12
+#define TYPE_INFO				  12
 #define TYPE_COMMAND			  13
-#define TYPE_BACK           14
-#define TYPE_DEVICE         15
-#define TYPE_DEVICES_FOLDER 16
+#define TYPE_BACK                 14
+#define TYPE_DEVICE               15
+#define TYPE_DEVICES_FOLDER       16
 
 #define CRSF_FRAMETYPE_DEVICE_PING 0x28
 #define CRSF_FRAMETYPE_DEVICE_INFO 0x29
@@ -43,19 +43,22 @@ PACK(struct FieldProps {
   uint16_t offset;
   uint8_t nameLength;
   union {
-    uint8_t min;
-    uint8_t timeout;
+    uint8_t min;          // INT8
+    uint8_t timeout;      // COMMAND
+    uint8_t valuesLength; // SELECT
   };
   union {
-    uint8_t valuesLength;
-    uint8_t lastStatus;
+    uint8_t unitLength;
+    uint8_t lastStatus;   // COMMAND
   };
-  uint8_t max;
-  uint8_t unitLength;
-  uint8_t type;
   union {
     uint8_t value;
-    uint8_t status;
+    uint8_t status;       // COMMAND, must be alias to value, because save expects it!
+  };
+  uint8_t type;
+  union {
+    uint8_t max;          // INT8, SELECT
+    uint8_t prec;         // only FLOAT, FLOAT max and min are stored in buffer
   };
   uint8_t id;
 });
@@ -66,26 +69,25 @@ struct FieldFunctions {
   void (*display)(FieldProps*, uint8_t, uint8_t);
 };
 
-static constexpr uint16_t BUFFER_SIZE = 462;
+static constexpr uint16_t BUFFER_SIZE = 520;
 static uint8_t *buffer = &reusableBuffer.cToolData[0];
 static uint16_t bufferOffset = 0;
 
-// last 25b are also used for popup messages
-static constexpr uint8_t FIELD_DATA_BUFFER_SIZE = 176; // 8 + 56 + 56 + 56 
-static uint8_t *fieldData = &reusableBuffer.cToolData[BUFFER_SIZE];
+// last POPUP_MSG_MAX_LEN of FIELD_DATA_TAIL_SIZE are reused for popup message
+static constexpr uint8_t FIELD_DATA_TAIL_SIZE = 40; // max popup packet size
+static constexpr uint8_t POPUP_MSG_MAX_LEN = 32; // popup hard limit = 32
+static constexpr uint8_t POPUP_MSG_OFFSET = FIELD_DATA_TAIL_SIZE - POPUP_MSG_MAX_LEN;
 
-// Reuse tail of fieldData for popup messages
-static constexpr uint8_t POPUP_MSG_MAX_LEN = 24; // popup hard limit is 32
-static constexpr uint8_t POPUP_MSG_OFFSET = FIELD_DATA_BUFFER_SIZE - POPUP_MSG_MAX_LEN;
+static uint8_t *fieldData = &reusableBuffer.cToolData[BUFFER_SIZE];
 static uint8_t fieldDataLen = 0;
 
-static constexpr uint8_t FIELDS_MAX_COUNT = 14;
+static constexpr uint8_t FIELDS_MAX_COUNT = 16;
 static constexpr uint8_t FIELDS_SIZE = FIELDS_MAX_COUNT * sizeof(FieldProps);
-static FieldProps *fields = (FieldProps *)&reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE];
+static FieldProps *fields = (FieldProps *)&reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_TAIL_SIZE];
 static uint8_t allocatedFieldsCount = 0;
 
-static constexpr uint8_t DEVICES_MAX_COUNT = 4;
-static uint8_t *deviceIds = &reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE + FIELDS_SIZE];
+static constexpr uint8_t DEVICES_MAX_COUNT = 8;
+static uint8_t *deviceIds = &reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_TAIL_SIZE + FIELDS_SIZE];
 //static uint8_t deviceIds[DEVICES_MAX_COUNT];
 static uint8_t devicesLen = 0;
 
@@ -101,7 +103,7 @@ static uint8_t deviceId = 0xEE;
 static uint8_t handsetId = 0xEF;
 
 static constexpr uint8_t DEVICE_NAME_MAX_LEN = 20;
-//static uint8_t *deviceName = &reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE + FIELDS_SIZE + DEVICES_MAX_COUNT];
+//static uint8_t *deviceName = &reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_TAIL_SIZE + FIELDS_SIZE + DEVICES_MAX_COUNT];
 static char deviceName[DEVICE_NAME_MAX_LEN];
 static uint8_t lineIndex = 1;
 static uint8_t pageOffset = 0;
@@ -114,7 +116,7 @@ static uint8_t fieldChunk = 0;
 static char goodBadPkt[11] = "";
 static uint8_t elrsFlags = 0;
 static constexpr uint8_t ELRS_FLAGS_INFO_MAX_LEN = 20;
-//static char *elrsFlagsInfo = (char *)&reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_BUFFER_SIZE + FIELDS_SIZE + DEVICES_MAX_COUNT + DEVICE_NAME_MAX_LEN];
+//static char *elrsFlagsInfo = (char *)&reusableBuffer.cToolData[BUFFER_SIZE + FIELD_DATA_TAIL_SIZE + FIELDS_SIZE + DEVICES_MAX_COUNT + DEVICE_NAME_MAX_LEN];
 static char elrsFlagsInfo[ELRS_FLAGS_INFO_MAX_LEN] = "";
 static uint8_t expectedFieldsCount = 0;
 
@@ -168,10 +170,15 @@ static void bufferPush(char * data, uint8_t len) {
   bufferOffset += len;
 }
 
-static void crossfireTelemetryPush4(const uint8_t cmd, const uint8_t third, const uint8_t fourth) {
-//  TRACE("crsf push %x  %x  %x", cmd, third, fourth);
-  uint8_t crsfPushData[4] = { deviceId, handsetId, third, fourth };
-  crossfireTelemetryPush(cmd, crsfPushData, 4);
+static void resetFieldData() {
+  fieldData = &reusableBuffer.cToolData[bufferOffset + 0 /* offset */];
+  fieldDataLen = 0;
+}
+
+static void crossfireTelemetryCmd(const uint8_t cmd, const uint8_t index, const uint8_t value) {
+  // TRACE("crsf cmd %x %x %x", cmd, index, value);
+  uint8_t crsfPushData[4] = { deviceId, handsetId, index, value };
+  crossfireTelemetryPush(cmd, crsfPushData, sizeof(crsfPushData));
 }
 
 static void crossfireTelemetryPing(){
@@ -250,7 +257,7 @@ static void incrField(int8_t step) {
   if (field->type <= TYPE_INT16) {
     min = field->min;
     max = field->max;
-  } else if (field->type == TYPE_TEXT_SELECTION) {
+  } else if (field->type == TYPE_SELECT) {
 //    min = 0;
     max = field->max;
   }
@@ -300,7 +307,7 @@ static void unitLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
 // UINT8
 static void fieldIntegerDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   lcdDrawNumber(COL2, y, field->value, attr);
-  lcdDrawSizedText(lcdLastRightPos, y, (char *)&buffer[field->offset + field->nameLength + field->valuesLength], field->unitLength, attr);
+  lcdDrawSizedText(lcdLastRightPos, y, (char *)&buffer[field->offset + field->nameLength /*+ field->valuesLength*/ /* TODO isn't it always 0 for INTs? */], field->unitLength, attr);
 }
 
 static void fieldUint8Load(FieldProps * field, uint8_t * data, uint8_t offset) {
@@ -311,7 +318,7 @@ static void fieldUint8Load(FieldProps * field, uint8_t * data, uint8_t offset) {
 }
 
 static void fieldIntSave(FieldProps * field) {
-  crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, field->id, field->value);
+  crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, field->id, field->value);
 }
 
 // TEXT SELECTION
@@ -330,7 +337,7 @@ static void fieldTextSelectionLoad(FieldProps * field, uint8_t * data, uint8_t o
   unitLoad(field, data, offset + len + 5);
 }
 
-static uint8_t semicolonPos(const char * str, uint8_t last) {
+static uint8_t getNextItemPos(const char * str, uint8_t last) {
   uint8_t pos = 0;
   while ((str[pos] != ';') && (pos < last)) pos++;
   return pos + 1;
@@ -342,13 +349,13 @@ static void fieldTextSelectionDisplay(FieldProps * field, uint8_t y, uint8_t att
   uint8_t len;
   uint32_t i = 0;
   while (i++ < field->value) {
-    start += semicolonPos((char *)&buffer[start], field->valuesLength - (start - valuesOffset));
+    start += getNextItemPos((char *)&buffer[start], field->valuesLength - (start - valuesOffset));
     if (start - valuesOffset >= field->valuesLength) {
       lcdDrawText(COL2, y, "ERR", attr);
       return;
     }
   }
-  len = semicolonPos((char *)&buffer[start], field->valuesLength - (start - valuesOffset)) - 1;
+  len = getNextItemPos((char *)&buffer[start], field->valuesLength - (start - valuesOffset)) - 1;
 
   lcdDrawSizedText(COL2, y, (char *)&buffer[start], len, attr);
   lcdDrawSizedText(lcdLastRightPos, y, (char *)&buffer[field->offset + field->nameLength + field->valuesLength], field->unitLength, 0/*attr*/);
@@ -385,16 +392,17 @@ static void noopDisplay(FieldProps * field, uint8_t y, uint8_t attr) {}
 static void fieldCommandLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
   field->status = data[offset];
   field->timeout = data[offset+1];
-  strncpy((char *)&fieldData[POPUP_MSG_OFFSET], (char *)&data[offset+2], POPUP_MSG_MAX_LEN);
   if (field->status == STEP_IDLE) {
     fieldPopup = nullptr;
+  } else {
+    strncpy((char *)&fieldData[POPUP_MSG_OFFSET], (char *)&data[offset+2], POPUP_MSG_MAX_LEN);
   }
 }
 
 static void fieldCommandSave(FieldProps * field) {
-  if (field->status < 4) {
+  if (field->status < STEP_CONFIRMED) {
     field->status = STEP_CLICK;
-    fieldIntSave(field); //crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, field->id, field->status);
+    fieldIntSave(field); //crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, field->id, field->status);
     fieldPopup = field;
     fieldPopup->lastStatus = 0;
     fieldTimeout = getTime() + field->timeout;
@@ -419,9 +427,9 @@ static void fieldUnifiedDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   } else { // CMD || DEVICE
     pat = cmdPat;
   }
-  char stringTmp[28];
-  tiny_sprintf((char *)&stringTmp, pat, 2, field->nameLength, (char *)&buffer[field->offset]);
-  lcdDrawText(textIndent, y, (char *)&stringTmp, attr | BOLD);
+  char tmpString[28];
+  tiny_sprintf((char *)&tmpString, pat, 2, field->nameLength, (char *)&buffer[field->offset]);
+  lcdDrawText(textIndent, y, (char *)&tmpString, attr | BOLD);
 }
 
 static void fieldBackExec(FieldProps * field = 0) {
@@ -432,7 +440,7 @@ static void fieldBackExec(FieldProps * field = 0) {
   expectedFieldsCount = 0;
 }
 
-static void changeDeviceId(uint8_t devId) { //change to selected device ID
+static void changeDeviceId(uint8_t devId) {
   //TRACE("changeDeviceId %x", devId);
   currentFolderId = 0;
   deviceIsELRS_TX = 0;
@@ -456,7 +464,7 @@ static void fieldDeviceIdSelect(FieldProps * field) {
 static void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t offset;
   uint8_t id = data[2];
-// TRACE("parseDevInfoMsg %x folderAcs %d, expect %d, devsLen %d", id, currentFolderId, expectedFieldsCount, devicesLen);
+// TRACE("parseDevInfoMsg %x folder %d, expect %d, devsLen %d", id, currentFolderId, expectedFieldsCount, devicesLen);
   offset = strlen((char*)&data[3]) + 1 + 3;
   uint8_t devId = getDevice(id);
   if (!devId) {
@@ -470,7 +478,7 @@ static void parseDeviceInfoMessage(uint8_t* data) {
 
       bufferPush((char *)&data[3], deviceField.nameLength);
       storeField(&deviceField);
-      if (devicesLen == expectedFieldsCount - 1) {
+      if (devicesLen == expectedFieldsCount - 1) { // was it the last one?
         allParamsLoaded = 1;
         fieldId = 1;
         addBackButton();
@@ -511,7 +519,7 @@ static const FieldFunctions functions[] = {
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 8 INT64(7)
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 9 FLOAT(8)
   { .load=fieldTextSelectionLoad, .save=fieldIntSave, .display=fieldTextSelectionDisplay }, // 10 TEXT SELECTION(9)
-  { .load=noopLoad, .save=noopSave, .display=fieldStringDisplay }, // 11 STRING(10)editing NOTIMPL
+  { .load=noopLoad, .save=noopSave, .display=fieldStringDisplay }, // 11 STRING(10) editing
   { .load=noopLoad, .save=fieldFolderOpen, .display=fieldUnifiedDisplay }, // 12 FOLDER(11)
   { .load=fieldTextSelectionLoad, .save=noopSave, .display=fieldStringDisplay }, // 13 INFO(12)
   { .load=fieldCommandLoad, .save=fieldCommandSave, .display=fieldUnifiedDisplay }, // 14 COMMAND(13)
@@ -522,13 +530,15 @@ static const FieldFunctions functions[] = {
 
 static FieldFunctions getFunctions(uint32_t i) {
   if (i > TYPE_UINT8) {
-    if (i < TYPE_TEXT_SELECTION) return noopFunctions; // guard against not implemented types
+    if (i < TYPE_SELECT) return noopFunctions; // guard against not implemented types
     i -= 8;
   }
   return functions[i];
 }
 
 static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
+  // TRACE("parse...");
+  // DUMP(&data[4], length - 4);
   if (data[2] != deviceId || data[3] != fieldId) {
     fieldDataLen = 0;
     fieldChunk = 0;
@@ -552,15 +562,28 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   }
   expectedChunks = chunksRemain - 1;
 
-//  TRACE("chunk len %d", length); // to know what is the max single chunk size
+  // skip on first chunk of not current folder
+  if (fieldDataLen == 0 && data[5] != currentFolderId) {
+    if (fieldId == expectedFieldsCount) {
+      allParamsLoaded = 1;
+      fieldId = 1;
+      if (currentFolderId == 0) {
+        otherDevicesState = BTN_REQUESTED;
+      } else {
+        addBackButton();
+      }
+    }
+    fieldChunk = 0;
+    fieldId++;
+    return;
+  }
+
   memcpy(&fieldData[fieldDataLen], &data[5], length - 5);
   fieldDataLen += length - 5;
 
   if (chunksRemain > 0) {
     fieldChunk = fieldChunk + 1;
   } else {
-    // TRACE("%d %s %d", fieldId, &fieldData[2], fieldDataLen);
-//    DUMP(fieldData, fieldDataLen);
     fieldChunk = 0;
     if (fieldDataLen < 4) {
       fieldDataLen = 0;
@@ -572,11 +595,6 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     uint8_t type = fieldData[1] & 0x7F;
     uint8_t hidden = fieldData[1] & 0x80;
     uint8_t offset;
-
-    if (type > TYPE_COMMAND) {
-//      TRACE("type %d", type);
-      return;
-    }
 
     if (field->nameLength != 0) {
       if (currentFolderId != parent || field->type != type/* || field->hidden != hidden*/) {
@@ -602,9 +620,6 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
 
     if (fieldPopup == nullptr) {
       if (fieldId == expectedFieldsCount) { // if we have loaded all params
-        // TRACE("bufferOffset %d", bufferOffset);
-        // DUMP(buffer, bufferOffset);
-        // TRACE("allocatedFieldsCount %d", allocatedFieldsCount);
         allParamsLoaded = 1;
         fieldId = 1;
         if (currentFolderId == 0) {
@@ -619,7 +634,7 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     } else {
       fieldTimeout = getTime() + fieldPopup->timeout;
     }
-    fieldDataLen = 0;
+    resetFieldData();
   }
 }
 
@@ -641,7 +656,7 @@ static void parseElrsInfoMessage(uint8_t* data) {
   strncpy(elrsFlagsInfo, (char*)&data[7], ELRS_FLAGS_INFO_MAX_LEN);
 
   char state = (elrsFlags & 1) ? 'C' : '-';
-  tiny_sprintf(goodBadPkt, "%u/%u   %c", 3, badPkt, goodPkt, state);
+  tiny_sprintf(goodBadPkt, "%d/%d   %c", 3, badPkt, goodPkt, state);
 }
 
 static void refreshNextCallback(uint8_t command, uint8_t* data, uint8_t length) {
@@ -661,7 +676,7 @@ static void refreshNext() {
   tmr10ms_t time = getTime();
   if (fieldPopup != nullptr) {
     if (time > fieldTimeout && fieldPopup->status != STEP_CONFIRM) {
-      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, 6); // lcsQuery
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, 6); // lcsQuery
       fieldTimeout = time + fieldPopup->timeout; // + popup timeout
     }
   } else if (time > devicesRefreshTimeout && expectedFieldsCount < 1) {
@@ -669,7 +684,7 @@ static void refreshNext() {
     crossfireTelemetryPing();
   } else if (time > fieldTimeout && expectedFieldsCount != 0) {
     if (allParamsLoaded < 1) {
-      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_READ, fieldId, fieldChunk);
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_READ, fieldId, fieldChunk);
       fieldTimeout = time + 50; // 0.5s
     }
   }
@@ -678,7 +693,7 @@ static void refreshNext() {
     if (!deviceIsELRS_TX && allParamsLoaded == 1) {
       goodBadPkt[0] = '\0';
     } else {
-      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, 0x0, 0x0); // request linkstat
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, 0x0, 0x0); // request linkstat
     }
     linkstatTimeout = time + 100;
   }
@@ -733,7 +748,7 @@ static void handleDevicePageEvent(event_t event) {
       fieldId = field->id;
       fieldChunk = 0;
       fieldDataLen = 0;
-      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_READ, fieldId, fieldChunk);
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_READ, fieldId, fieldChunk);
     } else {
       if (currentFolderId == 0 && allParamsLoaded == 1) {
         if (deviceId != 0xEE) {
@@ -748,7 +763,7 @@ static void handleDevicePageEvent(event_t event) {
   } else if (event == EVT_VIRTUAL_ENTER) {
     if (elrsFlags > 0x1F) {
       elrsFlags = 0;
-      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, 0x2E, 0x00);
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, 0x2E, 0x00);
     } else {
       FieldProps * field = getField(lineIndex);
       if (field != 0 && field->nameLength > 0) {
@@ -834,7 +849,7 @@ static uint8_t popupCompat(event_t event) {
 
 static void runPopupPage(event_t event) {
   if (event == EVT_VIRTUAL_EXIT) {
-    crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CANCEL);
+    crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CANCEL);
     fieldTimeout = getTime() + 200;
   }
 
@@ -847,7 +862,7 @@ static void runPopupPage(event_t event) {
     result = popupCompat(event);
     fieldPopup->lastStatus = fieldPopup->status;
     if (result == RESULT_OK) {
-      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CONFIRMED); // lcsConfirmed
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CONFIRMED); // lcsConfirmed
       fieldTimeout = getTime() + fieldPopup->timeout; // we are expecting an immediate response
       fieldPopup->status = STEP_CONFIRMED;
     } else if (result == RESULT_CANCEL) {
@@ -857,7 +872,7 @@ static void runPopupPage(event_t event) {
     result = popupCompat(event);
     fieldPopup->lastStatus = fieldPopup->status;
     if (result == RESULT_CANCEL) {
-      crossfireTelemetryPush4(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CANCEL);
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, fieldPopup->id, STEP_CANCEL);
       fieldTimeout = getTime() + fieldPopup->timeout;
       fieldPopup = nullptr;
     }
@@ -874,7 +889,7 @@ void elrsStop() {
 
 //  if (globalData.cToolRunning) {
     globalData.cToolRunning = 0;
-    memclear(reusableBuffer.cToolData, sizeof(reusableBuffer.cToolData));
+    memset(reusableBuffer.cToolData, 0, sizeof(reusableBuffer.cToolData));
     popMenu();
 //  }
 }
