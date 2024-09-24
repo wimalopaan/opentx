@@ -464,7 +464,7 @@ static void fieldDeviceIdSelect(FieldProps * field) {
 static void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t offset;
   uint8_t id = data[2];
-// TRACE("parseDevInfoMsg %x folder %d, expect %d, devsLen %d", id, currentFolderId, expectedFieldsCount, devicesLen);
+// TRACE("parseDev:%x folder:%d, expect:%d, devs:%d", id, currentFolderId, expectedFieldsCount, devicesLen);
   offset = strlen((char*)&data[3]) + 1 + 3;
   uint8_t devId = getDevice(id);
   if (!devId) {
