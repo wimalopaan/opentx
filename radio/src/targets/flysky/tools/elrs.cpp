@@ -254,7 +254,7 @@ static FieldProps * getField(const uint8_t line) {
 static void incrField(int8_t step) {
   FieldProps * field = getField(lineIndex);
   int32_t min = 0, max = 0;
-  if (field->type <= TYPE_INT16) {
+  if (field->type <= TYPE_INT8) {
     min = field->min;
     max = field->max;
   } else if (field->type == TYPE_SELECT) {
@@ -307,7 +307,7 @@ static void unitLoad(FieldProps * field, uint8_t * data, uint8_t offset) {
 // UINT8
 static void fieldIntegerDisplay(FieldProps * field, uint8_t y, uint8_t attr) {
   lcdDrawNumber(COL2, y, field->value, attr);
-  lcdDrawSizedText(lcdLastRightPos, y, (char *)&buffer[field->offset + field->nameLength /*+ field->valuesLength*/ /* TODO isn't it always 0 for INTs? */], field->unitLength, attr);
+  lcdDrawSizedText(lcdLastRightPos, y, (char *)&buffer[field->offset + field->nameLength], field->unitLength, attr);
 }
 
 static void fieldUint8Load(FieldProps * field, uint8_t * data, uint8_t offset) {
@@ -469,6 +469,7 @@ static void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t devId = getDevice(id);
   if (!devId) {
     deviceIds[devicesLen] = id;
+    devicesLen++;
     if (currentFolderId == otherDevicesId) { // if "Other Devices" opened store devices to fields
       FieldProps deviceField;
       deviceField.id = id;
@@ -478,13 +479,12 @@ static void parseDeviceInfoMessage(uint8_t* data) {
 
       bufferPush((char *)&data[3], deviceField.nameLength);
       storeField(&deviceField);
-      if (devicesLen == expectedFieldsCount - 1) { // was it the last one?
+      if (devicesLen == expectedFieldsCount) { // was it the last one?
         allParamsLoaded = 1;
         fieldId = 1;
         addBackButton();
       }
     }
-    devicesLen++;
   }
 
   if (deviceId == id && currentFolderId != otherDevicesId) {
