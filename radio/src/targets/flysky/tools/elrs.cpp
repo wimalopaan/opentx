@@ -837,7 +837,7 @@ static void runDevicePage(event_t event) {
 
 static uint8_t popupCompat(event_t event) {
   showMessageBox((char *)&fieldData[POPUP_MSG_OFFSET]);
-  lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+2*FH, STR_POPUPS_ENTER_EXIT);
+  lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+4*FH+2, STR_POPUPS_ENTER_EXIT);
 
   if (event == EVT_VIRTUAL_EXIT) {
     return RESULT_CANCEL;
