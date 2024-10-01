@@ -294,14 +294,14 @@ static void unitLoad(Parameter * param, uint8_t * data, uint8_t offset) {
   bufferPush((char*)&data[offset], unitLen);
 }
 
-static void unitDisplay(Parameter * param, uint8_t y, uint16_t offset, uint8_t attr) {
-  lcdDrawSizedText(lcdLastRightPos, y, (char *)&buffer[offset], param->unitLength, attr);
+static void unitDisplay(Parameter * param, uint8_t y, uint16_t offset) {
+  lcdDrawSizedText(lcdLastRightPos, y, (char *)&buffer[offset], param->unitLength, 0);
 }
 
 // UINT8
 static void paramIntegerDisplay(Parameter * param, uint8_t y, uint8_t attr) {
   lcdDrawNumber(COL2, y, param->value, attr);
-  unitDisplay(param, y, param->offset + param->nameLength, attr);
+  unitDisplay(param, y, param->offset + param->nameLength);
 }
 
 static void paramUint8Load(Parameter * param, uint8_t * data, uint8_t offset) {
@@ -352,7 +352,7 @@ static void paramTextSelectionDisplay(Parameter * param, uint8_t y, uint8_t attr
   len = getNextItemPos((char *)&buffer[start], param->valuesLength - (start - valuesOffset)) - 1;
 
   lcdDrawSizedText(COL2, y, (char *)&buffer[start], len, attr);
-  unitDisplay(param, y, param->offset + param->nameLength + param->valuesLength, 0);
+  unitDisplay(param, y, param->offset + param->nameLength + param->valuesLength);
 }
 
 static void paramStringDisplay(Parameter * param, uint8_t y, uint8_t attr) {
