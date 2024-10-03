@@ -76,7 +76,6 @@ static uint8_t  USBD_HID_Setup (void  *pdev,
 
 static const uint8_t  *USBD_HID_GetCfgDesc (uint8_t speed, uint16_t *length);
 
-static uint8_t  USBD_HID_DataIn (void  *pdev, uint8_t epnum);
 /**
   * @}
   */ 
@@ -135,17 +134,11 @@ __ALIGN_BEGIN static const uint8_t HID_JOYSTICK_ReportDesc[] __ALIGN_END =
     0x09, 0x30,                    //         USAGE (X)
     0x09, 0x31,                    //         USAGE (Y)
     0x09, 0x32,                    //         USAGE (Z)
-#if defined(PCBI6X)
-    0x09, 0x35,                    //         USAGE (Rz)
-    0x09, 0x33,                    //         USAGE (Rx)
-    0x09, 0x34,                    //         USAGE (Ry)
-#else
     0x09, 0x33,                    //         USAGE (Rx)
     0x09, 0x34,                    //         USAGE (Ry)
     0x09, 0x35,                    //         USAGE (Rz)
-#endif
     0x09, 0x36,                    //         USAGE (Slider)
-    0x09, 0x36,                    //         USAGE (Slider)
+    0x09, 0x37,                    //         USAGE (Slider)
     0x16, 0x00, 0x00,              //         LOGICAL_MINIMUM (0)
     0x26, 0xFF, 0x07,              //         LOGICAL_MAXIMUM (2047)
     0x75, 0x10,                    //         REPORT_SIZE (16)
@@ -263,7 +256,7 @@ __ALIGN_BEGIN static const uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ] __A
   0x03,          /*bmAttributes: Interrupt endpoint*/
   HID_IN_PACKET, /*wMaxPacketSize: 4 Byte max */
   0x00,
-  0x07,          /*bInterval: Polling Interval (7 ms)*/
+  0x04,          /*bInterval: Polling Interval (4 ms)*/
   /* 34 */
 } ;
 
