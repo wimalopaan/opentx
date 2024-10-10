@@ -232,6 +232,11 @@ void menuStatisticsDebug(event_t event)
 #endif // LUA
 #endif // PCBTARANIS
 
+//  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_COPROC, "Stack");
+//  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_COPROC, stackAvailable(), LEFT);
+//  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_COPROC, "/");
+//  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_COPROC, stackSize() * 4, LEFT);
+
   lcdDrawTextAlignedLeft(MENU_DEBUG_Y_MIXMAX, STR_TMIXMAXMS);
   lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_MIXMAX, DURATION_MS_PREC2(maxMixerDuration), PREC2|LEFT);
   lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_MIXMAX, "ms");

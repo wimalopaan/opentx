@@ -151,5 +151,6 @@ set(FIRMWARE_TARGET_SRC
   ${FIRMWARE_TARGET_SRC}
   lcd_driver.cpp
   pwr_driver.cpp
+  startup_stm32f072.s
   )
 set(FIRMWARE_DEPENDENCIES ${FIRMWARE_DEPENDENCIES} ${BITMAPS_TARGET})
