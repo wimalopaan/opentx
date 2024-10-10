@@ -31,83 +31,51 @@ coord_t lcdLastRightPos;
 coord_t lcdNextPos;
 coord_t lcdLastLeftPos;
 
-void lcdPutPattern(coord_t x, coord_t y, const uint8_t * pattern, uint8_t width, uint8_t height, LcdFlags flags)
+void lcdPutPattern(coord_t x, coord_t y, const uint8_t * pattern, uint8_t width, uint8_t height, LcdFlags flags) 
 {
-  bool blink = false;
-  bool inv = false;
-  if (flags & BLINK) {
-    if (BLINK_ON_PHASE) {
-      if (flags & INVERS)
-        inv = true;
-      else {
-        blink = true;
-      }
-    }
-  }
-  else if (flags & INVERS) {
-    inv = true;
-  }
+  bool inv = (flags & INVERS) != 0;
+  bool blink = (flags & BLINK) && !(flags & INVERS) && !BLINK_ON_PHASE;
 
-  uint8_t lines = (height+7)/8;
+  uint8_t lines = (height + 7) / 8;
   assert(lines <= 5);
 
-  for (int8_t i=0; i<width+2; i++) {
-    if (x<LCD_W) {
-      uint8_t b[5] = { 0 };
-      if (i==0) {
-        if (x==0 || !inv) {
-          lcdNextPos++;
-          continue;
-        }
-        else {
-          // we need to work on the previous x when INVERS
-          x--;
-        }
+  for (int8_t i = 0; i < width + 2; i++) {
+    if (x >= LCD_W) break;
+
+    uint8_t b[5] = { 0 };
+    bool skip = false;
+
+    if (i == 0) { // Handle inverse case at the start
+      if (x == 0 || !inv) {
+        lcdNextPos++;
+        continue;
       }
-      else if (i<=width) {
-        uint8_t skip = true;
-        for (uint8_t j=0; j<lines; j++) {
-          b[j] = *(pattern++); /*top byte*/
-          if (b[j] != 0xff) {
-            skip = false;
-          }
-        }
-        if (skip) {
-          if (flags & FIXEDWIDTH) {
-            for (uint8_t j=0; j<lines; j++) {
-              b[j] = 0;
-            }
-          }
-          else {
-            continue;
-          }
-        }
-        if ((flags & CONDENSED) && i==2) {
-          /*condense the letter by skipping column 3 */
-          continue;
-        }
+      x--; // Work on the previous x when INVERS
+    } else if (i <= width) {
+      for (uint8_t j = 0; j < lines; j++) {
+        b[j] = *(pattern++); // Load bytes for the current column
+        if (b[j] != 0xFF) skip = true;
       }
 
-      for (int8_t j=-1; j<=height; j++) {
-        bool plot;
-        if (j < 0 || ((j == height) && !(FONTSIZE(flags) == SMLSIZE))) {
-          plot = false;
-          if (height >= 12) continue;
-          if (j<0 && !inv) continue;
-          if (y+j < 0) continue;
-        }
-        else {
-          uint8_t line = (j / 8);
-          uint8_t pixel = (j % 8);
-          plot = b[line] & (1 << pixel);
-        }
-        if (inv) plot = !plot;
-        if (!blink) {
-          if (flags & VERTICAL)
-            lcdDrawPoint(y+j, LCD_H-x, plot ? FORCE : ERASE);
-          else
-            lcdDrawPoint(x, y+j, plot ? FORCE : ERASE);
-        }
+      if (!skip && !(flags & FIXEDWIDTH)) continue; // Skip if empty and not fixed width
+      if ((flags & CONDENSED) && i == 2) continue; // Skip column 3 in condensed mode
+    }
+
+    // Draw pixels for each row
+    for (int8_t j = -1; j <= height; j++) {
+      if ((j < 0 || (j == height && !(FONTSIZE(flags) == SMLSIZE))) && !inv) continue;
+      if (y + j < 0 || (height >= 12 && j < 0)) continue;
+
+      uint8_t line = j / 8;
+      uint8_t pixel = j % 8;
+      bool plot = (b[line] & (1 << pixel)) != 0;
+      if (inv) plot = !plot;
+
+      if (!blink) {
+        if (flags & VERTICAL)
+          lcdDrawPoint(y + j, LCD_H - x, plot ? FORCE : ERASE);
+        else
+          lcdDrawPoint(x, y + j, plot ? FORCE : ERASE);
       }
     }
     x++;
@@ -878,14 +846,19 @@ void drawGPSCoord(coord_t x, coord_t y, int32_t value, const char * direction, L
   lcdDrawSizedText(lcdLastRightPos+1, y, direction + (value>=0 ? 0 : 1), 1);
 }
 
+void drawTime(coord_t x, coord_t y, TelemetryItem & telemetryItem, LcdFlags att)
+{
+  lcdDrawNumber(x, y, telemetryItem.datetime.hour, att|LEADING0, 2);
+  lcdDrawText(lcdNextPos, y, ":", att);
+  lcdDrawNumber(lcdNextPos, y, telemetryItem.datetime.min, att|LEADING0, 2);
+  lcdDrawText(lcdNextPos, y, ":", att);
+  lcdDrawNumber(lcdNextPos, y, telemetryItem.datetime.sec, att|LEADING0, 2);
+}
+
 void drawDate(coord_t x, coord_t y, TelemetryItem & telemetryItem, LcdFlags att)
 {
   if (BLINK_ON_PHASE) {
-     lcdDrawNumber(x, y, telemetryItem.datetime.hour, att|LEADING0, 2);
-     lcdDrawText(lcdNextPos, y, ":", att);
-     lcdDrawNumber(lcdNextPos, y, telemetryItem.datetime.min, att|LEADING0, 2);
-     lcdDrawText(lcdNextPos, y, ":", att);
-     lcdDrawNumber(lcdNextPos, y, telemetryItem.datetime.sec, att|LEADING0, 2);
+     drawTime(x, y, telemetryItem, att);
   }
   else {
     lcdDrawNumber(x, y, telemetryItem.datetime.year, att|LEADING0|LEFT, 4);
@@ -940,11 +913,7 @@ void drawTelemScreenDate(coord_t x, coord_t y, source_t sensor, LcdFlags att)
   sensor = (sensor-MIXSRC_FIRST_TELEM) / 3;
 	TelemetryItem & telemetryItem = telemetryItems[sensor];
 
-  lcdDrawNumber(x, y, telemetryItem.datetime.hour, att|LEADING0, 2);
-  lcdDrawText(lcdNextPos, y, ":", att);
-  lcdDrawNumber(lcdNextPos, y, telemetryItem.datetime.min, att|LEADING0, 2);
-  lcdDrawText(lcdNextPos, y, ":", att);
-  lcdDrawNumber(lcdNextPos, y, telemetryItem.datetime.sec, att|LEADING0, 2);
+  drawTime(x, y, telemetryItem, att);
 
   lcdDrawNumber(x-29, y, telemetryItem.datetime.month, att|LEADING0|LEFT, 2);
   lcdDrawChar(lcdNextPos, y, '-', att);
