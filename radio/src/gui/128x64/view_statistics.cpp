@@ -239,10 +239,10 @@ void menuStatisticsDebug(event_t event)
   lcdDrawTextAlignedLeft(MENU_DEBUG_Y_RTOS, STR_FREESTACKMINB);
   lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_RTOS, menusStack.available(), LEFT);
   lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_RTOS, "/");
-  lcdDrawNumber(lcdLastRightPos+1, MENU_DEBUG_Y_RTOS, mixerStack.available(), LEFT);
+  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_RTOS, mixerStack.available(), LEFT);
 #if defined(AUDIO)
   lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_RTOS, "/");
-  lcdDrawNumber(lcdLastRightPos+1, MENU_DEBUG_Y_RTOS, audioStack.available(), LEFT);
+  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_RTOS, audioStack.available(), LEFT);
 #endif
 
   lcdDrawText(4*FW, 7*FH+1, STR_MENUTORESET);
