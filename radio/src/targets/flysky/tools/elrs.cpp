@@ -557,10 +557,10 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   if (paramDataLen == 0 && data[5] != currentFolderId) {
     if (paramId == expectedParamsCount) {
       allParamsLoaded = 1;
-      paramId = 1;
+      paramId = 0;
     }
     paramChunk = 0;
-    paramId++; // TODO discards paramId = 1; hmm
+    paramId++;
     return;
   }
 
@@ -686,20 +686,19 @@ static void lcd_title() {
     char * tmpString = tmp;
     tmpString = strAppendUnsigned(tmpString, linkstat.bad);
     tmpString = strAppendStringWithIndex(tmpString, "/", linkstat.good);
-    strAppend(tmpString, (linkstat.flags & 1) ? "   C" : "   -");
-    lcdDrawText(LCD_W - 1, 1, tmp, RIGHT);
+    lcdDrawText(LCD_W - 11, 1, tmp, RIGHT);
     lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS);
+    lcdDrawChar(LCD_W - 7, 1, (linkstat.flags & 1) ? 'C' : '-');
   }
 
   lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
   if (allParamsLoaded != 1 && expectedParamsCount > 0) {
     luaLcdDrawGauge(0, 1, COL2, barHeight, paramId, expectedParamsCount);
   } else {
-    if (titleShowWarn) {
-      lcdDrawSizedText(COL1, 1, elrsFlagsInfo, ELRS_FLAGS_INFO_MAX_LEN, INVERS);
-    } else {
-      lcdDrawSizedText(COL1, 1, (allParamsLoaded == 1) ? (char *)&deviceName[0] : "Loading...", DEVICE_NAME_MAX_LEN, INVERS);
-    }
+    const char* textToDisplay = titleShowWarn ? elrsFlagsInfo : 
+                            (allParamsLoaded == 1) ? (char *)&deviceName[0] : "Loading...";
+    uint8_t textLen = titleShowWarn ? ELRS_FLAGS_INFO_MAX_LEN : DEVICE_NAME_MAX_LEN;
+    lcdDrawSizedText(COL1, 1, textToDisplay, textLen, INVERS);
   }
 }
 
