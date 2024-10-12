@@ -90,10 +90,12 @@ static uint8_t devicesLen = 0;
 static constexpr uint8_t backButtonId = 100;
 static constexpr uint8_t otherDevicesId = 101;
 
-#define BTN_NONE 0
-#define BTN_REQUESTED 1
-#define BTN_ADDED 2
-static uint8_t otherDevicesState = BTN_NONE;
+enum {
+  BTN_NONE,
+  BTN_BACK,
+  BTN_DEVICES,
+};
+static uint8_t btnState = BTN_NONE;
 
 static uint8_t deviceId = 0xEE;
 static uint8_t handsetId = 0xEF;
@@ -188,7 +190,7 @@ static void crossfireTelemetryPing(){
 static void clearParams() {
 //  TRACE("clearParams %d", allocatedParamsCount);
   memclear(params, PARAMS_SIZE);
-  otherDevicesState = BTN_NONE;
+  btnState = BTN_NONE;
   allocatedParamsCount = 0;
 }
 
@@ -199,6 +201,7 @@ static void addBackButton() {
   backBtnParam.nameLength = 1; // mark as present
   backBtnParam.type = TYPE_BACK;
   storeParam(&backBtnParam);
+  btnState = BTN_BACK;
 }
 
 static void addOtherDevicesButton() {
@@ -207,7 +210,7 @@ static void addOtherDevicesButton() {
   otherDevicesParam.nameLength = 1;
   otherDevicesParam.type = TYPE_DEVICES_FOLDER;
   storeParam(&otherDevicesParam);
-  otherDevicesState = BTN_ADDED;
+  btnState = BTN_DEVICES;
 }
 
 static void reloadAllParam() {
@@ -455,7 +458,7 @@ static void paramDeviceIdSelect(Parameter * param) {
 static void parseDeviceInfoMessage(uint8_t* data) {
   uint8_t offset;
   uint8_t id = data[2];
-// TRACE("parseDev:%x folder:%d, expect:%d, devs:%d", id, currentFolderId, expectedParamsCount, devicesLen);
+// TRACE("parseDev:%x, exp:%d, devs:%d", id, expectedParamsCount, devicesLen);
   offset = strlen((char*)&data[3]) + 1 + 3;
   if (!isExistingDevice(id)) {
     deviceIds[devicesLen] = id;
@@ -472,7 +475,6 @@ static void parseDeviceInfoMessage(uint8_t* data) {
       if (devicesLen == expectedParamsCount) { // was it the last one?
         allParamsLoaded = 1;
         paramId = 1;
-        addBackButton();
       }
     }
   }
@@ -490,7 +492,6 @@ static void parseDeviceInfoMessage(uint8_t* data) {
       // This device has no params so the Loading code never starts
         allParamsLoaded = 1;
         paramId = 1;
-        addBackButton();
       }
     }
   }
@@ -557,14 +558,9 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     if (paramId == expectedParamsCount) {
       allParamsLoaded = 1;
       paramId = 1;
-      if (currentFolderId == 0) {
-        otherDevicesState = BTN_REQUESTED;
-      } else {
-        addBackButton();
-      }
     }
     paramChunk = 0;
-    paramId++;
+    paramId++; // TODO discards paramId = 1; hmm
     return;
   }
 
@@ -611,11 +607,6 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
       if (paramId == expectedParamsCount) { // if we have loaded all params
         allParamsLoaded = 1;
         paramId = 1;
-        if (currentFolderId == 0) {
-          otherDevicesState = BTN_REQUESTED;
-        } else {
-          addBackButton();
-        }
       } else if (allParamsLoaded == 0) {
         paramId++; // paramId = 1 + (paramId % (paramsLen-1));
       }
@@ -800,8 +791,12 @@ static void runDevicePage(event_t event) {
 
   lcd_title();
 
-  if (devicesLen > 1 && otherDevicesState == BTN_REQUESTED) {
-    addOtherDevicesButton();
+  if (btnState == BTN_NONE && allParamsLoaded) {
+    if (currentFolderId == 0) {
+      if (devicesLen > 1) addOtherDevicesButton();
+    } else {
+      addBackButton();
+    }
   }
   if (linkstat.flags > 0x1F) {
     lcd_warn();
