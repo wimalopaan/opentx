@@ -55,7 +55,10 @@ PACK(struct Parameter {
     uint8_t status;       // COMMAND, must be alias to value, because save expects it!
   };
   uint8_t type;
+  union {
   uint8_t max;          // INT8, SELECT
+  uint8_t infoOffset;   // COMMAND, paramData info offset
+  };
   uint8_t id;
 });
 
@@ -69,10 +72,7 @@ static constexpr uint16_t BUFFER_SIZE = 512;
 static uint8_t *buffer = &reusableBuffer.cToolData[0];
 static uint16_t bufferOffset = 0;
 
-// last POPUP_MSG_MAX_LEN of PARAM_DATA_TAIL_SIZE are reused for popup message
 static constexpr uint8_t PARAM_DATA_TAIL_SIZE = 40; // max popup packet size
-static constexpr uint8_t POPUP_MSG_MAX_LEN = 24; // popup hard limit = 24
-static constexpr uint8_t POPUP_MSG_OFFSET = PARAM_DATA_TAIL_SIZE - POPUP_MSG_MAX_LEN;
 
 static uint8_t *paramData = &reusableBuffer.cToolData[BUFFER_SIZE];
 static uint8_t paramDataLen = 0;
@@ -389,10 +389,9 @@ static void noopDisplay(Parameter * param, uint8_t y, uint8_t attr) {}
 static void paramCommandLoad(Parameter * param, uint8_t * data, uint8_t offset) {
   param->status = data[offset];
   param->timeout = data[offset+1];
+  param->infoOffset = offset+2; // do not copy info, access directly
   if (param->status == STEP_IDLE) {
     paramPopup = nullptr;
-  } else {
-    strncpy((char *)&paramData[POPUP_MSG_OFFSET], (char *)&data[offset+2], POPUP_MSG_MAX_LEN);
   }
 }
 
@@ -815,7 +814,7 @@ static void runDevicePage(event_t event) {
 }
 
 static uint8_t popupCompat(event_t event) {
-  showMessageBox((char *)&paramData[POPUP_MSG_OFFSET]);
+  showMessageBox((char *)&paramData[paramPopup->infoOffset]);
   lcdDrawText(WARNING_LINE_X, WARNING_LINE_Y+4*FH+2, STR_POPUPS_ENTER_EXIT);
 
   if (event == EVT_VIRTUAL_EXIT) {
