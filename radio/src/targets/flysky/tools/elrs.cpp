@@ -474,7 +474,6 @@ static void parseDeviceInfoMessage(uint8_t* data) {
       storeParam(&deviceParam);
       if (devicesLen == expectedParamsCount) { // was it the last one?
         allParamsLoaded = 1;
-        paramId = 1;
       }
     }
   }
@@ -491,7 +490,6 @@ static void parseDeviceInfoMessage(uint8_t* data) {
       if (newParamCount == 0) {
       // This device has no params so the Loading code never starts
         allParamsLoaded = 1;
-        paramId = 1;
       }
     }
   }
@@ -557,7 +555,6 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
   if (paramDataLen == 0 && data[5] != currentFolderId) {
     if (paramId == expectedParamsCount) {
       allParamsLoaded = 1;
-      paramId = 0;
     }
     paramChunk = 0;
     paramId++;
@@ -606,7 +603,6 @@ static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
     if (paramPopup == nullptr) {
       if (paramId == expectedParamsCount) { // if we have loaded all params
         allParamsLoaded = 1;
-        paramId = 1;
       } else if (allParamsLoaded == 0) {
         paramId++; // paramId = 1 + (paramId % (paramsLen-1));
       }
@@ -646,6 +642,14 @@ static void refreshNextCallback(uint8_t command, uint8_t* data, uint8_t length) 
     }
   } else if (command == CRSF_FRAMETYPE_ELRS_STATUS) {
     parseElrsInfoMessage(data);
+  }
+
+  if (btnState == BTN_NONE && allParamsLoaded) {
+    if (currentFolderId == 0) {
+      if (devicesLen > 1) addOtherDevicesButton();
+    } else {
+      addBackButton();
+    }
   }
 }
 
@@ -790,13 +794,6 @@ static void runDevicePage(event_t event) {
 
   lcd_title();
 
-  if (btnState == BTN_NONE && allParamsLoaded) {
-    if (currentFolderId == 0) {
-      if (devicesLen > 1) addOtherDevicesButton();
-    } else {
-      addBackButton();
-    }
-  }
   if (linkstat.flags > 0x1F) {
     lcd_warn();
   } else {
