@@ -123,7 +123,7 @@ static uint8_t expectedParamsCount = 0;
 
 static tmr10ms_t devicesRefreshTimeout = 50;
 static uint8_t allParamsLoaded = 0;
-static uint8_t currentFolderId = 0; // folder id
+static uint8_t currentFolderId = 0;
 static int8_t expectedChunks = -1;
 static uint8_t deviceIsELRS_TX = 0;
 static tmr10ms_t linkstatTimeout = 100;
@@ -688,7 +688,7 @@ static void lcd_title() {
     char tmp[16];
     char * tmpString = tmp;
     tmpString = strAppendUnsigned(tmpString, linkstat.bad);
-    tmpString = strAppendStringWithIndex(tmpString, "/", linkstat.good);
+    strAppendStringWithIndex(tmpString, "/", linkstat.good);
     lcdDrawText(LCD_W - 11, 1, tmp, RIGHT);
     lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS);
     lcdDrawChar(LCD_W - 7, 1, (linkstat.flags & 1) ? 'C' : '-');
