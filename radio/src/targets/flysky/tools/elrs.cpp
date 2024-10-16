@@ -717,10 +717,11 @@ static void handleDevicePageEvent(event_t event) {
     // }
   }
 
+  Parameter * param = getParam(lineIndex);
+
   if (event == EVT_VIRTUAL_EXIT) {
     if (edit) {
       edit = 0;
-      Parameter * param = getParam(lineIndex);
       paramTimeout = getTime() + 200;
       paramId = param->id;
       paramChunk = 0;
@@ -742,7 +743,6 @@ static void handleDevicePageEvent(event_t event) {
       linkstat.flags = 0;
       crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, 0x2E, 0x00);
     } else {
-      Parameter * param = getParam(lineIndex);
       if (param != 0 && param->nameLength > 0) {
         if (param->type < TYPE_FOLDER) {
           edit = 1 - edit;
