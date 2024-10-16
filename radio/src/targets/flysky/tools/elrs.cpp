@@ -309,14 +309,14 @@ static void paramIntegerDisplay(Parameter * param, uint8_t y, uint8_t attr) {
   unitDisplay(param, y, param->offset + param->nameLength);
 }
 
-static void paramUint8Load(Parameter * param, uint8_t * data, uint8_t offset) {
+static void paramInt8Load(Parameter * param, uint8_t * data, uint8_t offset) {
   param->value = data[offset + 0];
   param->min = data[offset + 1];
   param->max = data[offset + 2];
   unitLoad(param, data, offset + 4);
 }
 
-static void paramIntSave(Parameter * param) {
+static void paramInt8Save(Parameter * param) {
   crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, param->id, param->value);
 }
 
@@ -395,7 +395,7 @@ static void paramCommandLoad(Parameter * param, uint8_t * data, uint8_t offset) 
 static void paramCommandSave(Parameter * param) {
   if (param->status < STEP_CONFIRMED) {
     param->status = STEP_CLICK;
-    paramIntSave(param); //crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, param->id, param->status);
+    paramInt8Save(param); //crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, param->id, param->status);
     paramPopup = param;
     paramPopup->lastStatus = 0;
     paramTimeout = getTime() + param->timeout;
@@ -493,7 +493,7 @@ static void parseDeviceInfoMessage(uint8_t* data) {
 static const ParamFunctions noopFunctions = { .load=noopLoad, .save=noopSave, .display=noopDisplay };
 
 static const ParamFunctions functions[] = {
-  { .load=paramUint8Load, .save=paramIntSave, .display=paramIntegerDisplay }, // 1 UINT8(0)
+  { .load=paramInt8Load, .save=paramInt8Save, .display=paramIntegerDisplay }, // 1 UINT8(0)
   // { .load=noopLoad, .save=noopSave, .display=paramIntegerDisplay }, // 2 INT8(1)
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 3 UINT16(2)
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 4 INT16(3)
@@ -502,7 +502,7 @@ static const ParamFunctions functions[] = {
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 7 UINT64(6)
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 8 INT64(7)
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // 9 FLOAT(8)
-  { .load=paramTextSelectionLoad, .save=paramIntSave, .display=paramTextSelectionDisplay }, // 10 TEXT SELECTION(9)
+  { .load=paramTextSelectionLoad, .save=paramInt8Save, .display=paramTextSelectionDisplay }, // 10 TEXT SELECTION(9)
   { .load=noopLoad, .save=noopSave, .display=paramStringDisplay }, // 11 STRING(10) editing
   { .load=noopLoad, .save=paramFolderOpen, .display=paramUnifiedDisplay }, // 12 FOLDER(11)
   { .load=paramTextSelectionLoad, .save=noopSave, .display=paramStringDisplay }, // 13 INFO(12)
@@ -521,7 +521,7 @@ static ParamFunctions getFunctions(uint32_t i) {
 }
 
 static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
-  // TRACE("parse...");
+  // TRACE("parse %d...", data[3]);
   // DUMP(&data[4], length - 4);
   if (data[2] != deviceId || data[3] != paramId) {
     paramDataLen = 0;
@@ -744,9 +744,7 @@ static void handleDevicePageEvent(event_t event) {
     } else {
       Parameter * param = getParam(lineIndex);
       if (param != 0 && param->nameLength > 0) {
-        if (param->type == TYPE_STRING) {
-          ; // not implemented
-        } else if (param->type < TYPE_FOLDER) {
+        if (param->type < TYPE_FOLDER) {
           edit = 1 - edit;
         }
         if (!edit) {
@@ -800,7 +798,7 @@ static void runDevicePage(event_t event) {
         break;
       } else if (param->nameLength > 0) {
         uint8_t attr = (lineIndex == (pageOffset+y)) ? ((edit && BLINK) + INVERS) : 0;
-        if (param->type < TYPE_FOLDER || param->type == TYPE_INFO) {
+        if (param->type < TYPE_FOLDER || param->type == TYPE_INFO) { // if not folder, command, or back
           lcdDrawSizedText(COL1, y * textSize+textYoffset, (char *)&buffer[param->offset], param->nameLength, 0);
         }
         getFunctions(param->type).display(param, y*textSize+textYoffset, attr);
@@ -836,13 +834,13 @@ static void runPopupPage(event_t event) {
     result = popupCompat(event);
     paramPopup->lastStatus = paramPopup->status;
     if (result == RESULT_OK) {
-      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, paramPopup->id, STEP_CONFIRMED); // lcsConfirmed
+      crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, paramPopup->id, STEP_CONFIRMED);
       paramTimeout = getTime() + paramPopup->timeout; // we are expecting an immediate response
       paramPopup->status = STEP_CONFIRMED;
     } else if (result == RESULT_CANCEL) {
       paramPopup = nullptr;
     }
-  } else if (paramPopup->status == STEP_EXECUTING) { // running
+  } else if (paramPopup->status == STEP_EXECUTING) {
     result = popupCompat(event);
     paramPopup->lastStatus = paramPopup->status;
     if (result == RESULT_CANCEL) {
