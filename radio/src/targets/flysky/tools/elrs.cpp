@@ -329,10 +329,8 @@ static void paramTextSelectionLoad(Parameter * param, uint8_t * data, uint8_t of
   param->value = data[offset + len + 1];
   param->max = data[offset + len + 3];
   len = strlen((char*)&data[offset]);
-  if (param->valuesLength == 0) {
-    bufferPush((char*)&data[offset], len);
-    param->valuesLength = len;
-  }
+  bufferPush((char*)&data[offset], len);
+  param->valuesLength = len;
   unitLoad(param, data, offset + len + 5);
 }
 
@@ -416,11 +414,10 @@ static void paramUnifiedDisplay(Parameter * param, uint8_t y, uint8_t attr) {
   } else if (param->type == TYPE_DEVICES_FOLDER) {
     strAppend(tmpString, "> Other Devices");
     textIndent = COL1;
-  } else if (param->type == TYPE_BACK) {
-    strAppend(tmpString, "[----BACK----]");
-  } else { // CMD || DEVICE
+  } else { // CMD || DEVICE || BACK
     tmpString = strAppend(tmpString, "[");
-    tmpString = strAppend(tmpString, (char *)&buffer[param->offset], param->nameLength);
+    if (param->type == TYPE_BACK) tmpString = strAppend(tmpString, "----BACK----");
+    else tmpString = strAppend(tmpString, (char *)&buffer[param->offset], param->nameLength);
     strAppend(tmpString, "]");
   }
   lcdDrawText(textIndent, y, tmp, attr | BOLD);
