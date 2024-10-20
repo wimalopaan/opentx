@@ -273,15 +273,12 @@ static Parameter * getParam(const uint8_t line) {
   return &params[line - 1];
 }
 
-static void incrParam(int32_t step) {
-  Parameter * param = getParam(lineIndex);
-  int32_t min, max;
-  if (param->type <= TYPE_INT16 || param->type == TYPE_SELECT) {
-    min = paramGetMin(param);
-    max = paramGetMax(param);
-    param->value = limit<int32_t>(min, param->value + step, max);
-  }
-}
+//static void incrParam(int32_t step) {
+//  Parameter * param = getParam(lineIndex);
+//  int32_t min = paramGetMin(param);
+//  int32_t max = paramGetMax(param);
+//  param->value = limit<int32_t>(min, param->value + step, max);
+//}
 
 static void selectParam(int8_t step) {
   int32_t newLineIndex = lineIndex + step;
@@ -795,6 +792,7 @@ static void handleDevicePageEvent(event_t event) {
       if (param != 0 && param->nameLength > 0) {
         if (param->type < TYPE_FOLDER) {
           edit = 1 - edit;
+          s_editMode = edit;
         }
         if (!edit) {
           if (param->type == TYPE_COMMAND) {
@@ -820,11 +818,13 @@ static void handleDevicePageEvent(event_t event) {
     if (param->type == TYPE_STRING) {
       return;
     }
-    if (event == EVT_VIRTUAL_NEXT) {
-      incrParam(1);
-    } else if (event == EVT_VIRTUAL_PREV) {
-      incrParam(-1);
-    }
+//    if (event == EVT_VIRTUAL_NEXT) {
+//      incrParam(1);
+//    } else if (event == EVT_VIRTUAL_PREV) {
+//      incrParam(-1);
+//    }
+    // smaller but missing step support (FLOAT)
+    param->value = checkIncDec(event, param->value, paramGetMin(param), paramGetMax(param), 0);
   } else {
     if (event == EVT_VIRTUAL_NEXT) {
       selectParam(1);
