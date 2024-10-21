@@ -103,7 +103,6 @@ static constexpr uint8_t DEVICE_NAME_MAX_LEN = 20;
 static char deviceName[DEVICE_NAME_MAX_LEN];
 static uint8_t lineIndex = 1;
 static uint8_t pageOffset = 0;
-static uint8_t edit = 0;
 static Parameter * paramPopup = nullptr;
 static tmr10ms_t paramTimeout = 0;
 static uint8_t paramId = 1;
@@ -348,7 +347,6 @@ static void paramIntegerLoad(Parameter * param, uint8_t * data, uint8_t offset) 
 }
 
 static void paramStringDisplay(Parameter * param, uint8_t y, uint8_t attr) {
-  s_editMode = edit; // (edit) ? EDIT_MODIFY_FIELD : 0;
   editName(COL2, y, (char *)&buffer[param->offset + param->nameLength], STRING_LEN_MAX, currentEvent, attr);
   // unitDisplay(param, y, param->offset + param->nameLength + STRING_LEN_MAX);
 }
@@ -766,8 +764,8 @@ static void handleDevicePageEvent(event_t event) {
   Parameter * param = getParam(lineIndex);
 
   if (event == EVT_VIRTUAL_EXIT) {
-    if (edit) {
-      edit = 0;
+    if (s_editMode) {
+      s_editMode = 0;
       paramTimeout = getTime() + 200;
       paramId = param->id;
       paramChunk = 0;
@@ -791,10 +789,9 @@ static void handleDevicePageEvent(event_t event) {
     } else {
       if (param != 0 && param->nameLength > 0) {
         if (param->type < TYPE_FOLDER) {
-          edit = 1 - edit;
-          s_editMode = edit;
+          s_editMode = 1 - s_editMode;
         }
-        if (!edit) {
+        if (!s_editMode) {
           if (param->type == TYPE_COMMAND) {
             // For commands, request this param's
             // data again, with a short delay to allow the module EEPROM to
@@ -814,7 +811,7 @@ static void handleDevicePageEvent(event_t event) {
         }
       }
     }
-  } else if (edit) {
+  } else if (s_editMode) {
     if (param->type == TYPE_STRING) {
       return;
     }
@@ -850,7 +847,7 @@ static void runDevicePage(event_t event) {
       if (param == nullptr) {
         break;
       } else if (param->nameLength > 0) {
-        uint8_t attr = (lineIndex == (pageOffset+y)) ? ((edit && BLINK) + INVERS) : 0;
+        uint8_t attr = (lineIndex == (pageOffset+y)) ? ((s_editMode && BLINK) + INVERS) : 0;
         if (param->type < TYPE_FOLDER || param->type == TYPE_INFO) { // if not folder, command, or back
           lcdDrawSizedText(COL1, y * textSize+textYoffset, (char *)&buffer[param->offset], param->nameLength, 0);
         }
