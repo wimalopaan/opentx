@@ -197,8 +197,8 @@ void boardOff()
 
 uint16_t getBatteryVoltage()
 {
-  int32_t instant_vbat = adcValues[TX_VOLTAGE];
-  instant_vbat = (instant_vbat * 100 * (128 + g_eeGeneral.txVoltageCalibration)) / (421 * 128);
+  int32_t instant_vbat = anaIn(TX_VOLTAGE);
+  instant_vbat = (instant_vbat * 100 * (128 + g_eeGeneral.txVoltageCalibration)) / (421 * 64);
   instant_vbat += 20; // add 0.2V because of the diode
   return (uint16_t)instant_vbat;
 }
