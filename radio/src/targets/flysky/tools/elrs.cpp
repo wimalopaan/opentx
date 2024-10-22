@@ -553,7 +553,7 @@ static const ParamFunctions functions[] = {
   { .load=paramIntegerLoad, .save=paramMultibyteSave, .display=paramTextSelectionDisplay }, // SELECT(9)
   { .load=paramStringLoad, .save=paramStringSave, .display=paramStringDisplay }, // STRING(10) editing
   { .load=noopLoad, .save=paramFolderOpen, .display=paramUnifiedDisplay }, // FOLDER(11)
-  { .load=paramInfoLoad, .save=noopSave, .display=paramInfoDisplay }, // INFO(12)
+  { .load=paramInfoLoad, .save=noopSave, .display=paramStringDisplay }, // INFO(12)
   { .load=paramCommandLoad, .save=paramCommandSave, .display=paramUnifiedDisplay }, // COMMAND(13)
   { .load=noopLoad, .save=paramBackExec, .display=paramUnifiedDisplay }, // back(14)
   { .load=noopLoad, .save=paramDeviceIdSelect, .display=paramUnifiedDisplay }, // device(15)
