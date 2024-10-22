@@ -50,7 +50,10 @@ struct Parameter {
   uint8_t size;         // INT8/16/FLOAT/SELECT size
   uint8_t id;
   union {
-    int16_t value;
+    union {
+      int16_t value;
+      // uint8_t maxlen;   // STRING
+    };
     struct {
       uint8_t timeout;      // COMMAND
       uint8_t lastStatus;   // COMMAND
@@ -99,7 +102,6 @@ static uint8_t deviceId = 0xEE;
 static uint8_t handsetId = 0xEF;
 
 static constexpr uint8_t DEVICE_NAME_MAX_LEN = 20;
-//static uint8_t *deviceName = &reusableBuffer.cToolData[BUFFER_SIZE + PARAM_DATA_TAIL_SIZE + PARAMS_SIZE + DEVICES_MAX_COUNT];
 static char deviceName[DEVICE_NAME_MAX_LEN];
 static uint8_t lineIndex = 1;
 static uint8_t pageOffset = 0;
@@ -113,8 +115,8 @@ static struct LinkStat {
   uint8_t bad;
   uint8_t flags;
 } linkstat;
+
 static constexpr uint8_t ELRS_FLAGS_INFO_MAX_LEN = 20;
-//static char *elrsFlagsInfo = (char *)&reusableBuffer.cToolData[BUFFER_SIZE + PARAM_DATA_TAIL_SIZE + PARAMS_SIZE + DEVICES_MAX_COUNT + DEVICE_NAME_MAX_LEN];
 static char elrsFlagsInfo[ELRS_FLAGS_INFO_MAX_LEN] = "";
 static uint8_t expectedParamsCount = 0;
 
@@ -127,7 +129,7 @@ static tmr10ms_t linkstatTimeout = 100;
 static uint8_t titleShowWarn = 0;
 static tmr10ms_t titleShowWarnTimeout = 100;
 
-static constexpr uint8_t STRING_LEN_MAX = 10; // without trailing \0
+static constexpr uint8_t STRING_LEN_MAX = 15; // without trailing \0
 static event_t currentEvent;
 
 static constexpr uint8_t COL1          =  0;
@@ -172,7 +174,7 @@ static void bufferPush(char * data, uint8_t len) {
 }
 
 static void resetParamData() {
-  paramData = &reusableBuffer.cToolData[bufferOffset + 0 /* offset */];
+  paramData = &reusableBuffer.cToolData[bufferOffset];
   paramDataLen = 0;
 }
 
@@ -348,8 +350,7 @@ static void paramIntegerLoad(Parameter * param, uint8_t * data, uint8_t offset) 
 }
 
 static void paramStringDisplay(Parameter * param, uint8_t y, uint8_t attr) {
-  editName(COL2, y, (char *)&buffer[param->offset + param->nameLength], STRING_LEN_MAX, currentEvent, attr);
-  // unitDisplay(param, y, param->offset + param->nameLength + STRING_LEN_MAX);
+  editName(COL2, y, (char *)&buffer[param->offset + param->nameLength], 10/* max len to fit screen */, currentEvent, attr);
 }
 
 static void paramInfoDisplay(Parameter * param, uint8_t y, uint8_t attr) {
@@ -358,10 +359,16 @@ static void paramInfoDisplay(Parameter * param, uint8_t y, uint8_t attr) {
 
 static void paramStringLoad(Parameter * param, uint8_t * data, uint8_t offset) {
   uint8_t len = strlen((char*)&data[offset]);
-  char tmp[STRING_LEN_MAX];
-  memset(tmp, 0, STRING_LEN_MAX);
+  // if (len) param->maxlen = data[offset + len + 1];
+  char tmp[STRING_LEN_MAX] = {0};
   str2zchar(tmp, (char*)&data[offset], len);
   bufferPush(tmp, STRING_LEN_MAX);
+}
+
+static void paramStringSave(Parameter * param) {
+  char tmp[STRING_LEN_MAX + 1];
+  zchar2str(tmp, (char*)&buffer[param->offset + param->nameLength], STRING_LEN_MAX);
+  crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, param->id, (uint8_t *)&tmp, strlen(tmp) + 1);
 }
 
 static void paramMultibyteSave(Parameter * param) {
@@ -370,12 +377,6 @@ static void paramMultibyteSave(Parameter * param) {
       data[i] = (uint8_t)((param->value >> (8 * i)) & 0xFF);
     }
   crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, param->id, (uint8_t *)&data, param->size);
-}
-
-static void paramStringSave(Parameter * param) {
-  char tmp[STRING_LEN_MAX + 1];
-  zchar2str(tmp, (char*)&buffer[param->offset + param->nameLength], STRING_LEN_MAX);
-  crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, param->id, (uint8_t *)&tmp, strlen(tmp) + 1);
 }
 
 static void paramInfoLoad(Parameter * param, uint8_t * data, uint8_t offset) {
@@ -789,7 +790,7 @@ static void handleDevicePageEvent(event_t event) {
     } else {
       if (param != 0 && param->nameLength > 0) {
         if (param->type < TYPE_FOLDER) {
-          s_editMode = 1 - s_editMode;
+          s_editMode = (s_editMode) ? 0 : 1;
         }
         if (!s_editMode) {
           if (param->type == TYPE_COMMAND) {
