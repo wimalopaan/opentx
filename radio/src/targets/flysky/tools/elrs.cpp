@@ -350,11 +350,11 @@ static void paramIntegerLoad(Parameter * param, uint8_t * data, uint8_t offset) 
 }
 
 static void paramStringDisplay(Parameter * param, uint8_t y, uint8_t attr) {
-  editName(COL2, y, (char *)&buffer[param->offset + param->nameLength], 10/* max len to fit screen */, currentEvent, attr);
-}
-
-static void paramInfoDisplay(Parameter * param, uint8_t y, uint8_t attr) {
-  lcdDrawText(COL2, y, (char *)&buffer[param->offset + param->nameLength], attr);
+  char * str = (char *)&buffer[param->offset + param->nameLength];
+  if (param->type == TYPE_INFO) 
+    lcdDrawText(COL2, y, str, attr);
+  else 
+    editName(COL2, y, str, 10/* max len to fit screen */, currentEvent, attr);
 }
 
 static void paramStringLoad(Parameter * param, uint8_t * data, uint8_t offset) {
