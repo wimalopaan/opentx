@@ -599,7 +599,7 @@
 #define TR_PHASENAME           "Phase-Name"
 #define TR_MIXNAME             "Mix-Name"
 #define TR_INPUTNAME           "Input"
-  #define TR_EXPONAME          "Info"
+  #define TR_EXPONAME          "Name"
 #define TR_BITMAP              "Modellfoto"
 #define TR_TIMER               TR("Timer", "Timer ")  // für Timer1 Timer2 Timer3
 #define TR_ELIMITS             TR("Erw. Limit", "Erw. Wege auf 150%")

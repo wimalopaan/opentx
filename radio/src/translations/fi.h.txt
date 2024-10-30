@@ -581,11 +581,11 @@
 #define TR_MODELNAME           "Model Name"
 #define TR_PHASENAME           "Mode Name"
 #define TR_MIXNAME             "Mix Name"
-#define TR_INPUTNAME           "Input Name"
+#define TR_INPUTNAME           "Input"
 #if defined(PCBTARANIS)
   #define TR_EXPONAME          "Line Name"
 #else
-  #define TR_EXPONAME          "Expo Name"
+  #define TR_EXPONAME          "Name"
 #endif
 #define TR_BITMAP              "Model Image"
 #define TR_TIMER               TR("Timer", "Timer ")

@@ -599,9 +599,9 @@
 #define TR_MODELNAME           "Nazw. modelu"
 #define TR_PHASENAME           "Nazwa fazy"
 #define TR_MIXNAME             "Nazwa mix"
-#define TR_INPUTNAME           "Wpisz nazw"
-  #define TR_EXPONAME          "LiniaNazw"
-#define TR_BITMAP              "Obrazek    "
+#define TR_INPUTNAME           "Nazwa"
+  #define TR_EXPONAME          "Nazwa"
+#define TR_BITMAP              "Obrazek"
 #define TR_TIMER               TR("Timer", "Timer ")
 #define TR_ELIMITS             TR("Limi+25%", "Kanał +/- 125% ")
 #define TR_ETRIMS              TR("E.Trym ", "Poszer Trymery")

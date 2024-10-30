@@ -583,8 +583,8 @@
 #define TR_MODELNAME           "Modelnaam"
 #define TR_PHASENAME           "Modus"
 #define TR_MIXNAME             "Mix Naam"
-#define TR_INPUTNAME           "Input Naam"
-#define TR_EXPONAME            "Lijn Naam"
+#define TR_INPUTNAME           "Input"
+#define TR_EXPONAME            "Naam"
 #define TR_BITMAP              "Modelafbeelding"
 #define TR_TIMER               TR("Timer", "Timer ")
 #define TR_ELIMITS             TR("E.Limits", "Extended Limits")

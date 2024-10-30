@@ -594,8 +594,8 @@
 #define TR_MODELNAME           "Nome modello"
 #define TR_PHASENAME           "Nome fase"
 #define TR_MIXNAME             "Nome mix"
-#define TR_INPUTNAME           "Nome Ingr."
-  #define TR_EXPONAME          "Nome expo"
+#define TR_INPUTNAME           "Ingr."
+#define TR_EXPONAME            "Nome"
 #define TR_BITMAP              "Immagine"
 #define TR_TIMER               TR("Timer","Timer ")
 #define TR_ELIMITS             TR("Limiti.E","Limiti Estesi")

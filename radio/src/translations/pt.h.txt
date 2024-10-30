@@ -586,13 +586,13 @@
 #define TR_MODELNAME           "Model Name"
 #define TR_PHASENAME           "Phase Name"
 #define TR_MIXNAME             "Mix Name"
-#define TR_INPUTNAME           "Input Name"
+#define TR_INPUTNAME           "Input"
 #if defined(PCBTARANIS)
   #define TR_EXPONAME          "Line Name"
 #else
-  #define TR_EXPONAME          "Expo Name"
+  #define TR_EXPONAME          "Nome"
 #endif
-#define TR_BITMAP              "Model Image"
+#define TR_BITMAP              "Image"
 #define TR_TIMER               "Cronom"
 #define TR_ELIMITS             "E.Limits"
 #define TR_ETRIMS              "E.Trims"

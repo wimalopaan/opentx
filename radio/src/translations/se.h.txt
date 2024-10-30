@@ -599,11 +599,11 @@
 #define TR_MODELNAME           "Modellnamn"
 #define TR_PHASENAME           "Lägesnamn "
 #define TR_MIXNAME             "Mixnamn "
-#define TR_INPUTNAME           "Inputnamn"
+#define TR_INPUTNAME           "Input"
 #if defined(PCBTARANIS)
   #define TR_EXPONAME          "Radnamn"
 #else
-  #define TR_EXPONAME          "Exponamn"
+  #define TR_EXPONAME          "Namn"
 #endif
 #define TR_BITMAP              "Modellikon"
 #define TR_TIMER               TR("Timer","Timer ")
