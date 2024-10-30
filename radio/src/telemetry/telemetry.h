@@ -220,13 +220,12 @@ inline uint8_t modelTelemetryProtocol()
   }
 #endif
 
-#if defined(PCBI6X)
-  if (IS_INTERNAL_MODULE_ENABLED()) {
-    return PROTOCOL_FLYSKY_IBUS;
-  }
-#endif
   // default choice
+#if defined(PCBI6X)
+    return PROTOCOL_FLYSKY_IBUS;
+#else
   return PROTOCOL_FRSKY_SPORT;
+#endif
 }
 
 #if defined(LOG_TELEMETRY) && !defined(SIMU)
