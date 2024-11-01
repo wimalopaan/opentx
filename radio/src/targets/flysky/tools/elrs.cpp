@@ -50,10 +50,11 @@ struct Parameter {
   uint8_t size;         // INT8/16/FLOAT/SELECT size
   uint8_t id;
   union {
-    union {
-      int16_t value;
-      // uint8_t maxlen;   // STRING
-    };
+#if defined(CRSF_EXTENDED_TYPES)
+    int32_t value;
+#else
+    int16_t value;
+#endif
     struct {
       uint8_t timeout;      // COMMAND
       uint8_t lastStatus;   // COMMAND
@@ -329,46 +330,75 @@ static void unitDisplay(Parameter * param, uint8_t y, uint16_t offset) {
 }
 
 static void paramIntegerDisplay(Parameter *param, uint8_t y, uint8_t attr) {
-    uint16_t value = param->value;
+    int32_t value = param->value;
+    uint8_t offset = param->offset + param->nameLength + (2 * param->size);
+    if (param->type == TYPE_FLOAT) {
+#if defined(CRSF_EXTENDED_TYPES)
+      uint8_t prec = buffer[offset];
+      if (prec > 0) {
+        attr |= (prec == 1 ? PREC1 : PREC2);
+      }
+      offset += 1; // skip prec
+#else
+      return;
+#endif
+    }
     lcdDrawNumber(COL2, y, (param->type == TYPE_UINT8) ? (uint8_t)value :
                           (param->type == TYPE_INT8)  ? (int8_t)value :
-                          (param->type == TYPE_UINT16) ? (uint16_t)value : (int16_t)value, attr);
-    unitDisplay(param, y, param->offset + param->nameLength + (2 * param->size));
+                          (param->type == TYPE_UINT16) ? (uint16_t)value :
+#if defined(CRSF_EXTENDED_TYPES)
+                          (param->type == TYPE_INT16) ? (int16_t)value : (int32_t)value, attr);
+#else
+                          (int16_t)value, attr);
+#endif
+    unitDisplay(param, y, offset);
 }
 
 static void paramIntegerLoad(Parameter * param, uint8_t * data, uint8_t offset) {
   uint8_t size = (param->type == TYPE_UINT16 || param->type == TYPE_INT16) ? 2 : 1; // else INT8, SELECT
+  uint8_t loadSize = 2 * size; // min + max at once
+#if defined(CRSF_EXTENDED_TYPES)
+  if (param->type == TYPE_FLOAT) {
+    size = 4;
+    loadSize = 13; // min + max + prec + step at once
+  }
+#endif
   param->size = size;
   uint8_t valuesLen = 0;
   if (param->type == TYPE_SELECT) {
     valuesLen = strlen((char*)&data[offset]) + 1; // + \0
   }
   param->value = paramGetValue(&data[offset + valuesLen + (0 * size)], size);
-  bufferPush((char *)&data[offset + valuesLen + (1 * size)], 2 * size); // min + max at once
+  bufferPush((char *)&data[offset + valuesLen + (1 * size)], loadSize); // min + max at once
   bufferPush((char*)&data[offset], valuesLen); // TYPE_SELECT values
-  unitLoad(param, data, offset + valuesLen + 4 * size);
+  unitLoad(param, data, offset + valuesLen + loadSize + 2 * size);
 }
 
 static void paramStringDisplay(Parameter * param, uint8_t y, uint8_t attr) {
   char * str = (char *)&buffer[param->offset + param->nameLength];
   if (param->type == TYPE_INFO) 
     lcdDrawText(COL2, y, str, attr);
-  else 
+#if defined(CRSF_EXTENDED_TYPES)
+  else
     editName(COL2, y, str, 10/* max len to fit screen */, currentEvent, attr);
+#endif
 }
-
 static void paramStringLoad(Parameter * param, uint8_t * data, uint8_t offset) {
+#if defined(CRSF_EXTENDED_TYPES)
   uint8_t len = strlen((char*)&data[offset]);
   // if (len) param->maxlen = data[offset + len + 1];
   char tmp[STRING_LEN_MAX] = {0};
   str2zchar(tmp, (char*)&data[offset], len);
   bufferPush(tmp, STRING_LEN_MAX);
+#endif
 }
 
 static void paramStringSave(Parameter * param) {
+#if defined(CRSF_EXTENDED_TYPES)
   char tmp[STRING_LEN_MAX + 1];
   zchar2str(tmp, (char*)&buffer[param->offset + param->nameLength], STRING_LEN_MAX);
   crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_WRITE, param->id, (uint8_t *)&tmp, strlen(tmp) + 1);
+#endif
 }
 
 static void paramMultibyteSave(Parameter * param) {
@@ -433,7 +463,6 @@ static void paramFolderDeviceOpen(Parameter * param) {
 
 static void noopLoad(Parameter * param, uint8_t * data, uint8_t offset) {}
 static void noopSave(Parameter * param) {}
-static void noopDisplay(Parameter * param, uint8_t y, uint8_t attr) {}
 
 static void paramCommandLoad(Parameter * param, uint8_t * data, uint8_t offset) {
   param->status = data[offset];
@@ -543,7 +572,7 @@ static void parseDeviceInfoMessage(uint8_t* data) {
 }
 
 static const ParamFunctions functions[] = {
-  { .load=paramIntegerLoad, .save=paramMultibyteSave, .display=paramIntegerDisplay },    // UINT8(0), common integer
+  { .load=paramIntegerLoad, .save=paramMultibyteSave, .display=paramIntegerDisplay },    // UINT8(0), common for INTs, FLOAT
   // { .load=paramIntegerLoad, .save=paramMultibyteSave, .display=paramIntegerDisplay }, // INT8(1)
   // { .load=paramIntegerLoad, .save=paramMultibyteSave, .display=paramIntegerDisplay }, // UINT16(2)
   // { .load=paramIntegerLoad, .save=paramMultibyteSave, .display=paramIntegerDisplay }, // INT16(3)
@@ -551,7 +580,7 @@ static const ParamFunctions functions[] = {
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay },
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay },
   // { .load=noopLoad, .save=noopSave, .display=noopDisplay },
-  { .load=noopLoad, .save=noopSave, .display=noopDisplay }, // { .load=paramFloatLoad, .save=paramMultibyteSave, .display=paramFloatDisplay }, // FLOAT(8)
+  // { .load=paramFloatLoad, .save=paramMultibyteSave, .display=paramIntegerDisplay }, // FLOAT(8)
   { .load=paramIntegerLoad, .save=paramMultibyteSave, .display=paramTextSelectionDisplay }, // SELECT(9)
   { .load=paramStringLoad, .save=paramStringSave, .display=paramStringDisplay }, // STRING(10) editing
   { .load=noopLoad, .save=paramFolderOpen, .display=paramUnifiedDisplay }, // FOLDER(11)
@@ -563,8 +592,8 @@ static const ParamFunctions functions[] = {
 };
 
 static ParamFunctions getFunctions(uint32_t i) {
-  if (i <= TYPE_INT16) return functions[0];
-  else return functions[i - 7];
+  if (i <= TYPE_FLOAT) return functions[0];
+  else return functions[i - 8];
 }
 
 static void parseParameterInfoMessage(uint8_t* data, uint8_t length) {
