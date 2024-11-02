@@ -9,11 +9,10 @@
 
 Custom OpenTX/EdgeTX for Flysky FS-i6X.
 
-Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx_flysky_i6x).<br>
-You can find instructions and videos contributed by fellow early adopters in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. 
+Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
 
-- [Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help<br>
-  - [How to install and upgrade firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
+- **[Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help**<br>
+  - **[How to install and upgrade firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
   - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development) <br>
   - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
 - [Features](#features)<br>
@@ -24,6 +23,11 @@ You can find instructions and videos contributed by fellow early adopters in the
 - [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
 - [Credits](#credits)<br>
 
+**For help with general OpenI6X configuration see manuals:**
+- [EdgeTX manual](https://manual.edgetx.org/bw-radios)
+- [OpenTX manual](https://doc.open-tx.org/manual-for-opentx-2-2)
+
+You can find some instructions in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. Some of that can be outdated. Read Wiki for up to date instructions.
 
 ## Features
 
