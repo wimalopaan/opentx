@@ -23,6 +23,9 @@
 // uint32_t telemetryErrors = 0;
 DMAFifo<TELEMETRY_FIFO_SIZE> telemetryDMAFifo __DMA (TELEMETRY_DMA_Channel_RX);
 
+#define TELEMETRY_USART_IRQ_PRIORITY 0 // was 6
+#define TELEMETRY_DMA_IRQ_PRIORITY   0 // was 7
+
 void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   TRACE("telemetryPortInit %d", baudrate);
 
@@ -81,7 +84,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 
   USART_ITConfig(TELEMETRY_USART, USART_IT_RXNE, DISABLE);
   USART_ITConfig(TELEMETRY_USART, USART_IT_TXE, DISABLE);
-  NVIC_SetPriority(TELEMETRY_USART_IRQn, 6);
+  NVIC_SetPriority(TELEMETRY_USART_IRQn, TELEMETRY_USART_IRQ_PRIORITY);
   NVIC_EnableIRQ(TELEMETRY_USART_IRQn);
 
   TELEMETRY_DMA_Channel_RX->CPAR = (uint32_t) &TELEMETRY_USART->RDR;
@@ -143,7 +146,7 @@ void sportSendBuffer(const uint8_t* buffer, unsigned long count) {
 
   // enable interrupt and set it's priority
   NVIC_EnableIRQ(TELEMETRY_DMA_TX_IRQn);
-  NVIC_SetPriority(TELEMETRY_DMA_TX_IRQn, 7);
+  NVIC_SetPriority(TELEMETRY_DMA_TX_IRQn, TELEMETRY_DMA_IRQ_PRIORITY);
 }
 
 extern "C" void TELEMETRY_DMA_TX_IRQHandler(void) {
