@@ -67,9 +67,6 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 
   TELEMETRY_USART->CR1 |= USART_CR1_IDLEIE;
 
-  // Half duplex
-  USART_HalfDuplexCmd(TELEMETRY_USART, ENABLE);
-
   // Level inversion
 #if !defined(CRSF_UNINVERTED)
   USART_InvPinCmd(TELEMETRY_USART, USART_InvPin_Tx | USART_InvPin_Rx, ENABLE);
@@ -87,22 +84,19 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   NVIC_SetPriority(TELEMETRY_USART_IRQn, 6);
   NVIC_EnableIRQ(TELEMETRY_USART_IRQn);
 
-  // RX DMA
-  DMA_InitTypeDef DMA_InitStructure;
-  DMA_InitStructure.DMA_PeripheralBaseAddr = CONVERT_PTR_UINT(&TELEMETRY_USART->RDR);
-  DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
-  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-  DMA_InitStructure.DMA_MemoryBaseAddr = CONVERT_PTR_UINT(telemetryDMAFifo.buffer());
-  DMA_InitStructure.DMA_BufferSize = telemetryDMAFifo.size();
-  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  TELEMETRY_DMA_Channel_RX->CPAR = (uint32_t) &TELEMETRY_USART->RDR;
+  TELEMETRY_DMA_Channel_RX->CMAR = (uint32_t) telemetryDMAFifo.buffer();
+  TELEMETRY_DMA_Channel_RX->CNDTR = telemetryDMAFifo.size();
+  TELEMETRY_DMA_Channel_RX->CCR = DMA_MemoryInc_Enable
+                                | DMA_M2M_Disable
+                                | DMA_Mode_Circular
+                                | DMA_Priority_Low
+                                | DMA_DIR_PeripheralSRC
+                                | DMA_PeripheralInc_Disable
+                                | DMA_PeripheralDataSize_Byte
+                                | DMA_MemoryDataSize_Byte;
 
-  DMA_Init(TELEMETRY_DMA_Channel_RX, &DMA_InitStructure);
-  USART_DMACmd(TELEMETRY_USART, USART_DMAReq_Rx, ENABLE);
+  TELEMETRY_USART->CR3 |= USART_CR3_HDSEL | USART_DMAReq_Rx; // HalfDuplex + DMA RX
   USART_Cmd(TELEMETRY_USART, ENABLE);
   DMA_Cmd(TELEMETRY_DMA_Channel_RX, ENABLE);
 }
@@ -110,41 +104,39 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 void telemetryPortSetDirectionOutput() {
   // Disable RX
   TELEMETRY_DMA_Channel_RX->CCR &= ~DMA_CCR_EN;
-  TELEMETRY_USART->CR1 &= ~USART_CR1_RE;  // disable receive
+  TELEMETRY_USART->CR1 &= ~USART_CR1_RE;
 
   // Enable TX
-  TELEMETRY_USART->CR1 |= USART_CR1_TE;   // enable transmit
+  TELEMETRY_USART->CR1 |= USART_CR1_TE;
 }
 
 void telemetryPortSetDirectionInput() {
   // Disable TX
   TELEMETRY_DMA_Channel_TX->CCR &= ~DMA_CCR_EN;
-  TELEMETRY_USART->CR1 &= ~USART_CR1_TE;  // disable transmit
+  TELEMETRY_USART->CR1 &= ~USART_CR1_TE;
 
   // Enable RX
-  TELEMETRY_USART->CR1 |= USART_CR1_RE;   // enable receive
+  TELEMETRY_USART->CR1 |= USART_CR1_RE;
   TELEMETRY_DMA_Channel_RX->CCR |= DMA_CCR_EN;
 }
 
 void sportSendBuffer(const uint8_t* buffer, unsigned long count) {
   telemetryPortSetDirectionOutput();
 
-  DMA_InitTypeDef DMA_InitStructure;
   DMA_DeInit(TELEMETRY_DMA_Channel_TX);
 
-  DMA_InitStructure.DMA_PeripheralBaseAddr = CONVERT_PTR_UINT(&TELEMETRY_USART->TDR);
-  DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;  
-  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-  DMA_InitStructure.DMA_BufferSize = count;
-  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-  DMA_InitStructure.DMA_MemoryBaseAddr = CONVERT_PTR_UINT(buffer);
+  TELEMETRY_DMA_Channel_TX->CPAR = (uint32_t) &TELEMETRY_USART->TDR;
+  TELEMETRY_DMA_Channel_TX->CMAR = (uint32_t) buffer;
+  TELEMETRY_DMA_Channel_TX->CNDTR = count;
+  TELEMETRY_DMA_Channel_TX->CCR = DMA_MemoryInc_Enable
+                                | DMA_M2M_Disable
+                                | DMA_Mode_Normal
+                                | DMA_Priority_VeryHigh
+                                | DMA_DIR_PeripheralDST
+                                | DMA_PeripheralInc_Disable
+                                | DMA_PeripheralDataSize_Byte
+                                | DMA_MemoryDataSize_Byte;
 
-  DMA_Init(TELEMETRY_DMA_Channel_TX, &DMA_InitStructure);
   DMA_Cmd(TELEMETRY_DMA_Channel_TX, ENABLE);
   USART_DMACmd(TELEMETRY_USART, USART_DMAReq_Tx, ENABLE);
   DMA_ITConfig(TELEMETRY_DMA_Channel_TX, DMA_IT_TC, ENABLE);
