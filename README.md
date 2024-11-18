@@ -5,9 +5,7 @@
 
 ![Banner](https://github.com/OpenI6X/opentx/blob/master/doc/flysky/banner.png?raw=true)
 
-## Welcome to Openi6X!
-
-Custom OpenTX/EdgeTX for Flysky FS-i6X.
+## Custom OpenTX / EdgeTX for Flysky FS-i6X
 
 Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
 
@@ -23,7 +21,7 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx
 - [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
 - [Credits](#credits)<br>
 
-For help with general OpenI6X configuration see manuals:
+**Configuration manuals:**
 - [EdgeTX manual](https://manual.edgetx.org/bw-radios)
 - [OpenTX manual](https://doc.open-tx.org/manual-for-opentx-2-2)
 
