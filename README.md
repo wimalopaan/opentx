@@ -10,7 +10,7 @@
 Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
 
 - **[Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help**<br>
-  - [How to install and upgrade firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
+  - [How to install, upgrade or restore firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
   - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development) <br>
   - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
 - [Features](#features)<br>
