@@ -38,7 +38,7 @@ void onUSBConnectMenu(const char *result)
   if (result == STR_USB_JOYSTICK) {
     setSelectedUsbMode(USB_JOYSTICK_MODE);
   }
-#if !defined(PCBI6X)
+#if defined(USB_SERIAL)
   else if (result == STR_USB_SERIAL) {
     setSelectedUsbMode(USB_SERIAL_MODE);
   }
@@ -56,9 +56,9 @@ void handleUsbConnection()
   #if !defined(PCBI6X) || defined(PCBI6X_USB_MSD)
         POPUP_MENU_ADD_ITEM(STR_USB_MASS_STORAGE);
   #endif
-  #if defined(DEBUG) && !defined(PCBI6X)
+#if defined(USB_SERIAL)
         POPUP_MENU_ADD_ITEM(STR_USB_SERIAL);
-  #endif
+#endif
         POPUP_MENU_START(onUSBConnectMenu);
       }
       else {
@@ -476,7 +476,7 @@ void perMain()
   }
 #endif
 
-#if defined(STM32)
+#if defined(STM32) && defined(PCBI6X_USB_MSD)
   if (usbPlugged() && getSelectedUsbMode() == USB_MASS_STORAGE_MODE) {
     // disable access to menus
     lcdClear();
