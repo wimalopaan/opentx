@@ -776,7 +776,6 @@ enum Functions {
 #if defined(PCBTARANIS)
   FUNC_SCREENSHOT,
 #endif
-  FUNC_SET_SCREEN,
 #if defined(DEBUG)
   FUNC_TEST, // should remain the last before MAX as not added in Companion
 #endif
