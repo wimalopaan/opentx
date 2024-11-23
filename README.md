@@ -27,7 +27,7 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
 
 ## Features
 
-Comparison with original firmware:
+Short comparison with original firmware:
 
 | Feature                   | FlySky i6X | OpenTX i6X                   |
 |---------------------------|------------|------------------------------|
@@ -36,16 +36,13 @@ Comparison with original firmware:
 | Models                    | 20         | 16 / unlimited<sup>[1]</sup> |
 | Protocols                 | AFHDS, AFHDS2A, PPM | AFHDS2A + 16Ch modes, PPM, CRSF (CRSFshot)  |
 | Trainer                   | PPM        | SBUS, PPM                    |
-| Logical switches          | _          | ✓                            |
-| Global variables          | _          | ✓                            |
 | Timers                    | _          | ✓                            |
 | Voice annoucements        | _          | ✓<sup>[2]</sup>              |
 | Vario                     | _          | ✓                            |
-| Use trims as buttons      | _          | ✓                            |
 | ExpressLRS ready          | _          | ✓ Configurator built-in (no need for LUA) |
 | Adjustable screen brightness | _       | ✓<sup>[3]</sup>              |
-| USB Modes                 | Joystick   | Joystick, Storage, Serial (Telemetry mirror) |
-| AUX Serial port           | _          | SBUS Trainer, Telemetry mirror, Debug |
+| USB Modes                 | Joystick   | Joystick, Storage, Serial (Telemetry mirror, Debug) |
+| AUX Serial port           | _          | ✓ SBUS Trainer, Telemetry mirror, Debug |
 | FlySky FS-HZCZ03-ADJ Digital Gimbal | _   | ✓<sup>[4]</sup>    |
 | Languages                 | EN, CN      | PL, EN, CZ, DE, ES, FI, FR, IT, NL, PT, SE |
 
@@ -66,12 +63,11 @@ Comparison with original firmware:
 
 ## Shutdown
 
-FlySky FS-i6X don't have a software controlled shutdown button. Do not switch off radio when you see `▫` (small square) icon in top right corner of main screen. It indicates that settings are not yet saved. Wait until it disappears or use "Save all" option from main screen popup menu.
+The FlySky FS-i6X does not have a software-controlled shutdown button. If you see a ▫ (small square) icon in the top-right corner of the main screen, wait until it disappears, as it indicates that settings are still being saved. Alternatively, you can use the "Save All" option from the main screen's popup menu to:
 
-When to use "Save all" option:
-* When you don't want to wait until square icon disappear before shutdown.
-* With USB connected - when USB is connected then settings are not stored with standard delay.
-* To save timers.
+- Speed up the saving process.
+- Save timers (timers are not saved automatically).
+- Save changes while USB is connected (settings are not saved automatically when USB is connected).
 
 ## USB connection
 
