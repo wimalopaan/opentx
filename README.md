@@ -14,16 +14,10 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
 
 **OpenI6X documentation:**
 - **[Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help**<br>
-  - [How to install, upgrade or restore firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
-  - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development) <br>
+  - [FlySky i6X user interface](https://github.com/OpenI6X/opentx/wiki/Manual) and other differences to official EdgeTX/OpenTX devices.<br>
+  - [How to install, upgrade or restore firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading)<br>
+  - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development)<br>
   - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
-- [Features](#features)<br>
-- [User Interface](#user-interface)<br>
-- [Proper shutdown (I see square icon)](#shutdown)<br>
-- [USB connection](#usb-connection)<br>
-- [Powering by 2S Li-Po/Li-ion/18650](#powering-by-2s-li-poli-ion18650)<br>
-- [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
-- [Credits](#credits)<br>
 
 ## Features
 
@@ -51,36 +45,6 @@ Short comparison with original firmware:
 <sub>[3] By wiring 2 pads, see [instructions](https://github.com/OpenI6X/opentx/wiki/Modifications#adjustable-backlight-level) in wiki.</sub><br>
 <sub>[4] See [instructions](https://github.com/OpenI6X/opentx/wiki/Modifications#flysky-fs-hzcz03-adj-gimbal) in wiki.</sub>
   
-## User Interface
-
-| Button | Function                                                                                           |
-| --- |----------------------------------------------------------------------------------------------------|
-| **[UP]**     | Move up, scroll values. Long press on the main screen to go to Statistics screen.                                        |                              
-| **[DOWN]**   | Move down, scroll values. Long press on the main screen to show Telemetry screens.                                       |                                  
-| **[OK]**     | Accept, select option. Short press on main screen to show Popup menu. Long press on main screen to go to Models menu.    |
-| **[CANCEL]** | Return, back, cancel. Long press in ExpressLRS menu to exit.                                                             |                      
-| **[BIND]**   | Scroll pages right or left (long press), go right in a line. Long press on the main screen to go to Radio Settings menu. |
-
-## Shutdown
-
-The FlySky FS-i6X does not have a software-controlled shutdown button. If you see a ▫ (small square) icon in the top-right corner of the main screen, wait until it disappears, as it indicates that settings are still being saved. Alternatively, you can use the "Save All" option from the main screen's popup menu to:
-
-- Speed up the saving process.
-- Save timers (timers are not saved automatically).
-- Save changes while USB is connected (settings are not saved automatically when USB is connected).
-
-## USB connection
-
-FlySky FS-i6X don't have a USB VBUS making it impossible to detect USB connection. To connect press OK on main screen and select "USB Connect" (In version 1.8.0 or earlier it's in: Radio Setup -> "USB Detect").
-
-## Powering by 2S Li-Po/Li-ion/18650
-
-FlySky i6X is officially rated for up to 6V. Running anything above will damage your radio.
-
-## Mode 1 & Mode 3 radios
-
-With Mode 1 & Mode 3 radios you may experience inverted gimbal movement and swapped gimbals on main screen. To fix this swap gimbal connectors (red-white one with black-white one).
-
 ## Credits
 
 * Janek ([ajjjjjjjj](https://github.com/ajjjjjjjj)), continues Kuba's and Mariano's work, added sound, USB, ExpressLRS V2/V3 configuration, telemetry mirror, SBUS trainer, new/fixed drivers, ports, bugfixes.
