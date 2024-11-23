@@ -9,9 +9,8 @@
 
 Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
 
-**Configuration manuals:**
+**Configuration manual:**
 - [EdgeTX manual](https://manual.edgetx.org/bw-radios)
-- [OpenTX manual](https://doc.open-tx.org/manual-for-opentx-2-2)
 
 **OpenI6X documentation:**
 - **[Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help**<br>
@@ -59,9 +58,9 @@ Comparison with original firmware:
 
 | Key | Function                                                                                           |
 | --- |----------------------------------------------------------------------------------------------------|
-| UP     | Scroll values. Long press on the main screen for Statistics screen.                                                  |                              
-| DOWN   | Scroll values. Long press on the main screen to show telemetry screens.                                            |                                  
-| OK     | Select option, accept. Long press on main screen to go to Models menu. Short press on main screen to show popup menu.            |
+| UP     | Move up, scroll values. Long press on the main screen to go to Statistics screen.                                                  |                              
+| DOWN   | Move down, scroll values. Long press on the main screen to show Telemetry screens.                                            |                                  
+| OK     | Select, accept. Long press on main screen to go to Models menu. Short press on main screen to show Popup menu.            |
 | CANCEL | Return, back, cancel.                                                                                  |                      
 | BIND   | Scroll pages right or left (long press), go right in a line. Long press on the main screen to go to Radio Settings menu. |
 
