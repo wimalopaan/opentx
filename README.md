@@ -9,11 +9,10 @@
 
 Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
 
-**Configuration manual:**
-- [EdgeTX manual](https://manual.edgetx.org/bw-radios)
+## Instructions
 
-**Instructions:**
 - [FlySky i6X user interface](https://github.com/OpenI6X/opentx/wiki/Manual) and other differences to official EdgeTX/OpenTX devices.<br>
+- [EdgeTX manual](https://manual.edgetx.org/bw-radios)
 - [How to install, upgrade or restore firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading)<br>
 - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development)<br>
 - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
