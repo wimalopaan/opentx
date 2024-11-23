@@ -7,7 +7,7 @@
 
 ## Custom OpenTX / EdgeTX for Flysky FS-i6X
 
-Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
+Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help.<br> 
 
 ## Instructions
 
@@ -17,7 +17,7 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
 - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development)<br>
 - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
 
-## Features comparison
+## Selected features comparison
 
 | Feature                   | FlySky i6X | OpenTX i6X                   |
 |---------------------------|------------|------------------------------|
