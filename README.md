@@ -18,7 +18,7 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
   - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development) <br>
   - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
 - [Features](#features)<br>
-- [Navigation](#navigation)<br>
+- [User Interface](#user-interface)<br>
 - [Proper shutdown (I see square icon)](#shutdown)<br>
 - [USB connection](#usb-connection)<br>
 - [Powering by 2S Li-Po/Li-ion/18650](#powering-by-2s-li-poli-ion18650)<br>
@@ -54,17 +54,15 @@ Comparison with original firmware:
 <sub>[3] By wiring 2 pads, see [instructions](https://github.com/OpenI6X/opentx/wiki/Modifications#adjustable-backlight-level) in wiki.</sub><br>
 <sub>[4] See [instructions](https://github.com/OpenI6X/opentx/wiki/Modifications#flysky-fs-hzcz03-adj-gimbal) in wiki.</sub>
   
-## Navigation
+## User Interface
 
-| Key | Function                                                                                           |
+| Button | Function                                                                                           |
 | --- |----------------------------------------------------------------------------------------------------|
-| UP     | Move up, scroll values. Long press on the main screen to go to Statistics screen.                                                  |                              
-| DOWN   | Move down, scroll values. Long press on the main screen to show Telemetry screens.                                            |                                  
-| OK     | Select, accept. Long press on main screen to go to Models menu. Short press on main screen to show Popup menu.            |
-| CANCEL | Return, back, cancel.                                                                                  |                      
-| BIND   | Scroll pages right or left (long press), go right in a line. Long press on the main screen to go to Radio Settings menu. |
-
-Start DFU bootloader mode - Start by pushing horizontal trims to the center + power on a the same time.
+| **[UP]**     | Move up, scroll values. Long press on the main screen to go to Statistics screen.                                        |                              
+| **[DOWN]**   | Move down, scroll values. Long press on the main screen to show Telemetry screens.                                       |                                  
+| **[OK]**     | Accept, select option. Short press on main screen to show Popup menu. Long press on main screen to go to Models menu.    |
+| **[CANCEL]** | Return, back, cancel. Long press in ExpressLRS menu to exit.                                                             |                      
+| **[BIND]**   | Scroll pages right or left (long press), go right in a line. Long press on the main screen to go to Radio Settings menu. |
 
 ## Shutdown
 
