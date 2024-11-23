@@ -12,12 +12,11 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
 **Configuration manual:**
 - [EdgeTX manual](https://manual.edgetx.org/bw-radios)
 
-**OpenI6X documentation:**
-- **[Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help**<br>
-  - [FlySky i6X user interface](https://github.com/OpenI6X/opentx/wiki/Manual) and other differences to official EdgeTX/OpenTX devices.<br>
-  - [How to install, upgrade or restore firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading)<br>
-  - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development)<br>
-  - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
+**Instructions:**
+- [FlySky i6X user interface](https://github.com/OpenI6X/opentx/wiki/Manual) and other differences to official EdgeTX/OpenTX devices.<br>
+- [How to install, upgrade or restore firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading)<br>
+- [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development)<br>
+- [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
 
 ## Features
 
