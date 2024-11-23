@@ -7,8 +7,13 @@
 
 ## Custom OpenTX / EdgeTX for Flysky FS-i6X
 
-Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
+Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) or [Telegram](https://t.me/otx_flysky_i6x) to contribute, discuss or get help!<br> 
 
+**Configuration manuals:**
+- [EdgeTX manual](https://manual.edgetx.org/bw-radios)
+- [OpenTX manual](https://doc.open-tx.org/manual-for-opentx-2-2)
+
+**OpenI6X documentation:**
 - **[Wiki](https://github.com/OpenI6X/opentx/wiki) - Read before asking for help**<br>
   - [How to install, upgrade or restore firmware](https://github.com/OpenI6X/opentx/wiki/Flashing-&-Upgrading) <br>
   - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development) <br>
@@ -20,12 +25,6 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2) or [Telegram](https://t.me/otx
 - [Powering by 2S Li-Po/Li-ion/18650](#powering-by-2s-li-poli-ion18650)<br>
 - [Mode 1 and Mode 3 radios](#mode-1--mode-3-radios)<br>
 - [Credits](#credits)<br>
-
-**Configuration manuals:**
-- [EdgeTX manual](https://manual.edgetx.org/bw-radios)
-- [OpenTX manual](https://doc.open-tx.org/manual-for-opentx-2-2)
-
-You can find some instructions in the [RCGroups](https://www.rcgroups.com/forums/showthread.php?3916435-FlySky-I6X-port-of-OpenTX) and [Rakish Rc](https://www.youtube.com/playlist?list=PLfzAEbvn4Bgr3ndNrwp87UimoKVhXkzBa) youtube tutorials. Some of that can be outdated. Read Wiki for up to date instructions.
 
 ## Features
 
@@ -49,7 +48,7 @@ Comparison with original firmware:
 | USB Modes                 | Joystick   | Joystick, Storage, Serial (Telemetry mirror) |
 | AUX Serial port           | _          | SBUS Trainer, Telemetry mirror, Debug |
 | FlySky FS-HZCZ03-ADJ Digital Gimbal | _   | ✓<sup>[4]</sup>    |
-| Languages                 | EN,CN      | PL,EN,CZ,DE,ES,FI,FR,IT,NL,PT,SE |
+| Languages                 | EN, CN      | PL, EN, CZ, DE, ES, FI, FR, IT, NL, PT, SE |
 
 <sub>[1] Unlimited by using USB mass storage mode eeprom backup/restore.</sub><br>
 <sub>[2] By adding DFPlayer, see [instructions](https://github.com/OpenI6X/opentx/wiki/Modifications#dfplayer) in wiki.</sub><br>
