@@ -18,9 +18,7 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
 - [Developers guide, how to build](https://github.com/OpenI6X/opentx/wiki/Development)<br>
 - [Modifications](https://github.com/OpenI6X/opentx/wiki/Modifications)<br>
 
-## Features
-
-Short comparison with original firmware:
+## Features comparison
 
 | Feature                   | FlySky i6X | OpenTX i6X                   |
 |---------------------------|------------|------------------------------|
