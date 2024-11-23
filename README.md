@@ -59,13 +59,13 @@ Comparison with original firmware:
 
 | Key | Function                                                                                           |
 | --- |----------------------------------------------------------------------------------------------------|
-| UP     | Up. Scroll values. Hold on main screen for stats.                                                  |                              
-| DOWN   | Down. Scroll values. Hold on main screen for telemetry.                                            |                                  
-| OK     | Confirm. Hold on main screen for model menu. Short press on main screen for popup menu.            |
-| CANCEL | Exit/Back/Cancel.                                                                                  |                      
-| BIND   | Scroll pages right or left (long press), go right in a line. Hold on main screen for general menu. |
+| UP     | Scroll values. Long press on the main screen for Statistics screen.                                                  |                              
+| DOWN   | Scroll values. Long press on the main screen to show telemetry screens.                                            |                                  
+| OK     | Select option, accept. Long press on main screen to go to Models menu. Short press on main screen to show popup menu.            |
+| CANCEL | Return, back, cancel.                                                                                  |                      
+| BIND   | Scroll pages right or left (long press), go right in a line. Long press on the main screen to go to Radio Settings menu. |
 
-DFU bootloader mode - Start by pushing horizontal trims to the center + power on a the same time.
+Start DFU bootloader mode - Start by pushing horizontal trims to the center + power on a the same time.
 
 ## Shutdown
 
