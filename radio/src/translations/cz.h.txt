@@ -161,8 +161,6 @@
   #define TR_RETA123           "SVPK1234LRLR"
 #elif defined(PCBTARANIS) || defined(REVX)
   #define TR_RETA123           "SVPK123LR"
-#elif defined(PCBSKY9X)
-  #define TR_RETA123           "SVPK123a"
 #else
   #define TR_RETA123           "SVPK123"
 #endif

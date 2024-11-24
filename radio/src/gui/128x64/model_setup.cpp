@@ -100,19 +100,11 @@ enum MenuModelSetupItems {
 #endif
   ITEM_MODEL_EXTERNAL_MODULE_CHANNELS,
   ITEM_MODEL_EXTERNAL_MODULE_BIND,
-#if defined(PCBSKY9X) && defined(REVX)
-  ITEM_MODEL_EXTERNAL_MODULE_OUTPUT_TYPE,
-#endif
   ITEM_MODEL_EXTERNAL_MODULE_OPTIONS,
 #if defined(MULTIMODULE)
   ITEM_MODEL_EXTERNAL_MODULE_AUTOBIND,
 #endif
   ITEM_MODEL_EXTERNAL_MODULE_POWER,
-#if defined(PCBSKY9X) && !defined(REVA)
-  ITEM_MODEL_EXTRA_MODULE_LABEL,
-  ITEM_MODEL_EXTRA_MODULE_CHANNELS,
-  ITEM_MODEL_EXTRA_MODULE_BIND,
-#endif
   ITEM_MODEL_EXTERNAL_MODULE_FAILSAFE,
 #if defined(SBUS_TRAINER)
   ITEM_MODEL_TRAINER_LABEL,
@@ -165,11 +157,8 @@ enum MenuModelSetupItems {
   #define INTERNAL_MODULE_CHANNELS_ROWS  IF_INTERNAL_MODULE_ON(1)
   #define EXTERNAL_MODULE_BIND_ROWS()    ((isModuleXJT(EXTERNAL_MODULE) && IS_D8_RX(EXTERNAL_MODULE)) || isModuleSBUS(EXTERNAL_MODULE)) ? (uint8_t)1 : (isModulePPM(EXTERNAL_MODULE) || isModulePXX(EXTERNAL_MODULE) || isModuleDSM2(EXTERNAL_MODULE) || isModuleMultimodule(EXTERNAL_MODULE)) ? (uint8_t)2 : (isModuleCrossfire(EXTERNAL_MODULE)) ? (uint8_t)0 : HIDDEN_ROW
 
-#if defined(PCBSKY9X) && defined(REVX)
-  #define OUTPUT_TYPE_ROWS()             (isModulePPM(EXTERNAL_MODULE) ? (uint8_t)0 : HIDDEN_ROW) ,
-#else
   #define OUTPUT_TYPE_ROWS()
-#endif
+
   #define PORT_CHANNELS_ROWS(x)          (x==EXTERNAL_MODULE ? EXTERNAL_MODULE_CHANNELS_ROWS : 0)
 
   #define EXTERNAL_MODULE_MODE_ROWS      (isModulePXX(EXTERNAL_MODULE) || isModuleDSM2(EXTERNAL_MODULE) || isModuleMultimodule(EXTERNAL_MODULE) || isModuleCrossfire(EXTERNAL_MODULE)) ? (uint8_t)1 : (uint8_t)0
@@ -179,11 +168,7 @@ enum MenuModelSetupItems {
   #define POT_WARN_ITEMS()               ((g_model.potsWarnMode) ? (uint8_t)(NUM_POTS+NUM_SLIDERS) : (uint8_t)0)
   #define TIMER_ROWS(x)                  2, 0, 0, 0, g_model.timers[x].countdownBeep != COUNTDOWN_SILENT ? (uint8_t)1 : (uint8_t)0
   #define TIMERS_ROWS                    TIMER_ROWS(0), TIMER_ROWS(1), TIMER_ROWS(2)
-#if defined(PCBSKY9X) && !defined(REVA)
-  #define EXTRA_MODULE_ROWS              LABEL(ExtraModule), 1, 2,
-#else
   #define EXTRA_MODULE_ROWS
-#endif
 
 #if defined(PCBX7)
 #define ANTENNA_ROW
@@ -829,12 +814,6 @@ void menuModelSetup(event_t event)
         }
         break;
   
-#endif
-
-#if defined(PCBSKY9X)
-      case ITEM_MODEL_EXTRA_MODULE_LABEL:
-        lcdDrawTextAlignedLeft(y, "RF Port 2 (PPM)");
-        break;
 #endif
 
       case ITEM_MODEL_EXTERNAL_MODULE_LABEL:

@@ -145,12 +145,7 @@ extern const char STR_OPEN9X[];
   #define OFS_RETA123          (OFS_VDISPLAYTRIMS + sizeof(TR_VDISPLAYTRIMS))
 #define OFS_VPROTOS            (OFS_RETA123 + sizeof(TR_RETA123))
 #define OFS_POSNEG             (OFS_VPROTOS + sizeof(TR_VPROTOS))
-#if defined(PCBSKY9X) && defined(REVX)
-  #define OFS_VOUTPUT_TYPE     (OFS_POSNEG + sizeof(TR_POSNEG))
-  #define OFS_VBLMODE          (OFS_VOUTPUT_TYPE + sizeof(TR_VOUTPUT_TYPE))
-#else
-  #define OFS_VBLMODE          (OFS_POSNEG + sizeof(TR_POSNEG))
-#endif
+#define OFS_VBLMODE          (OFS_POSNEG + sizeof(TR_POSNEG))
 #define OFS_VCURVEFUNC         (OFS_VBLMODE + sizeof(TR_VBLMODE))
 #define OFS_VMLTPX             (OFS_VCURVEFUNC + sizeof(TR_VCURVEFUNC))
 #define OFS_VMLTPX2            (OFS_VMLTPX + sizeof(TR_VMLTPX))
@@ -260,9 +255,6 @@ extern const char STR_OPEN9X[];
 #define STR_RETA123             (STR_OPEN9X + OFS_RETA123)
 #define STR_VPROTOS             (STR_OPEN9X + OFS_VPROTOS)
 #define STR_POSNEG              (STR_OPEN9X + OFS_POSNEG)
-#if defined(PCBSKY9X) && defined(REVX)
-  #define STR_VOUTPUT_TYPE      (STR_OPEN9X + OFS_VOUTPUT_TYPE)
-#endif
 #define STR_VBLMODE             (STR_OPEN9X + OFS_VBLMODE)
 #define STR_VCURVEFUNC          (STR_OPEN9X + OFS_VCURVEFUNC)
 #define STR_VSIDE               STR_VCURVEFUNC
@@ -385,9 +377,6 @@ extern const char STR_TTRACE[];
 extern const char STR_TTRIM[];
 extern const char STR_BEEPCTR[];
 extern const char STR_USE_GLOBAL_FUNCS[];
-#if defined(PCBSKY9X) && defined(REVX)
-  extern const char STR_OUTPUT_TYPE[];
-#endif
 extern const char STR_PROTO[];
 extern const char STR_PPMFRAME[];
 extern const char STR_REFRESHRATE[];
@@ -641,11 +630,7 @@ extern const char STR_WAV_VOLUME[];
 extern const char STR_BG_VOLUME[];
 extern const char STR_PERSISTENT_MAH[];
 
-#if defined(PCBSKY9X)
-#define LEN_CALIB_FIELDS               (PSIZE(TR_BATT_CALIB) > PSIZE(TR_CURRENT_CALIB) ? PSIZE(TR_BATT_CALIB) : PSIZE(TR_CURRENT_CALIB))
-#else
 #define LEN_CALIB_FIELDS               PSIZE(TR_BATT_CALIB)
-#endif
 
   extern const char STR_SELECT_MODEL[];
   extern const char STR_CREATE_CATEGORY[];
