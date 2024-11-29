@@ -28,12 +28,12 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
 | Trainer                   | PPM        | SBUS, PPM                    |
 | Timers                    | _          | ✓                            |
 | Voice annoucements        | _          | ✓<sup>[2]</sup>              |
-| Vario                     | _          | ✓                            |
+| Variometer                | _          | ✓                            |
 | ExpressLRS ready          | _          | ✓ Configurator built-in (no need for LUA) |
 | Adjustable screen brightness | _       | ✓<sup>[3]</sup>              |
 | USB Modes                 | Joystick   | Joystick, Storage, Serial (Telemetry mirror, Debug) |
 | AUX Serial port           | _          | ✓ SBUS Trainer, Telemetry mirror, Debug |
-| FlySky FS-HZCZ03-ADJ Digital Gimbal | _   | ✓<sup>[4]</sup>    |
+| FlySky FS-HZCZ03-ADJ Digital Gimbal support | _   | ✓<sup>[4]</sup>    |
 | Languages                 | EN, CN      | PL, EN, CZ, DE, ES, FI, FR, IT, NL, PT, SE |
 
 <sub>[1] Unlimited by using USB mass storage mode eeprom backup/restore.</sub><br>
