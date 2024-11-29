@@ -121,20 +121,20 @@ static void inavDrawCraft(uint8_t x, uint8_t y) {
 
 //FM2 5-MANUAL, 1-ACRO, 1-AIR, 0-ANGLE, 7-HRZN, 2-ALTHOLD, 8-POSHOLD, 6-RTH, 3-WP, 3-CRUISE, 4-LAUNCH, 9-FAILSAFE
 static void inavDrawAFHDS2AFM(uint8_t mode) {
-  static const char modeText[10][9] = {
-    {'A','N','G','L','E','\0',' ',' ',' '},
-    {'A','C','R','O',' ','A','I','R','\0'},
-    {'A','L','T',' ','H','O','L','D','\0'},
-    {'W','P',' ','C','R','U','I','S', 'E'},
-    {'L','A','U','N','C','H','\0',' ',' '},
-    {'M','A','N','U','E','L','\0',' ',' '},
-    {'R','T','H','\0',' ',' ',' ',' ',' '},
-    {'H','O','R','I','Z','O','N','\0',' '},
-    {'P','O','S',' ','H','O','L','D','\0'},
-    {'F','A','I','L','S','A','F','E','\0'},
+  static const char modeText[10][8] = {
+    {'A','N','G','L','E','\0',' ',' '},
+    {'A','C','R','O',' ','A','I','R'},
+    {'A','L','T',' ','H','O','L','D'},
+    {'W','P','C','R','U','I','S', 'E'},
+    {'L','A','U','N','C','H','\0',' '},
+    {'M','A','N','U','A','L','\0',' '},
+    {'R','T','H','\0',' ',' ',' ',' '},
+    {'H','O','R','I','Z','O','N','\0'},
+    {'P','O','S',' ','H','O','L','D'},
+    {'F','A','I','L','S','A','F','E'},
   };
 
-  lcdDrawSizedText(INAV_FM_X, INAV_FM_Y, modeText[mode], 9, SMLSIZE | CENTERED);
+  lcdDrawSizedText(INAV_FM_X, INAV_FM_Y, modeText[mode], 8, SMLSIZE | CENTERED);
 
   if(inavData.lastMode != mode) {
     audioEvent(AU_SPECIAL_SOUND_WARN2);
