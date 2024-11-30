@@ -37,9 +37,6 @@
   #define SWITCH_SIMU(a, b)  (b)
 #endif
 
-  #define IS_PCBSKY9X        false
-  #define CASE_PCBSKY9X(x)
-
 #if defined(STM32)
   #define CASE_STM32(x)     x,
 #else

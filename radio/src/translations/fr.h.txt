@@ -163,8 +163,6 @@
   #define TR_RETA123                   "DPGA1234LRLR"
 #elif defined(PCBTARANIS) || defined(REVX)
   #define TR_RETA123                   "DPGA123LR"
-#elif defined(PCBSKY9X)
-  #define TR_RETA123                   "DPGA123a"
 #else
   #define TR_RETA123                   "DPGA123"
 #endif
@@ -199,11 +197,6 @@
 
 #define LEN_POSNEG                     "\003"
 #define TR_POSNEG                      "POS""NEG"
-
-#if defined(PCBSKY9X) && defined(REVX)
-  #define LEN_VOUTPUT_TYPE             "\011"
-  #define TR_VOUTPUT_TYPE              "OpenDrain""PushPull\0"
-#endif
 
 #define LEN_VCURVEFUNC                 "\003"
 #define TR_VCURVEFUNC                  "---""x>0""x<0""|x|""f>0""f<0""|f|"
@@ -260,11 +253,7 @@
 #endif
 
 #if defined(VOICE)
-  #if defined(PCBSKY9X)
-    #define TR_PLAY_TRACK              "Jouer\0       "
-  #else
-    #define TR_PLAY_TRACK              "Jouer fich\0  "
-  #endif
+  #define TR_PLAY_TRACK              "Jouer fich\0  "
   #define TR_PLAY_BOTH                 "Jouer les 2\0 "
   #define TR_PLAY_VALUE                "Lire valeur\0 "
 #else
@@ -471,10 +460,6 @@
 #elif defined(PCBTARANIS)
   #define TR_POTS_VSRCRAW              "\310S1\0""\310S2\0""\310S3\0""\311LS\0""\311RS\0"
   #define TR_SW_VSRCRAW                "\312SA\0""\312SB\0""\312SC\0""\312SD\0""\312SE\0""\312SF\0""\312SG\0""\312SH\0"
-#elif defined(PCBSKY9X)
-  #define TR_POTS_VSRCRAW              "P1\0 ""P2\0 ""P3\0 "
-  #define TR_SW_VSRCRAW                "3POS" "THR\0""RUD\0""ELE\0""AIL\0""GEA\0""TRN\0"
-  #define TR_9X_3POS_SWITCHES          "ID0""ID1""ID2"
 #else
   #define TR_POTS_VSRCRAW              "P1\0 ""P2\0 ""P3\0 "
   #define TR_SW_VSRCRAW                "3POS"
@@ -489,13 +474,8 @@
   #define TR_TRIMS_SWITCHES            TR("tDg""tDd""tPb""tPh""tGb""tGh""tAg""tAd", "\313Dg""\313Dd""\313Pb""\313Ph""\313Gb""\313Gh""\313Ag""\313Ad")
 #endif
 
-#if defined(PCBSKY9X)
-  #define TR_ROTARY_ENCODERS           "REa\0"
-  #define TR_ROTENC_SWITCHES           "REa"
-#else
-  #define TR_ROTARY_ENCODERS
-  #define TR_ROTENC_SWITCHES
-#endif
+#define TR_ROTARY_ENCODERS
+#define TR_ROTENC_SWITCHES
 
 #if !defined(PCBTARANIS) && !defined(PCBHORUS)  && !defined(PCBI6X)
   #define TR_2POS_SWITCHES             "THR""RUD""ELE""AIL""GEA""TRN"
@@ -506,8 +486,6 @@
 #if defined(PCBTARANIS) || defined(PCBHORUS) || defined(PCBI6X)
   // only special switches here
   #define TR_VSWITCHES                 "---" TR_TRIMS_SWITCHES TR_ON_ONE_SWITCHES
-#elif defined(PCBSKY9X)
-  #define TR_VSWITCHES                 "---" TR_9X_3POS_SWITCHES TR_2POS_SWITCHES TR_TRIMS_SWITCHES TR_ROTENC_SWITCHES TR_ON_ONE_SWITCHES
 #else
   #define TR_VSWITCHES                 "---" TR_9X_3POS_SWITCHES TR_2POS_SWITCHES TR_TRIMS_SWITCHES TR_ROTENC_SWITCHES TR_LOGICALSW TR_ON_ONE_SWITCHES
 #endif
@@ -616,9 +594,6 @@
 #define TR_TTRIM                       TR("Trim gaz", INDENT "Trim ralenti uniq.")
 #define TR_BEEPCTR                     TR("Bips centr", "Bips centrage")
 #define TR_USE_GLOBAL_FUNCS            TR("Fonc. glob.", "Fonctions globales")
-#if defined(PCBSKY9X) && defined(REVX)
-  #define TR_OUTPUT_TYPE               INDENT "Sortie"
-#endif
 #define TR_PROTO                       TR(INDENT "Proto.", INDENT "Protocole")
   #define TR_PPMFRAME                  INDENT "Trame PPM"
 #define TR_REFRESHRATE               TR(INDENT "Refresh", INDENT "Refresh rate")

@@ -1029,9 +1029,6 @@ void menuModelSetup(event_t event)
       case ITEM_MODEL_TRAINER_CHANNELS:
       case ITEM_MODEL_INTERNAL_MODULE_CHANNELS:
 #endif
-#if defined(PCBSKY9X)
-      case ITEM_MODEL_EXTRA_MODULE_CHANNELS:
-#endif
       case ITEM_MODEL_EXTERNAL_MODULE_CHANNELS:
       {
         uint8_t moduleIdx = CURRENT_MODULE_EDITED(k);
@@ -1064,9 +1061,6 @@ void menuModelSetup(event_t event)
 #endif
 #if defined(PCBTARANIS) || defined(PCBI6X)
       case ITEM_MODEL_INTERNAL_MODULE_BIND:
-#endif
-#if defined(PCBSKY9X)
-      case ITEM_MODEL_EXTRA_MODULE_BIND:
 #endif
       case ITEM_MODEL_EXTERNAL_MODULE_BIND:
       {
@@ -1162,8 +1156,6 @@ void menuModelSetup(event_t event)
                   if (isModuleR9M(moduleIdx) || (isModuleXJT(moduleIdx) && g_model.moduleData[moduleIdx].rfProtocol==RF_PROTO_X16)) {
 #if defined(PCBXLITE)
                     if (EVT_KEY_MASK(event) == KEY_ENTER) {
-#elif defined(PCBSKY9X) || defined(AR9X)
-                    if (event ==  EVT_KEY_FIRST(KEY_ENTER)) {
 #else
                     if (event == EVT_KEY_BREAK(KEY_ENTER)) {
 #endif
@@ -1228,16 +1220,6 @@ void menuModelSetup(event_t event)
         }
         break;
       }
-
-#if defined(PCBSKY9X) && defined(REVX)
-      case ITEM_MODEL_EXTERNAL_MODULE_OUTPUT_TYPE:
-      {
-        uint8_t moduleIdx = CURRENT_MODULE_EDITED(k);
-        ModuleData & moduleData = g_model.moduleData[moduleIdx];
-        moduleData.ppm.outputType = editChoice(MODEL_SETUP_2ND_COLUMN, y, STR_OUTPUT_TYPE, STR_VOUTPUT_TYPE, moduleData.ppm.outputType, 0, 1, attr, event);
-        break;
-      }
-#endif
 
 #if defined(PCBTARANIS) || defined(PCBI6X)
       case ITEM_MODEL_INTERNAL_MODULE_FAILSAFE:
@@ -1468,12 +1450,6 @@ void menuModelSetup(event_t event)
     case ITEM_MODEL_INTERNAL_MODULE_BIND:
       if (menuHorizontalPosition == 0)
         checkModelIdUnique(g_eeGeneral.currModel, INTERNAL_MODULE);
-      break;
-#endif
-#if defined(PCBSKY9X)
-    case ITEM_MODEL_EXTRA_MODULE_BIND:
-      if (menuHorizontalPosition == 0)
-        checkModelIdUnique(g_eeGeneral.currModel, EXTRA_MODULE);
       break;
 #endif
       case ITEM_MODEL_EXTERNAL_MODULE_BIND:

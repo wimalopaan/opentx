@@ -492,7 +492,7 @@ PACK(typedef struct {
   uint8_t nPotsToWarn; \
   int8_t potPosition[NUM_POTS+NUM_SLIDERS]; \
   uint8_t spare[2];
-#elif defined(PCBSKY9X) || defined(PCBI6X)
+#elif defined(PCBI6X)
 #define MODELDATA_EXTRA_216 \
   uint8_t externalModule; \
   ModuleData_v216 moduleData[NUM_MODULES+1]; \
@@ -847,16 +847,6 @@ void ConvertRadioData_217_to_218(RadioData & settings)
   memcpy(settings.bluetoothName, settings_v217.bluetoothName, sizeof(settings.bluetoothName));
 #endif
 
-#if defined(PCBSKY9X)
-  settings.txCurrentCalibration = settings_v217.txCurrentCalibration;
-  settings.temperatureWarn = settings_v217.temperatureWarn;
-  settings.mAhWarn = settings_v217.mAhWarn;
-  settings.mAhUsed = settings_v217.mAhUsed;
-  settings.temperatureCalib = settings_v217.temperatureCalib;
-  settings.optrexDisplay = settings_v217.optrexDisplay;
-  settings.sticksGain = settings_v217.sticksGain;
-  settings.rotarySteps = settings_v217.rotarySteps;
-#endif
 }
 
 void ConvertModel_216_to_217(ModelData & model)
@@ -1172,9 +1162,6 @@ void ConvertModel_217_to_218(ModelData & model)
     newModel.flightModeData[i].swtch = ConvertSwitch_217_to_218(oldModel.flightModeData[i].swtch);
     newModel.flightModeData[i].fadeIn = oldModel.flightModeData[i].fadeIn;
     newModel.flightModeData[i].fadeOut = oldModel.flightModeData[i].fadeOut;
-#if defined(PCBSKY9X)
-    memcpy(newModel.flightModeData[i].rotaryEncoders, oldModel.flightModeData[i].rotaryEncoders, sizeof(newModel.flightModeData[i].rotaryEncoders));
-#endif
     memcpy(newModel.flightModeData[i].gvars, oldModel.flightModeData[i].gvars, sizeof(newModel.flightModeData[i].gvars));
   }
   newModel.thrTraceSrc = oldModel.thrTraceSrc;
@@ -1257,9 +1244,6 @@ bool eeConvert()
   int conversionVersionStart = g_eeGeneral.version;
 
   // Information to the user and wait for key press
-#if defined(PCBSKY9X)
-  g_eeGeneral.optrexDisplay = 0;
-#endif
   g_eeGeneral.backlightMode = e_backlight_mode_on;
   g_eeGeneral.backlightBright = 0;
   g_eeGeneral.contrast = 25;

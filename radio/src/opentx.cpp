@@ -1809,10 +1809,6 @@ void opentxInit()
 
   BACKLIGHT_ENABLE();
 
-#if defined(PCBSKY9X) && defined(BLUETOOTH)
-  btInit();
-#endif
-
 #if defined(PCBHORUS)
   loadTheme();
   loadFontCache();

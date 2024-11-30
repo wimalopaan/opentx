@@ -501,11 +501,6 @@ const char *eeBackupModel(uint8_t i_fileSrc)
     return SDCARD_ERROR(result);
   }
 
-#if defined(PCBSKY9X)
-  strcpy(statusLineMsg, "File ");
-  strcpy(statusLineMsg + 5, &buf[sizeof(MODELS_PATH)]);
-#endif
-
   uint16_t size = eeModelSize(i_fileSrc);
 
   *(uint32_t *)&buf[0] = OTX_FOURCC;
@@ -536,10 +531,6 @@ const char *eeBackupModel(uint8_t i_fileSrc)
   }
 
   f_close(&archiveFile);
-
-#if defined(PCBSKY9X)
-  showStatusLine();
-#endif
 
   return NULL;
 }
