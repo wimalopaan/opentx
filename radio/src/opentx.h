@@ -567,7 +567,6 @@ void flightReset(uint8_t check=true);
 PACK(struct GlobalData {
 #if defined(PCBI6X)
   uint8_t unexpectedShutdown;
-  uint8_t usbConnect;
   uint8_t cToolRunning;
 #else
   uint8_t unexpectedShutdown:1;
