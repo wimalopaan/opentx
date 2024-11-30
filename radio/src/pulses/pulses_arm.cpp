@@ -317,7 +317,7 @@ bool setupPulses(uint8_t port) {
         break;
       case PROTOCOL_CHANNELS_AFHDS2A_SPI:
         init_afhds2a(port);
-        mixerSchedulerSetPeriod(INTERNAL_MODULE, 3850);
+        mixerSchedulerSetPeriod(INTERNAL_MODULE, AFHDS2A_PERIOD);
         break;
       default:
         init_no_pulses(port);
