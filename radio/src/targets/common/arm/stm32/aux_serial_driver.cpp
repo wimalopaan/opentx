@@ -98,13 +98,13 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
 
   switch (mode) {
     case UART_MODE_TELEMETRY_MIRROR:
+// The same baudrate for Crossfire and AFHDS2A, but CROSSFIRE is optional
 // #if defined(CROSSFIRE)
-//       if (protocol == PROTOCOL_TELEMETRY_CROSSFIRE) { // PROTOCOL_TELEMETRY_CROSSFIRE
+//       if (protocol == PROTOCOL_TELEMETRY_CROSSFIRE) {
 //         auxSerialSetup(CROSSFIRE_TELEM_MIRROR_BAUDRATE, false);
 //         break;
 //       }
 // #endif
-      // The same baudrate for Crossfire and AFHDS2A, but CROSSFIRE is optional
       auxSerialSetup(AFHDS2A_TELEM_MIRROR_BAUDRATE, false);
       break;
 
