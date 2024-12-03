@@ -161,7 +161,7 @@ static void inavDraw() {
 
     TelemetryItem & telemetryItem = telemetryItems[i];
 
-    if (telemetryProtocol == PROTOCOL_PULSES_CROSSFIRE) {
+    if (telemetryProtocol == PROTOCOL_TELEMETRY_CROSSFIRE) {
 #if defined(INAVLITE_CRSF)
       TelemetrySensor & sensor = g_model.telemetrySensors[i];
 
@@ -199,7 +199,7 @@ static void inavDraw() {
         inavData.currentLon = telemetryItem.gps.latitude;
       }
 #endif // INAVLITE_CRSF
-    } else if (telemetryProtocol == PROTOCOL_FLYSKY_IBUS) {
+    } else if (telemetryProtocol == PROTOCOL_TELEMETRY_FLYSKY_IBUS) {
 #if defined(INAVLITE_AFHDS2A)
       if (g_model.telemetrySensors[i].id == 0xfc) { // RX RSSI
         rssi = telemetryItem.value;

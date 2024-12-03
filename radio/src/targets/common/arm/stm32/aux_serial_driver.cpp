@@ -99,7 +99,7 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
   switch (mode) {
     case UART_MODE_TELEMETRY_MIRROR:
 // #if defined(CROSSFIRE)
-//       if (protocol == PROTOCOL_PULSES_CROSSFIRE) { // PROTOCOL_TELEMETRY_CROSSFIRE
+//       if (protocol == PROTOCOL_TELEMETRY_CROSSFIRE) { // PROTOCOL_TELEMETRY_CROSSFIRE
 //         auxSerialSetup(CROSSFIRE_TELEM_MIRROR_BAUDRATE, false);
 //         break;
 //       }
@@ -123,7 +123,7 @@ void auxSerialInit(unsigned int mode, unsigned int protocol)
 
 #if !defined(PCBI6X)
     case UART_MODE_TELEMETRY:
-      if (protocol == PROTOCOL_FRSKY_D_SECONDARY) {
+      if (protocol == PROTOCOL_TELEMETRY_FRSKY_D_SECONDARY) {
         auxSerialSetup(FRSKY_D_BAUDRATE, true);
       }
       break;

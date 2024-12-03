@@ -32,7 +32,7 @@ bool isFaiForbidden(source_t idx) {
 
   switch (telemetryProtocol) {
 #if defined(TELEMETRY_FRSKY_SPORT)
-    case PROTOCOL_FRSKY_SPORT:
+    case PROTOCOL_TELEMETRY_FRSKY_SPORT:
       if (sensor->id == RSSI_ID) {
         return false;
       } else if (sensor->id == BATT_ID) {
@@ -41,7 +41,7 @@ bool isFaiForbidden(source_t idx) {
       break;
 #endif
 #if defined(TELEMETRY_FRSKY)
-    case PROTOCOL_FRSKY_D:
+    case PROTOCOL_TELEMETRY_FRSKY_D:
       if (sensor->id == D_RSSI_ID) {
         return false;
       } else if (sensor->id == D_A1_ID) {
@@ -50,7 +50,7 @@ bool isFaiForbidden(source_t idx) {
       break;
 #endif
 #if defined(CROSSFIRE)
-    case PROTOCOL_PULSES_CROSSFIRE:
+    case PROTOCOL_TELEMETRY_CROSSFIRE:
       if (sensor->id == RX_RSSI1_INDEX) {
         return false;
       } else if (sensor->id == RX_RSSI2_INDEX) {
@@ -487,32 +487,32 @@ int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, ui
     storageDirty(EE_MODEL);
     switch (protocol) {
 #if defined(TELEMETRY_FRSKY_SPORT)
-      case TELEM_PROTO_FRSKY_SPORT:
+      case PROTOCOL_TELEMETRY_FRSKY_SPORT:
         frskySportSetDefault(index, id, subId, instance);
         break;
 #endif
 #if defined(TELEMETRY_FRSKY) && !defined(PCBI6X)
-      case TELEM_PROTO_FRSKY_D:
+      case PROTOCOL_TELEMETRY_FRSKY_D:
         frskyDSetDefault(index, id);
         break;
 #endif
 #if defined(CROSSFIRE)
-      case TELEM_PROTO_CROSSFIRE:
+      case PROTOCOL_TELEMETRY_CROSSFIRE:
         crossfireSetDefault(index, id, instance);
         break;
 #endif
 #if defined(MULTIMODULE)
-      case TELEM_PROTO_SPEKTRUM:
+      case PROTOCOL_TELEMETRY_SPEKTRUM:
         spektrumSetDefault(index, id, subId, instance);
         break;
 #endif
 #if defined(MULTIMODULE) || defined(PCBI6X)
-      case TELEM_PROTO_FLYSKY_IBUS:
+      case PROTOCOL_TELEMETRY_FLYSKY_IBUS:
         flySkySetDefault(index, id, subId, instance);
         break;
 #endif
 #if defined(LUA)
-      case TELEM_PROTO_LUA:
+      case PROTOCOL_TELEMETRY_LUA:
         // Sensor will be initialized by calling function
         // This drops the first value
         return index;

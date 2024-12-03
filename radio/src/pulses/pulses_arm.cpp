@@ -229,7 +229,7 @@ bool setupPulses(uint8_t port) {
 
 #if defined(CROSSFIRE)
     case PROTOCOL_CHANNELS_CROSSFIRE:
-      if (telemetryProtocol == PROTOCOL_PULSES_CROSSFIRE && !init_needed) {
+      if (telemetryProtocol == PROTOCOL_TELEMETRY_CROSSFIRE && !init_needed) {
         ModuleSyncStatus& status = getModuleSyncStatus(EXTERNAL_MODULE);
         if (status.isValid())
           mixerSchedulerSetPeriod(EXTERNAL_MODULE, status.getAdjustedRefreshRate());
@@ -244,7 +244,7 @@ bool setupPulses(uint8_t port) {
 
 #if defined(PXX2)
     case PROTO_PXX2:
-      if (telemetryProtocol == PROTOCOL_FRSKY_SPORT && !init_needed) {
+      if (telemetryProtocol == PROTOCOL_TELEMETRY_FRSKY_SPORT && !init_needed) {
         modulePulsesData[port].pxx2.setupFrame(port);
         sportSendBuffer(modulePulsesData[port].pxx2.getData(), modulePulsesData[port].pxx2.getSize());
       }

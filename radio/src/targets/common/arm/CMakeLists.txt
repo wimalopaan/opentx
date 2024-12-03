@@ -150,13 +150,8 @@ set(PULSES_SRC
   ${PULSES_SRC}
   pxx.cpp
   pxx1.cpp
+  pxx2.cpp
   dsm2_arm.cpp
   sbus_arm.cpp
   )
-endif()
-if(PXX2)
-  set(PULSES_SRC
-    ${PULSES_SRC}
-    pxx2.cpp
-    )
 endif()
