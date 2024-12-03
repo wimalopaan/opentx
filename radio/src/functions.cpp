@@ -175,7 +175,7 @@ void evalFunctions(const CustomFunctionData * functions, CustomFunctionsContext 
         active &= (bool)CFN_ACTIVE(cfn);
       }
 
-      if (active || IS_PLAY_BOTH_FUNC(CFN_FUNC(cfn))) {
+      if (active) {
 
         switch (CFN_FUNC(cfn)) {
 

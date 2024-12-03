@@ -59,9 +59,6 @@
 #define IS_PLAY_FUNC(func) ((func) == FUNC_PLAY_SOUND)
 #endif
 
-#define IS_PLAY_BOTH_FUNC(func) (0)
-#define IS_VOLUME_FUNC(func) ((func) == FUNC_VOLUME)
-
 #if defined(GVARS)
 #define IS_ADJUST_GV_FUNC(func) ((func) == FUNC_ADJUST_GVAR)
 #else
