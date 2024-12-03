@@ -838,7 +838,7 @@ void putsRotaryEncoderMode(coord_t x, coord_t y, uint8_t phase, uint8_t idx, Lcd
 }
 #endif
 
-void drawValueWithUnit(coord_t x, coord_t y, int val, uint8_t unit, LcdFlags att)
+void drawValueWithUnit(coord_t x, coord_t y, int32_t val, uint8_t unit, LcdFlags att)
 {
   // convertUnit(val, unit);
   lcdDrawNumber(x, y, val, att & (~NO_UNIT));
