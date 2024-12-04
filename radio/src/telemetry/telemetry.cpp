@@ -196,12 +196,6 @@ void telemetryInterrupt10ms()
 
   }
 
-#if defined(WS_HOW_HIGH)
-  if (wshhStreaming > 0) {
-    wshhStreaming--;
-  }
-#endif
-
   if (telemetryStreaming > 0) {
     telemetryStreaming--;
   }

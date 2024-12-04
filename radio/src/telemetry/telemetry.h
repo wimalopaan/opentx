@@ -85,13 +85,9 @@ struct TelemetryData {
   uint16_t xjtVersion;
   bool varioHighPrecision;
 };
-extern uint8_t telemetryProtocol;
+
 extern TelemetryData telemetryData;
 extern uint8_t telemetryStreaming; // >0 (true) == data is streaming in. 0 = no data detected for some time
-
-#if defined(WS_HOW_HIGH)
-extern uint8_t wshhStreaming;
-#endif
 
 enum TelemetryStates {
   TELEMETRY_INIT,
