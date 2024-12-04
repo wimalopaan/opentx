@@ -741,7 +741,7 @@ PACK(struct TrainerData {
 
 PACK(struct RadioData {
   NOBACKUP(uint8_t version);
-  NOBACKUP(uint16_t variant);
+  NOBACKUP(uint16_t variant); // not used on PCBI6X, reuse for swconfig_t?
   CalibData calib[NUM_CALIBRATED_ANALOGS];
   NOBACKUP(uint16_t chkSum);
   N_HORUS_FIELD(int8_t currModel);

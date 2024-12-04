@@ -773,7 +773,7 @@ bool eeLoadGeneral()
   theFile.openRlc(FILE_GENERAL);
   if (theFile.readRlc((uint8_t*)&g_eeGeneral, 3) == 3 && g_eeGeneral.version == EEPROM_VER) {
     theFile.openRlc(FILE_GENERAL);
-    if (theFile.readRlc((uint8_t*)&g_eeGeneral, sizeof(g_eeGeneral)) <= sizeof(g_eeGeneral) && g_eeGeneral.variant == EEPROM_VARIANT) {
+    if (theFile.readRlc((uint8_t*)&g_eeGeneral, sizeof(g_eeGeneral)) <= sizeof(g_eeGeneral) /*&& g_eeGeneral.variant == EEPROM_VARIANT*/) {
       return true;
     }
   }

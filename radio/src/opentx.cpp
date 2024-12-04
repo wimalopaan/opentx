@@ -225,8 +225,9 @@ void memswap(void *a, void *b, uint8_t size) {
 void generalDefault() {
   memclear(&g_eeGeneral, sizeof(g_eeGeneral));
   g_eeGeneral.version = EEPROM_VER;
+#if !defined(PCBI6X)
   g_eeGeneral.variant = EEPROM_VARIANT;
-
+#endif
 #if !defined(PCBHORUS)
   g_eeGeneral.contrast = LCD_CONTRAST_DEFAULT;
 #endif
