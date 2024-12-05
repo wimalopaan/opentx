@@ -223,7 +223,7 @@ void telemetryInit(uint8_t protocol)
 {
   telemetryProtocol = protocol;
   switch(telemetryProtocol){
-#if defined(TELEMETRY_FRSKY)
+#if defined(TELEMETRY_FRSKY) && !defined(PCBI6X)
   case PROTOCOL_TELEMETRY_FRSKY_D:
 	  telemetryPortInit(FRSKY_D_BAUDRATE, TELEMETRY_SERIAL_DEFAULT);
 	  break;
@@ -260,7 +260,7 @@ void telemetryInit(uint8_t protocol)
 	  break;
 #endif
   default:
-#if defined(TELEMETRY_FRSKY)
+#if defined(TELEMETRY_FRSKY) && !defined(PCBI6X)
 	  telemetryPortInit(FRSKY_SPORT_BAUDRATE, TELEMETRY_SERIAL_WITHOUT_DMA);
 	  #if defined(LUA)
 	  outputTelemetryBufferSize = 0;
@@ -269,14 +269,6 @@ void telemetryInit(uint8_t protocol)
 #endif
 	  break;
   }
-#if defined(REVX) && !defined(SIMU)
-  if (serialInversion) {
-    setMFP();
-  }
-  else {
-    clearMFP();
-  }
-#endif
 }
 
 
