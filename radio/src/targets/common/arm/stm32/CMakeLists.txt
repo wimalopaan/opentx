@@ -93,6 +93,11 @@ if(DEBUG OR CLI OR USB_SERIAL)
     ../common/arm/stm32/usbd_cdc.cpp
   )
   add_definitions(-DUSB_SERIAL)
+
+#disable USB_SERIAL if it will exceed flash size
+if ((NOT TRANSLATIONS STREQUAL EN) AND DFPLAYER STREQUAL YES AND USB_MSD STREQUAL YES AND PCBI6X_ELRS STREQUAL YES AND PCBI6X_INAV STREQUAL YES AND USB_SERIAL STREQUAL YES)
+  remove_definitions(-DUSB_SERIAL)
+endif()
 endif()
 set(STM32USB_SRC
   ${STM32USB_SRC}

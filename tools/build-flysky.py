@@ -21,7 +21,7 @@ boards = {
         "PCBI6X_ELRS": "YES",
         "PCBI6X_INAV": "YES",
         "DFPLAYER": "YES",
-        "USB_SERIAL": "NO",
+        "USB_SERIAL": "YES",
     },
     "I6X_HELI": {
         "HELI": "YES",
