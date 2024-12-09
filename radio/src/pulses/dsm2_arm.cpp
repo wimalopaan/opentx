@@ -47,7 +47,7 @@ void putDsm2SerialBit(uint8_t bit)
 void sendByteDsm2(uint8_t b)     // max 10changes 0 10 10 10 10 1
 {
   putDsm2SerialBit(0);           // Start bit
-  for (uint8_t i=0; i<8; i++) {  // 8 data Bits
+  for (uint32_t i=0; i<8; i++) {  // 8 data Bits
     putDsm2SerialBit(b & 1);
     b >>= 1;
   }
@@ -79,7 +79,7 @@ void sendByteDsm2(uint8_t b) // max 10 changes 0 10 10 10 10 1
 {
   bool    lev = 0;
   uint8_t len = BITLEN_DSM2; // max val: 9*16 < 256
-  for (uint8_t i=0; i<=8; i++) { // 8Bits + Stop=1
+  for (uint32_t i=0; i<=8; i++) { // 8Bits + Stop=1
     bool nlev = b & 1; // lsb first
     if (lev == nlev) {
       len += BITLEN_DSM2;

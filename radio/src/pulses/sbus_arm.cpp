@@ -33,7 +33,7 @@ void sendByteSbus(uint8_t b)
   uint8_t parity = 1;
 
   putDsm2SerialBit(0);           // Start bit
-  for (uint8_t i=0; i<8; i++) {  // 8 data Bits
+  for (uint32_t i=0; i<8; i++) {  // 8 data Bits
     putDsm2SerialBit(b & 1);
     parity = parity ^ (b & 1);
     b >>= 1;
@@ -64,7 +64,7 @@ void sendByteSbus(uint8_t b) //max 11 changes 0 10 10 10 10 P 1
   uint8_t parity = 1;
 
   uint8_t len = BITLEN_SBUS; //max val: 10*20 < 256
-  for (uint8_t i=0; i<=9; i++) { //8Bits + 1Parity + Stop=1
+  for (uint32_t i=0; i<=9; i++) { //8Bits + 1Parity + Stop=1
     bool nlev = b & 1; //lsb first
     parity = parity ^ (uint8_t)nlev;
     if (lev == nlev) {
