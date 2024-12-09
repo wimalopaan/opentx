@@ -292,7 +292,7 @@ void logTelemetryWriteByte(uint8_t data)
 }
 #endif
 
-uint8_t outputTelemetryBuffer[TELEMETRY_OUTPUT_FIFO_SIZE] __DMA;
+uint8_t outputTelemetryBuffer[TELEMETRY_OUTPUT_BUFFER_SIZE] __DMA;
 uint8_t outputTelemetryBufferSize = 0;
 uint8_t outputTelemetryBufferTrigger = 0;
 
