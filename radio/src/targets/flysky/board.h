@@ -429,10 +429,6 @@ extern volatile bool pendingTelemetryPollFrame;
 
 // Audio driver
 void initBuzzerTimer(void);
-void audioInit(void);
-void audioEnd(void);
-void dacStart(void);
-void dacStop(void);
 
 #define VOLUME_LEVEL_MAX  23
 #define VOLUME_LEVEL_DEF  12
@@ -441,15 +437,6 @@ void setScaledVolume(uint8_t volume);
 void setVolume(uint8_t volume);
 int32_t getVolume(void);
 #endif
-void audioConsumeCurrentBuffer();
-void setSampleRate(uint32_t frequency);
-void referenceSystemAudioFiles();
-#define audioDisableIrq()               __disable_irq()
-#define audioEnableIrq()                __enable_irq()
-
-// Haptic driver
-void hapticInit(void);
-void hapticOff(void);
 
 // Second serial port driver
 #if defined(AUX_SERIAL_GPIO)
@@ -463,7 +450,6 @@ void auxSerialSbusInit(void);
 void auxSerialStop(void);
 #endif
 
-// Aux2 serial port driver
 #if defined(FLYSKY_GIMBAL)
 #define AUX4_SERIAL
 #define AUX4_SERIAL_BAUDRATE FLYSKY_HALL_BAUDRATE // 921600
@@ -476,10 +462,6 @@ void flysky_gimbal_init();
 #endif
 
 #if defined(AUX3_SERIAL)
-// extern uint8_t aux2SerialMode;
-// #if defined __cplusplus
-// void aux2SerialSetup(unsigned int baudrate, bool dma, uint16_t length = USART_WordLength_8b, uint16_t parity = USART_Parity_No, uint16_t stop = USART_StopBits_1);
-// #endif
 void aux3SerialInit(void);
 void aux3SerialPutc(char c);
 #endif

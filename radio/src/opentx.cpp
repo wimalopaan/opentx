@@ -1571,8 +1571,9 @@ void opentxResume() {
 
   // removed to avoid the double warnings (throttle, switch, etc.)
   // opentxStart(OPENTX_START_NO_SPLASH | OPENTX_START_NO_CALIBRATION | OPENTX_START_NO_CHECKS);
-
+#if defined(AUDIO)
   referenceSystemAudioFiles();
+#endif
 
   if (!g_eeGeneral.unexpectedShutdown) {
     g_eeGeneral.unexpectedShutdown = 1;
