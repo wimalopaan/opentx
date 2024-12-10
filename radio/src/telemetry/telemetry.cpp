@@ -33,9 +33,6 @@ uint8_t telemetryProtocol = 255;
 
 volatile bool pendingTelemetryPollFrame = false;
 
-extern DMAFifo<TELEMETRY_FIFO_SIZE> telemetryDMAFifo __DMA;
-
-
 void processTelemetryData(uint8_t data)
 {
 #if defined(CROSSFIRE)
