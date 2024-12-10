@@ -204,7 +204,3 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
 uint8_t telemetryGetByte(uint8_t* byte) {
   return telemetryDMAFifo.pop(*byte);
 }
-
-bool telemetryIsEmpty() {
-  return telemetryDMAFifo.isEmpty();
-}

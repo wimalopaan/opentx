@@ -79,7 +79,7 @@ void telemetryWakeup()
   }
 
 #if defined(CROSSFIRE)
-  if (telemetryProtocol == PROTOCOL_TELEMETRY_CROSSFIRE && !telemetryIsEmpty()) {
+  if (telemetryProtocol == PROTOCOL_TELEMETRY_CROSSFIRE) {
     uint8_t data;
     while (telemetryGetByte(&data)) {
       processCrossfireTelemetryData(data); // TODO handle full frame as in EdgeTX
