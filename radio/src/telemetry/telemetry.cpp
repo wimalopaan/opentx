@@ -33,6 +33,8 @@ uint8_t telemetryProtocol = 255;
 
 volatile bool pendingTelemetryPollFrame = false;
 
+extern DMAFifo<TELEMETRY_FIFO_SIZE> telemetryDMAFifo __DMA;
+
 
 void processTelemetryData(uint8_t data)
 {
@@ -76,6 +78,16 @@ void telemetryWakeup()
     telemetryInit(requiredTelemetryProtocol);
   }
 
+#if defined(CROSSFIRE)
+  if (telemetryProtocol == PROTOCOL_TELEMETRY_CROSSFIRE && !telemetryIsEmpty()) {
+    uint8_t data;
+    while (telemetryGetByte(&data)) {
+      processCrossfireTelemetryData(data); // TODO handle full frame as in EdgeTX
+      LOG_TELEMETRY_WRITE_BYTE(data);
+    }
+  }
+#endif
+
   // Handle complete telemetry frame
   if (pendingTelemetryPollFrame) {
     pendingTelemetryPollFrame = false;
@@ -86,15 +98,18 @@ void telemetryWakeup()
      break;
 #endif
 #if defined(CROSSFIRE)
-     case PROTOCOL_TELEMETRY_CROSSFIRE:
-     {
-       uint8_t data;
-       while (telemetryGetByte(&data)) {
-         processCrossfireTelemetryData(data); // TODO handle full frame as in EdgeTX
-         LOG_TELEMETRY_WRITE_BYTE(data);
-       }
-     }
-     break;
+    //  case PROTOCOL_TELEMETRY_CROSSFIRE:
+    //  {
+    //    uint8_t data;
+    //    uint8_t count = 0;
+    //    while (telemetryGetByte(&data)) {
+    //      processCrossfireTelemetryData(data); // TODO handle full frame as in EdgeTX
+    //      LOG_TELEMETRY_WRITE_BYTE(data);
+    //      count++;
+    //    }
+    //    TRACE("c%d", count);
+    //  }
+    //  break;
 #endif
      default:
 //       TRACE("Unhandled telemetry %d", telemetryProtocol);

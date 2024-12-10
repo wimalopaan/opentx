@@ -67,7 +67,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   USART_DeInit(TELEMETRY_USART);
 
   // OverSampling + IDLE
-  TELEMETRY_USART->CR1 |= ( USART_CR1_OVER8 | USART_CR1_IDLEIE );
+  TELEMETRY_USART->CR1 |= ( USART_CR1_OVER8 /*| USART_CR1_IDLEIE*/ );
 
   GPIO_PinAFConfig(TELEMETRY_GPIO, TELEMETRY_GPIO_PinSource_TX, TELEMETRY_TX_GPIO_AF);
 
@@ -121,7 +121,7 @@ void telemetryPortSetDirectionOutput() {
   // Disable RX
 #if !defined(CRSF_FULLDUPLEX)
   TELEMETRY_DMA_Channel_RX->CCR &= ~DMA_CCR_EN;
-  TELEMETRY_USART->CR1 &= ~USART_CR1_RE;
+  TELEMETRY_USART->CR1 &= ~(USART_CR1_RE /* | USART_CR1_IDLEIE*/);
 #endif
 
   // Enable TX
@@ -136,7 +136,7 @@ void telemetryPortSetDirectionInput() {
 #endif
 
   // Enable RX
-  TELEMETRY_USART->CR1 |= USART_CR1_RE;
+  TELEMETRY_USART->CR1 |= (USART_CR1_RE/* | USART_CR1_IDLEIE*/);
   TELEMETRY_DMA_Channel_RX->CCR |= DMA_CCR_EN;
 }
 
@@ -192,15 +192,19 @@ extern "C" void TELEMETRY_USART_IRQHandler(void) {
 
   // RX, handled by DMA
 
-  // IDLE
-  if (status & USART_FLAG_IDLE) {
-    TELEMETRY_USART->ICR = USART_ICR_IDLECF;
-    pendingTelemetryPollFrame = true;
-    TELEMETRY_USART->CR1 |= USART_CR1_IDLEIE;
-  }
+  // TODO IDLE disabled, it is always triggering, spamming ISR
+//  if ((TELEMETRY_USART->CR1 & USART_CR1_IDLEIE) && (status & USART_ISR_IDLE)) {
+//    TRACE_NOCRLF("x");
+//     pendingTelemetryPollFrame = true;
+//    TELEMETRY_USART->ICR = USART_ICR_IDLECF;
+//  }
 }
 
 // TODO we should have telemetry in an higher layer, functions above should move to a sport_driver.cpp
 uint8_t telemetryGetByte(uint8_t* byte) {
   return telemetryDMAFifo.pop(*byte);
+}
+
+bool telemetryIsEmpty() {
+  return telemetryDMAFifo.isEmpty();
 }
