@@ -87,7 +87,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   USART_DMACmd(TELEMETRY_USART, USART_DMAReq_Rx, DISABLE);
   DMA_DeInit(TELEMETRY_DMA_Channel_RX);
 
-  telemetryDMAFifo.stream = TELEMETRY_DMA_Channel_RX; // workaround, CNDTR reading do not work otherwise
+  telemetryDMAFifo.channel = TELEMETRY_DMA_Channel_RX; // workaround, CNDTR reading do not work otherwise
   telemetryDMAFifo.clear();
 
   USART_ITConfig(TELEMETRY_USART, USART_IT_RXNE, DISABLE);
