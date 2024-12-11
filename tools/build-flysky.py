@@ -57,7 +57,7 @@ common_options = {
     "USB_MSD": "YES",
     "USB_SERIAL": "YES",
     "PCBI6X_ELRS": "YES",
-    "SBUS_TRAINER": "NO",
+    "SBUS_TRAINER": "YES",
 }
 
 
