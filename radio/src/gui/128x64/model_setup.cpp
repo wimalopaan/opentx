@@ -769,29 +769,22 @@ void menuModelSetup(event_t event)
 #if defined(PCBI6X) 
       case ITEM_MODEL_INTERNAL_MODULE_MODE:
         lcdDrawTextAlignedLeft(y, INDENT TR_MODE);
-        lcdDrawTextAtIndex(
-          MODEL_SETUP_2ND_COLUMN, 
-          y, 
-          STR_I6X_PROTOCOLS, 
-          1+g_model.moduleData[INTERNAL_MODULE].rfProtocol, 
-          attr);
+        lcdDrawTextAtIndex(MODEL_SETUP_2ND_COLUMN, y, STR_I6X_PROTOCOLS, 1+g_model.moduleData[INTERNAL_MODULE].rfProtocol, attr);
         if (attr) {
           g_model.moduleData[INTERNAL_MODULE].rfProtocol = 
-          checkIncDec(event, 
-                      g_model.moduleData[INTERNAL_MODULE].rfProtocol, 
-                      RF_I6X_PROTO_OFF, 
-                      RF_I6X_PROTO_LAST, 
-                      EE_MODEL, 
-                      isRfProtocolAvailable);
+          checkIncDec(event, g_model.moduleData[INTERNAL_MODULE].rfProtocol, RF_I6X_PROTO_OFF, RF_I6X_PROTO_LAST, EE_MODEL, isRfProtocolAvailable);
           if (checkIncDec_Ret) { // modified?
             g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_AFHDS2A_SPI;
+            g_model.moduleData[INTERNAL_MODULE].channelsStart = 0;
+            g_model.moduleData[INTERNAL_MODULE].channelsCount = MAX_OUTPUT_CHANNELS - 8; // 16
+            g_model.moduleData[INTERNAL_MODULE].afhds2a.servoFreq = 50;
             if (g_model.moduleData[INTERNAL_MODULE].rfProtocol == RF_PROTO_OFF){
               g_model.moduleData[INTERNAL_MODULE].type = MODULE_TYPE_NONE;
             }
           }
         }
         break;
-        case ITEM_MODEL_INTERNAL_MODULE_SUBTYPE:
+      case ITEM_MODEL_INTERNAL_MODULE_SUBTYPE:
         lcdDrawTextAlignedLeft(y, INDENT "Subtype");
         lcdDrawTextAtIndex(
           MODEL_SETUP_2ND_COLUMN, 
@@ -1130,6 +1123,7 @@ void menuModelSetup(event_t event)
                     moduleState[EXTERNAL_MODULE].counter = CRSF_FRAME_MODELID;
                   modelHeaders[g_eeGeneral.currModel].modelId[moduleIdx] = g_model.header.modelId[moduleIdx];
                 }
+#if !defined(PCBI6X)
                 else if (event == EVT_KEY_LONG(KEY_ENTER)) {
                   killEvents(event);
                   uint8_t newVal = findNextUnusedModelId(g_eeGeneral.currModel, moduleIdx);
@@ -1138,6 +1132,7 @@ void menuModelSetup(event_t event)
                     storageDirty(EE_MODEL);
                   }
                 }
+#endif
               }
             }
           }
@@ -1442,8 +1437,8 @@ void menuModelSetup(event_t event)
 
 #if defined(AFHDS2A)
   if (IS_RANGECHECK_ENABLE()) {
-    showMessageBox("RQly ");
-    lcdDrawNumber(16+4*FW, 5*FH, TELEMETRY_RSSI(), BOLD);
+    showMessageBox("RQly");
+    lcdDrawNumber(WARNING_LINE_X, 5*FH, TELEMETRY_RSSI(), BOLD);
   }
 #endif
 
@@ -1451,7 +1446,7 @@ void menuModelSetup(event_t event)
   if (old_editMode > 0 && s_editMode == 0) {
     switch(menuVerticalPosition) {
 #if defined(PCBTARANIS) || defined(PCBI6X)
-    case ITEM_MODEL_INTERNAL_MODULE_BIND:
+    case ITEM_MODEL_INTERNAL_MODULE_BIND + 1: // for some reason index is off by one
       if (menuHorizontalPosition == 0)
         checkModelIdUnique(g_eeGeneral.currModel, INTERNAL_MODULE);
       break;
