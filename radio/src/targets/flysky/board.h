@@ -122,13 +122,6 @@ void delay_ms(uint32_t ms);
 }
 #endif
 
-// #if !defined(BOOT)
-// #define usbPlugged() (false)
-// #define usbStarted() (false)
-// #define getSelectedUsbMode() (USB_UNSELECTED_MODE)
-// #endif
-
-
 // CPU Unique ID
 #define LEN_CPU_UID                     (3*8+2)
 void getCPUUniqueID(char * s);
@@ -191,13 +184,9 @@ uint32_t isBootloaderStart(const uint8_t * buffer);
 #define EXTERNAL_MODULE_ON()            EXTMODULE_PWR_GPIO->BSRR = EXTMODULE_PWR_GPIO_PIN // GPIO_SetBits(EXTMODULE_PWR_GPIO, EXTMODULE_PWR_GPIO_PIN)
 #define EXTERNAL_MODULE_OFF()           EXTMODULE_PWR_GPIO->BRR = EXTMODULE_PWR_GPIO_PIN // GPIO_ResetBits(EXTMODULE_PWR_GPIO, EXTMODULE_PWR_GPIO_PIN)
 #endif
-#define IS_INTERNAL_MODULE_ON()         (false)
+
 #define IS_EXTERNAL_MODULE_ON()         (GPIO_ReadInputDataBit(EXTMODULE_PWR_GPIO, EXTMODULE_PWR_GPIO_PIN) == Bit_SET)
-#if defined(INTMODULE_USART)
-  #define IS_UART_MODULE(port)          (port == INTERNAL_MODULE)
-#else
-  #define IS_UART_MODULE(port)          false
-#endif
+
 
 void init_no_pulses(uint32_t port);
 void disable_no_pulses(uint32_t port);
@@ -208,7 +197,6 @@ void disable_serial( uint32_t module_index);
 void init_module_timer( uint32_t module_index, uint32_t period, uint8_t state);
 void disable_module_timer( uint32_t module_index);
 
-//just to allow compilation
 void extmoduleSendNextFrame();
 
 // Trainer driver
@@ -420,8 +408,7 @@ void debugPutc(const char c);
 // Telemetry driver
 void telemetryPortInit(uint32_t baudrate, uint8_t mode);
 void telemetryPortSetDirectionOutput(void);
-//void sportSendBuffer(uint8_t * buffer, uint32_t count);
-void sportSendBuffer(const uint8_t* buffer, unsigned long count);
+void sportSendBuffer(const uint8_t* buffer, uint32_t count);
 uint8_t telemetryGetByte(uint8_t * byte);
 // extern uint32_t telemetryErrors;
 
