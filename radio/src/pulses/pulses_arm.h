@@ -131,10 +131,6 @@ void putDsm2Flush();
 void putDsm2SerialBit(uint8_t bit);
 void sendByteSbus(uint8_t byte);
 
-#if defined(HUBSAN)
-void Hubsan_Init();
-#endif
-
 inline void startPulses() {
 //  TRACE_NOCRLF("sP");
   s_pulses_paused = false;
@@ -144,10 +140,6 @@ inline void startPulses() {
   setupPulses(EXTERNAL_MODULE);
 #else
   setupPulses(EXTERNAL_MODULE);
-#endif
-
-#if defined(HUBSAN)
-  Hubsan_Init();
 #endif
 }
 
