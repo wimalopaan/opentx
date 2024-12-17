@@ -5,7 +5,7 @@ version: 2.1
 jobs:
   build-std:
     docker:
-      - image: ajjjjjjjj/opentx-docker-i6x:1.3.0
+      - image: ajjjjjjjj/opentx-docker-i6x:1.4.0
     steps:
       - checkout
       - run: |
@@ -15,7 +15,7 @@ jobs:
 
   build-std-dfplayer:
     docker:
-      - image: ajjjjjjjj/opentx-docker-i6x:1.3.0
+      - image: ajjjjjjjj/opentx-docker-i6x:1.4.0
     steps:
       - checkout
       - run: |
@@ -25,7 +25,7 @@ jobs:
 
   build-heli:
     docker:
-      - image: ajjjjjjjj/opentx-docker-i6x:1.3.0
+      - image: ajjjjjjjj/opentx-docker-i6x:1.4.0
     steps:
       - checkout
       - run: |
@@ -35,7 +35,7 @@ jobs:
 
   build-heli-dfplayer:
     docker:
-      - image: ajjjjjjjj/opentx-docker-i6x:1.3.0
+      - image: ajjjjjjjj/opentx-docker-i6x:1.4.0
     steps:
       - checkout
       - run: |
@@ -45,7 +45,7 @@ jobs:
 
   build-en:
     docker:
-      - image: ajjjjjjjj/opentx-docker-i6x:1.3.0
+      - image: ajjjjjjjj/opentx-docker-i6x:1.4.0
     steps:
       - checkout
       - run: |
