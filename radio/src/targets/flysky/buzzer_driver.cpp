@@ -251,8 +251,7 @@ static void setVolume(int8_t volume)
 
 static void setFrequency(uint32_t freq)
 {
-  uint32_t autoReload = 1000000 / freq - 1;
-  PWM_TIMER->ARR = limit<uint32_t>(2, autoReload, 65535);
+  PWM_TIMER->ARR = 1000000 / freq - 1; // freq below 16Hz will overflow 16bit ARR (never happen)
   if (PWM_TIMER->CNT > PWM_TIMER->ARR) // fixes vario noise on descent
     PWM_TIMER->CNT = 0;
 }
