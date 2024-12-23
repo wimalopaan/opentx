@@ -77,7 +77,7 @@ static uint16_t bufferOffset = 0;
 static constexpr uint8_t PARAM_DATA_TAIL_SIZE = 44; // max popup packet size
 
 static uint8_t *paramData = &reusableBuffer.cToolData[0];
-static uint8_t paramDataLen = 0;
+static uint32_t paramDataLen = 0;
 
 static constexpr uint8_t PARAMS_MAX_COUNT = 18;
 static constexpr uint8_t PARAMS_SIZE = PARAMS_MAX_COUNT * sizeof(Parameter);
