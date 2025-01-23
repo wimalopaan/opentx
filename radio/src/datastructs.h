@@ -663,7 +663,8 @@ PACK(struct TrainerData {
   NOBACKUP(uint8_t jitterFilter : 1); /* 0 - active */ \
   NOBACKUP(uint8_t disableRssiPoweroffAlarm : 1);      \
   NOBACKUP(uint8_t USBMode : 2);                       \
-  NOBACKUP(uint8_t spareExtraArm : 3);                 \
+  NOBACKUP(uint8_t spare : 1);                         \
+  NOBACKUP(uint8_t ppmunit : 2);                       \
   NOBACKUP(char ttsLanguage[2]);                       \
   NOBACKUP(int8_t beepVolume : 4);                     \
   NOBACKUP(int8_t wavVolume : 4);                      \
