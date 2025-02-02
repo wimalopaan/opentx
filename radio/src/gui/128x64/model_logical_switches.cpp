@@ -234,7 +234,7 @@ void onLogicalSwitchesMenu(const char *result)
     s_currIdx = sub;
     pushMenu(menuModelLogicalSwitchOne);
   }
-#if defined(SDCARD)
+#if defined(CLIPBOARD)
   else if (result == STR_COPY) {
     clipboard.type = CLIPBOARD_TYPE_CUSTOM_SWITCH;
     clipboard.data.csw = *cs;
@@ -265,7 +265,7 @@ void menuModelLogicalSwitches(event_t event)
       s_currIdx = sub;
     if (sub >= 0)
       POPUP_MENU_ADD_ITEM(STR_EDIT);
-#if defined(SDCARD)
+#if defined(CLIPBOARD)
     if (cs->func || cs->v1 || cs->v2 || cs->delay || cs->duration || cs->andsw)
       POPUP_MENU_ADD_ITEM(STR_COPY);
     if (clipboard.type == CLIPBOARD_TYPE_CUSTOM_SWITCH)

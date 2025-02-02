@@ -34,6 +34,7 @@ if(PCB STREQUAL I6X)
   add_definitions(-DEEPROM_VARIANT=0)
   add_definitions(-DSOFTWARE_VOLUME)
   add_definitions(-DAFHDS2A)
+  add_definitions(-DCLIPBOARD)
 endif()
 
 if(NOT AFHDS2A_LQI_CH STREQUAL OFF)
