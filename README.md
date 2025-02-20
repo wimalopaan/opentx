@@ -23,7 +23,7 @@ Join our [Discord](https://discord.gg/3vKfYNTVa2), [RCGroups](https://www.rcgrou
 |---------------------------|------------|------------------------------|
 | Channels                  | 6/10       | 16                           |
 | Mixers                    | 3          | 32                           |
-| Models                    | 20         | 16 / unlimited<sup>[1]</sup> |
+| Models                    | 20         | 20 / unlimited<sup>[1]</sup> |
 | Protocols                 | AFHDS, AFHDS2A, PPM | AFHDS2A + 16Ch modes, PPM, CRSF |
 | Trainer                   | PPM        | PPM, SBUS                    |
 | Timers                    | _          | ✓                            |
