@@ -4,4 +4,4 @@ image:
 
 tasks:
   - init: echo 'Welcome!'
-  - command: make build && cd build
+  - command: mkdir build && cd build
