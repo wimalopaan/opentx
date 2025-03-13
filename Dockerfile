@@ -9,6 +9,7 @@ RUN pacman -S --noconfirm \
 	arm-none-eabi-newlib \
 	base-devel \
 	bc \
+	cmake \
 	cpio \
 	curl \
 	dos2unix \
@@ -18,6 +19,7 @@ RUN pacman -S --noconfirm \
 	nano \
 	python \
 	python-pip \
+	python-pilkit \
 	screen \
 	tree \
 	unzip \
