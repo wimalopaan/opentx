@@ -407,8 +407,8 @@ extern volatile bool pendingTelemetryPollFrame;
 // Audio driver
 void initBuzzerTimer(void);
 
-#define VOLUME_LEVEL_MAX  23
-#define VOLUME_LEVEL_DEF  12
+#define VOLUME_LEVEL_MAX  30 // dfplayer max
+#define VOLUME_LEVEL_DEF  23
 #if !defined(SOFTWARE_VOLUME)
 void setScaledVolume(uint8_t volume);
 void setVolume(uint8_t volume);
