@@ -12,19 +12,13 @@
  You should have received a copy of the GNU General Public License
  along with Multiprotocol.  If not, see <http://www.gnu.org/licenses/>.
  */
-// Last sync with hexfet new_protocols/flysky_a7105.c dated 2015-09-28
 #include "../../telemetry/flysky_ibus.h"
 #include "iface_a7105.h"
 #include "opentx.h"
 
-#define AFHDS2A_HUB_TELEMETRY
-//#define AFHDS2A_NUMFREQ			16
-
-extern int8_t s_editMode;
-
 static uint8_t num_ch;
 
-inline uint32_t GetChipID(void) {
+inline uint32_t GetUIDHash(void) {
   return (uint32_t)(READ_REG(*((uint32_t *)UID_BASE))) ^
          (uint32_t)(READ_REG(*((uint32_t *)(UID_BASE + 4U)))) ^
          (uint32_t)(READ_REG(*((uint32_t *)(UID_BASE + 8U))));
@@ -342,7 +336,7 @@ SendNoAntSwitch_:
 
 void initAFHDS2A() {
   RadioState = ((TIM_CALL << CALLER) | (SEND << SEND_RES) | (AFHDS2A_DATA));
-  ID.MProtocol_id = GetChipID();
+  ID.MProtocol_id = GetUIDHash();
   AFHDS2A_calc_channels();
   A7105_Init();
   packet_count = 0;
