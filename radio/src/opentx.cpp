@@ -224,7 +224,8 @@ void generalDefault() {
 #if !defined(PCBI6X)
   g_eeGeneral.variant = EEPROM_VARIANT;
 #endif
-#if !defined(PCBHORUS)
+
+#if defined(LCD_CONTRAST_DEFAULT)
   g_eeGeneral.contrast = LCD_CONTRAST_DEFAULT;
 #endif
 
@@ -1832,6 +1833,7 @@ int main()
 #if defined(PCBTARANIS)
   g_eeGeneral.contrast = LCD_CONTRAST_DEFAULT;
 #endif
+
   wdt_disable();
 
   boardInit();
@@ -1844,30 +1846,14 @@ int main()
   loadFonts();
 #endif
 
-#if defined(GUI) && !defined(PCBTARANIS) && !defined(PCBHORUS) && !defined(PCBI6X)
-  // TODO remove this
-  lcdInit();
-#endif
-
 #if !defined(SIMU)
   stackPaint();
-#endif
-
-#if defined(GUI) && !defined(PCBTARANIS)
-  // lcdSetRefVolt(25);
 #endif
 
 #if defined(SPLASH) && (defined(PCBTARANIS) || defined(PCBHORUS))
   drawSplash();
 #endif
 
-#if defined(DSM2_SERIAL) && !defined(TELEMETRY_FRSKY)
-  DSM2_Init();
-#endif
-
-#if defined(MENU_ROTARY_SW)
-  init_rotary_sw();
-#endif
 
 #if defined(PCBHORUS)
   if (!IS_FIRMWARE_COMPATIBLE_WITH_BOARD()) {
