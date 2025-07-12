@@ -529,6 +529,7 @@ void menuModelTelemetryFrsky(event_t event)
             pushMenu(menuModelSensor);
           }
           else {
+            allowNewSensors = false;
             POPUP_WARNING(STR_TELEMETRYFULL);
           }
         }

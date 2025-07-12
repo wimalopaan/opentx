@@ -21,7 +21,7 @@
 #include "opentx.h"
 
 TelemetryItem telemetryItems[MAX_TELEMETRY_SENSORS];
-uint8_t allowNewSensors;
+bool allowNewSensors;
 
 bool isFaiForbidden(source_t idx) {
   if (idx < MIXSRC_FIRST_TELEM) {
@@ -523,6 +523,7 @@ int setTelemetryValue(TelemetryProtocol protocol, uint16_t id, uint8_t subId, ui
     telemetryItems[index].setValue(g_model.telemetrySensors[index], value, unit, prec);
     return index;
   } else {
+    allowNewSensors = false;
     POPUP_WARNING(STR_TELEMETRYFULL);
     return -1;
   }
