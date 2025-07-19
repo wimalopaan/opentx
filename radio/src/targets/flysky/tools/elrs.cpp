@@ -732,12 +732,12 @@ static void refreshNext() {
       paramTimeout = time + paramPopup->timeout;
     }
   } else if (time > devicesRefreshTimeout && expectedParamsCount < 1) {
-    devicesRefreshTimeout = time + 100;
+    devicesRefreshTimeout = time + 100; // 1s
     crossfireTelemetryPing();
   } else if (time > paramTimeout && expectedParamsCount != 0) {
     if (allParamsLoaded < 1) {
       crossfireTelemetryCmd(CRSF_FRAMETYPE_PARAMETER_READ, paramId, paramChunk);
-      paramTimeout = time + 50; // 0.5s
+      paramTimeout = time + 500; // 5s
     }
   }
 
@@ -825,17 +825,20 @@ static void handleDevicePageEvent(event_t event) {
         }
         if (!s_editMode) {
           if (param->type == TYPE_COMMAND) {
-            // For commands, request this param's
-            // data again, with a short delay to allow the module EEPROM to
-            // commit. Do this before save() to allow save to override
+            // For commands, request this param's data again
+            // Do this before save() to allow save to override
             paramId = param->id;
             paramChunk = 0;
             paramDataLen = 0;
           }
+          // with a short delay to allow the module EEPROM to commit
           paramTimeout = getTime() + 20;
+          // Also push the next bad/good update further out
+          linkstatTimeout = paramTimeout + 100;
           getFunctions(param->type).save(param);
           if (param->type < TYPE_FOLDER) {
-            // For editable param types reload whole folder, but do it after save
+            // For editable param types
+            // Reload all editable fields at the same level
             clearParams();
             reloadAllParam();
             paramId = currentFolderId + 1; // Start loading from first folder item

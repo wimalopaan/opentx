@@ -29,11 +29,6 @@ DMAFifo<TELEMETRY_FIFO_SIZE> telemetryDMAFifo __DMA (TELEMETRY_DMA_Channel_RX);
 void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   TRACE("telemetryPortInit %d", baudrate);
 
-  if (baudrate == 0) {
-    USART_DeInit(TELEMETRY_USART);
-    return;
-  }
-
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = TELEMETRY_DMA_TX_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPriority = 1;
@@ -83,7 +78,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
   USART_InvPinCmd(TELEMETRY_USART, USART_InvPin_Tx | USART_InvPin_Rx, ENABLE);
 #endif
 
-  DMA_Cmd(TELEMETRY_DMA_Channel_RX, DISABLE);
+//   DMA_Cmd(TELEMETRY_DMA_Channel_RX, DISABLE); // done by DMA_DeInit
   USART_DMACmd(TELEMETRY_USART, USART_DMAReq_Rx, DISABLE);
   DMA_DeInit(TELEMETRY_DMA_Channel_RX);
 
@@ -110,7 +105,7 @@ void telemetryPortInit(uint32_t baudrate, uint8_t mode) {
 #if defined(CRSF_FULLDUPLEX)
   TELEMETRY_USART->CR3 |= USART_DMAReq_Rx;
 #else
-  TELEMETRY_USART->CR3 |= USART_CR3_HDSEL /*Half duplex*/ | USART_DMAReq_Rx;
+  TELEMETRY_USART->CR3 |= USART_DMAReq_Rx | USART_CR3_HDSEL /*Half duplex*/;
 #endif
 
   USART_Cmd(TELEMETRY_USART, ENABLE);
