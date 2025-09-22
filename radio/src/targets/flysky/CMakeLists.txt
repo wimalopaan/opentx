@@ -8,6 +8,10 @@ option(AFHDS2A_LQI_CH "Send RSSI at channel 1-17" OFF)
 option(DFPLAYER "Enables DFPlayer on AUX3 TX" NO) # ~1.7kB
 option(FAKE_RSSI "Enables converting TRSS to RSSI data for receivers not sending RSSI" NO)
 option(SBUS_TRAINER "Enables SBUS Trainer mode and trainer lost/back sounds" NO) # ~0.6kB
+option(INVERT_GIMBAL_CH1 "Invert Gimbal CH1" NO)
+option(INVERT_GIMBAL_CH2 "Invert Gimbal CH2" NO)
+option(INVERT_GIMBAL_CH3 "Invert Gimbal CH3" NO)
+option(INVERT_GIMBAL_CH4 "Invert Gimbal CH4" NO)
 
 if(PCB STREQUAL I6X)
   set(PWR_BUTTON "SWITCH" CACHE STRING "Pwr button type (PRESS/SWITCH)")
@@ -109,6 +113,22 @@ if(SBUS_TRAINER STREQUAL YES)
     ${PULSES_SRC}
     ../sbus.cpp
     )
+endif()
+
+if(INVERT_GIMBAL_CH1 STREQUAL YES)
+  add_definitions(-DINVERT_GIMBAL_CH1)
+endif()
+
+if(INVERT_GIMBAL_CH2 STREQUAL YES)
+  add_definitions(-DINVERT_GIMBAL_CH2)
+endif()
+
+if(INVERT_GIMBAL_CH3 STREQUAL YES)
+  add_definitions(-DINVERT_GIMBAL_CH3)
+endif()
+
+if(INVERT_GIMBAL_CH4 STREQUAL YES)
+  add_definitions(-DINVERT_GIMBAL_CH4)
 endif()
 
 set(HSE_VALUE 8000000)
