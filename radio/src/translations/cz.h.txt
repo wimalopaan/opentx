@@ -144,8 +144,13 @@
 #define LEN_VDISPLAYTRIMS      "\006"
 #define TR_VDISPLAYTRIMS       "Ne\0   ""Změna\0""Ano\0  "
 
+#if defined(HAPTIC)
 #define LEN_VBEEPCOUNTDOWN     "\007"
 #define TR_VBEEPCOUNTDOWN      "Ne\0    ""Zvuk\0  ""Hlas\0  ""Vibrace"
+#else
+#define LEN_VBEEPCOUNTDOWN     "\004"
+#define TR_VBEEPCOUNTDOWN      "Ne\0 ""Zvuk""Hlas"
+#endif
 
 #define LEN_VVARIOCENTER       "\005"
 #define TR_VVARIOCENTER        "Tón\0 ""Ticho"

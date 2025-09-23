@@ -147,12 +147,12 @@
 #define LEN_VDISPLAYTRIMS      "\006"
 #define TR_VDISPLAYTRIMS       "Nie\0  ""Zmień\0""Tak\0"
 
-#if defined(PCBI6X)
-  #define LEN_VBEEPCOUNTDOWN     "\005"
-  #define TR_VBEEPCOUNTDOWN      "CichyPik\0 Głos\0"
-#else
+#if defined(HAPTIC)
   #define LEN_VBEEPCOUNTDOWN     "\006"
-  #define TR_VBEEPCOUNTDOWN      "Cichy Pik  \0DźwiękWibrac"
+  #define TR_VBEEPCOUNTDOWN      "Cichy ""Pik  \0""Dźwięk""Wibrac"
+#else
+  #define LEN_VBEEPCOUNTDOWN     "\005"
+  #define TR_VBEEPCOUNTDOWN      "Cichy""Pik\0 ""Głos\0"
 #endif
 
 #define LEN_VVARIOCENTER       "\006"

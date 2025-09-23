@@ -144,20 +144,21 @@
 #define TR_VTRIMINC      "Expo  ""ExFino""Fino  ""Medio ""Largo "
 
 #define LEN_VDISPLAYTRIMS      "\006"
-#define TR_VDISPLAYTRIMS       "No\0   ""Change""Yes\0"
+#define TR_VDISPLAYTRIMS       "Não\0  ""Trocar""Sim\0"
 
-#define LEN_VBEEPCOUNTDOWN     "\006"
-#if defined(PCBI6X)
-  #define TR_VBEEPCOUNTDOWN              "SilentBeeps\0Voice\0"
+#if defined(HAPTIC)
+  #define LEN_VBEEPCOUNTDOWN     "\006"
+  #define TR_VBEEPCOUNTDOWN      "SilentBeeps\0Voice\0Haptic"
 #else
-  #define TR_VBEEPCOUNTDOWN              "SilentBeeps\0Voice\0Haptic"
+  #define LEN_VBEEPCOUNTDOWN     "\004"
+  #define TR_VBEEPCOUNTDOWN      "S/Á\0""Bips""Voz\0"
 #endif
 
 #define LEN_VVARIOCENTER       "\006"
 #define TR_VVARIOCENTER        "Tone\0 ""Silent"
 
-#define LEN_CURVE_TYPES        "\010"
-#define TR_CURVE_TYPES         "Standard""Custom\0"
+#define LEN_CURVE_TYPES        "\006"
+#define TR_CURVE_TYPES         "Normal""Custom"
 
 #define LEN_RETA123      "\001"
 
