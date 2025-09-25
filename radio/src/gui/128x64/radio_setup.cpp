@@ -67,7 +67,7 @@ enum MenuRadioSetupItems {
   ITEM_SETUP_INACTIVITY_ALARM,
   ITEM_SETUP_MEMORY_WARNING,
   ITEM_SETUP_ALARM_WARNING,
-#if defined(PWR_BUTTON_SOFT)
+#if defined(PWR_BUTTON_PRESS)
   ITEM_SETUP_RSSI_POWEROFF_ALARM,
 #endif
   IF_ROTARY_ENCODERS(ITEM_SETUP_RE_NAVIGATION)
@@ -143,7 +143,7 @@ void menuRadioSetup(event_t event)
     CASE_HAPTIC(0)
     LABEL(ALARMS), 0, CASE_CAPACITY(0)
     0, 0, 0,
-#if defined(PWR_BUTTON_SOFT)
+#if defined(PWR_BUTTON_PRESS)
     0, /* rssi poweroff alarm */
 #endif
     IF_ROTARY_ENCODERS(0)
@@ -387,7 +387,7 @@ void menuRadioSetup(event_t event)
         g_eeGeneral.disableAlarmWarning = 1 - editCheckBox(b, LCD_W-9, y, STR_ALARMWARNING, attr, event, INDENT_WIDTH);
         break;
       }
-#if defined(PWR_BUTTON_SOFT)
+#if defined(PWR_BUTTON_PRESS)
       case ITEM_SETUP_RSSI_POWEROFF_ALARM:
       {
         uint8_t b = 1 - g_eeGeneral.disableRssiPoweroffAlarm;
