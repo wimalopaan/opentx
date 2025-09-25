@@ -54,7 +54,7 @@ const CrossfireSensor crossfireSensors[] = {
   {BARO_ALT_ID,    0, ZSTR_ALT,           UNIT_METERS,         2},
   {AIRSPEED_ID,    0, ZSTR_ASPD,         UNIT_KMH,             1},
   {CF_RPM_ID,      0, ZSTR_RPM,          UNIT_RPMS,            0},
-  {TEMP_ID,        0, ZSTR_TEMP,         UNIT_DEGREE,          1},
+  {TEMP_ID,        0, ZSTR_TEMP,         UNIT_TEMPERATURE,     1},
   {CELLS_ID,       0, ZSTR_CELLS,        UNIT_CELLS,           2},
   {0,              0, "UNKNOWN",          UNIT_RAW,            0},
 };
