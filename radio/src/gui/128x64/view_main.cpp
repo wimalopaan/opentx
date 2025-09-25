@@ -278,10 +278,12 @@ void onMainViewMenu(const char *result)
   else if (result == STR_STATISTICS) {
     chainMenu(menuStatisticsView);
   }
+#if !defined(PWR_BUTTON_SOFT)
   else if (result == STR_SAVEALLDATA) {
     watchdogSuspend(200); // 2s
     saveAllData();
   }
+#endif
 #if !defined(PCBI6X)
   else if (result == STR_ABOUT_US) {
     chainMenu(menuAboutView);
@@ -331,7 +333,7 @@ void menuMainView(event_t event)
       }
 #endif
 
-#if defined(PCBI6X)
+#if !defined(PWR_BUTTON_SOFT)
       POPUP_MENU_ADD_ITEM(STR_SAVEALLDATA);
 #endif
       POPUP_MENU_ADD_ITEM(STR_RESET_SUBMENU);
@@ -558,12 +560,12 @@ void menuMainView(event_t event)
       lcdDrawChar(REBOOT_X, 0 * FH, '!', INVERS | BLINK);
     }
 
-#if defined(PCBI6X)
-    // Add square in case of pending or ongoing eeprom write
+#if !defined(PWR_BUTTON_SOFT)
+    // Add square icon in case of pending or ongoing eeprom write
     if (storageDirtyMsk || eepromIsWriting()) {
       lcdDrawRect(REBOOT_X + 3, 0 * FH, 4, 4);
     }
-#endif // PCBI6X
+#endif
   }
 
 #if defined(GVARS)
