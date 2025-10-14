@@ -46,11 +46,11 @@ enum MenuRadioSetupItems {
   ITEM_SETUP_SOUND_LABEL,
   CASE_AUDIO(ITEM_SETUP_BEEP_MODE)
   CASE_BUZZER(ITEM_SETUP_BUZZER_MODE)
-  // ITEM_SETUP_SPEAKER_VOLUME,
+  CASE_DFPLAYER(ITEM_SETUP_SPEAKER_VOLUME)
   ITEM_SETUP_BEEP_VOLUME,
   ITEM_SETUP_BEEP_LENGTH,
   ITEM_SETUP_SPEAKER_PITCH,
-  CASE_DFPLAYER(ITEM_SETUP_WAV_VOLUME)
+  CASE_AUDIO(ITEM_SETUP_WAV_VOLUME)
   // ITEM_SETUP_BACKGROUND_VOLUME,
   CASE_VARIO(ITEM_SETUP_VARIO_LABEL)
   CASE_VARIO(ITEM_SETUP_VARIO_VOLUME)
@@ -67,7 +67,7 @@ enum MenuRadioSetupItems {
   ITEM_SETUP_INACTIVITY_ALARM,
   ITEM_SETUP_MEMORY_WARNING,
   ITEM_SETUP_ALARM_WARNING,
-#if defined(PWR_BUTTON_SOFT)
+#if defined(PWR_BUTTON_PRESS)
   ITEM_SETUP_RSSI_POWEROFF_ALARM,
 #endif
   IF_ROTARY_ENCODERS(ITEM_SETUP_RE_NAVIGATION)
@@ -131,7 +131,7 @@ void menuRadioSetup(event_t event)
     HEADER_LINE_COLUMNS CASE_RTCLOCK(2) CASE_RTCLOCK(2) 
     LABEL(SOUND), CASE_AUDIO(0)
     CASE_BUZZER(0)
-    /*0,*/ 0, 0, 0, CASE_DFPLAYER(0) CASE_AUDIO(0)
+    CASE_DFPLAYER(0) 0, 0, 0, CASE_AUDIO(0) /*WAV*/ CASE_AUDIO(0) /*BACKGROUND*/
     CASE_VARIO(LABEL(VARIO))
     CASE_VARIO(0)
     CASE_VARIO(0)
@@ -143,7 +143,7 @@ void menuRadioSetup(event_t event)
     CASE_HAPTIC(0)
     LABEL(ALARMS), 0, CASE_CAPACITY(0)
     0, 0, 0,
-#if defined(PWR_BUTTON_SOFT)
+#if defined(PWR_BUTTON_PRESS)
     0, /* rssi poweroff alarm */
 #endif
     IF_ROTARY_ENCODERS(0)
@@ -262,7 +262,7 @@ void menuRadioSetup(event_t event)
         break;
 #endif
 
-#if defined(VOICE)
+#if defined(DFPLAYER)
       case ITEM_SETUP_SPEAKER_VOLUME:
       {
         lcdDrawTextIndented(y, STR_SPEAKER_VOLUME);
@@ -282,14 +282,10 @@ void menuRadioSetup(event_t event)
         g_eeGeneral.beepVolume = slider_5pos(y, g_eeGeneral.beepVolume, event, attr, STR_BEEP_VOLUME);
         break;
 
-#if defined(DFPLAYER)
+#if defined(AUDIO)
       case ITEM_SETUP_WAV_VOLUME:
       {
-        int8_t vol = g_eeGeneral.wavVolume;
         g_eeGeneral.wavVolume = slider_5pos(y, g_eeGeneral.wavVolume, event, attr, STR_WAV_VOLUME);
-        if (vol != g_eeGeneral.wavVolume) {
-          dfplayerSetVolume(g_eeGeneral.wavVolume);
-        }
       }
       break;
 #endif
@@ -391,7 +387,7 @@ void menuRadioSetup(event_t event)
         g_eeGeneral.disableAlarmWarning = 1 - editCheckBox(b, LCD_W-9, y, STR_ALARMWARNING, attr, event, INDENT_WIDTH);
         break;
       }
-#if defined(PWR_BUTTON_SOFT)
+#if defined(PWR_BUTTON_PRESS)
       case ITEM_SETUP_RSSI_POWEROFF_ALARM:
       {
         uint8_t b = 1 - g_eeGeneral.disableRssiPoweroffAlarm;

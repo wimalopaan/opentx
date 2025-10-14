@@ -160,22 +160,20 @@ void boardInit()
 
 void boardOff()
 {
-#if !defined(PWR_BUTTON_SWITCH) // not really useful on i6X
+#if defined(PWR_BUTTON_PRESS)
   BACKLIGHT_DISABLE();
 
-//#if defined(PWR_BUTTON_PRESS)
-//  while (pwrPressed())
-//  {
-//    wdt_reset();
-//  }
-//#endif
+  while (pwrPressed())
+  {
+    wdt_reset();
+  }
   lcdOff();
   SysTick->CTRL = 0; // turn off systick
   pwrOff();
 
   // disable interrupts
   __disable_irq();
-#endif // PWR_BUTTON_SWITCH
+#endif // PWR_BUTTON_PRESS
   // this function must not return!
 }
 
