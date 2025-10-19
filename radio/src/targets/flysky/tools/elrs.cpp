@@ -152,7 +152,7 @@ static constexpr uint8_t RESULT_OK = 2;
 static constexpr uint8_t RESULT_CANCEL = 1;
 
 static void storeParam(Parameter * param);
-static void clearParams();
+static void clearData();
 static void addBackButton();
 static void reloadAllParam();
 static Parameter * getParam(uint8_t line);
@@ -199,9 +199,9 @@ static void crossfireTelemetryPing() {
   crossfireTelemetryPush(CRSF_FRAMETYPE_DEVICE_PING, (uint8_t *) crsfPushData, 2);
 }
 
-static void clearParams() {
-//  TRACE("clearParams %d", allocatedParamsCount);
-  memclear(params, PARAMS_SIZE);
+static void clearData() {
+//  TRACE("clearData %d", allocatedParamsCount);
+  memclear(reusableBuffer.cToolData, sizeof(reusableBuffer.cToolData));
   btnState = BTN_NONE;
   allocatedParamsCount = 0;
 }
@@ -452,7 +452,7 @@ static void paramFolderOpen(Parameter * param) {
   if (param->type == TYPE_FOLDER) { // guard because it is reused for devices
     paramId = param->id + 1; // UX hack: start loading from first folder item to fetch it faster
   }
-  clearParams();
+  clearData();
 }
 
 static void paramFolderDeviceOpen(Parameter * param) {
@@ -507,7 +507,7 @@ static void paramUnifiedDisplay(Parameter * param, uint8_t y, uint8_t attr) {
 
 static void paramBackExec(Parameter * param = 0) {
   currentFolderId = 0;
-  clearParams();
+  clearData();
   reloadAllParam();
   devicesLen = 0;
   expectedParamsCount = 0;
@@ -564,7 +564,7 @@ static void parseDeviceInfoMessage(uint8_t* data) {
     reloadAllParam();
     if (newParamCount != expectedParamsCount || newParamCount == 0) {
       expectedParamsCount = newParamCount;
-      clearParams();
+      clearData();
       if (newParamCount == 0) {
         // This device has no params so the Loading code never starts
         allParamsLoaded = 1;
@@ -841,7 +841,7 @@ static void handleDevicePageEvent(event_t event) {
           if (param->type < TYPE_FOLDER) {
             // For editable param types
             // Reload all editable fields at the same level
-            clearParams();
+            clearData();
             reloadAllParam();
             paramId = currentFolderId + 1; // Start loading from first folder item
           }
@@ -947,7 +947,7 @@ void elrsStop() {
   handsetId = 0xEF;
 
   globalData.cToolRunning = 0;
-  memset(reusableBuffer.cToolData, 0, sizeof(reusableBuffer.cToolData));
+  clearData();
   popMenu();
 }
 
