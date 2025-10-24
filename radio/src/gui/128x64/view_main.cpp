@@ -37,12 +37,13 @@
 #define VBATT_Y       (2*FH)
 #define VBATTUNIT_X   (VBATT_X-1)
 #define VBATTUNIT_Y   (3*FH)
-#define REBOOT_X      (20*FW-3)
+#define REBOOT_X      (2)
 #define BAR_HEIGHT    (BOX_WIDTH-1l) // don't remove the l here to force 16bits maths on 9X
-#define TRIM_LH_X     (LCD_W*1/4+2)
+#define TRIM_LEN      21
+#define TRIM_LH_X     (TRIM_LEN+4)
 #define TRIM_LV_X     3
 #define TRIM_RV_X     (LCD_W-4)
-#define TRIM_RH_X     (LCD_W*3/4-2)
+#define TRIM_RH_X     (LCD_W-TRIM_LEN-5)
 #define TRIM_LH_NEG   (TRIM_LH_X+1*FW)
 #define TRIM_LH_POS   (TRIM_LH_X-4*FW)
 #define TRIM_RH_NEG   (TRIM_RH_X+1*FW)
@@ -57,7 +58,6 @@
 #endif
 #endif
 
-#define TRIM_LEN      23
 
 void drawExternalAntennaAndRSSI()
 {
@@ -557,13 +557,13 @@ void menuMainView(event_t event)
 
     // And ! in case of unexpected shutdown
     if (isAsteriskDisplayed()) {
-      lcdDrawChar(REBOOT_X, 0 * FH, '!', INVERS | BLINK);
+      lcdDrawChar(REBOOT_X, 1, '!', INVERS | BLINK);
     }
 
 #if !defined(PWR_BUTTON_PRESS)
     // Add square icon in case of pending or ongoing eeprom write
     if (storageDirtyMsk || eepromIsWriting()) {
-      lcdDrawRect(REBOOT_X + 3, 0 * FH, 4, 4);
+      lcdDrawRect(REBOOT_X + 2, 0 * FH, 4, 4);
     }
 #endif
   }
