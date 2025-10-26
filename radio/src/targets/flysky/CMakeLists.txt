@@ -54,6 +54,7 @@ endif()
 
 if(DFPLAYER STREQUAL YES)
   add_definitions(-DDFPLAYER)
+  add_definitions(-DSF_VOLUME)
   set(TARGET_SRC
   ${TARGET_SRC}
   dfplayer_driver.cpp
@@ -86,7 +87,7 @@ set(TARGET_SRC
   )
 endif()
 
-if((PCBI6X_INAV STREQUAL YES)) # AND ((TRANSLATIONS STREQUAL EN) OR (NOT PCBI6X_ELRS STREQUAL YES)))
+if((PCBI6X_INAV STREQUAL YES)) # AND (TRANSLATIONS STREQUAL EN))
   add_definitions(-DPCBI6X_INAV)
 set(TARGET_SRC
   ${TARGET_SRC}
