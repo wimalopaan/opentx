@@ -195,8 +195,8 @@ static void crossfireTelemetryPing() {
   crossfireTelemetryPush(CRSF_FRAMETYPE_DEVICE_PING, (uint8_t *) crsfPushData, 2);
 }
 
-static void updateParamsSizeAndBufferOffset() {
-  TRACE("updateParamsSizeAndBufferOffset %d", expectedParamsCount);
+static void updateParamsOffset() {
+  TRACE("updateParamsOffset %d", expectedParamsCount);
   uint16_t paramsSize = (expectedParamsCount + 1) * sizeof(Parameter); // + 1 for button (EXIT/DEVICES)
   params = (Parameter *)&reusableBuffer.cToolData[BUFFER_SIZE - paramsSize];
 }
@@ -566,7 +566,7 @@ static void parseDeviceInfoMessage(uint8_t* data) {
     reloadAllParam();
     if (newParamCount != expectedParamsCount || newParamCount == 0) {
       expectedParamsCount = newParamCount;
-      updateParamsSizeAndBufferOffset();
+      updateParamsOffset();
       clearData();
       if (newParamCount == 0) {
         // This device has no params so the Loading code never starts
