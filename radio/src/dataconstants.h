@@ -66,25 +66,15 @@
   #define MAX_EXPOS                    14
   #define MAX_LOGICAL_SWITCHES         12
   #define MAX_SPECIAL_FUNCTIONS        18 // number of functions assigned to switches, 20B each
-  #define MAX_TRAINER_CHANNELS         16
+  #define MAX_SCRIPTS				           0
   #define MAX_INPUTS                   16
+  #define MAX_TRAINER_CHANNELS         16
   #define MAX_TELEMETRY_SENSORS        30 // 48B each
-  #define MAX_SCRIPTS				   0
 #else
-  #define MAX_MODELS                   16
-  #define MAX_OUTPUT_CHANNELS          16 // number of real output channels CH1-CH16
-  #define MAX_FLIGHT_MODES             5
-  #define MAX_MIXERS                   32
-  #define MAX_EXPOS                    14
-  #define MAX_LOGICAL_SWITCHES         12
-  #define MAX_SPECIAL_FUNCTIONS        16 // number of functions assigned to switches
-  #define MAX_TRAINER_CHANNELS         8
-  #define MAX_TELEMETRY_SENSORS        0
+  #warning "Unknown board!"
 #endif
 
-#define MAX_TIMERS                   3
-
-#define NUM_CYC                        3
+#define MAX_TIMERS                     3
 #define NUM_CAL_PPM                    4
 
 enum CurveType {
@@ -93,8 +83,7 @@ enum CurveType {
   CURVE_TYPE_LAST = CURVE_TYPE_CUSTOM
 };
 
-  #define MIN_POINTS_PER_CURVE         3
-
+#define MIN_POINTS_PER_CURVE           3
 #define MAX_POINTS_PER_CURVE           17
 
 #if defined(PCBHORUS)

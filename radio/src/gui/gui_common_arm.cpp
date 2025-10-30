@@ -404,7 +404,7 @@ bool isAssignableFunctionAvailable(int function) {
 #else
       return false;
 #endif
-#if !defined(DFPLAYER)
+#if !defined(DFPLAYER) || !defined(SF_VOLUME)
     case FUNC_VOLUME:
 #endif
 #if !defined(HAPTIC)

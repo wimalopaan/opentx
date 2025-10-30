@@ -6,8 +6,13 @@
  */
 #include "opentx.h"
 
+#if defined(AFHDS2A)
 #define INAVLITE_AFHDS2A
+#endif
+
+#if defined(CROSSFIRE)
 #define INAVLITE_CRSF
+#endif
 
 static const int8_t sine[32] = {
   0, 24, 48, 70, 90, 106, 117, 125, 127, 125, 117, 106, 90, 70, 48, 24,
@@ -145,10 +150,10 @@ static void inavDrawAFHDS2AFM(uint8_t mode) {
 static void inavDraw() {
   lcdDrawSolidVerticalLine(36, FH, LCD_H - FH, FORCE);
   lcdDrawSolidVerticalLine(LCD_W - 31, FH, LCD_H - FH, FORCE);
-  lcdDrawSolidVerticalLine(LCD_W - 27, FH, LCD_H - FH, FORCE);
   lcdDrawSolidHorizontalLine(0, 55, 36, FORCE);
-  lcdDrawSolidHorizontalLine(LCD_W - 26, 51, 32, FORCE);
-  lcdDrawLine(LCD_W - 30, (LCD_H / 2) + FH / 2, LCD_W - 28, (LCD_H / 2) + FH / 2, DOTTED, FORCE);
+  lcdDrawSolidHorizontalLine(LCD_W - 30, 51, 32, FORCE);
+  // lcdDrawSolidVerticalLine(LCD_W - 27, FH, LCD_H - FH, FORCE); // VSpd indicator
+  // lcdDrawLine(LCD_W - 30, (LCD_H / 2) + FH / 2, LCD_W - 28, (LCD_H / 2) + FH / 2, DOTTED, FORCE); // VSpd indicator
 
   uint8_t rxBatt = 0, sats = 0;
   int32_t dist = 0, alt = 0, galt = 0, speed = 0, current = 0;
@@ -334,9 +339,9 @@ static void inavDraw() {
   inavDrawCraft(BBOX_CENTER_X + scaledCurrentLat, BBOX_CENTER_Y - scaledCurrentLon);
 
   // draw VSpd line
-  vspd = limit<int16_t>(-5, vspd / 4, 5);
-  lcdDrawLine(LCD_W - 30, ((LCD_H / 2) + FH / 2) - 10 + vspd, LCD_W - 28, ((LCD_H / 2) + FH / 2) - 10 - vspd, SOLID, FORCE);
-  lcdDrawLine(LCD_W - 30, ((LCD_H / 2) + FH / 2) -  9 + vspd, LCD_W - 28, ((LCD_H / 2) + FH / 2) -  9 - vspd, SOLID, FORCE);
+  // vspd = limit<int16_t>(-5, vspd / 4, 5);
+  // lcdDrawLine(LCD_W - 30, ((LCD_H / 2) + FH / 2) - 10 + vspd, LCD_W - 28, ((LCD_H / 2) + FH / 2) - 10 - vspd, SOLID, FORCE);
+  // lcdDrawLine(LCD_W - 30, ((LCD_H / 2) + FH / 2) -  9 + vspd, LCD_W - 28, ((LCD_H / 2) + FH / 2) -  9 - vspd, SOLID, FORCE);
 }
 
 void inavRun(event_t event) {
