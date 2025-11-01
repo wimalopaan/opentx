@@ -131,11 +131,11 @@ static tmr10ms_t titleShowWarnTimeout = 100;
 static constexpr uint8_t STRING_LEN_MAX = 15; // without trailing \0
 static event_t currentEvent;
 
-static constexpr uint8_t COL1          =  0;
-static constexpr uint8_t COL2          = 70;
-static constexpr uint8_t maxLineIndex  =  6;
-static constexpr uint8_t textYoffset   =  3;
-static constexpr uint8_t textSize      =  8;
+static constexpr uint8_t COL1           =  0;
+static constexpr uint8_t COL2           = 70;
+static constexpr uint8_t MAX_LINE_INDEX =  6;
+static constexpr uint8_t TEXT_YOFFSET   =  1;
+static constexpr uint8_t TEXT_SIZE      =  8;
 
 #define getTime           get_tmr10ms
 #define EVT_VIRTUAL_EXIT  EVT_KEY_BREAK(KEY_EXIT)
@@ -195,6 +195,10 @@ static void crossfireTelemetryPing() {
   crossfireTelemetryPush(CRSF_FRAMETYPE_DEVICE_PING, (uint8_t *) crsfPushData, 2);
 }
 
+/**
+ * Requires ExpressLRS V4+ firmware to work optimally,
+ * on older versions allocates space for all params.
+ */
 static void updateParamsOffset() {
   TRACE("updateParamsOffset %d", expectedParamsCount);
   uint16_t paramsSize = (expectedParamsCount + 1) * sizeof(Parameter); // + 1 for button (EXIT/DEVICES)
@@ -307,8 +311,8 @@ static void selectParam(int8_t step) {
 
   lineIndex = newLineIndex;
 
-  if (lineIndex > maxLineIndex + pageOffset) {
-    pageOffset = lineIndex - maxLineIndex;
+  if (lineIndex > MAX_LINE_INDEX + pageOffset) {
+    pageOffset = lineIndex - MAX_LINE_INDEX;
   } else if (lineIndex <= pageOffset) {
     pageOffset = lineIndex - 1;
   }
@@ -492,17 +496,19 @@ static void paramUnifiedDisplay(Parameter * param, uint8_t y, uint8_t attr) {
   char tmp[28];
   char * tmpString = tmp;
   if (param->type == TYPE_FOLDER) {
-    tmpString = strAppend(tmpString, "> ");
+    *tmpString++ = '>';
+    *tmpString++ = ' ';
     strAppend(tmpString, (char *)&buffer[param->offset], param->nameLength);
     textIndent = COL1;
   } else if (param->type == TYPE_DEVICES_FOLDER) {
     strAppend(tmpString, "> Other Devices");
     textIndent = COL1;
   } else { // CMD || DEVICE || BACK
-    tmpString = strAppend(tmpString, "[");
+    *tmpString++ = '[';
     if (param->type == TYPE_BACK) tmpString = strAppend(tmpString, "----BACK----");
     else tmpString = strAppend(tmpString, (char *)&buffer[param->offset], param->nameLength);
-    strAppend(tmpString, "]");
+    *tmpString++ = ']';
+    *tmpString = '\0';
   }
   lcdDrawText(textIndent, y, tmp, attr | BOLD);
 }
@@ -760,32 +766,32 @@ static void refreshNext() {
 static void lcd_title() {
   lcdClear();
 
-  const uint8_t barHeight = 9;
+  const uint8_t BAR_HEIGHT = 8;
   if (deviceIsELRS_TX && !titleShowWarn) {
     char tmp[16];
     char * tmpString = tmp;
     tmpString = strAppendUnsigned(tmpString, linkstat.bad);
     strAppendStringWithIndex(tmpString, "/", linkstat.good);
-    lcdDrawText(LCD_W - 11, 1, tmp, RIGHT);
-    lcdDrawVerticalLine(LCD_W - 10, 0, barHeight, SOLID, INVERS);
-    lcdDrawChar(LCD_W - 7, 1, (linkstat.flags & 1) ? 'C' : '-');
+    lcdDrawText(LCD_W - 11, 0, tmp, RIGHT);
+    lcdDrawVerticalLine(LCD_W - 10, 0, BAR_HEIGHT, SOLID, INVERS);
+    lcdDrawChar(LCD_W - 7, 0, (linkstat.flags & 1) ? 'C' : '-');
   }
 
-  lcdDrawFilledRect(0, 0, LCD_W, barHeight, SOLID);
+  lcdInvertLine(0);
   if (allParamsLoaded != 1 && expectedParamsCount > 0) {
-    luaLcdDrawGauge(0, 1, COL2, barHeight, paramId, expectedParamsCount);
+    luaLcdDrawGauge(0, 1, COL2, BAR_HEIGHT, paramId, expectedParamsCount);
   } else {
     const char* textToDisplay = titleShowWarn ? elrsFlagsInfo :
                             (allParamsLoaded == 1) ? (char *)&deviceName[0] : TR_EXTERNALRF; // "External TX...";
     uint8_t textLen = titleShowWarn ? ELRS_FLAGS_INFO_MAX_LEN : DEVICE_NAME_MAX_LEN;
-    lcdDrawSizedText(COL1, 1, textToDisplay, textLen, INVERS);
+    lcdDrawSizedText(COL1, 0, textToDisplay, textLen, INVERS);
   }
 }
 
 static void lcd_warn() {
-  lcdDrawText(COL1, textSize*2, "Error:");
-  lcdDrawText(COL1, textSize*3, elrsFlagsInfo);
-  lcdDrawText(LCD_W/2, textSize*5, TR_ENTER, BLINK + INVERS + CENTERED);
+ lcdDrawText(COL1, TEXT_SIZE * 2, "Error:");
+ lcdDrawText(COL1, TEXT_SIZE * 3, elrsFlagsInfo);
+ lcdDrawText(LCD_W/2, TEXT_SIZE * 5, TR_ENTER, BLINK + INVERS + CENTERED);
 }
 
 static void handleDevicePageEvent(event_t event) {
@@ -881,17 +887,17 @@ static void runDevicePage(event_t event) {
     lcd_warn();
   } else {
     Parameter * param;
-    for (uint32_t y = 1; y < maxLineIndex + 2; y++) {
+    for (uint32_t y = 1; y < MAX_LINE_INDEX + 2; y++) {
       if (pageOffset + y > allocatedParamsCount) break;
       param = getParam(pageOffset + y);
       if (param == nullptr) {
         break;
       } else if (param->nameLength > 0) {
-        uint8_t attr = (lineIndex == (pageOffset+y)) ? ((s_editMode && BLINK) + INVERS) : 0;
+        uint8_t attr = (lineIndex == (pageOffset + y)) ? ((s_editMode && BLINK) + INVERS) : 0;
         if (param->type < TYPE_FOLDER || param->type == TYPE_INFO) { // if not folder, command, or back
-          lcdDrawSizedText(COL1, y * textSize+textYoffset, (char *)&buffer[param->offset], param->nameLength, 0);
+          lcdDrawSizedText(COL1, y * TEXT_SIZE + TEXT_YOFFSET, (char *)&buffer[param->offset], param->nameLength, 0);
         }
-        getFunctions(param->type).display(param, y*textSize+textYoffset, attr);
+        getFunctions(param->type).display(param, y * TEXT_SIZE + TEXT_YOFFSET, attr);
       }
     }
   }
@@ -917,7 +923,6 @@ static void runPopupPage(event_t event) {
 
   uint8_t result = RESULT_NONE;
   if (paramPopup->status == STATUS_READY && paramPopup->lastStatus != STATUS_READY) { // stopped
-      popupCompat(event);
       reloadAllParam();
       paramPopup = nullptr;
   } else if (paramPopup->status == STATUS_CONFIRMATION_NEEDED) { // confirmation required
