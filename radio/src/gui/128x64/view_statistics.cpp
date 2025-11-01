@@ -225,7 +225,7 @@ void menuStatisticsDebug(event_t event)
   lcdInvertLastLine();
 }
 
-#if defined(STM32)
+#if defined(STM32) && !defined(PCBI6X)
 void menuStatisticsDebug2(event_t event)
 {
   TITLE(STR_MENUDEBUG);
