@@ -100,19 +100,8 @@ void menuStatisticsView(event_t event)
 #endif
 }
 
-  #define MENU_DEBUG_COL1_OFS          (11*FW-3)
-  #define MENU_DEBUG_COL2_OFS          (17*FW)
-  #define MENU_DEBUG_Y_CURRENT         (1*FH)
-  #define MENU_DEBUG_ROW1              (1*FH+1)
-  #define MENU_DEBUG_ROW2              (2*FH+1)
-  #define MENU_DEBUG_Y_MAH             (2*FH)
-  #define MENU_DEBUG_Y_CPU_TEMP        (3*FH)
-  #define MENU_DEBUG_Y_COPROC          (4*FH)
-  #define MENU_DEBUG_Y_MIXMAX          (5*FH)
-  #define MENU_DEBUG_Y_RTOS            (6*FH)
-  #define MENU_DEBUG_Y_USB             (2*FH)
-  #define MENU_DEBUG_Y_LUA             (3*FH)
-  #define MENU_DEBUG_Y_FREE_RAM        (4*FH)
+#define MENU_DEBUG_COL1_OFS          (11*FW-3)
+#define MENU_DEBUG_COL2_OFS          (17*FW)
 
 void menuStatisticsDebug(event_t event)
 {
@@ -154,72 +143,51 @@ void menuStatisticsDebug(event_t event)
       break;
   }
 
-#if defined(PCBI6X) // single debug screen
-//   lcdDrawTextAlignedLeft(MENU_DEBUG_ROW1, "Tlm RX Err");
-//   lcdDrawNumber(MENU_DEBUG_COL1_OFS + FW, MENU_DEBUG_ROW1, telemetryErrors, RIGHT);
-#endif
+  uint8_t y = FH + 1;
 
-#if defined(COPROCESSOR)
-  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_COPROC, STR_COPROC_TEMP);
-
-  if (Coproc_read==0) {
-    lcdDrawText(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_COPROC, "Co Proc NACK",INVERS);
-  }
-  else if (Coproc_read==0x81) {
-    lcdDrawText(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_COPROC, "Inst.TinyApp",INVERS);
-  }
-  else if (Coproc_read<3) {
-    lcdDrawText(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_COPROC, "Upgr.TinyApp",INVERS);
-  }
-  else {
-    drawValueWithUnit(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_COPROC, Coproc_temp, UNIT_TEMPERATURE, LEFT);
-    drawValueWithUnit(MENU_DEBUG_COL2_OFS, MENU_DEBUG_Y_COPROC, Coproc_maxtemp, UNIT_TEMPERATURE, LEFT);
-  }
+#if defined(PCBI6X) && defined(TLM_ERRORS) // single debug screen
+  lcdDrawTextAlignedLeft(y, "Tlm RX Err");
+  lcdDrawNumber(MENU_DEBUG_COL1_OFS + FW, y, telemetryErrors, RIGHT);
+  y += FH;
 #endif
 
 #if defined(PCBTARANIS) //|| defined(PCBI6X)
 #if !defined(SIMU) && defined(DEBUG)
-  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_USB, "Usb");
-  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_USB, charsWritten, LEFT);
-  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_USB, " ");
-  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_USB, APP_Rx_ptr_in, LEFT);
-  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_USB, " ");
-  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_USB, APP_Rx_ptr_out, LEFT);
-  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_USB, " ");
-  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_USB, usbWraps, LEFT);
+  lcdDrawTextAlignedLeft(y, "Usb");
+  lcdDrawNumber(MENU_DEBUG_COL1_OFS, y, charsWritten, LEFT);
+  lcdDrawText(lcdLastRightPos, y, " ");
+  lcdDrawNumber(lcdLastRightPos, y, APP_Rx_ptr_in, LEFT);
+  lcdDrawText(lcdLastRightPos, y, " ");
+  lcdDrawNumber(lcdLastRightPos, y, APP_Rx_ptr_out, LEFT);
+  lcdDrawText(lcdLastRightPos, y, " ");
+  lcdDrawNumber(lcdLastRightPos, y, usbWraps, LEFT);
+  y += FH;
 #endif
-  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_FREE_RAM, "Free Mem");
-  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_FREE_RAM, availableMemory(), LEFT);
-  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_FREE_RAM, "b");
-#if defined(LUA)
-  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_LUA, "Lua scripts");
-  lcdDrawText(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_LUA+1, "[D]", SMLSIZE);
-  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_LUA, 10*maxLuaDuration, LEFT);
-  lcdDrawText(lcdLastRightPos+2, MENU_DEBUG_Y_LUA+1, "[I]", SMLSIZE);
-  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_LUA, 10*maxLuaInterval, LEFT);
-#endif // LUA
+  lcdDrawTextAlignedLeft(y, "Free Mem");
+  lcdDrawNumber(MENU_DEBUG_COL1_OFS, y, availableMemory(), LEFT);
+  lcdDrawText(lcdLastRightPos, y, "b");
+  y += FH;
 #endif // PCBTARANIS
 
-//  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_COPROC, "Stack");
-//  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_COPROC, stackAvailable(), LEFT);
-//  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_COPROC, "/");
-//  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_COPROC, stackSize() * 4, LEFT);
+//  lcdDrawTextAlignedLeft(y, "Stack");
+//  lcdDrawNumber(MENU_DEBUG_COL1_OFS, y, stackAvailable(), LEFT);
+//  lcdDrawText(lcdLastRightPos, y, "/");
+//  lcdDrawNumber(lcdLastRightPos, y, stackSize() * 4, LEFT);
+//  y += FH;
 
-//  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_COPROC, "USB Conn");
-//  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_COPROC, ((GPIOA->IDR & GPIO_IDR_11) ? 1 : 0), LEFT);
+//  lcdDrawTextAlignedLeft(y, "USB Conn");
+//  lcdDrawNumber(MENU_DEBUG_COL1_OFS, y, ((GPIOA->IDR & GPIO_IDR_11) ? 1 : 0), LEFT);
+//  y += FH;
 
-  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_MIXMAX, STR_TMIXMAXMS);
-  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_MIXMAX, DURATION_MS_PREC2(maxMixerDuration), PREC2|LEFT);
-  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_MIXMAX, "ms");
+  lcdDrawTextAlignedLeft(y, STR_TMIXMAXMS);
+  lcdDrawNumber(MENU_DEBUG_COL1_OFS, y, DURATION_MS_PREC2(maxMixerDuration), PREC2|LEFT);
+  lcdDrawText(lcdLastRightPos, y, "ms");
+  y += FH;
 
-  lcdDrawTextAlignedLeft(MENU_DEBUG_Y_RTOS, STR_FREESTACKMINB);
-  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_Y_RTOS, menusStack.available(), LEFT);
-  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_RTOS, "/");
-  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_RTOS, mixerStack.available(), LEFT);
-#if defined(AUDIO)
-  lcdDrawText(lcdLastRightPos, MENU_DEBUG_Y_RTOS, "/");
-  lcdDrawNumber(lcdLastRightPos, MENU_DEBUG_Y_RTOS, audioStack.available(), LEFT);
-#endif
+  lcdDrawTextAlignedLeft(y, STR_FREESTACKMINB);
+  lcdDrawNumber(MENU_DEBUG_COL1_OFS, y, menusStack.available(), LEFT);
+  lcdDrawText(lcdLastRightPos, y, "/");
+  lcdDrawNumber(lcdLastRightPos, y, mixerStack.available(), LEFT);
 
   lcdDrawText(4*FW, 7*FH+1, STR_MENUTORESET);
   lcdInvertLastLine();
@@ -255,14 +223,6 @@ void menuStatisticsDebug2(event_t event)
       break;
   }
 
-//   lcdDrawTextAlignedLeft(MENU_DEBUG_ROW1, "Tlm RX Err");
-//   lcdDrawNumber(MENU_DEBUG_COL1_OFS + FW, MENU_DEBUG_ROW1, telemetryErrors, RIGHT);
-#if defined(BLUETOOTH)
-#if defined(PCBX7)
-  lcdDrawTextAlignedLeft(MENU_DEBUG_ROW2, "BT status");
-  lcdDrawNumber(MENU_DEBUG_COL1_OFS, MENU_DEBUG_ROW2, IS_BLUETOOTH_CHIP_PRESENT(), RIGHT);
-#endif
-#endif
   lcdDrawText(4*FW, 7*FH+1, STR_MENUTORESET);
   lcdInvertLastLine();
 }
