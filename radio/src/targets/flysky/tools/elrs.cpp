@@ -789,9 +789,8 @@ static void lcd_title() {
 }
 
 static void lcd_warn() {
- lcdDrawText(COL1, TEXT_SIZE * 2, "Error:");
- lcdDrawText(COL1, TEXT_SIZE * 3, elrsFlagsInfo);
- lcdDrawText(LCD_W/2, TEXT_SIZE * 5, TR_ENTER, BLINK + INVERS + CENTERED);
+  showMessageBox(elrsFlagsInfo);
+  lcdDrawText(LCD_W/2 - 2 * FW, WARNING_LINE_Y + 4*FH+2, TR_ENTER);
 }
 
 static void handleDevicePageEvent(event_t event) {
