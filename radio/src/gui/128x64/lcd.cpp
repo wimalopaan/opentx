@@ -34,80 +34,81 @@ coord_t lcdLastLeftPos;
 void lcdPutPattern(coord_t x, coord_t y, const uint8_t * pattern, uint8_t width, uint8_t height, LcdFlags flags)
 {
   bool blink = false;
-  bool inv = false;
+  bool inv = (flags & INVERS) != 0;
   if (flags & BLINK) {
     if (BLINK_ON_PHASE) {
-      if (flags & INVERS)
+      if (inv) {
         inv = true;
-      else {
+      } else {
         blink = true;
       }
+    } else {
+      inv = false;
     }
   }
-  else if (flags & INVERS) {
-    inv = true;
-  }
 
-  uint8_t lines = (height+7)/8;
+  uint8_t lines = (height + 7) / 8;
   assert(lines <= 5);
 
-  for (int8_t i=0; i<width+2; i++) {
-    if (x<LCD_W) {
-      uint8_t b[5] = { 0 };
-      if (i==0) {
-        if (x==0 || !inv) {
-          lcdNextPos++;
-          continue;
-        }
-        else {
-          // we need to work on the previous x when INVERS
-          x--;
-        }
-      }
-      else if (i<=width) {
-        uint8_t skip = true;
-        for (uint32_t j=0; j<lines; j++) {
-          b[j] = *(pattern++); /*top byte*/
-          if (b[j] != 0xff) {
-            skip = false;
-          }
-        }
-        if (skip) {
-          if (flags & FIXEDWIDTH) {
-            for (uint32_t j=0; j<lines; j++) {
-              b[j] = 0;
-            }
-          }
-          else {
-            continue;
-          }
-        }
-        if ((flags & CONDENSED) && i==2) {
-          /*condense the letter by skipping column 3 */
-          continue;
-        }
-      }
+  for (int8_t i = 0; i < width + 2; i++) {
+    if (x >= LCD_W) {
+      x++;
+      lcdNextPos++;
+      continue;
+    }
 
-      for (int8_t j=-1; j<=height; j++) {
-        bool plot;
-        if (j < 0 || ((j == height) && !(FONTSIZE(flags) == SMLSIZE))) {
-          plot = false;
-          if (height >= 12) continue;
-          if (j<0 && !inv) continue;
-          if (y+j < 0) continue;
+    uint8_t b[5] = {0};
+    if (i == 0) {
+      if (x == 0 || !inv) {
+        lcdNextPos++;
+        continue;
+      } else {
+        // we need to work on the previous x when INVERS
+        x--;
+      }
+    } else if (i <= width) {
+      bool skip = true;
+      for (uint32_t j = 0; j < lines; j++) {
+        b[j] = *(pattern++); /*top byte*/
+        if (b[j] != 0xff) {
+          skip = false;
+        }
+      }
+      if (skip) {
+        if (flags & FIXEDWIDTH) {
+          for (uint32_t j=0; j<lines; j++) {
+            b[j] = 0;
+          }
         }
         else {
-          uint8_t line = (j / 8);
-          uint8_t pixel = (j % 8);
-          plot = b[line] & (1 << pixel);
+          continue;
         }
-        if (inv) plot = !plot;
-        if (!blink) {
-          if (flags & VERTICAL)
-            lcdDrawPoint(y+j, LCD_H-x, plot ? FORCE : ERASE);
-          else
-            lcdDrawPoint(x, y+j, plot ? FORCE : ERASE);
-        }
+      }
+      if ((flags & CONDENSED) && i == 2) {
+        /*condense the letter by skipping column 3 */
+        continue;
+      }
+    }
+
+    for (int8_t j=-1; j<=height; j++) {
+      bool plot;
+      if (j < 0 || ((j == height) && !(FONTSIZE(flags) == SMLSIZE))) {
+        plot = false;
+        if (height >= 12) continue;
+        if (j<0 && !inv) continue;
+        if (y+j < 0) continue;
+      }
+      else {
+        uint8_t line = (j / 8);
+        uint8_t pixel = (j % 8);
+        plot = b[line] & (1 << pixel);
+      }
+      if (inv) plot = !plot;
+      if (!blink) {
+        if (flags & VERTICAL)
+          lcdDrawPoint(y+j, LCD_H-x, plot ? FORCE : ERASE);
+        else
+          lcdDrawPoint(x, y+j, plot ? FORCE : ERASE);
       }
     }
     x++;
