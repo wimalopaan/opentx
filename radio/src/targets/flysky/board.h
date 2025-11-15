@@ -40,6 +40,7 @@ extern "C" {
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_crs.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_rcc.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_gpio.h"
+#include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_iwdg.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_tim.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_adc.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_spi.h"
@@ -286,13 +287,13 @@ uint32_t readTrims(void);
 #define NUM_DUMMY_ANAS                 0
 
 // WDT driver
-#define WDTO_500MS                      500
+#define WDG_DURATION                    500 /*ms*/
 #if defined(WATCHDOG_DISABLED) || defined(SIMU)
-  #define wdt_enable(x)
-  #define wdt_reset()
+  #define WDG_ENABLE(x)
+  #define WDG_RESET()
 #else
-  #define wdt_enable(x)                 watchdogInit(x)
-  #define wdt_reset()                   IWDG->KR = 0xAAAA
+  #define WDG_ENABLE(x)                 watchdogInit(x)
+  #define WDG_RESET()                   IWDG->KR = 0xAAAA
 #endif
 #define wdt_disable()
 void watchdogInit(unsigned int duration);
@@ -349,11 +350,11 @@ extern "C" {
 
 // Power driver
 #define SOFT_PWR_CTRL
-void pwrInit(void);
-uint32_t pwrCheck(void);
-void pwrOn(void);
-void pwrOff(void);
-uint32_t pwrPressed(void);
+void pwrInit();
+uint32_t pwrCheck();
+void pwrOn();
+void pwrOff();
+bool pwrPressed();
 #if defined(PWR_PRESS_BUTTON)
 uint32_t pwrPressedDuration(void);
 #endif

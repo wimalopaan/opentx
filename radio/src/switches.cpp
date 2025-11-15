@@ -728,7 +728,7 @@ void checkSwitches()
 
     checkBacklight();
 
-    wdt_reset();
+    WDG_RESET();
 
     RTOS_WAIT_MS(10);
   }

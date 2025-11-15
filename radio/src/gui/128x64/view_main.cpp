@@ -278,7 +278,7 @@ void onMainViewMenu(const char *result)
   else if (result == STR_STATISTICS) {
     chainMenu(menuStatisticsView);
   }
-#if !defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_SWITCH) && !defined(PWR_BUTTON_EMULATED)
   else if (result == STR_SAVEALLDATA) {
     watchdogSuspend(200); // 2s
     saveAllData();
@@ -333,7 +333,7 @@ void menuMainView(event_t event)
       }
 #endif
 
-#if !defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_SWITCH) && !defined(PWR_BUTTON_EMULATED)
       POPUP_MENU_ADD_ITEM(STR_SAVEALLDATA);
 #endif
       POPUP_MENU_ADD_ITEM(STR_RESET_SUBMENU);
@@ -560,7 +560,7 @@ void menuMainView(event_t event)
       lcdDrawChar(REBOOT_X, 1, '!', INVERS | BLINK);
     }
 
-#if !defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_SWITCH) && !defined(PWR_BUTTON_EMULATED)
     // Add square icon in case of pending or ongoing eeprom write
     if (storageDirtyMsk || eepromIsWriting()) {
       lcdDrawRect(REBOOT_X + 2, 0 * FH, 4, 4);

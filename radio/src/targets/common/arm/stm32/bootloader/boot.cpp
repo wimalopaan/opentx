@@ -216,7 +216,7 @@ int main() {
 #endif
   uint32_t nameCount = 0;
 
-  wdt_reset();
+  WDG_RESET();
 #if defined(PCBI6X)
   RCC_AHBPeriphClockCmd(RCC_AHB1_LIST, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1_LIST, ENABLE);
@@ -238,7 +238,7 @@ int main() {
 
   // wait for inputs to stabilize
   for (uint32_t i = 0; i < 50000; i += 1) {
-    wdt_reset();
+    WDG_RESET();
   }
 
   // LHR & RHL trims not pressed simultanously
@@ -278,12 +278,12 @@ int main() {
 #if defined(PWR_BUTTON_PRESS)
   // wait until power button is released
   while (pwrPressed()) {
-    wdt_reset();
+    WDG_RESET();
   }
 #endif
 
   for (;;) {
-    wdt_reset();
+    WDG_RESET();
 
     if (Tenms) {
       Tenms = 0;

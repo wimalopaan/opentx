@@ -19,6 +19,7 @@
  */
 
 #include "opentx.h"
+#include "board.h"
 
 #if defined(__cplusplus) && !defined(SIMU)
 extern "C"
@@ -81,9 +82,9 @@ void SystemBootloaderJump() {
 
 void watchdogInit(unsigned int duration)
 {
-  IWDG->KR = 0x5555;    // Unlock registers
-  IWDG->PR = 3;         // Divide by 32 => 1kHz clock
-  IWDG->KR = 0x5555;    // Unlock registers
+  IWDG->KR = IWDG_WriteAccess_Enable;
+  IWDG->PR = IWDG_Prescaler_32;         // Divide by 32 => 1kHz clock
+  IWDG->KR = IWDG_WriteAccess_Enable;
   IWDG->RLR = duration; // 1.5 seconds nominal
   IWDG->KR = 0xAAAA;    // reload
   IWDG->KR = 0xCCCC;    // start
@@ -160,13 +161,14 @@ void boardInit()
 
 void boardOff()
 {
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
+
   BACKLIGHT_DISABLE();
 
-  while (pwrPressed())
-  {
-    wdt_reset();
+  while (pwrPressed()) {
+    WDG_RESET();
   }
+
   lcdOff();
   SysTick->CTRL = 0; // turn off systick
   pwrOff();

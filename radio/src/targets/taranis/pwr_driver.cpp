@@ -79,7 +79,7 @@ void pwrOff()
   __disable_irq();
 
   while (1) {
-    wdt_reset();
+    WDG_RESET();
 #if defined(PWR_BUTTON_PRESS)
     // X9E/X7 needs watchdog reset because CPU is still running while
     // the power key is held pressed by the user.
@@ -100,7 +100,7 @@ void pwrOff()
   // this function must not return!
 }
 
-uint32_t pwrPressed()
+bool pwrPressed()
 {
   return GPIO_ReadInputDataBit(PWR_SWITCH_GPIO, PWR_SWITCH_GPIO_PIN) == Bit_RESET;
 }

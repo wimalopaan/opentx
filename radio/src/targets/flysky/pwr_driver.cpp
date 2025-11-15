@@ -55,7 +55,7 @@ void pwrOff() {
  * i6X dont have a dedicated power trigger so use CANCEL (KEY_EXIT) to emulate it
  * or on SWITCH mode ignore it completelly, saving data is done in main screen popup.
  */
-uint32_t pwrPressed() {
+bool pwrPressed() {
 #if defined(PWR_BUTTON_PRESS)
   static tmr10ms_t pwr_trigger_time = 0;
 

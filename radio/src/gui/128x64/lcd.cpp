@@ -1056,7 +1056,7 @@ void lcdDrawHorizontalLine(coord_t x, coord_t y, coord_t w, uint8_t pat, LcdFlag
   }
 }
 
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
 void drawShutdownAnimation(uint32_t index, const char * message)
 {
   lcdClear();

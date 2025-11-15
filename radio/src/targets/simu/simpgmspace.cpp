@@ -599,7 +599,7 @@ void pwrOff()
 {
 }
 
-uint32_t pwrPressed()
+bool pwrPressed()
 {
   // TODO: simulate power button
 #if defined(PWR_SWITCH_GPIO)  // STM32

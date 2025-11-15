@@ -394,13 +394,13 @@ void checkRotaryEncoder(void);
 #endif
 
 // WDT driver
-#define WDTO_500MS                      500
+#define WDG_DURATION                    500 /*ms*/
 #if defined(WATCHDOG_DISABLED) || defined(SIMU)
-  #define wdt_enable(x)
-  #define wdt_reset()
+  #define WDG_ENABLE(x)
+  #define WDG_RESET()
 #else
-  #define wdt_enable(x)                 watchdogInit(x)
-  #define wdt_reset()                   IWDG->KR = 0xAAAA
+  #define WDG_ENABLE(x)                 watchdogInit(x)
+  #define WDG_RESET()                   IWDG->KR = 0xAAAA
 #endif
 #define wdt_disable()
 void watchdogInit(unsigned int duration);
@@ -515,7 +515,7 @@ void pwrInit(void);
 uint32_t pwrCheck(void);
 void pwrOn(void);
 void pwrOff(void);
-uint32_t pwrPressed(void);
+bool pwrPressed(void);
 #if defined(PWR_BUTTON_PRESS)
 uint32_t pwrPressedDuration(void);
 #endif
