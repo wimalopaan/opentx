@@ -295,7 +295,6 @@ uint32_t readTrims(void);
   #define WDG_ENABLE(x)                 watchdogInit(x)
   #define WDG_RESET()                   IWDG->KR = 0xAAAA
 #endif
-#define wdt_disable()
 void watchdogInit(unsigned int duration);
 #define WAS_RESET_BY_WATCHDOG()               (RCC->CSR & (RCC_CSR_IWDGRSTF))
 #define WAS_RESET_BY_SOFTWARE()               (RCC->CSR & RCC_CSR_SFTRSTF)

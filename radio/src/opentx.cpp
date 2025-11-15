@@ -1834,8 +1834,6 @@ int main()
   g_eeGeneral.contrast = LCD_CONTRAST_DEFAULT;
 #endif
 
-  wdt_disable();
-
   boardInit();
 
 #if defined(PCBX7)
