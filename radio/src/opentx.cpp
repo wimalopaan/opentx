@@ -448,7 +448,7 @@ void modelDefault(uint8_t id) {
 #endif
 
 #if defined(PCBXLITE)
-  g_model.trainerMode = TRAINER_MODE_MASTER_BLUETOOTH;
+  g_model.trainerData.mode = TRAINER_MODE_MASTER_BLUETOOTH;
 #endif
 
 #if defined(FLIGHT_MODES) && defined(GVARS)
@@ -1804,7 +1804,6 @@ void opentxInit()
     opentxStart();
   }
 
-  // TODO Horus does not need this
   if (!g_eeGeneral.unexpectedShutdown) {
     g_eeGeneral.unexpectedShutdown = 1;
     storageDirty(EE_GENERAL);
