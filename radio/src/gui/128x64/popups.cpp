@@ -114,3 +114,78 @@ void runPopupWarning(event_t event)
       break;
   }
 }
+
+void POPUP_WARNING(const char * s)
+{
+  // killAllEvents();
+  warningText = s;
+  warningInfoText = nullptr;
+  warningType = WARNING_TYPE_ASTERISK;
+  popupFunc = runPopupWarning;
+}
+
+void POPUP_CONFIRMATION(const char * s/*, PopupMenuHandler handler*/)
+{
+  if (s != warningText) {
+    // killAllEvents();
+    warningText = s;
+    warningInfoText = nullptr;
+    warningType = WARNING_TYPE_CONFIRM;
+    popupFunc = runPopupWarning;
+    // popupMenuHandler = handler;
+  }
+}
+
+void POPUP_INPUT(const char * s, PopupFunc func)
+{
+  // killAllEvents();
+  warningText = s;
+  warningInfoText = nullptr;
+  warningType = WARNING_TYPE_INPUT;
+  popupFunc = func;
+}
+
+void SET_WARNING_INFO(const char * info, uint8_t length, uint8_t flags)
+{
+  warningInfoText = info;
+  warningInfoLength = length;
+  warningInfoFlags = flags;
+}
+
+bool isEventCaughtByPopup()
+{
+  if (warningText /*&& warningType != WARNING_TYPE_WAIT*/)
+    return true;
+
+  if (popupMenuItemsCount > 0)
+    return true;
+
+  return false;
+}
+
+void POPUP_MENU_ADD_ITEM(const char * s)
+{
+  popupMenuOffsetType = MENU_OFFSET_INTERNAL;
+  if (popupMenuItemsCount < POPUP_MENU_MAX_LINES) {
+    popupMenuItems[popupMenuItemsCount++] = s;
+  }
+}
+
+void POPUP_MENU_SELECT_ITEM(uint8_t index)
+{
+  popupMenuSelectedItem =  (index > 0 ? (index < popupMenuItemsCount ? index : popupMenuItemsCount) : 0);
+}
+
+void POPUP_MENU_TITLE(const char * s)
+{
+  popupMenuTitle = s;
+}
+
+void POPUP_MENU_START(PopupMenuHandler handler)
+{
+  if (handler != popupMenuHandler) {
+    // killAllEvents();
+    AUDIO_KEY_PRESS();
+    popupMenuHandler = handler;
+  }
+}

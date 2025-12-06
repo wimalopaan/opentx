@@ -227,7 +227,7 @@ void boardOff()
 
 #if defined(PWR_BUTTON_PRESS)
   while (pwrPressed()) {
-    wdt_reset();
+    WDG_RESET();
   }
 #endif
 

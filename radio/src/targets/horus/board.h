@@ -97,7 +97,7 @@ extern "C" {
 
 extern uint16_t sessionTimer;
 
-#define SLAVE_MODE()                   (g_model.trainerMode == TRAINER_MODE_SLAVE)
+#define SLAVE_MODE()                   (g_model.trainerData.mode == TRAINER_MODE_SLAVE)
 
 #if defined(PCBX10)
   #define TRAINER_CONNECTED()            (GPIO_ReadInputDataBit(TRAINER_DETECT_GPIO, TRAINER_DETECT_GPIO_PIN) == Bit_SET)
@@ -302,7 +302,7 @@ uint32_t readTrims(void);
 void checkRotaryEncoder(void);
 
 // WDT driver
-#define WDTO_500MS                              500
+#define WDG_DURATION                              500
 extern uint32_t powerupReason;
 
 #define SHUTDOWN_REQUEST                        0xDEADBEEF
@@ -310,21 +310,20 @@ extern uint32_t powerupReason;
 #define DIRTY_SHUTDOWN                          0xCAFEDEAD
 #define NORMAL_POWER_OFF                        ~DIRTY_SHUTDOWN
 
-#define wdt_disable()
 void watchdogInit(unsigned int duration);
 #if defined(SIMU)
   #define WAS_RESET_BY_WATCHDOG()               (false)
   #define WAS_RESET_BY_SOFTWARE()               (false)
   #define WAS_RESET_BY_WATCHDOG_OR_SOFTWARE()   (false)
-  #define wdt_enable(x)
-  #define wdt_reset()
+  #define WDG_ENABLE(x)
+  #define WDG_RESET()
 #else
   #if defined(WATCHDOG_DISABLED)
-    #define wdt_enable(x)
-    #define wdt_reset()
+    #define WDG_ENABLE(x)
+    #define WDG_RESET()
   #else
-    #define wdt_enable(x)                       watchdogInit(x)
-    #define wdt_reset()                         IWDG->KR = 0xAAAA
+    #define WDG_ENABLE(x)                       watchdogInit(x)
+    #define WDG_RESET()                         IWDG->KR = 0xAAAA
   #endif
   #define WAS_RESET_BY_WATCHDOG()               (RCC->CSR & (RCC_CSR_WDGRSTF | RCC_CSR_WWDGRSTF))
   #define WAS_RESET_BY_SOFTWARE()               (RCC->CSR & RCC_CSR_SFTRSTF)
@@ -438,7 +437,7 @@ uint32_t pwrCheck(void);
 void pwrOn(void);
 void pwrOff(void);
 void pwrResetHandler(void);
-uint32_t pwrPressed(void);
+bool pwrPressed(void);
 uint32_t pwrPressedDuration(void);
 #if defined(SIMU) || defined(NO_UNEXPECTED_SHUTDOWN)
   #define UNEXPECTED_SHUTDOWN()                 (false)

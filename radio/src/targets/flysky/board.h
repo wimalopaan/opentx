@@ -40,6 +40,7 @@ extern "C" {
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_crs.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_rcc.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_gpio.h"
+#include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_iwdg.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_tim.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_adc.h"
 #include "STM32F0xx_StdPeriph_Lib_V1.5.0/Libraries/STM32F0xx_StdPeriph_Driver/inc/stm32f0xx_spi.h"
@@ -122,6 +123,15 @@ void delay_ms(uint32_t ms);
 }
 #endif
 
+#define INIT_KEYS_PINS(GPIO) \
+  GPIO_InitStructure.GPIO_Pin = KEYS_ ## GPIO ## _PINS; \
+  GPIO_Init(GPIO, &GPIO_InitStructure)
+
+#define SET_KEYS_PINS_HIGH(GPIO) \
+  GPIO_InitStructure.GPIO_Pin = KEYS_ ## GPIO ## _PINS; \
+  GPIO_Init(GPIO, &GPIO_InitStructure); \
+  GPIO_SetBits(GPIO, KEYS_ ## GPIO ## _PINS)
+
 // CPU Unique ID
 #define LEN_CPU_UID                     (3*8+2)
 void getCPUUniqueID(char * s);
@@ -190,7 +200,7 @@ uint32_t isBootloaderStart(const uint8_t * buffer);
 void extmoduleSendNextFrame();
 
 // Trainer driver
-#define SLAVE_MODE()                    (false) // (g_model.trainerMode == TRAINER_MODE_SLAVE)
+#define SLAVE_MODE()                    (false) // (g_model.trainerData.mode == TRAINER_MODE_SLAVE)
 #define TRAINER_CONNECTED()           (true)
 
 #if defined(TRAINER_GPIO)
@@ -246,6 +256,8 @@ enum EnumSwitches
   SW_SB,
   SW_SC,
   SW_SD,
+  SW_SE,
+  SW_SF,
   NUM_SWITCHES
 };
 
@@ -263,10 +275,17 @@ enum EnumSwitchesPositions
   SW_SD0,
   SW_SD1,
   SW_SD2,
+  SW_SE0,
+  SW_SE1,
+  SW_SE2,
+  SW_SF0,
+  SW_SF1,
+  SW_SF2
 };
+
 #define IS_3POS(x)            ((x) == SW_SC)
 #define IS_TOGGLE(x)					false
-#define NUM_SWITCHES          4
+#define NUM_SWITCHES          6
 
 void keysInit(void);
 uint8_t keyState(uint8_t index);
@@ -286,15 +305,14 @@ uint32_t readTrims(void);
 #define NUM_DUMMY_ANAS                 0
 
 // WDT driver
-#define WDTO_500MS                      500
+#define WDG_DURATION                    500 /*ms*/
 #if defined(WATCHDOG_DISABLED) || defined(SIMU)
-  #define wdt_enable(x)
-  #define wdt_reset()
+  #define WDG_ENABLE(x)
+  #define WDG_RESET()
 #else
-  #define wdt_enable(x)                 watchdogInit(x)
-  #define wdt_reset()                   IWDG->KR = 0xAAAA
+  #define WDG_ENABLE(x)                 watchdogInit(x)
+  #define WDG_RESET()                   IWDG->KR = 0xAAAA
 #endif
-#define wdt_disable()
 void watchdogInit(unsigned int duration);
 #define WAS_RESET_BY_WATCHDOG()               (RCC->CSR & (RCC_CSR_IWDGRSTF))
 #define WAS_RESET_BY_SOFTWARE()               (RCC->CSR & RCC_CSR_SFTRSTF)
@@ -349,11 +367,11 @@ extern "C" {
 
 // Power driver
 #define SOFT_PWR_CTRL
-void pwrInit(void);
-uint32_t pwrCheck(void);
-void pwrOn(void);
-void pwrOff(void);
-uint32_t pwrPressed(void);
+void pwrInit();
+uint32_t pwrCheck();
+void pwrOn();
+void pwrOff();
+bool pwrPressed();
 #if defined(PWR_PRESS_BUTTON)
 uint32_t pwrPressedDuration(void);
 #endif

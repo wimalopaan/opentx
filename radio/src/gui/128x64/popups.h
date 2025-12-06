@@ -90,91 +90,22 @@ enum
   #define SET_WARNING_INFO(...)
 #else
   #define DISPLAY_WARNING(evt)              (*popupFunc)(evt)
-  // #define POPUP_CONFIRMATION(s)        (warningText = s, warningType = WARNING_TYPE_CONFIRM, warningInfoText = 0, popupFunc = runPopupWarning)
-  // #define POPUP_INPUT(s, func)         (warningText = s, popupFunc = func)
+  extern void POPUP_INFORMATION(const char * s);
+  extern void POPUP_WARNING(const char * message/*, const char * info = nullptr, bool waitForClose = true*/);
+  extern void SET_WARNING_INFO(const char * info, uint8_t length, uint8_t flags);
+  extern void POPUP_CONFIRMATION(const char * s/*, PopupMenuHandler handler*/);
+  extern void POPUP_INPUT(const char * s, PopupFunc func);
+  extern void POPUP_MENU_ADD_ITEM(const char * s);
+  extern bool isEventCaughtByPopup();
+  extern void POPUP_MENU_TITLE(const char * s);
+  extern void POPUP_MENU_START(PopupMenuHandler handler);
 #endif
 
-
-  inline void POPUP_WARNING(const char * s)
-  {
-    // killAllEvents();
-    warningText = s;
-    warningInfoText = nullptr;
-    warningType = WARNING_TYPE_ASTERISK;
-    popupFunc = runPopupWarning;
-  }
-
- inline void POPUP_CONFIRMATION(const char * s/*, PopupMenuHandler handler*/)
-  {
-    if (s != warningText) {
-      // killAllEvents();
-      warningText = s;
-      warningInfoText = nullptr;
-      warningType = WARNING_TYPE_CONFIRM;
-      popupFunc = runPopupWarning;
-      // popupMenuHandler = handler;
-    }
-  }
-
-  inline void POPUP_INPUT(const char * s, PopupFunc func)
-  {
-    // killAllEvents();
-    warningText = s;
-    warningInfoText = nullptr;
-    warningType = WARNING_TYPE_INPUT;
-    popupFunc = func;
-  }
-
-  inline void SET_WARNING_INFO(const char * info, uint8_t length, uint8_t flags)
-  {
-    warningInfoText = info;
-    warningInfoLength = length;
-    warningInfoFlags = flags;
-  }
-
-  inline bool isEventCaughtByPopup()
-  {
-    if (warningText /*&& warningType != WARNING_TYPE_WAIT*/)
-      return true;
-
-    if (popupMenuItemsCount > 0)
-      return true;
-
-    return false;
-  }
-
-  inline void POPUP_MENU_ADD_ITEM(const char * s)
-  {
-    popupMenuOffsetType = MENU_OFFSET_INTERNAL;
-    if (popupMenuItemsCount < POPUP_MENU_MAX_LINES) {
-      popupMenuItems[popupMenuItemsCount++] = s;
-    }
-  }
 
 #if defined(SDCARD)
   #define POPUP_MENU_ADD_SD_ITEM(s)    POPUP_MENU_ADD_ITEM(s)
 #else
   #define POPUP_MENU_ADD_SD_ITEM(s)
 #endif
-
-inline void POPUP_MENU_SELECT_ITEM(uint8_t index)
-{
-  popupMenuSelectedItem =  (index > 0 ? (index < popupMenuItemsCount ? index : popupMenuItemsCount) : 0);
-}
-
-inline void POPUP_MENU_TITLE(const char * s)
-{
-  popupMenuTitle = s;
-}
-
-inline void POPUP_MENU_START(PopupMenuHandler handler)
-{
-  if (handler != popupMenuHandler) {
-    // killAllEvents();
-    AUDIO_KEY_PRESS();
-    popupMenuHandler = handler;
-  }
-}
-
 
 #endif // _POPUPS_H_

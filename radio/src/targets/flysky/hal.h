@@ -41,13 +41,19 @@
 #define KEYS_COLUMNS_PINS               (KEYS_MATRIX_R1_PIN | KEYS_MATRIX_R2_PIN | KEYS_MATRIX_R3_PIN)
 #define KEYS_LINES_PINS                 (KEYS_MATRIX_L1_PIN | KEYS_MATRIX_L2_PIN | KEYS_MATRIX_L3_PIN | KEYS_MATRIX_L4_PIN)
 
-//buggy implementation
-
 #define KEYS_GPIO_PIN_RIGHT 1024
 #define KEYS_GPIO_PIN_LEFT 1024
 #define KEYS_GPIO_PIN_UP 1024
 #define KEYS_GPIO_PIN_DOWN 1024
 
+
+// Switches
+#define SWITCHES_GPIO_REG_E           GPIOC->IDR
+#define SWITCHES_GPIO_PIN_E           GPIO_Pin_12 // PC.12
+#define SWITCHES_GPIO_REG_F           GPIOC->IDR
+#define SWITCHES_GPIO_PIN_F           GPIO_Pin_15 // PC.15
+
+#define KEYS_GPIOC_PINS               (SWITCHES_GPIO_PIN_E | SWITCHES_GPIO_PIN_F)
 
 // LCD driver
 #define LCD_RCC_AHB1Periph            (RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOD | RCC_AHBPeriph_GPIOE)
@@ -123,8 +129,8 @@
 #define ADC_CHANNEL_POT2              ADC_Channel_8
 #define ADC_CHANNEL_BATT              ADC_Channel_10
 
-// PWR and LED driver
-#define PWR_RCC_AHB1Periph              (RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOE | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOC | RCC_AHBPeriph_GPIOD | RCC_AHBPeriph_GPIOE)
+// Power driver
+#define PWR_RCC_AHB1Periph             0
 /*
 #if defined(PCBX9E) || defined(PCBX7) || defined(PCBXLITE)
 #define PWR_PRESS_BUTTON
@@ -333,7 +339,8 @@ void ActionAFHDS2A();
   #define BACKLIGHT_CCMR2               TIM_CCMR2_OC4M_1 | TIM_CCMR2_OC4M_2 // Channel4, PWM
   #define BACKLIGHT_CCER                TIM_CCER_CC4P | TIM_CCER_CC4E
   #define BACKLIGHT_COUNTER_REGISTER    BACKLIGHT_TIMER->CCR4
-  // std, fixed brightness
+
+  // Standard, fixed brightness
   #define BACKLIGHT_STD_RCC_APB1Periph      0
   #define BACKLIGHT_STD_RCC_AHB1Periph      RCC_AHBPeriph_GPIOF
   #define BACKLIGHT_STD_GPIO                GPIOF
@@ -375,8 +382,8 @@ void ActionAFHDS2A();
 #define MIXER_SCHEDULER_TIMER_IRQHandler     TIM17_IRQHandler
 
 //all used RCC goes here
-#define RCC_AHB1_LIST                   (I2C_RCC_AHB1Periph | BACKLIGHT_STD_RCC_APB1Periph | BACKLIGHT_RCC_AHB1Periph | LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | BUZZER_RCC_AHBPeriph \
-                                         | EXTMODULE_RCC_AHBPeriph | CRC_RCC_AHB1Periph | TELEMETRY_RCC_AHB1Periph | AUX_SERIAL_RCC_AHB1Periph \
+#define RCC_AHB1_LIST                   (I2C_RCC_AHB1Periph | BACKLIGHT_STD_RCC_AHB1Periph | BACKLIGHT_RCC_AHB1Periph | LCD_RCC_AHB1Periph | KEYS_RCC_AHB1Periph | BUZZER_RCC_AHBPeriph \
+                                         | PWR_RCC_AHB1Periph | EXTMODULE_RCC_AHBPeriph | CRC_RCC_AHB1Periph | TELEMETRY_RCC_AHB1Periph | AUX_SERIAL_RCC_AHB1Periph \
                                          | AUX3_SERIAL_RCC_AHB1Periph | AUX4_SERIAL_RCC_AHB1Periph | ADC_RCC_AHB1Periph | USB_RCC_AHBPeriph_GPIO)
 #define RCC_APB1_LIST                   (I2C_RCC_APB1Periph | RCC_APB1Periph_TIM6 /*delays*/ | INTERRUPT_xMS_RCC_APB1Periph | TIMER_2MHz_RCC_APB1Periph \
                                          | TELEMETRY_RCC_APB1Periph | BACKLIGHT_STD_RCC_APB1Periph | BACKLIGHT_RCC_APB1Periph | RCC_APB1Periph_USB \

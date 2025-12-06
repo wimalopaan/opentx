@@ -66,10 +66,10 @@
   #define MAX_EXPOS                    14
   #define MAX_LOGICAL_SWITCHES         12
   #define MAX_SPECIAL_FUNCTIONS        18 // number of functions assigned to switches, 20B each
-  #define MAX_SCRIPTS				           0
+  #define MAX_SCRIPTS                  0
   #define MAX_INPUTS                   16
   #define MAX_TRAINER_CHANNELS         16
-  #define MAX_TELEMETRY_SENSORS        30 // 48B each
+  #define MAX_TELEMETRY_SENSORS        40 // 48B each
 #else
   #warning "Unknown board!"
 #endif
@@ -174,8 +174,7 @@ enum BeeperMode {
   enum ModuleIndex {
     INTERNAL_MODULE,
     EXTERNAL_MODULE,
-    TRAINER_MODULE,
-    FLASHING_MODULE,
+    SPORT_MODULE,
   };
 
   enum ArmingMode {
@@ -372,16 +371,12 @@ enum SwitchSources {
   SWSRC_SD0,
   SWSRC_SD1,
   SWSRC_SD2,
-#if !defined(PCBX7) && !defined(PCBXLITE) && !defined(PCBI6X)
   SWSRC_SE0,
   SWSRC_SE1,
   SWSRC_SE2,
-#endif
-#if !defined(PCBXLITE) && !defined(PCBI6X)
   SWSRC_SF0,
   SWSRC_SF1,
   SWSRC_SF2,
-#endif
 #if !defined(PCBX7) && !defined(PCBXLITE) && !defined(PCBI6X)
   SWSRC_SG0,
   SWSRC_SG1,
@@ -427,9 +422,12 @@ enum SwitchSources {
 #if defined(PCBX9E) 
   SWSRC_TRAINER = SWSRC_SH2,
   SWSRC_LAST_SWITCH = SWSRC_SR2,
-#elif defined(PCBXLITE) || defined(PCBI6X)
+#elif defined(PCBXLITE)
   SWSRC_TRAINER = SWSRC_SD2,
   SWSRC_LAST_SWITCH = SWSRC_SD2,
+#elif defined(PCBI6X)
+  SWSRC_TRAINER = SWSRC_SF2,
+  SWSRC_LAST_SWITCH = SWSRC_SF2,
 #else
   SWSRC_TRAINER = SWSRC_SH2,
   SWSRC_LAST_SWITCH = SWSRC_SH2,
@@ -599,12 +597,20 @@ enum MixSources {
 
   MIXSRC_FIRST_SWITCH,
 
-#if defined(PCBXLITE) || defined(PCBI6X)
+#if defined(PCBXLITE)
   MIXSRC_SA = MIXSRC_FIRST_SWITCH,  LUA_EXPORT("sa", "Switch A")
   MIXSRC_SB,                        LUA_EXPORT("sb", "Switch B")
   MIXSRC_SC,                        LUA_EXPORT("sc", "Switch C")
   MIXSRC_SD,                        LUA_EXPORT("sd", "Switch D")
   MIXSRC_LAST_SWITCH = MIXSRC_SD,
+#elif defined(PCBI6X)
+  MIXSRC_SA = MIXSRC_FIRST_SWITCH,  LUA_EXPORT("sa", "Switch A")
+  MIXSRC_SB,                        LUA_EXPORT("sb", "Switch B")
+  MIXSRC_SC,                        LUA_EXPORT("sc", "Switch C")
+  MIXSRC_SD,                        LUA_EXPORT("sd", "Switch D")
+  MIXSRC_SE,                        LUA_EXPORT("se", "Switch E")
+  MIXSRC_SF,                        LUA_EXPORT("sf", "Switch F")
+  MIXSRC_LAST_SWITCH = MIXSRC_SF,
 #elif defined(PCBTARANIS) || defined(PCBHORUS)
   MIXSRC_SA = MIXSRC_FIRST_SWITCH,  LUA_EXPORT("sa", "Switch A")
   MIXSRC_SB,                        LUA_EXPORT("sb", "Switch B")

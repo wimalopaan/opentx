@@ -144,11 +144,6 @@ TASK_FUNCTION(mixerTask)
         break;
       }
     }
-
-#if defined(DEBUG_MIXER_SCHEDULER)
-    GPIO_SetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);
-    GPIO_ResetBits(EXTMODULE_TX_GPIO, EXTMODULE_TX_GPIO_PIN);
-#endif
    
     // re-enable trigger
     mixerSchedulerClearTrigger();
@@ -200,7 +195,7 @@ TASK_FUNCTION(mixerTask)
        * because PPM init fails for some users.
        */
       if (heartbeat == HEART_WDT_CHECK || heartbeat == 3) {
-        wdt_reset();
+        WDG_RESET();
         heartbeat = 0;
       }
 
@@ -221,7 +216,7 @@ TASK_FUNCTION(menusTask)
 {
   opentxInit();
 
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
   while (true) {
     uint32_t pwr_check = pwrCheck();
     if (pwr_check == e_power_off) {
@@ -260,10 +255,10 @@ TASK_FUNCTION(menusTask)
   ledOff();
 #endif
 
-#if !defined(PCBI6X) // no software controlled power on i6X
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
   drawSleepBitmap();
   opentxClose();
-  boardOff();  // Only turn power off if necessary
+  boardOff();
 
   TASK_RETURN();
 #endif

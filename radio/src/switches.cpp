@@ -130,6 +130,8 @@ void getSwitchesPosition(bool startup)
   CHECK_3POS(1, SW_SB);
   CHECK_3POS(2, SW_SC);
   CHECK_3POS(3, SW_SD);
+  CHECK_2POS(SW_SE);
+  CHECK_2POS(SW_SF);
 
   switchesPos = newPos;
 
@@ -728,7 +730,7 @@ void checkSwitches()
 
     checkBacklight();
 
-    wdt_reset();
+    WDG_RESET();
 
     RTOS_WAIT_MS(10);
   }

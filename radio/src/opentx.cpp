@@ -87,7 +87,7 @@ void per10ms()
   if (watchdogTimeout)
   {
     watchdogTimeout -= 1;
-    wdt_reset(); // Retrigger hardware watchdog
+    WDG_RESET(); // Retrigger hardware watchdog
   }
 
 #if defined(GUI)
@@ -249,7 +249,8 @@ void generalDefault() {
 #if defined(PCBXLITE)
   g_eeGeneral.switchConfig = (SWITCH_2POS << 6) + (SWITCH_2POS << 4) + (SWITCH_3POS << 2) + (SWITCH_3POS << 0);  // 2x3POS, 2x2POS
 #elif defined(PCBI6X)
-  g_eeGeneral.switchConfig = (SWITCH_2POS << 6) + (SWITCH_3POS << 4) + (SWITCH_2POS << 2) + (SWITCH_2POS << 0);
+  // SE and SF disabled by default
+  g_eeGeneral.switchConfig = (SWITCH_NONE << 10) + (SWITCH_NONE << 8) + (SWITCH_2POS << 6) + (SWITCH_3POS << 4) + (SWITCH_2POS << 2) + (SWITCH_2POS << 0);
 #elif defined(PCBX7)
   g_eeGeneral.switchConfig = 0x000006ff;  // 4x3POS, 1x2POS, 1xTOGGLE
 #elif defined(PCBTARANIS) || defined(PCBHORUS)
@@ -448,7 +449,7 @@ void modelDefault(uint8_t id) {
 #endif
 
 #if defined(PCBXLITE)
-  g_model.trainerMode = TRAINER_MODE_MASTER_BLUETOOTH;
+  g_model.trainerData.mode = TRAINER_MODE_MASTER_BLUETOOTH;
 #endif
 
 #if defined(FLIGHT_MODES) && defined(GVARS)
@@ -715,7 +716,7 @@ bool readonlyUnlocked() {
 
 #if defined(SPLASH)
 void doSplash() {
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
   bool refresh = false;
 #endif
 
@@ -737,7 +738,7 @@ void doSplash() {
       if (keyDown() || inputsMoved())
         return;
 
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
       uint32_t pwr_check = pwrCheck();
       if (pwr_check == e_power_off) {
         break;
@@ -860,7 +861,7 @@ void checkAll() {
     tmr10ms_t tgtime = get_tmr10ms() + 500;
     while (tgtime != get_tmr10ms()) {
       RTOS_WAIT_MS(1);
-      wdt_reset();
+      WDG_RESET();
     }
   }
 
@@ -909,7 +910,7 @@ void checkThrottleStick()
   LED_ERROR_BEGIN();
   RAISE_ALERT(STR_THROTTLEWARN, STR_THROTTLENOTIDLE, STR_PRESSANYKEYTOSKIP, AU_THROTTLE_ALERT);
 
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
   bool refresh = false;
 #endif
 
@@ -918,7 +919,7 @@ void checkThrottleStick()
       return;
     }
 
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
     uint32_t power = pwrCheck();
     if (power == e_power_off) {
       break;
@@ -936,7 +937,7 @@ void checkThrottleStick()
 
     checkBacklight();
 
-    wdt_reset();
+    WDG_RESET();
 
     RTOS_WAIT_MS(10);
   }
@@ -962,7 +963,7 @@ void alert(const char *title, const char *msg, uint8_t sound) {
 
   RAISE_ALERT(title, msg, STR_PRESSANYKEY, sound);
 
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
   bool refresh = false;
 #endif
 
@@ -974,9 +975,9 @@ void alert(const char *title, const char *msg, uint8_t sound) {
 
     checkBacklight();
 
-    wdt_reset();
+    WDG_RESET();
 
-#if !defined(PCBI6X) // no software controlled power on i6X
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
     const uint32_t pwr_check = pwrCheck();
     if (pwr_check == e_power_off) {
       drawSleepBitmap();
@@ -984,7 +985,7 @@ void alert(const char *title, const char *msg, uint8_t sound) {
       return;  // only happens in SIMU, required for proper shutdown
     }
 #endif
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
     else if (pwr_check == e_power_press) {
       refresh = true;
     } else if (pwr_check == e_power_on && refresh) {
@@ -1804,7 +1805,6 @@ void opentxInit()
     opentxStart();
   }
 
-  // TODO Horus does not need this
   if (!g_eeGeneral.unexpectedShutdown) {
     g_eeGeneral.unexpectedShutdown = 1;
     storageDirty(EE_GENERAL);
@@ -1817,7 +1817,7 @@ void opentxInit()
 
   startPulses();
 
-  wdt_enable(WDTO_500MS);
+  WDG_ENABLE(WDG_DURATION);
 }
 
 #if defined(SIMU)
@@ -1828,13 +1828,11 @@ int main()
 {
   // G: The WDT remains active after a WDT reset -- at maximum clock speed. So it's
   // important to disable it before commencing with system initialisation (or
-  // we could put a bunch more wdt_reset()s in. But I don't like that approach
+  // we could put a bunch more WDG_RESET()s in. But I don't like that approach
   // during boot up.)
 #if defined(PCBTARANIS)
   g_eeGeneral.contrast = LCD_CONTRAST_DEFAULT;
 #endif
-
-  wdt_disable();
 
   boardInit();
 
@@ -1871,7 +1869,7 @@ int main()
 }
 
 #if !defined(SIMU)
-#if defined(PWR_BUTTON_PRESS)
+#if defined(PWR_BUTTON_PRESS) || defined(PWR_BUTTON_EMULATED)
 uint32_t pwr_press_time = 0;
 
 uint32_t pwrPressedDuration() {
@@ -1917,7 +1915,7 @@ uint32_t pwrCheck() {
 #else
         while ((TELEMETRY_STREAMING() && !g_eeGeneral.disableRssiPoweroffAlarm)) {
 #endif
-#if defined(PCBI6X)
+#if defined(PWR_BUTTON_SWITCH) && !defined(PWR_BUTTON_EMULATED)
           pwr_check_state = PWR_CHECK_OFF;
           return e_power_off;
 #else
@@ -1957,7 +1955,7 @@ uint32_t pwrCheck() {
 
   return e_power_on;
 }
-#elif defined(PCBI6X) // no software controlled power on i6X
+#elif defined(PWR_BUTTON_SWITCH) && !defined(PWR_BUTTON_EMULATED)
 uint32_t pwrCheck() {
   return e_power_on;
 }

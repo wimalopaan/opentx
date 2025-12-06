@@ -196,7 +196,7 @@ void init_module_timer( uint32_t module_index, uint32_t period, uint8_t state);
 void disable_module_timer( uint32_t module_index);
 
 // Trainer driver
-#define SLAVE_MODE()                    (g_model.trainerMode == TRAINER_MODE_SLAVE)
+#define SLAVE_MODE()                    (g_model.trainerData.mode == TRAINER_MODE_SLAVE)
 #if defined(PCBX9E)
   #define TRAINER_CONNECTED()           (true)
 #elif defined(PCBX7)
@@ -394,15 +394,14 @@ void checkRotaryEncoder(void);
 #endif
 
 // WDT driver
-#define WDTO_500MS                      500
+#define WDG_DURATION                    500 /*ms*/
 #if defined(WATCHDOG_DISABLED) || defined(SIMU)
-  #define wdt_enable(x)
-  #define wdt_reset()
+  #define WDG_ENABLE(x)
+  #define WDG_RESET()
 #else
-  #define wdt_enable(x)                 watchdogInit(x)
-  #define wdt_reset()                   IWDG->KR = 0xAAAA
+  #define WDG_ENABLE(x)                 watchdogInit(x)
+  #define WDG_RESET()                   IWDG->KR = 0xAAAA
 #endif
-#define wdt_disable()
 void watchdogInit(unsigned int duration);
 #define WAS_RESET_BY_SOFTWARE()             (RCC->CSR & RCC_CSR_SFTRSTF)
 #define WAS_RESET_BY_WATCHDOG()             (RCC->CSR & (RCC_CSR_WDGRSTF | RCC_CSR_WWDGRSTF))
@@ -515,7 +514,7 @@ void pwrInit(void);
 uint32_t pwrCheck(void);
 void pwrOn(void);
 void pwrOff(void);
-uint32_t pwrPressed(void);
+bool pwrPressed(void);
 #if defined(PWR_BUTTON_PRESS)
 uint32_t pwrPressedDuration(void);
 #endif
