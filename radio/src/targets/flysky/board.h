@@ -283,8 +283,6 @@ enum EnumSwitchesPositions
   SW_SF2
 };
 
-#define IS_3POS(x)            ((x) == SW_SC)
-#define IS_TOGGLE(x)					false
 #define NUM_SWITCHES          6
 
 void keysInit(void);

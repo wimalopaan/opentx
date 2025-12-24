@@ -665,7 +665,7 @@ void menuModelSetup(event_t event)
           uint8_t swactive = !(g_model.switchWarningEnable & 1 << i);
           attr = 0;
 
-          if (IS_3POS(i)) {
+          if (IS_CONFIG_3POS(i)) {
             c = '0'+(states & 0x03);
             states >>= 2;
           }
