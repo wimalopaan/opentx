@@ -28,10 +28,10 @@ uint8_t switchToMix(uint8_t source)
 
 uint8_t expandableSection(coord_t y, const char* title, uint8_t value, uint8_t attr, event_t event)
 {
-  #define STR_CHAR_UP "\300"
-  #define STR_CHAR_DOWN "\301"
+  #define CHAR_UP '\300'
+  #define CHAR_DOWN '\301'
   lcdDrawTextAlignedLeft(y, title);
-  lcdDrawText(120, y, value ? STR_CHAR_UP : STR_CHAR_DOWN, attr);
+  lcdDrawChar(120, y, value ? CHAR_UP : CHAR_DOWN, attr);
   if (attr && (event == EVT_KEY_BREAK(KEY_ENTER))) {
     value = !value;
     s_editMode = 0;
