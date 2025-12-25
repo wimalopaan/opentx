@@ -72,14 +72,15 @@ struct ParamFunctions {
   void (*display)(Parameter*, uint8_t, uint8_t);
 };
 
-static constexpr uint16_t BUFFER_SIZE = CTOOL_DATA_SIZE - 8/*devices*/;
+static constexpr uint16_t BUFFER_SIZE = CTOOL_DATA_SIZE - 8/*DEVICES_MAX_COUNT*/;
 static uint8_t *buffer = &reusableBuffer.cToolData[0];
 static uint16_t bufferOffset = 0;
 
 static uint8_t *paramData = &reusableBuffer.cToolData[0];
 static uint32_t paramDataLen = 0;
 
-static Parameter *params;
+static constexpr uint8_t MAX_PARAMS_COUNT = 18;
+static Parameter *params = (Parameter *)&reusableBuffer.cToolData[BUFFER_SIZE - MAX_PARAMS_COUNT * sizeof(Parameter)];
 static uint8_t allocatedParamsCount = 0;
 
 static constexpr uint8_t DEVICES_MAX_COUNT = 8;
@@ -195,15 +196,10 @@ static void crossfireTelemetryPing() {
   crossfireTelemetryPush(CRSF_FRAMETYPE_DEVICE_PING, (uint8_t *) crsfPushData, 2);
 }
 
-/**
- * Requires ExpressLRS V4+ firmware to work optimally,
- * on older versions allocates space for all params.
- */
-static void updateParamsOffset() {
-  TRACE("updateParamsOffset %d", expectedParamsCount);
-  uint16_t paramsSize = (expectedParamsCount + 1) * sizeof(Parameter); // + 1 for button (EXIT/DEVICES)
-  params = (Parameter *)&reusableBuffer.cToolData[BUFFER_SIZE - paramsSize];
-}
+// static void updateParamsOffset() {
+//   uint16_t paramsSize = (expectedParamsCount + 1) * sizeof(Parameter); // + 1 for button (EXIT/DEVICES)
+//   params = (Parameter *)&reusableBuffer.cToolData[BUFFER_SIZE - paramsSize];
+// }
 
 static void clearData() {
 //  TRACE("clearData %d", allocatedParamsCount);
@@ -572,7 +568,7 @@ static void parseDeviceInfoMessage(uint8_t* data) {
     reloadAllParam();
     if (newParamCount != expectedParamsCount || newParamCount == 0) {
       expectedParamsCount = newParamCount;
-      updateParamsOffset();
+      // updateParamsOffset();
       clearData();
       if (newParamCount == 0) {
         // This device has no params so the Loading code never starts
